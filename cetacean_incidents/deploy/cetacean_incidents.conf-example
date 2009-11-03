@@ -1,0 +1,22 @@
+NameVirtualHost *:8001
+Listen 8001
+
+<VirtualHost *:8001>
+    DocumentRoot /var/www/nowhere
+
+    Alias /site_media/ /path/to/project/cetacean_incidents/site_media/
+
+    <Directory /path/to/project/cetacean_incidents/site_media/>
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    WSGIScriptAlias / /path/to/project/cetacean_incidents/deploy/cetacean_incidents.wsgi
+
+    <Directory /path/to/project/cetacean_incidents/deploy/>
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+</VirtualHost>
+

@@ -1,0 +1,11 @@
+*.pyc
+
+# install-specific files with corresponding *-example files
+/cetacean_incidents/local_settings.py
+/cetacean_incidents/deploy/cetacean_incidents.conf
+/cetacean_incidents/deploy/cetacean_incidents.wsgi
+
+# includes
+/cetacean_incidents/site_media/blueprint/
+/cetacean_incidents/site_media/jquery/
+/cetacean_incidents/site_media/jqueryui/

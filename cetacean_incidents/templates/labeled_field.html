@@ -1,0 +1,17 @@
+<div class="field_wrapper">
+	<div>
+		{{ f.label_tag }}: {{ f }}
+	</div>
+	{% if f.help_text %}
+	<div>
+		({{ f.help_text }})
+	</div>
+	{% endif %}
+	{% if f.errors %}
+	<ul class="errorlist">
+		{% for e in f.errors %}
+		<li>{{ e }}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+</div>

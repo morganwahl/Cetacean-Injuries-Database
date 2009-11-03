@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<django-objects version="1.0">
+  <object pk="7" model="animals.taxon">
+    <field type="CharField" name="name">acutorostrata</field>
+    <field type="CharField" name="common_name">common minke, northern minke</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">6</field>
+    <field type="CharField" name="rank">S</field>
+  </object>
+  <object pk="8" model="animals.taxon">
+    <field type="CharField" name="name">Balaenidae</field>
+    <field type="CharField" name="common_name">right whales and bowhead whales</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">2</field>
+    <field type="CharField" name="rank">F</field>
+  </object>
+  <object pk="6" model="animals.taxon">
+    <field type="CharField" name="name">Balaenoptera</field>
+    <field type="CharField" name="common_name"></field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
+    <field type="CharField" name="rank">G</field>
+  </object>
+  <object pk="3" model="animals.taxon">
+    <field type="CharField" name="name">Balaenopteridae</field>
+    <field type="CharField" name="common_name">rorquals</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">2</field>
+    <field type="CharField" name="rank">F</field>
+  </object>
+  <object pk="1" model="animals.taxon">
+    <field type="CharField" name="name">Cetacea</field>
+    <field type="CharField" name="common_name">whales, dolphins, and porpoises</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field type="CharField" name="rank">O</field>
+  </object>
+  <object pk="9" model="animals.taxon">
+    <field type="CharField" name="name">Eubalaena</field>
+    <field type="CharField" name="common_name">right whale</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">8</field>
+    <field type="CharField" name="rank">G</field>
+  </object>
+  <object pk="10" model="animals.taxon">
+    <field type="CharField" name="name">glacialis</field>
+    <field type="CharField" name="common_name">north atlantic right whale</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">9</field>
+    <field type="CharField" name="rank">S</field>
+  </object>
+  <object pk="4" model="animals.taxon">
+    <field type="CharField" name="name">Megaptera</field>
+    <field type="CharField" name="common_name"></field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
+    <field type="CharField" name="rank">G</field>
+  </object>
+  <object pk="2" model="animals.taxon">
+    <field type="CharField" name="name">Mysticeti</field>
+    <field type="CharField" name="common_name">baleen whales, whalebone whales, great whales</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="rank">bO</field>
+  </object>
+  <object pk="5" model="animals.taxon">
+    <field type="CharField" name="name">novaeangliae</field>
+    <field type="CharField" name="common_name">humpback whale</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">4</field>
+    <field type="CharField" name="rank">S</field>
+  </object>
+  <object pk="11" model="animals.taxon">
+    <field type="CharField" name="name">Odontoceti</field>
+    <field type="CharField" name="common_name">toothed whales and dolphins</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
+    <field type="CharField" name="rank">bO</field>
+  </object>
+  <object pk="12" model="animals.taxon">
+    <field type="CharField" name="name">Ziphiidae</field>
+    <field type="CharField" name="common_name">beaked whale</field>
+    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">11</field>
+    <field type="CharField" name="rank">F</field>
+  </object>
+</django-objects>

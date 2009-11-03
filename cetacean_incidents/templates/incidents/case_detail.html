@@ -1,0 +1,42 @@
+{% extends "detail.html" %}
+
+{% block title %}{{ block.super }}: {{ case }}{% endblock %}
+
+{% block ids-table-rows %}
+<tr><th>NMFS national #</th><td>{{ case.national_id }}</td></tr>
+<tr><th>NMFS regional #</th><td>{{ case.regional_id }}</td></tr>
+<tr><th>field #</th><td>{{ case.field_id }}</td></tr>
+<tr><th>local ID</th><td>{{ case.id }}</td></tr>
+{% endblock %}
+
+{% block header %}
+{{ block.super }}
+<div><h2>{{ case }}</h2><a href="{% url edit_case case.id %}">edit this case</a></div>
+{% endblock %}
+
+{% block content %}
+<div>
+<h3>animal data</h3>
+<table>
+	<tr>
+		<th>animal</th>
+		<td>
+		{% for animal in case.animals %}
+			{% if not forloop.first %}
+			or
+			{% endif %}
+			<a href="{% url animal_detail object_id=animal.id %}">{{ animal }}</a>
+		{% endfor %}
+		</td>
+	</tr>
+</table>
+</div>
+<div>
+<h3>Visits</h3>
+<ul>
+	{% for visit in case.visit_set.all %}
+	<li><a href="{% url visit_detail object_id=visit.id %}">{{ visit }}</a></li>
+	{% endfor %}
+</ul>
+</div>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "detail.html" %}
+{% load visit_extras %}
+
+{% block title %}{{ block.super }}: edit {{ case }}{% endblock %}
+
+{% block ids-table-rows %}
+<tr><th>local ID</th><td>{{ case.id }}</td></tr>
+{% endblock %}
+
+{% block content %}
+<h2>Edit {{ case }}</h2>
+
+{% for field in form %}
+<div class="debug">
+	{{ field.label }}{% if field.errors %}<span class='error'>{{ field.errors }}</span>{% endif %}
+</div>
+{% endfor %}
+
+<form action="" method="POST" class="section">
+    <div class="field-wrapper">
+    	{% with form.national_id as f %}
+    		{% include "labeled_field.html" %}
+        {% endwith %}
+    	{% with form.regional_id as f %}
+    		{% include "labeled_field.html" %}
+        {% endwith %}
+    	{% with form.field_id as f %}
+    		{% include "labeled_field.html" %}
+        {% endwith %}
+    </div>
+    <p><button type="submit">update case</button></p>
+</form>
+
+<div class="section">
+    <h3>Events:</h3>
+    {% if case.visit_set.count %}
+    <table>
+        {% for visit in case.visit_set.all %}
+        <tr><td>{{ visit }}</td></tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+    <a href="{% url add_visit case.id %}">
+        {% if not case.visit_set.count %}
+        add the initial event
+        {% else %}
+        add another event
+        {% endif %}
+    </a>
+<div>
+{% endblock %}
+

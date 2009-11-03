@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load animal_extras %}
+{% load case_extras %}
+
+{% block title %}{{ block.super }}: Cases{% endblock %}
+
+{% block content %}
+<h2>Cases</h2>
+
+<table>
+	<tr>
+		<th>Case</th>
+		<th>Type</th>
+		<th>Animal</th>
+		<th>first visit</th>
+		<th>most recent visit</th>
+	</tr>
+	{% for case in case_list %}
+	<tr>
+		<td>{% case_link case %}</td>
+		<td>{{ case.case_type }}</td>
+		<td>
+		{% for animal in case.animals %}
+			{% if not forloop.first %}
+			or
+			{% endif %}
+			{% animal_link animal %}
+		{% endfor %}
+		</td>
+		<td>{{ case.first_visit_date }}</td>
+		<td>{{ case.last_visit_date }}</td>
+	</tr>
+	{% endfor %}
+</table>
+{% endblock %}

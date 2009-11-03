@@ -1,0 +1,25 @@
+import os, sys
+
+# add the django virtualenv
+sys.path.append( '/path/to/virutalenv/with/django/lib/python2.6/site-packages' )
+
+# TODO can these pathes be specified relative to this file?
+
+PROJECT_DIR = '/path/to/cetacean_incidents'
+
+# django likes the project.apps.animals.models style for imports, I prefer just
+# apps.animals.models
+
+#sys.path.append('/usr/local/django')
+sys.path.append( os.path.dirname(PROJECT_DIR) )
+#sys.path.append('/usr/local/django/mysite')
+sys.path.append( PROJECT_DIR )
+
+# import from cetacean_incidents because that's how the Django development
+# server does it
+os.environ['DJANGO_SETTINGS_MODULE'] = 'cetacean_incidents.settings'
+
+import django.core.handlers.wsgi
+
+application = django.core.handlers.wsgi.WSGIHandler()
+

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load animal_extras %}
+
+{% block title %}{{ block.super }}: Animals{% endblock %}
+
+{% block content %}
+<ul>
+	{% for animal in animal_list %}
+	<li>{% animal_link animal %}</li>
+	{% endfor %}
+</ul>
+{% endblock %}

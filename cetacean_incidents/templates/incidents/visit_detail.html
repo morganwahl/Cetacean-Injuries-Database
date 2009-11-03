@@ -1,0 +1,19 @@
+{% extends "detail.html" %}
+{% load animal_extras %}
+{% load case_extras %}
+
+{% block title %}{{ block.super }}: {{ visit }}{% endblock %}
+
+{% block header %}
+<h2>{{ visit }}</h2>
+{{ block.super }}
+{% endblock %}
+
+{% block ids-table-rows %}
+<tr><th>Case #</th><td>{{ visit.case.id }}</td></tr>
+{% endblock %}
+
+{% block content %}
+	<div>{% case_link visit.case %}</div>
+	<div>{% animal_link visit.animal %}</div>
+{% endblock %}

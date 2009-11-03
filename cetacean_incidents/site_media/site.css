@@ -1,0 +1,63 @@
+/*
+	the Tango palette from http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines
+	
+	butter	#fce94f #edd400 #c4a000
+	orange	#fcaf3e	#f57900	#ce5c00
+	chocolate #e9b96e #c17d11 #8f5902
+	chameleon	#8ae234 #73d216 #4e9a06
+	sky blue	#729fcf #3465a4 #204a87
+	plum	#ad7fa8 #75507b #5c3566
+	scarlet red	#ef2929 #cc0000 #a40000
+	aluminium	#eeeeec #d3d7cf #babdb6
+		#888a85 #555753 #2e3436
+*/
+
+
+body {
+	background-color: #eeeeec; /* aluminium 1 */
+	color: #2e3436; /* aluminium 6 */
+	font-family: "Trebuchet MS", Helvetica, Arial, "Sans", sans-serif;
+	font-size: 10pt;
+	line-height: 1.4em;
+	margin: 0;
+	text-align: center;
+}
+a {
+	color: #204a87; /* sky blue 3 */
+}
+h1 {
+    margin: 0;
+}
+h1 * {
+    vertical-align: middle;
+}
+
+table {
+	width: inherit;
+	border: thin solid #babdb6; /* aluminium 3 */
+}
+table th {
+	text-align: right;
+}
+table td,th {
+	border: thin dotted #d3d7cf; /* aluminium 2 */
+}
+
+ul.errorlist {
+	list-style-type: none;
+	background-color: #ef2929; /* scarlet red 1 */
+	border: thin dashed #a40000; /* scarlet red 3 */
+}
+
+.section {
+	border: 2px solid #729fcf; /* sky blue 1 */
+	margin: .25em;
+	padding: .25em;
+}
+
+.field_wrapper {
+	border: thin dashed #555753; /* aluminium 5 */
+	padding: .125em;
+	margin: .125em;
+	text-align: left;
+}

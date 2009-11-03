@@ -1,0 +1,34 @@
+{% extends "detail.html" %}
+
+{% block title %}{{ block.super }}: {{ animal }}{% endblock %}
+
+{% block header %}
+<h2>{{ animal }}</h2>
+{{ block.super }}
+{% endblock %}
+
+{% block ids-table-rows %}
+<tr><th>Animal #</th><td>{{ animal.id }}</td></tr>
+{% endblock %}
+
+{% block content %}
+<table>
+	<tr><th>name</th><td>{{ animal.name }}</td></tr>
+	<tr>
+		<th>gender</th>
+		<td>
+		{{ animal.probable_gender }}
+		</td>
+	</tr>
+	<tr><th>possible parents</th><td>{{ animal.parents|join:", " }}</td></tr>
+</table>
+
+{% if animal.observation_set.count %}
+<h4>observations:</h4>
+<ul>
+	{% for visit in animal.observation_set.all %}
+	<li><a href="{% url visit_detail object_id=visit.id %}">{{ visit }}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}
