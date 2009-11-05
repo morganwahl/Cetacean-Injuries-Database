@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.databrowse',
     'cetacean_incidents.apps.locations',
     'cetacean_incidents.apps.people',
     'cetacean_incidents.apps.vessels',
