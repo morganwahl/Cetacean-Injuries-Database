@@ -13,8 +13,7 @@ USE_I18N = True
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/site_media/'
 #MEDIA_ROOT = PROJECT_PATH + '/site_media/'
-ADMIN_MEDIA_URL = '/site_media/admin/'
-#ADMIN_MEDIA_ROOT = PROJECT_PATH + '/site_media/admin/'
+ADMIN_MEDIA_PREFIX = '/site_media/admin/'
 
 LOGIN_URL = '/login/' 
 LOGIN_REDIRECT_URL = '/'
@@ -45,8 +44,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
-    'django.contrib.databrowse',
-    'django_extensions',
     'cetacean_incidents.apps.locations',
     'cetacean_incidents.apps.people',
     'cetacean_incidents.apps.vessels',

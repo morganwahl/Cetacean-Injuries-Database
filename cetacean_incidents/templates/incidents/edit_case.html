@@ -10,12 +10,6 @@
 {% block content %}
 <h2>Edit {{ case }}</h2>
 
-{% for field in form %}
-<div class="debug">
-	{{ field.label }}{% if field.errors %}<span class='error'>{{ field.errors }}</span>{% endif %}
-</div>
-{% endfor %}
-
 <form action="" method="POST" class="section">
     <div class="field-wrapper">
     	{% with form.national_id as f %}

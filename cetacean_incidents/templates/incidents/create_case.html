@@ -7,9 +7,6 @@
 <form action="{% url create_case %}" method="post">
     <table>
 	{{ form.as_table }}
-	{% for f in form.fields %}
-	<tr><td>{% include "labeled_field.html" %}</td></tr>
-	{% endfor %}
 	</table>
 	<button type="submit">create case</button>
 </form>
