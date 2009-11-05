@@ -12,7 +12,7 @@ USE_I18N = True
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/site_media/'
-#MEDIA_ROOT = PROJECT_PATH + '/site_media/'
+MEDIA_ROOT = PROJECT_PATH + '/site_media/'
 ADMIN_MEDIA_PREFIX = '/site_media/admin/'
 
 LOGIN_URL = '/login/' 
