@@ -7,7 +7,7 @@ from django.template import RequestContext
 from cetacean_incidents.apps.animals.models import Animal
 
 from models import Case, Entanglement
-from forms import CreateCaseForm, EntanglementForm, visit_forms
+from forms import CreateCaseForm, CaseForm, EntanglementForm, visit_forms
 
 @login_required
 def edit_entanglement(request, case_id):
@@ -31,9 +31,26 @@ def edit_entanglement(request, case_id):
 def edit_case(request, case_id):
     # dispatch based on case type
     case = Case.objects.get(id=case_id)
-    return {
-        'Entanglement': edit_entanglement,
-    }[case.detailed_class_name](request, case_id)
+    try:
+        return {
+            'Entanglement': edit_entanglement,
+        }[case.detailed_class_name](request, case_id)
+    except KeyError:
+        pass
+
+    if request.method == 'POST':
+        form = CaseForm(request.POST, instance=case)
+        if form.is_valid():
+            form.save()
+            return redirect(case)
+    else:
+		form = CaseForm(instance=case)
+    return render_to_response('incidents/edit_case.html', {
+        'taxon': case.probable_taxon,
+        'gender': case.probable_gender,
+        'form': form,
+        'case': case,
+    })
 
 @login_required
 def add_visit(request, case_id):
@@ -51,82 +68,91 @@ def add_visit(request, case_id):
     # organize the form's fields into categories
     observer_fieldnames = (
         'date',
-        'date_reported',
-        'filer',
-        'firsthand',
-        'haz_loc_animal',
-        'haz_loc_public',
-        'letterholder',
+        'time',
         'location',
         'observer',
-        'observer_comments',
-        'time',
-        'time_reported',
+        'reporter',
         'vessel',
+        'verified_sighting',
+        'verified_method',
     )
     animal_fieldnames = (
-        'abandoned',
-        'age_group',
-        'age_method',
         'animal',
-        'animal_description',
-        'animal_heading',
-        'animal_movement',
-        'associates',
-        'behaviour_description',
-        'breathing',
-        'can_breath',
-        'condition',
-        'dive_duration',
-        'first_impression',
-        'first_observed',
-        'fluking',
+        'taxon',
         'gender',
         'gender_method',
-        'head_out',
-        'illness',
-        'inaccessible',
-        'injury',
-        'intital_disposition_comment',
+        'age',
+        'age_group',
+        'age_method',
         'length',
         'length_method',
-        'offspring',
-        'other_findings',
-        'other_initial_disposition',
-        'out_of_habitat',
-        'parents',
-        'reported_name',
-        'shot',
-        'skin_condition',
-        'taxon',
-        'weight',
-        'weight_health',
-        'weight_method',
-        'wound_age',
-        'wounds',
+        'size_description',
+        'color',
+        'head_description',
+        'back_description',
+        'tail_description',
+        'flippers_description',
+        'visible_injuries',
+        'visible_blood',
+        'scars_or_chafing',
+        'appears_thin',
+        'rough_skin',
     )
     visit_fieldnames = (
+        'weather',
+        'visibility',
+        'visibility_distance',
+        'wind_speed',
+        'wind_direction',
+        'wave_height',
+        'swell_height',
+        'water_depth',
+        'seasurface_temp',
+        'bottom_type',
     )
+    visit_fieldnames += {
+        'Entanglement': (
+            'entanglement_status',
+            'body_part_entangled',
+            'level_of_constriction',
+            'visible_lines',
+            'trailing_gear',
+            'buoys_present',
+            'buoy_markings',
+            # general gear fields
+            'gear_collected',
+            'gear_sent_to',
+            'gear_analysis',
+            # specific gear fields
+            'gear_retrieved_date',
+            'gear_received_date',
+            'gear_retrieved_contact',
+            'gear_received_from',
+            'gear_type',
+            'target_species',
+            'gear_amount',
+            'gear_owner',
+            'gear_set_date',
+            'gear_set_location',
+            'gear_set_assymetry',
+            'gear_missing_date',
+            'gear_missing_amount',
+            'gear_comments',
+        )
+    }[case.detailed_class_name]
     response_fieldnames = (
-        'deemed_healthy',
-        'died_at_site',
-        'died_in_transport',
-        'disentangled',
-        'euthanized_at_site',
-        'euthanized_in_transport',
-        'findings_determined',
-        'immediate_release',
-        'left_at_site',
-        'other_determination',
-        'relocated',
-        'transferred',
+        'visual_health',
+        'thermal_imaging',
+        'respiration_analysis',
+        'fecal_analysis',
+        'skin_culture',
+        'disentanglement_attempt',
     )
     doc_fieldnames = (
-        'media_loc',
-        'media_taken',
-        'media_taker',
-        'photos_taken',
-        'video_taken',
+        'photos_location',
+        'photos_contact',
+        'videos_location',
+        'videos_contact',
     )
     other_fieldnames = tuple(
         set(form.fields) 

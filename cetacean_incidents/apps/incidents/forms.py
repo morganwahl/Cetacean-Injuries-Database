@@ -48,10 +48,10 @@ class EntanglementForm(forms.ModelForm):
     class Meta:
         model = Entanglement
 
-class EntanglementVisitForm(forms.ModelForm):
+class EntanglementVisitForm(VisitForm):
 
-    class Meta:
+    class Meta(VisitForm.Meta):
         model = EntanglementVisit
-        exclude = VisitForm.Meta.exclude
+
 visit_forms['Entanglement'] = EntanglementVisitForm
 

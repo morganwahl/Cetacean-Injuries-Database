@@ -3,6 +3,7 @@ from cetacean_incidents.apps.animals.models import Animal, Observation, GENDERS,
 from cetacean_incidents.apps.animals.utils import probable_gender, probable_taxon
 from cetacean_incidents.apps.people.models import Person, Organization
 from cetacean_incidents.apps.vessels.models import Vessel
+from cetacean_incidents.apps.locations.models import Location
 
 from django.contrib.auth.models import User
 
@@ -11,18 +12,210 @@ from datetime import datetime
 class Visit(Observation):
     '''\
     A Visit is one interaction with an animal that deals with a Case. It's an
-    abstract model for the common fields between different types of Cases.
+    abstract model for the common fields between different types of Visits.
+    Visits are referred to as 'Events' in the UI.
     '''
 
     case = models.ForeignKey('Case')
-    date_reported = models.DateField(
+
+    verified_sighting = models.BooleanField(blank=True)
+    verified_method = models.TextField(
+        max_length= 1023,
         blank= True,
         null= True,
+        help_text= "If a verified sighting, how was it verified?"
     )
-    time_reported = models.TimeField(
+    '''Implies verified_sighting == True'''
+
+    
+    # more particular versions of Observation.animal_description
+    size_description = models.TextField(
+        blank= True,
+    )
+    color = models.TextField(
+        blank= True,
+    )
+    head_description = models.TextField(
+        blank= True,
+    )
+    back_description = models.TextField(
+        blank= True,
+        help_text= "back (fin?) description",
+    )
+    tail_description = models.TextField(
+        blank= True,
+    )
+    flippers_description = models.TextField(
+        blank= True,
+    )
+    
+    # animal condition booleans
+    visible_injuries = models.NullBooleanField(
+    )
+    visible_blood = models.NullBooleanField(
+        verbose_name= "visible fresh blood",
+    )
+    scars_or_chafing = models.NullBooleanField(
+        verbose_name= "white scars or chafing",
+    )
+    appears_thin = models.NullBooleanField(
+        verbose_name= "appears thin or emaciated",
+    )
+    rough_skin = models.NullBooleanField(
+        help_text = "does the skin appear rough?",
+    )
+
+    # evironmental conditions
+    weather = models.CharField(
+        choices= (
+            ('c', 'clear'),
+            ('o', 'cloudy'), # overcast
+            ('r', 'rain'),
+            ('s', 'snow'),
+            ('f', 'fog'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    visibility = models.CharField(
+        choices= (
+            # numbers for sensible ordering
+            ('7', 'good'),
+            ('5', 'fair'),
+            ('3', 'poor'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    visibility_distance = models.FloatField(
         blank= True,
         null= True,
+        help_text= "distance in km",
     )
+    wind_speed = models.FloatField(
+        blank= True,
+        null= True,
+        help_text= "in knots"
+    )
+    # TODO degrees?
+    wind_direction = models.CharField(
+        choices= (
+            ('n', 'north'),
+            ('s', 'south'),
+            ('e', 'east'),
+            ('w', 'west'),
+        ),
+        max_length= 3, # for NNW etc
+        blank= True,
+    )
+    wave_height = models.FloatField(
+        blank= True,
+        null= True,
+        help_text = "in meters",
+    )
+    swell_height = models.FloatField(
+        blank= True,
+        null= True,
+        help_text = "in meters",
+    )
+    water_depth = models.FloatField(
+        blank= True,
+        null= True,
+        help_text = "in meters",
+    )
+    seasurface_temp = models.FloatField(
+        blank= True,
+        null= True,
+        help_text = "in degrees C",
+    )
+    bottom_type = models.CharField(
+        choices= (
+            ('0', 'some type'),
+            ('1', 'some other type'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+
+    # response info
+
+    # biopsy data is handled with Biopsy objects
+    visual_health = models.TextField(blank=True, verbose_name="visual health assesment")
+    thermal_imaging = models.TextField(blank=True)
+    respiration_analysis = models.TextField(blank=True)
+    fecal_analysis = models.TextField(blank=True)
+    skin_culture = models.TextField(blank=True)
+    
+    # documentation
+    
+    photos_location = models.CharField(
+        max_length=1023,
+        blank=True,
+        help_text= "where to look up photos that aren't in this database",
+    )
+    photos_contact = models.ManyToManyField(
+        Person,
+        blank= True,
+        null= True,
+        related_name= "photo_contact_for",
+        help_text= "who to contact about photos",
+    )
+    videos_location = models.CharField(
+        max_length=1023,
+        blank=True,
+        help_text= "where to look up videos that aren't in this database",
+    )
+    videos_contact = models.ManyToManyField(
+        Person,
+        blank= True,
+        null= True,
+        related_name= "video_contact_for",
+        help_text= "who to contact about videos",
+    )
+    # TODO actual storage / upload of media files
+    # TODO sketches
+    # TODO reports
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('visit_detail', [str(self.id)]) 
+
+    class Meta:
+        ordering = ['date', 'time']
+
+class Wound(models.Model):
+    '''\
+    A Visit can list multiple wounds. When a Visit is created, by default it
+    has copies of the Case's previous Visit's Wounds.
+    '''
+    
+    visit = models.ForeignKey(Visit)
+    wound_locations = (
+        ('0', 'someplace'),
+        ('1', 'someplace else'),
+    )
+    location = models.CharField(
+        choices= wound_locations,
+        max_length= 1,
+        blank= True,
+    )
+    wound_types = (
+        ('0', 'physical'),
+        ('1', 'emotional'),
+    )
+    wound_type = models.CharField(
+        choices = wound_types,
+        max_length= 1,
+        blank= True,
+    )
+    depth = models.TextField(
+        blank= True,
+    )
+    description = models.TextField(
+        blank= True,
+    )
+
+class OldVisit(Observation):
     
     imported_from = models.CharField(
         max_length= 255,
@@ -186,13 +379,6 @@ class Visit(Observation):
         help_text= "in minutes"
     )
     
-    @models.permalink
-    def get_absolute_url(self):
-        return ('visit_detail', [str(self.id)]) 
-
-    class Meta:
-        ordering = ['date', 'time']
-
 class Case(models.Model):
     '''\
     A Case is an ongoing situation for an Animal that involves Visits. Case is
@@ -220,7 +406,7 @@ class Case(models.Model):
                    "Mammal Stranding Database",
     )
     status = models.CharField(
-        max_length= 1,
+        max_length=255,
         blank= True,
         help_text= 'leave blank for unknown',
     )
@@ -296,6 +482,225 @@ class Case(models.Model):
     def get_absolute_url(self):
         return ('case_detail', [str(self.id)]) 
 
+class EntanglementVisit(Visit):
+    entanglement_status = models.CharField(
+        choices= (
+            ('n', 'non life-threatening'),
+            ('t', 'life-threatening'),
+            ('d', 'disentangled'),
+            ('e', 'remains entangled'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    body_part_entangled = models.CharField(
+        choices= (
+            ('y', 'some part'),
+            ('z', 'some other part'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    level_of_constriction = models.CharField(
+        choices= ( # ints so they're sortable
+            ('1', 'loose'),
+            ('5', 'tight'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    visible_lines = models.IntegerField(
+        help_text= "number of lines visible",
+        # TODO is that redundant? are we trying to ignore invisible lines?
+        blank= True,
+        null= True,
+    )
+    trailing_gear = models.NullBooleanField(blank=True, null=True)
+    buoys_present = models.NullBooleanField(blank=True, null=True)
+    buoy_markings = models.CharField(max_length=1023, blank=True)
+
+    # general gear fields
+    gear_collected = models.CharField(max_length= 1023, blank= True)
+    gear_sent_to = models.CharField(max_length= 1023, blank= True)
+    gear_analysis = models.CharField(max_length= 1023, blank= True)
+    
+    # specific gear fields
+    gear_retrieved_date = models.DateField(blank=True)
+    gear_received_date = models.DateField(blank= True)
+    gear_retrieved_contact = models.ForeignKey(
+        Person,
+        blank= True,
+        null= True,
+        related_name= 'retrieved_gear_from',
+    )
+    gear_received_from = models.CharField(max_length=1023, blank=True)
+    gear_type = models.CharField(
+        choices= (
+            ('y', 'some type'),
+            ('z', 'another type'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    target_species = models.ForeignKey(
+        Taxon,
+        blank= True,
+        null= True,
+        related_name= 'targeted by',
+    )
+    gear_amount = models.CharField(max_length= 1023, blank= True)
+    gear_owner = models.ForeignKey(
+        Person,
+        blank= True,
+        null= True,
+        related_name= 'gear_owner_in',
+    )
+    gear_set_date = models.DateField(blank=True)
+    gear_set_location = models.ForeignKey(
+        Location,
+        blank= True,
+        null= True,
+        related_name= 'gear_set_in',
+    )
+    gear_set_assymetry = models.CharField(
+        choices= (
+            ('y', 'somewhat assymetric'),
+            ('z', 'quite assymetric'),
+        ),
+        max_length= 1,
+        blank= True,
+        null= True,
+    )
+            
+    gear_missing_date = models.DateField(blank=True)
+    gear_missing_amount = models.CharField(max_length= 1023, blank= True)
+    gear_comments = models.TextField(blank=True)
+
+    # response info
+    disentanglement_attempt = models.TextField(blank=True)
+    
+    class Meta:
+        ordering = ['date', 'time']
+
+class OldEntanglementVisit(models.Model):
+
+    time_with = models.CharField(
+        max_length= 1023,
+        blank= True,
+    )
+
+    # gear types
+    lobster_gear = models.NullBooleanField()
+    free_pot_warp_gear = models.NullBooleanField(
+        verbose_name= "pot warp (free)",
+    )
+    unknown_gillnet = models.NullBooleanField()
+    sink_gillnet = models.NullBooleanField()
+    surface_gillnet = models.NullBooleanField()
+    tiedown_gillnet = models.NullBooleanField(verbose_name="tie-down gillnet")
+    swordfish_gillnet = models.NullBooleanField()
+    driftnet = models.NullBooleanField()
+    stopseine_net = models.NullBooleanField(verbose_name="stop seine net")
+    purseseine_net = models.NullBooleanField(verbose_name="purse seine net")
+    trawl_gear = models.NullBooleanField(verbose_name="trawl")
+    longline_gear = models.NullBooleanField(verbose_name="longline")
+    tuna_gear = models.NullBooleanField()
+    weir_gear = models.NullBooleanField(verbose_name="weir")
+    monofiliment = models.NullBooleanField()
+    mooring_gear = models.NullBooleanField(verbose_name="mooring / anchor")
+    other_gear = models.NullBooleanField()
+    gear_description = models.TextField(
+        blank= True,
+    )
+    line_type = models.CharField(
+        max_length= 1023,
+        blank= True,
+        help_text= "type of line (diameter, color, material, etc.)" 
+    )
+    visible_mesh = models.NullBooleanField(
+        help_text= "Is mesh visible?",
+    )
+    visible_floats = models.NullBooleanField(
+        help_text= "Are floats or other gear trailing?",
+    )
+    wraps = models.CharField(
+        max_length= 255,
+        blank= True,
+    )
+    effects_on_movement = models.CharField(
+        max_length= 255,
+        blank= True,
+    )
+    
+    rescue = models.NullBooleanField()
+    ccs_rescue_id = models.CharField(
+        max_length= 255,
+        blank= True,
+        verbose_name= "CCS rescue ID #",
+    )
+
+class Biopsy(models.Model):
+    
+    visit = models.ForeignKey(
+        Visit,
+        blank= True,
+        null= True,
+    )
+    taker = models.ForeignKey(
+        Person,
+        related_name= 'took_biopsy',
+        blank= True,
+        null= True,
+    )
+    biopsy_id = models.CharField(
+        max_length= 255,
+        blank= True,
+        verbose_name= "biopsy #",
+    )
+    site = models.CharField(
+        choices= (
+            ('y', 'someplace'),
+            ('z', 'someplace else'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    tissue_samples_available = models.CharField(
+        choices= (
+            ('y', 'some option'),
+            ('z', 'some other option'),
+        ),
+        max_length= 1,
+        blank= True,
+    )
+    
+    def __unicode__(self):
+        ret = "Biopsy #%d" % self.id
+        if (self.taker):
+            ret += " by %s" % self.taker
+        return ret
+    
+    class Meta:
+        verbose_name_plural = "Biopsies"
+
+class Biopsy_Result(models.Model):
+    
+    biopsy = models.ForeignKey(
+        Biopsy,
+    )
+    disposition = models.CharField(max_length=1023, blank=True)
+    results = models.TextField(blank=True)
+    
+    def __unicode__(self):
+        ret = "Result"
+        if self.biopsy.biopsy_result_set.count() > 1:
+            ret += " %d" % self.id
+        ret += " for %s" % unicode(self.biopsy)
+        return ret
+    
+    class Meta:
+        verbose_name = "Biopsy Result"
+
 class CaseGroup(models.Model):
     '''\
     A CaseGroup simply groups together cases that differ only in their Animals.
@@ -339,78 +744,7 @@ class CaseGroup(models.Model):
         help_text= "note that a case may not exist for every animal",
     )
     
-    
-class EntanglementVisit(Visit):
-    time_with = models.CharField(
-        max_length= 1023,
-        blank= True,
-    )
-    # gear types
-    lobster_gear = models.NullBooleanField()
-    free_pot_warp_gear = models.NullBooleanField(
-        verbose_name= "pot warp (free)",
-    )
-    unknown_gillnet = models.NullBooleanField()
-    sink_gillnet = models.NullBooleanField()
-    surface_gillnet = models.NullBooleanField()
-    tiedown_gillnet = models.NullBooleanField(verbose_name="tie-down gillnet")
-    swordfish_gillnet = models.NullBooleanField()
-    driftnet = models.NullBooleanField()
-    stopseine_net = models.NullBooleanField(verbose_name="stop seine net")
-    purseseine_net = models.NullBooleanField(verbose_name="purse seine net")
-    trawl_gear = models.NullBooleanField(verbose_name="trawl")
-    longline_gear = models.NullBooleanField(verbose_name="longline")
-    tuna_gear = models.NullBooleanField()
-    weir_gear = models.NullBooleanField(verbose_name="weir")
-    monofiliment = models.NullBooleanField()
-    mooring_gear = models.NullBooleanField(verbose_name="mooring / anchor")
-    other_gear = models.NullBooleanField()
-    gear_description = models.TextField(
-        blank= True,
-    )
-    line_type = models.CharField(
-        max_length= 1023,
-        blank= True,
-        help_text= "type of line (diameter, color, material, etc.)" 
-    )
-    visible_mesh = models.NullBooleanField(
-        help_text= "Is mesh visible?",
-    )
-    visible_floats = models.NullBooleanField(
-        help_text= "Are floats or other gear trailing?",
-    )
-    body_part_entangled = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    wraps = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    life_threatening = models.NullBooleanField()
-    effects_on_movement = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    
-    comments = models.TextField(blank=True)
-    
-    rescue = models.NullBooleanField()
-    ccs_rescue_id = models.CharField(
-        max_length= 255,
-        blank= True,
-        verbose_name= "CCS rescue ID #",
-    )
-    biopsy_id = models.CharField(
-        max_length= 255,
-        blank= True,
-        verbose_name= "biopsy #",
-    )
-    
-    class Meta:
-        ordering = ['date', 'time']
-
 class Entanglement(Case):
-    visit_model = EntanglementVisit
+    pass
 Case.register_subclass(Entanglement)
 
