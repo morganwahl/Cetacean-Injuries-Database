@@ -8,9 +8,9 @@
 	</div>
 	{% endif %}
 	{% if f.errors %}
-	<ul class="errorlist">
+	<ul class="errorlist ui-state-error">
 		{% for e in f.errors %}
-		<li>{{ e }}</li>
+		<li class="ui-state-error-text">{{ e }}</li>
 		{% endfor %}
 	</ul>
 	{% endif %}

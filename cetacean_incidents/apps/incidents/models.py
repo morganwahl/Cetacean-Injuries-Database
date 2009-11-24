@@ -229,7 +229,7 @@ class OldVisit(Observation):
         help_text= "If this was imported from another database, the person " +
             "program that imported it."
     )
-    
+
     # for supporting Level A reports. if examination_observation or
     # able_to_examine is set, this is the initial observation part of a Level A.
     # if initial_observation is set this is the examination part.
@@ -254,7 +254,6 @@ class OldVisit(Observation):
         blank= True,
         null= True,
     )
-
     first_observed = models.CharField(
         max_length= 255,
         blank= True,
@@ -265,13 +264,12 @@ class OldVisit(Observation):
         blank= True,
         help_text= "e.g. 'mummified/skeletal'",
     )
-    
     cow_or_calf_half = models.BooleanField(
         default= False,
         help_text= "for compatibility with Level A forms only. Please use " +
                    "the parent / offspring fields for new cases"
     )
-        
+
     # occurrence details
     boat_strike = models.BooleanField()
     shot = models.BooleanField()
