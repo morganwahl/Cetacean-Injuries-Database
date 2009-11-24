@@ -449,6 +449,16 @@ class Case(models.Model):
         return self._get_visit_date(order='-date')
     last_visit_date = property(_get_last_visit_date)
     
+    determined_animal = models.ForeignKey(
+        Animal,
+        blank= True,
+        null= True,
+        help_text= '''\
+            mark this case as for a particular animal, overriding what was
+            originally reported in the individual events.
+        ''',
+    )
+        
     def _get_animals(self):
         animals = []
         for visit in self.visit_set.all():

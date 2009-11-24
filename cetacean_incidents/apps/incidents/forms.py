@@ -12,12 +12,6 @@ class CaseForm(forms.ModelForm):
 
 class VisitForm(forms.ModelForm):
 
-    animal = forms.ModelChoiceField(
-        queryset= Animal.objects.all(),
-        empty_label= '<new animal>',
-        required= False,
-    )
-
     class Meta:
         model = Visit
         # the case for a new visit is set by the view
@@ -29,8 +23,7 @@ visit_forms['Case'] = VisitForm
 
 class CreateCaseForm(CaseForm):
     '''\
-    A CaseForm with some additional fields for the inital creation of animals
-    and a visit.
+    A CaseForm with some additional fields for the case type.
     '''
     
     # TODO get this info from the model
