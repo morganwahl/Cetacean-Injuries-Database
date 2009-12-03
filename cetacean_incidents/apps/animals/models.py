@@ -30,13 +30,13 @@ class Taxon(models.Model):
     )
     # generate the super-, sub-, and infra-, ranks
     # note that this function takes a pair and returns a 4-tuple of pairs
-    expand = lambda r : (
+    _expand = lambda r : (
         ('u' + r[0], 'super' + r[1]),
         r,
         ('b' + r[0], 'sub'   + r[1]),
         ('i' + r[0], 'infra' + r[1]),
     )
-    ALL_RANKS = map(expand, MAIN_RANKS)
+    ALL_RANKS = map(_expand, MAIN_RANKS)
     # ALL_RANKS is now a list of 4-tuples of pairs
     ALL_RANKS = reduce( lambda t1, t2: t1 + t2, ALL_RANKS )
     # ALL_RANKS is now a list of pairs
