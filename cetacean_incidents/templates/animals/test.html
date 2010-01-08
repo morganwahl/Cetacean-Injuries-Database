@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block head %}
+    {{ block.super }}
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    {{ form.media }}
+{% endblock head %}
+
+{% block content %}
+<form method="post">
+    <div>
+        {{ form }}
+        <button type="submit">submit</button>
+    </div>
+</form>
+{% endblock content %}
+
