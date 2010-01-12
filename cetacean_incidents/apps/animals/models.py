@@ -104,45 +104,6 @@ class Animal(models.Model):
         help_text= 'as determined from the taxa indicated in specific events',
     )
     
-    def _get_possible_parents(self):
-        # observations where this Animal is in the offspring relationship
-        child_obvs = self.child_of.all()
-        
-        # observations of this Animal where something is in the parents 
-        # relationship
-        parent_obvs = self.observation_set.filter(parents__isnull=False)
-        # TODO merge the two above queries into one big one
-        return frozenset( 
-            map(lambda obv: obv.animal, child_obvs)
-            + reduce(
-                operator.add, 
-                map(lambda obv: list(obv.parents.all()), parent_obvs),
-                [],
-            )
-        )
-    parents = property(_get_possible_parents)
-    
-    def _get_possible_mothers(self):
-        '''\
-        Returns a set of Animals that _may_ be parents of this one and are 
-        possibly female.
-        '''
-        return frozenset(filter(
-            lambda animal: animal.possibly_female,
-            self.parents,
-        ))
-    possible_mothers = property(_get_possible_mothers)
-    def _get_probable_mothers(self):
-        '''\
-        Returns a set of Animals that _may_ be parents of this one and are 
-        probably female.
-        '''
-        return frozenset(filter(
-            lambda animal: animal.probably_female,
-            self.parents,
-        ))
-    probable_mothers = property(_get_probable_mothers)
-    
     def __unicode__(self):
         if self.name:
             return self.name
@@ -449,31 +410,6 @@ class Observation(models.Model):
         blank= True,
     )
     
-    # TODO can't be same as animal
-    # TODO better related name.
-    offspring = models.ManyToManyField(
-        'Animal',
-        blank= True,
-        null= True,
-        related_name= 'child_of',
-    )
-    # TODO at most 2 parents. can't be same as animal
-    # TODO better related name.
-    parents = models.ManyToManyField(
-        'Animal',
-        blank= True,
-        null= True,
-        related_name= 'parent_of',
-        help_text= "if another animal was determined to be one of it's parents"
-    )
-    associates = models.ManyToManyField(
-        'Animal',
-        blank= True,
-        null= True,
-        related_name= 'associated_of',
-        help_text= 'seen in association with',
-    )
-
     # tag data
     # see django ticket #999 for why this fields can't be 'tags'
     tags_seen = models.ManyToManyField(
