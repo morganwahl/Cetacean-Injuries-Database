@@ -1,5 +1,5 @@
 from django.db import models
-from cetacean_incidents.apps.people.models import PhoneNumber
+from cetacean_incidents.apps.contacts.models import PhoneNumber
 
 class Vessel(models.Model):
     name = models.CharField(

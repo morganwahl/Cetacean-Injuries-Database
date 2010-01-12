@@ -1,7 +1,7 @@
 from django.db import models
 from cetacean_incidents.apps.animals.models import Animal, Observation, GENDERS, Taxon
 from cetacean_incidents.apps.animals.utils import probable_gender, probable_taxon
-from cetacean_incidents.apps.people.models import Person, Organization
+from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.vessels.models import Vessel
 from cetacean_incidents.apps.locations.models import Location
 
@@ -154,7 +154,7 @@ class Visit(Observation):
         help_text= "where to look up photos that aren't in this database",
     )
     photos_contact = models.ManyToManyField(
-        Person,
+        Contact,
         blank= True,
         null= True,
         related_name= "photo_contact_for",
@@ -166,7 +166,7 @@ class Visit(Observation):
         help_text= "where to look up videos that aren't in this database",
     )
     videos_contact = models.ManyToManyField(
-        Person,
+        Contact,
         blank= True,
         null= True,
         related_name= "video_contact_for",
@@ -536,7 +536,7 @@ class EntanglementVisit(Visit):
     gear_retrieved_date = models.DateField(blank=True)
     gear_received_date = models.DateField(blank= True)
     gear_retrieved_contact = models.ForeignKey(
-        Person,
+        Contact,
         blank= True,
         null= True,
         related_name= 'retrieved_gear_from',
@@ -558,7 +558,7 @@ class EntanglementVisit(Visit):
     )
     gear_amount = models.CharField(max_length= 1023, blank= True)
     gear_owner = models.ForeignKey(
-        Person,
+        Contact,
         blank= True,
         null= True,
         related_name= 'gear_owner_in',
@@ -655,7 +655,7 @@ class Biopsy(models.Model):
         null= True,
     )
     taker = models.ForeignKey(
-        Person,
+        Contact,
         related_name= 'took_biopsy',
         blank= True,
         null= True,

@@ -1,7 +1,7 @@
 import operator
 
 from django.db import models
-from cetacean_incidents.apps.people.models import Person, Organization
+from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.vessels.models import Vessel
 from cetacean_incidents.apps.locations.models import Location
 from django.contrib.auth.models import User
@@ -142,7 +142,7 @@ class Tag(models.Model):
         help_text= "leave blank if not a VHF tag",
     )
 
-    tagging_person = models.ForeignKey(Person, blank=True, null=True)
+    tagging_person = models.ForeignKey(Contact, blank=True, null=True)
     tagging_org = models.ForeignKey(Organization, blank=True, null=True)
     built_date = models.DateField(blank=True)
     refurbished_date = models.DateField(blank=True)
@@ -200,7 +200,7 @@ class Observation(models.Model):
     '''
 
     observer = models.ForeignKey(
-        Person,
+        Contact,
         blank= True,
         null= True,
         related_name= 'observed',
@@ -233,7 +233,7 @@ class Observation(models.Model):
         return self.reporter == self.observer
     firsthand = property(_is_firsthand)
     reporter = models.ForeignKey(
-        Person,
+        Contact,
         blank= True,
         null= True,
         help_text= '''\
