@@ -113,85 +113,6 @@ class Animal(models.Model):
     def get_absolute_url(self):
         return ('animal_detail', [str(self.id)]) 
 
-class Tag(models.Model):
-
-    platform_id = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    serial_id = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    model_id = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    tag_type = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    color = models.CharField(
-        max_length= 255,
-        blank= True,
-    )
-    gps = models.BooleanField()
-    vhf_frequency = models.FloatField(
-        blank= True,
-        null= True,
-        help_text= "leave blank if not a VHF tag",
-    )
-
-    tagging_person = models.ForeignKey(Contact, blank=True, null=True)
-    tagging_org = models.ForeignKey(Organization, blank=True, null=True)
-    built_date = models.DateField(blank=True)
-    refurbished_date = models.DateField(blank=True)
-    tagging_date = models.DateField(blank=True)
-    tagging_location = models.ForeignKey(
-        Location,
-        blank= True,
-        null= True,
-    )
-    expiration_date = models.DateField(blank=True)
-
-    placement = models.CharField(
-        max_length= 2,
-        choices =  (
-            ('D', 'dorsal'),
-            ('DF', 'dorsal fin'),
-            ('L', 'lateral body'),
-            ('LF', 'left front'),
-            ('LR', 'left rear'),
-            ('RF', 'right front'),
-            ('RR', 'right rear'),
-        ),
-        blank= True,
-    )
-    
-    comments = models.TextField(blank=True)
-    
-    def __unicode__(self):
-        if self.id_number:
-            return unicode(self.id_number)
-        parts = []
-        desc = ''
-        if self.pk:
-            parts.append(unicode(self.pk))
-        if self.color:
-            parts.append(unicode(self.color))
-        if self.placement:
-            parts.append(self.get_placement_display())
-        if self.type:
-            parts.append(unicode(self.type))
-        return u' '.join(parts + [u'tag'])
-
-class TagObservation(models.Model):
-    tag = models.ForeignKey(Tag)
-    observation = models.ForeignKey('Observation')
-    added = models.BooleanField(
-        verbose_name= 'was it added during this observation?',
-    )
-
 class Observation(models.Model):
     '''\
     An observation is a source of data for an Animal. It has an observer and
@@ -205,29 +126,24 @@ class Observation(models.Model):
         null= True,
         related_name= 'observed',
     )
-    vessel = models.ForeignKey(
+    observer_vessel = models.ForeignKey(
         Vessel,
         blank= True,
         null= True,
         related_name= 'observed',
-        help_text= 'the vessel the observer was on',
-    )
-    observer_comments = models.TextField(
-        blank= True,
-        help_text= 'any additional observations about the animal or '
-                   + 'clarifications of the other fields'
+        help_text= 'the vessel the observer was on, if any',
     )
     date = models.DateField(
         blank= True,
         null= True,
-        help_text= 'the date that the observation took place',
+        help_text= 'the date that (start of) the observation took place',
     )
     time = models.TimeField(
         blank= True,
         null= True,
         help_text= 'the time of the beginning of the observation',
     )
-    # TODO separate begin and end times?
+    # TODO duration?
 
     def _is_firsthand(self):
         return self.reporter == self.observer
@@ -236,6 +152,7 @@ class Observation(models.Model):
         Contact,
         blank= True,
         null= True,
+        related_name= 'reported',
         help_text= '''\
             Same as observer if this is a firsthand report. If not, this is the
             person who either created this entry in the database, or filled out
@@ -251,9 +168,6 @@ class Observation(models.Model):
         null= True,
     )
 
-    # TODO importer fields for the person/program that imported the datat into
-    # this database
-    
     location = models.ForeignKey(
         Location,
         blank= True,
@@ -261,61 +175,12 @@ class Observation(models.Model):
         related_name= "observed_here",
     )
     
-    animal_movement = models.CharField(
-        max_length= 255,
-        blank= True,
-        null= True,
-        help_text= "i.e. anchored, stranded, traveling",
-    )
-    animal_heading = models.CharField(
-        max_length= 255,
-        blank= True,
-        null= True,
-        help_text= "i.e. north, southwest, circling, random, unknown",
-    )
-    
-    video_taken = models.NullBooleanField(
-        blank= True,
-    )
-    '''If true, implies media_taken.'''
-    photos_taken = models.NullBooleanField(
-        blank= True,
-    )
-    '''If true, implies media_taken.'''
-    media_taken = models.BooleanField(
-        blank= True,
-        verbose_name= "photos or videos taken",
-    )
-    media_taker = models.CharField(
-        max_length = 255,
-        blank= True,
-        verbose_name= 'photo or video taker',
-    )
-    media_loc = models.CharField(
-        max_length= 1023,
-        blank= True,
-        verbose_name= "photos or videos disposition",
-        help_text= 'leave blank if unknown',
-    ) # TODO implies media_taken
-    
-    animal = models.ForeignKey('Animal')
     taxon = models.ForeignKey(
         Taxon,
+        blank= True,
+        null= True,
         help_text= 'The most specific taxon that can be applied to this ' +
             'animal. (e.g. a species)',
-    )
-    TAXON_METHODS=(
-        ("p", "photo(s)"),
-        ("v", "video(s)"),
-        ("g", "genetics"),
-        ("m", "morphology"),
-    )
-    taxon_method = models.CharField(
-        "How was the species determined?",
-        max_length= 1,
-        choices= TAXON_METHODS,
-        blank= True,
-        help_text= 'leave blank if unknown'
     )
 
     gender = models.CharField(
@@ -324,109 +189,43 @@ class Observation(models.Model):
         blank= True,
         help_text= 'The gender of this animal, if known.'
     )
-    GENDER_METHODS = (
-        ('p', 'physical exam'),
-        ('g', 'genetics'),
-        ('c', 'presence of calf'),
-        ('o', 'visual observation'),
-    )
-    gender_method = models.CharField(
-        "Method for determining gender",
-        max_length= '1',
-        choices= GENDER_METHODS,
-        blank= True,
-        help_text= "leave blank if unknown",
-    )
     
-    age = models.FloatField(
-        blank= True,
-        null= True,
-        help_text="age in years (decimal years allowed)",
-    )
-    # use ints so they're orderable
-    AGE_GROUPS = (
-        (1, 'pup / calf'),
-        (2, 'yearling'),
-        (3, 'subadult'),
-        (4, 'adult'),
-    )
-    age_group = models.SmallIntegerField(
-        "Age-group",
-        choices= AGE_GROUPS,
-        blank= True,
-        null= True,
-        help_text= "leave blank if unknown",
-    )
-    AGE_METHODS = (
-        ('b', "biopsy"),
-        ('o', "visual observation"),
-        ('p', "photo(s)"),
-        ('v', "video(s)"),
-    )
-    age_method = models.CharField(
-        "Method for determining age",
-        max_length= 1,
-        choices= AGE_METHODS,
-        blank= True,
-        help_text= "leave blank if unknown",
-    )
-    
-    length = models.FloatField(
-        "Estimated length in meters",
-        blank= True,
-        null= True,
-        help_text= "leave blank if no estimation was made",
-    )
-    LENGTH_METHODS = (
-        ('o', "visual observation"),
-        ('p', "photo(s)"),
-        ('v', "video(s)"),
-    )
-    length_method = models.CharField(
-        max_length= 1,
-        choices = LENGTH_METHODS,
-        blank= True,
-        help_text= "leave blank if no estimation was made",
-    )
-    
-    weight = models.FloatField(
-        "weight in kilograms",
-        blank= True,
-        null= True,
-        help_text= "leave blank if no estimation was made",
-    )
-    WEIGHT_METHODS = (
-        ('o', 'visual observation'),
-        ('s', 'a big scale'),
-    )
-    weight_method = models.CharField(
-        max_length= 1,
-        choices = WEIGHT_METHODS,
-        blank= True,
-        help_text= "how was the weight measured, if at all",
-    )
+    animal = models.ForeignKey(Animal)
     
     animal_description = models.TextField(
         blank= True,
-    )
-    
-    # tag data
-    # see django ticket #999 for why this fields can't be 'tags'
-    tags_seen = models.ManyToManyField(
-        'Tag',
-        through='TagObservation',
-        blank= True,
-        null= True,
+        help_text= """\
+        Please note anything that would help identify the individual animal or
+        it's species or gender, etc. Even if you've determined those already,
+        please indicate what that was on the basis of.
+        """
     )
     
     def __unicode__(self):
-        ret = "visit of %s" % self.animal
+        ret = "visit"
         if self.date:
             ret += " on %s" % self.date
         if self.observer:
-            ret += " by %s" % self.date
+            ret += " by %s" % self.observer
         ret += " (%d)" % self.id
         return ret
     
     class Meta:
-        ordering = ['date', 'time', 'animal']
+        ordering = ['date', 'time', 'id']
+class Media(models.Model):
+    
+    observation = models.ForeignKey(Observation)
+    media_type = models.CharField(
+        max_length= 1,
+        choices = (
+            ('p', 'photos'),
+            ('v', 'video'),
+        ),
+    )
+    contact = models.ManyToManyField(
+        Contact,
+        blank= True,
+        null= True,
+        help_text= "Who should be contacted for copies of the media?",
+    )
+
