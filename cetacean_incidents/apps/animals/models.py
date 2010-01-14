@@ -70,11 +70,11 @@ class Taxon(models.Model):
         verbose_name_plural = 'taxa'
         
     def __unicode__(self):
-        if self.rank == 'S':
+        if self.get_rank_display() == 'species':
             genus = self
-            while genus.rank != 'G' and genus.supertaxon is not None:
+            while genus.get_rank_display() != 'genus' and genus.supertaxon is not None:
                 genus = genus.supertaxon
-            if genus.rank == 'G':
+            if genus.get_rank_display() == 'genus':
                 return u'%s. %s' % (genus.name[0], self.name)
         return u'%s %s' % (self.name, self.get_rank_display())
 
