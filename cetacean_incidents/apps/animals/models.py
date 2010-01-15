@@ -60,7 +60,7 @@ class Taxon(models.Model):
         related_name='subtaxons',
         help_text="The smallest taxon that contains this one",
     )
-    rank = models.FloatField(choices=RANK_CHOICES, blank=True, null=True)
+    rank = models.FloatField(choices=RANK_CHOICES)
     
     def _is_binomial(self):
         if not self.rank is None:
