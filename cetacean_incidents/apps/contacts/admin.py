@@ -47,6 +47,4 @@ class ContactAdmin(admin.ModelAdmin):
 admin.site.register(Contact, ContactAdmin)
 
 admin.site.register(Organization)
-admin.site.register(Email)
-admin.site.register(PhoneNumber)
-admin.site.register(Address)
+
