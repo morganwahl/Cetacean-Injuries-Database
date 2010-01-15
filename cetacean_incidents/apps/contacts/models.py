@@ -31,6 +31,27 @@ class Contact(models.Model):
         help_text= "Is this a person? (i.e. not an organization)"
     )
     
+    # Note that only one of each thing is given so that contacts just have a 
+    # primary phone or email to contact them at. Other ones could be noted in 
+    # 'notes' field, if necessary.
+    
+    phone = models.CharField(
+        max_length= 255,
+        blank= True,
+    )
+    
+    email = models.CharField(
+        max_length= 255,
+        blank= True,
+        verbose_name= "email address",
+    )
+    
+    address = models.TextField(
+        max_length= 1023,
+        blank= True,
+        help_text= "mailing address",
+    )
+    
     affiliations = models.ManyToManyField(
         Organization,
         blank= True,
@@ -38,6 +59,8 @@ class Contact(models.Model):
         help_text= "The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (I.e. 'Coast Guard')",
         related_name = 'contacts',
     )
+    
+    notes = models.TextField(blank= True)
    
     def save(self, force_insert=False, force_update=False):
         if not self.sort_name:
@@ -50,45 +73,4 @@ class Contact(models.Model):
 
     def __unicode__(self):
         return self.name
-
-class PhoneNumber(models.Model):
-    number = models.CharField(
-        max_length= 255,
-    )
-    
-    contact = models.ForeignKey(
-        Contact,
-        related_name= 'phone_numbers',
-    )
-    
-    def __unicode__(self):
-        return unicode(self.number)
-    
-class Address(models.Model):
-    address = models.TextField(
-        max_length= 1023,
-    )
-
-    contact = models.ForeignKey(
-        Contact,
-        related_name= 'addresses',
-    )
-
-    def __unicode__(self):
-        return unicode(self.address)
-
-class Email(models.Model):
-    address = models.EmailField()
-    
-    contact = models.ForeignKey(
-        Contact,
-        related_name= 'email_addresses',
-    )
-    
-    def __unicode__(self):
-        return unicode(self.address)
-
-    class Meta:
-        verbose_name = 'email address'
-        verbose_name_plural = 'email addresses'
 
