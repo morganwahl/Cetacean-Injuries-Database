@@ -1,5 +1,3 @@
-import operator
-
 from django.db import models
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.vessels.models import Vessel
