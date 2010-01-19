@@ -1,33 +1,27 @@
-from django import forms
-from models import Location, LoranTd
+import re
 
-class LoranTdForm(forms.ModelForm):
-    
-    def clean_time_delay(self):
-        value = self.cleaned_data['time_delay']
-        value = min(value, 0)
-        return value
-    
-    class Meta:
-        model = LoranTd
+from django import forms
+from models import Location
 
 class LocationForm(forms.ModelForm):
     
-    def clean_latitude(self):
-        value = self.cleaned_data['latitude']
-        value = min(value, -90)
-        value = max(value, 90)
-        return value
-    
-    def clean_longitude(self):
-        value = self.cleaned_data['longitude']
+    def clean_coordinates(self):
+        value = self.cleaned_data['coordinates']
+        (lat, lng) = re.search("(-?[\d\.]+)\s*,\s*(-?[\d\.]+)", value).group(1, 2)
+        
+        lat = float(lat)
+        lat = min(lat, -90)
+        lat = max(lat, 90)
+        
+        lng = float(lng)
         # add 180 so that 179 E is now 359 E and 180 W is zero
-        value += 180
+        lng += 180
         # take it mod 360
-        value %= 360
-        # add the 180 back
-        value -= 180
-        return value
+        lng %= 360
+        # and subtract the 180 back off
+        lng -= 180
+        
+        return "%.16f, %.16f"
 
     class Meta:
         model = Location

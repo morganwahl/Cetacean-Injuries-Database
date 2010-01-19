@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import Location, LoranTd
+from models import Location
 
 admin.site.register(Location)
-admin.site.register(LoranTd)
+
