@@ -1,0 +1,15 @@
+<div id="taxon_widget" style="display: inline-block;">
+    {{ initial_taxon }}
+    <pre><![CDATA[ {{ final_attrs|safe }} ]]></pre>
+    <div id="search_box" style="display: inline-block;">
+        search taxons for
+        <input id="taxon_filter" type="text" autocomplete="off"></input>
+        <div id="results_box" class="searchlist" style="display: none;">
+            <i>no query</i>
+        </div>
+    </div>
+    <span id="taxon_chosen"></span>
+    <button type="button" id="clear_taxon">clear selection</button>
+    <input {{ final_attrs|safe }}></input>
+</div>
+

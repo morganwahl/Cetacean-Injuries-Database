@@ -1,0 +1,25 @@
+.searchlist {
+    border: thin solid grey;
+    text-align: left;
+}
+td.taxon {
+    padding: .2em;
+}
+.taxon_name {
+    font-weight: bold;
+    font-size: 125%;
+    line-height: 90%;
+}
+.taxon_id {
+    display: none;
+}
+.common_name {
+    font-style: italic;
+    font-size: 85%;
+    line-height: 95%;
+    padding-left: .2em;
+}
+.highlighted {
+    background-color: #729fcf; /* sky blue 1 */
+}
+
