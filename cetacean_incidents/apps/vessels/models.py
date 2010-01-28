@@ -3,7 +3,7 @@ from django.db import models
 from cetacean_incidents.apps.countries.models import Country
 from cetacean_incidents.apps.contacts.models import Contact
 
-class Vessel(models.Model):
+class VesselInfo(models.Model):
     '''\
     Note that this _isn't_ a model for individual vessels, but for a description
     of a vessel.

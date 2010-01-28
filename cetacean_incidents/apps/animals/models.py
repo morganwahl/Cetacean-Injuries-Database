@@ -1,6 +1,6 @@
 from django.db import models
 from cetacean_incidents.apps.contacts.models import Contact, Organization
-from cetacean_incidents.apps.vessels.models import Vessel
+from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.locations.models import Location
 from django.contrib.auth.models import User
 from django.contrib.localflavor.us.models import USStateField
@@ -146,7 +146,7 @@ class Observation(models.Model):
         related_name= 'observed',
     )
     observer_vessel = models.ForeignKey(
-        Vessel,
+        VesselInfo,
         blank= True,
         null= True,
         related_name= 'observed',

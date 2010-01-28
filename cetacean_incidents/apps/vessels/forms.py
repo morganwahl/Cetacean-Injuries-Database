@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
-from models import Vessel
+from models import VesselInfo
 from cetacean_incidents.apps.countries.models import Country
 from django.conf import settings
 
@@ -72,5 +72,5 @@ class VesselAdminForm(forms.ModelForm):
     flag = FlagField(required= False)
     
     class Meta:
-        model = Vessel
+        model = VesselInfo
 
