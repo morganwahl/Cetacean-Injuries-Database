@@ -21,6 +21,8 @@ def probable_taxon(observations):
     all the Taxa mentioned. If no such Taxon exists, returns None.
     '''
 
+    from models import Taxon # do this here to avoid circular dependancies
+
     # TODO fancier algorithm
 
     # note that values_list returns taxon IDs
@@ -28,7 +30,6 @@ def probable_taxon(observations):
     if len(taxon_ids) == 0:
         return None
 
-    from models import Taxon # do this here to avoid circular dependancies
     taxon_ids = set(taxon_ids)
     taxa = set()
     for id in taxon_ids:
