@@ -9,7 +9,7 @@ class DateTime(models.Model):
     )
     months = [(i, month_name[i])for i in range(1,len(month_name))]
     month = models.IntegerField(
-        choices= months
+        choices= months,
         blank= True,
         null= True,
     )
@@ -19,10 +19,10 @@ class DateTime(models.Model):
     )
     
     hour = models.IntegerField(
-        choices = [(i, i) for i in range(0,24)]
+        choices = [(i, i) for i in range(0,24)],
         blank= True,
         null= True,
-        help_text= "midnight is 0, 1pm is 13, etc."
+        help_text= "midnight is 0, 1pm is 13, etc. Note that all datetimes are TAI (i.e. timezoneless). It's up to the editing and display interface to convert accordingly.",
     )
     minute = models.IntegerField(
         blank= True,
@@ -34,5 +34,5 @@ class DateTime(models.Model):
     )
     
     class Meta:
-        ording = ('year', 'month', 'day', 'hour', 'minute', 'second')
+        ordering = ('year', 'month', 'day', 'hour', 'minute', 'second')
         

@@ -1,4 +1,5 @@
 from django.db import models
+from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.locations.models import Location
@@ -223,5 +224,5 @@ class Observation(models.Model):
         return ret
     
     class Meta:
-        ordering = ['date', 'time', 'id']
+        ordering = ['observation_datetime', 'id']
 
