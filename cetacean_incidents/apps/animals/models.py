@@ -4,7 +4,6 @@ from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.locations.models import Location
 from django.contrib.auth.models import User
-from django.contrib.localflavor.us.models import USStateField
 from utils import probable_gender, probable_taxon
 
 GENDERS = (
