@@ -25,8 +25,10 @@ def probable_taxon(observations):
 
     # TODO fancier algorithm
 
-    # note that values_list returns taxon IDs
+    # note that values_list returns taxon IDs or Nones
     taxon_ids = observations.values_list('taxon', flat=True)
+    # remove Nones
+    taxon_ids = filter( lambda x: not x is None, taxon_ids )
     if len(taxon_ids) == 0:
         return None
 
