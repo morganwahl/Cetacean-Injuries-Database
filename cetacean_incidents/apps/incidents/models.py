@@ -13,7 +13,6 @@ class Visit(Observation):
     '''\
     A Visit is one interaction with an animal that deals with a Case. It's an
     abstract model for the common fields between different types of Visits.
-    Visits are referred to as 'Events' in the UI.
     '''
 
     case = models.ForeignKey('Case')
