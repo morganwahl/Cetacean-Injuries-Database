@@ -33,6 +33,20 @@ class DateTime(models.Model):
         null= True,
     )
     
+    def __unicode__(self):
+        ret = u"%04d" % self.year
+        if self.month:
+            ret += u"-%02d" % self.month
+            if self.day:
+                ret += u"-%02d" % self.day
+        if self.hour:
+            ret += u" %02dh" % self.hour
+            if self.minute:
+                ret += u" %02dm" % self.minute
+                if self.second:
+                    ret += u" %02ds" % self.second
+        return ret
+    
     class Meta:
         ordering = ('year', 'month', 'day', 'hour', 'minute', 'second')
         
