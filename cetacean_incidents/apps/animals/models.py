@@ -104,6 +104,16 @@ class Animal(models.Model):
         help_text= 'The name given to this particular animal (e.g. "Kingfisher"). Not an ID number.'
     )
     
+    determined_dead_after = models.DateField(
+        blank= True,
+        null= True,
+        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking (i.e. if an animal is marked as not dead in an observation after this date, a warning will be displayed.)"
+    )
+    necropsy = models.BooleanField(
+        default= False,
+        help_text= "if this animal is dead, has a necropsy been performed on it?",
+    )
+    
     def _get_probable_gender(self):
         return probable_gender(self.observation_set)
     probable_gender = property(_get_probable_gender)
@@ -111,7 +121,7 @@ class Animal(models.Model):
         max_length= 1,
         blank= True,
         choices= GENDERS,
-        help_text= 'as determined from the genders indicated in specific events',
+        help_text= 'as determined from the genders indicated in specific observations',
     )
     
     def _get_probable_taxon(self):
@@ -121,7 +131,7 @@ class Animal(models.Model):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'as determined from the taxa indicated in specific events',
+        help_text= 'as determined from the taxa indicated in specific observations',
     )
     
     def __unicode__(self):
@@ -167,27 +177,6 @@ class Observation(models.Model):
         related_name= "observed_here",
     )
 
-    def _is_firsthand(self):
-        return self.reporter == self.observer
-    firsthand = property(_is_firsthand)
-    reporter = models.ForeignKey(
-        Contact,
-        blank= True,
-        null= True,
-        related_name= 'reported',
-        help_text= '''\
-            Same as observer if this is a firsthand report. If not, this is who
-        informed us of the incidents.
-        ''',
-    )
-    report_datetime = models.ForeignKey(
-        DateTime,
-        blank= True,
-        null= True,
-        unique = True,
-        help_text = 'when we first heard about the observation',
-    )
-    
     taxon = models.ForeignKey(
         Taxon,
         blank= True,
@@ -215,9 +204,7 @@ class Observation(models.Model):
     )
     
     def __unicode__(self):
-        ret = "visit"
-        if self.date:
-            ret += " on %s" % self.date
+        ret = "observation on %s" % self.observation_datetime
         if self.observer:
             ret += " by %s" % self.observer
         ret += " (%d)" % self.id
