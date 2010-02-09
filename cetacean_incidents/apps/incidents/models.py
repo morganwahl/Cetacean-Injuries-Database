@@ -223,11 +223,39 @@ class Case(models.Model):
         self.names = ','.join(new_names)
     names_set = property(_get_names_set,_put_names_set)
 
+    def _get_current_name(self):
+        # Cases with no Visits yet don't get names
+        if not self.visit_set.count():
+            return None
+        s = {}
+        s['year'] = unicode(self.date.year)
+        s['yearly_number'] = self.yearly_number
+        s['date'] = unicode(self.date)
+        taxon = self.probable_taxon
+        if not taxon is None:
+            s['taxon'] = unicode(taxon)
+        else:
+            s['taxon'] = u'Unknown taxon'
+        s['type'] = self.case_type
+        return u"%(year)s#%(yearly_number)i (%(date)s) %(type)s of %(taxon)s" % s
+        
+    current_name = property(_get_current_name)
+
+    def _get_past_names_set(self):
+        return self.names_set - set([self.current_name])
+    past_names_set = property(_get_past_names_set)
+
+    def _get_first_observation_date(self):
+        return self.visit_set.order_by('observation_datetime')[0].observation_datetime
+    first_observation_date = property(_get_first_observation_date)
+    def _get_first_report_date(self):
+        return self.visit_set.order_by('report_datetime')[0].report_datetime
+    first_report_date = property(_get_first_report_date)
     def _get_case_date(self):
         if not self.visit_set.count():
             return None
         # TODO more specific dates should override less specific ones
-        return self.visit_set.order_by('report_datetime')[0].report_datetime
+        return self.first_report_date
     date = property(_get_case_date)
 
     def save(self, *args, **kwargs):
@@ -248,24 +276,6 @@ class Case(models.Model):
 
         return super(Case, self).save(*args, **kwargs)
 
-    def _get_current_name(self):
-        # Cases with no Visits yet don't get names
-        if not self.visit_set.count():
-            return None
-        s = {}
-        s['year'] = unicode(self.date.year)
-        s['yearly_number'] = self.yearly_number
-        s['date'] = unicode(self.date)
-        taxon = self.probable_taxon
-        if not taxon is None:
-            s['taxon'] = unicode(taxon)
-        else:
-            s['taxon'] = u'Unknown taxon'
-        # TODO case type
-        return u"%(year)s#%(yearly_number)i (%(date)s) Case of %(taxon)s" % s
-        
-    current_name = property(_get_current_name)
-
     # TODO there's probably a way to get a list of all the subclasses,
     # but for now we'll just add them one-by-one.
     _subclasses = set()
@@ -284,6 +294,7 @@ class Case(models.Model):
         return self._get_detailed_instance().__class__.__name__
     detailed = property(_get_detailed_instance)
     detailed_class_name = property(_get_detailed_class_name) 
+    case_type = detailed_class_name
     
     def _get_probable_taxon(self):
         return probable_taxon(self.visit_set)
