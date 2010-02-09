@@ -4,31 +4,24 @@
 
 {% block title %}{{ block.super }}: Cases{% endblock %}
 
-{% block content %}
-<h2>Cases</h2>
+{% block header %}<h2>All Cases</h2>{% endblock %}
 
+{% block content %}
 <table>
 	<tr>
-		<th>Case</th>
-		<th>Type</th>
-		<th>Animal</th>
-		<th>first visit</th>
-		<th>most recent visit</th>
+		<th>case</th>
+		<th>type</th>
+		<th>animal</th>
+		<th>first observation</th>
+		<th>first report</th>
 	</tr>
 	{% for case in case_list %}
 	<tr>
 		<td>{% case_link case %}</td>
 		<td>{{ case.case_type }}</td>
-		<td>
-		{% for animal in case.animals %}
-			{% if not forloop.first %}
-			or
-			{% endif %}
-			{% animal_link animal %}
-		{% endfor %}
-		</td>
-		<td>{{ case.first_visit_date }}</td>
-		<td>{{ case.last_visit_date }}</td>
+		<td>{% animal_link case.animal %}</td>
+		<td>{{ case.first_observation_date }}</td>
+		<td>{{ case.first_report_date }}</td>
 	</tr>
 	{% endfor %}
 </table>

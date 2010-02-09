@@ -3,10 +3,13 @@
 {% block title %}{{ block.super }}: {{ case }}{% endblock %}
 
 {% block ids-table-rows %}
-<tr><th>NMFS national #</th><td>{{ case.national_id }}</td></tr>
-<tr><th>NMFS regional #</th><td>{{ case.regional_id }}</td></tr>
-<tr><th>field #</th><td>{{ case.field_id }}</td></tr>
 <tr><th>local ID</th><td>{{ case.id }}</td></tr>
+<tr><th>current name</th><td>{{ case.current_name }}</td></tr>
+<tr><th>past names</th><td>
+    {% for past_name in case.past_names_set %}
+    {{ past_name }}<br>
+    {% endfor %}
+</td></tr>
 {% endblock %}
 
 {% block header %}
@@ -20,14 +23,7 @@
 <table>
 	<tr>
 		<th>animal</th>
-		<td>
-		{% for animal in case.animals %}
-			{% if not forloop.first %}
-			or
-			{% endif %}
-			<a href="{% url animal_detail object_id=animal.id %}">{{ animal }}</a>
-		{% endfor %}
-		</td>
+		<td><a href="{% url animal_detail object_id=case.animal.id %}">{{ case.animal }}</a></td>
 	</tr>
 </table>
 </div>
