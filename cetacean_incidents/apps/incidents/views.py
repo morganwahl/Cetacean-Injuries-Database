@@ -4,8 +4,6 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 
-from cetacean_incidents.apps.animals.models import Animal
-
 from models import Case, Entanglement
 from forms import CreateCaseForm, CaseForm, EntanglementForm, visit_forms
 

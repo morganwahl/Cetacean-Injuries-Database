@@ -1,7 +1,6 @@
 from django import forms
 from models import Case, Visit, Entanglement, EntanglementVisit
 
-from cetacean_incidents.apps.animals.models import Animal
 
 visit_forms = {}
 

@@ -1,22 +1,102 @@
 from django.db import models
-from cetacean_incidents.apps.animals.models import Animal, Observation, GENDERS, Taxon
+from cetacean_incidents.apps.animals.models import Taxon
 from cetacean_incidents.apps.animals.utils import probable_gender, probable_taxon
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.datetime.models import DateTime
 
 from django.contrib.auth.models import User
+from cetacean_incidents.apps.vessels.models import VesselInfo
 
 from datetime import datetime
+GENDERS = (
+    ("f", "female"),
+    ("m", "male"),
+)
 
-class Visit(Observation):
+class Animal(models.Model):
+    name = models.CharField(
+        max_length= 255,
+        help_text= 'The name given to this particular animal (e.g. "Kingfisher"). Not an ID number.'
+    )
+    
+    determined_dead_after = models.DateField(
+        blank= True,
+        null= True,
+        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking (i.e. if an animal is marked as not dead in an observation after this date, a warning will be displayed.)"
+    )
+    necropsy = models.BooleanField(
+        default= False,
+        help_text= "if this animal is dead, has a necropsy been performed on it?",
+    )
+    
+    def _get_probable_gender(self):
+        return probable_gender(self.observation_set)
+    probable_gender = property(_get_probable_gender)
+    determined_gender = models.CharField(
+        max_length= 1,
+        blank= True,
+        choices= GENDERS,
+        help_text= 'as determined from the genders indicated in specific observations',
+    )
+    
+    def _get_probable_taxon(self):
+        return probable_taxon(self.observation_set)
+    probable_taxon = property(_get_probable_taxon)
+    determined_taxon = models.ForeignKey(
+        Taxon,
+        blank= True,
+        null= True,
+        help_text= 'as determined from the taxa indicated in specific observations',
+    )
+    
+    def __unicode__(self):
+        if self.name:
+            return self.name
+        return "animal %s" % self.pk
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('animal_detail', [str(self.id)]) 
+
+class Visit(models.Model):
     '''\
-    A Visit is one interaction with an animal that deals with a Case. It's an
+    A Visit is a source of data for an Animal. It has an observer and
+    and date/time and details of how the observations were taken. Note that the
+    observer data may be scanty if this isn't a firsthand report. It's an
     abstract model for the common fields between different types of Visits.
     '''
 
     case = models.ForeignKey('Case')
     
+    observer = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+        related_name= 'observed',
+    )
+    observer_vessel = models.ForeignKey(
+        VesselInfo,
+        blank= True,
+        null= True,
+        unique= True,
+        related_name= 'observed',
+        help_text= 'the vessel the observer was on, if any',
+    )
+    observation_datetime = models.ForeignKey(
+        DateTime,
+        unique = True,
+        help_text= 'the start of the observation',
+        related_name= 'observation',
+    )
+    # TODO duration?
+    location = models.ForeignKey(
+        Location,
+        blank= True,
+        null= True,
+        related_name= "observation",
+    )
+
     def _is_firsthand(self):
         return self.reporter == self.observer
     firsthand = property(_is_firsthand)
@@ -34,6 +114,33 @@ class Visit(Observation):
         DateTime,
         unique = True,
         help_text = 'when we first heard about the observation',
+        related_name = 'report',
+    )
+        
+    animal = models.ForeignKey(Animal)
+    
+    taxon = models.ForeignKey(
+        Taxon,
+        blank= True,
+        null= True,
+        help_text= 'The most specific taxon that can be applied to this ' +
+            'animal. (e.g. a species)',
+    )
+
+    gender = models.CharField(
+        max_length= 1,
+        choices= GENDERS,
+        blank= True,
+        help_text= 'The gender of this animal, if known.'
+    )
+    
+    animal_description = models.TextField(
+        blank= True,
+        help_text= """\
+        Please note anything that would help identify the individual animal or
+        it's species or gender, etc. Even if you've determined those already,
+        please indicate what that was on the basis of.
+        """
     )
     
     biopsy = models.BooleanField(
@@ -55,6 +162,13 @@ class Visit(Observation):
     def get_absolute_url(self):
         return ('visit_detail', [str(self.id)]) 
 
+    def __unicode__(self):
+        ret = "observation on %s" % self.observation_datetime
+        if self.observer:
+            ret += " by %s" % self.observer
+        ret += " (%d)" % self.id
+        return ret
+    
     class Meta:
         ordering = ['report_datetime', 'observation_datetime', 'id']
 
