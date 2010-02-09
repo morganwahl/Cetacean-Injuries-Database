@@ -201,20 +201,14 @@ def _visit_post_save(sender, **kwargs):
 models.signals.post_save.connect(_visit_post_save, sender=Visit)
 
 class EntanglementVisit(Visit):
-    entanglement_status = models.CharField(
-        choices= (
-            ('n', 'non life-threatening'),
-            ('t', 'life-threatening'),
-            ('d', 'disentangled'),
-            ('e', 'remains entangled'),
-        ),
-        max_length= 1,
+    outcome = models.TextField(
         blank= True,
+        help_text= "What was the situation at the end of this Visit? was the animal disentangled? Was it determined to be non-life-threatening? etc.",
     )
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_visit_post_save, sender=EntanglementVisit)
 
 class Entanglement(Case):
-    pass
+    visit_model = EntanglementVisit
 Case.register_subclass(Entanglement)
 
