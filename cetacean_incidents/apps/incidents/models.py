@@ -214,7 +214,8 @@ class Case(models.Model):
             + "<year>#<case # in year> (<date>) <type> of <taxon>"
     )
     def _get_names_set(self):
-        return frozenset(self.names.split(','))
+        names = filter(lambda x: x != '', self.names.split(','))
+        return frozenset(names)
     def _put_names_set(self, new_names):
         # TODO should the names-set be the union of the one passed and the
         # current one? This makes sense because once assigned, names should
