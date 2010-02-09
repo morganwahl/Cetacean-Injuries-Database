@@ -2,13 +2,10 @@ from django.db import models
 from cetacean_incidents.apps.animals.models import Taxon
 from cetacean_incidents.apps.animals.utils import probable_gender, probable_taxon
 from cetacean_incidents.apps.contacts.models import Contact, Organization
-from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.datetime.models import DateTime
-
-from django.contrib.auth.models import User
+from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.vessels.models import VesselInfo
 
-from datetime import datetime
 GENDERS = (
     ("f", "female"),
     ("m", "male"),
@@ -317,7 +314,7 @@ class Case(models.Model):
         return ('case_detail', [str(self.id)]) 
     
     objects = CaseManager()
-
+    
 # since adding a new Visit whose case is this could change things like
 # case.date or even assign yearly_number, we need to listen for Visit
 # saves
@@ -331,10 +328,12 @@ class EntanglementVisit(Visit):
         blank= True,
         help_text= "What was the situation at the end of this Visit? was the animal disentangled? Was it determined to be non-life-threatening? etc.",
     )
+
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_visit_post_save, sender=EntanglementVisit)
 
 class Entanglement(Case):
     visit_model = EntanglementVisit
+
 Case.register_subclass(Entanglement)
 

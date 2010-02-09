@@ -1,3 +1,5 @@
+from models import Taxon
+
 '''Various utility functions for the animal models.'''
 
 def probable_gender(observations):
@@ -20,8 +22,6 @@ def probable_taxon(observations):
     Given a queryset of Observations, finds the Taxon that is a supertaxon of 
     all the Taxa mentioned. If no such Taxon exists, returns None.
     '''
-
-    from models import Taxon # do this here to avoid circular dependancies
 
     # TODO fancier algorithm
 
