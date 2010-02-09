@@ -16,20 +16,36 @@
 body {
 	background-color: #eeeeec; /* aluminium 1 */
 	color: #2e3436; /* aluminium 6 */
-	font-family: "Trebuchet MS", Helvetica, Arial, "Sans", sans-serif;
-	font-size: 10pt;
-	line-height: 1.4em;
+	font-family: Helvetica, "Sans", "Trebuchet MS", Arial, sans-serif;
+	font-size: 12pt;
 	margin: 0;
-	text-align: center;
+}
+div#masthead {
+    padding: .5em;
+    background-color: #ffffff;
+}
+div#masthead a {
+    text-decoration: none;
+}
+div#header {
+    padding: .5em;
+    background-color: #fafaf8; /* aluminium 1 plus 5% */
+}
+div#content {
+    padding: .5em;
 }
 a {
 	color: #204a87; /* sky blue 3 */
 }
 h1 {
-    margin: 0;
+    font-size: 200%;
+    vertical-align: middle;
 }
 h1 * {
-    vertical-align: middle;
+    vertical-align: inherit;
+}
+h2 {
+    font-size: 150%;
 }
 
 table {
@@ -41,6 +57,7 @@ table th {
 }
 table td,th {
 	border: thin dotted #d3d7cf; /* aluminium 2 */
+	padding: .25em;
 }
 
 ul.errorlist {
