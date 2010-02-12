@@ -28,8 +28,8 @@ urlpatterns += patterns("django.views",
 )
 
 from django.contrib import databrowse
-from apps.animals.models import Animal, Taxon
-from apps.incidents.models import Entanglement, EntanglementVisit
+from apps.animals.models import Taxon
+from apps.incidents.models import Animal, Entanglement, EntanglementVisit
 
 databrowse.site.register(Animal)
 databrowse.site.register(Taxon)
