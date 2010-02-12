@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 
 from models import Case, Entanglement
-from forms import CreateCaseForm, CaseForm, EntanglementForm, visit_forms
+from forms import CreateCaseForm, CaseForm, EntanglementForm, observation_forms
 
 @login_required
 def edit_entanglement(request, case_id):
@@ -51,12 +51,12 @@ def edit_case(request, case_id):
     })
 
 @login_required
-def add_visit(request, case_id):
+def add_observation(request, case_id):
     case = Case.objects.get(id=case_id).detailed
-    form_class = visit_forms[case.detailed_class_name]
+    form_class = observation_forms[case.detailed_class_name]
     if request.method == 'POST':
-        new_visit = case.visit_model(case=case)
-        form = form_class(request.POST, instance=new_visit)
+        new_observation = case.observation_model(case=case)
+        form = form_class(request.POST, instance=new_observation)
         if form.is_valid():
             form.save()
             return redirect('edit_case', case.id)
@@ -64,7 +64,7 @@ def add_visit(request, case_id):
         form = form_class()
     
     return render_to_response(
-        'incidents/add_visit.html',
+        'incidents/add_observation.html',
         {
             'form': form,
             'case': case,

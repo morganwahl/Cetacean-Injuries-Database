@@ -1,24 +1,24 @@
 from django import forms
-from models import Case, Visit, Entanglement, EntanglementVisit
+from models import Case, Observation, Entanglement, EntanglementObservation
 
 
-visit_forms = {}
+observation_forms = {}
 
 class CaseForm(forms.ModelForm):
 
     class Meta:
         model = Case
 
-class VisitForm(forms.ModelForm):
+class ObservationForm(forms.ModelForm):
 
     class Meta:
-        model = Visit
-        # the case for a new visit is set by the view
+        model = Observation
+        # the case for a new observation is set by the view
         # tags_seen is an many-to-many relationship with an intermediary model.
         # ModelForm can't handle that.
         exclude = ('case', 'tags_seen') 
 
-visit_forms['Case'] = VisitForm
+observation_forms['Case'] = ObservationForm
 
 class CreateCaseForm(CaseForm):
     '''\
@@ -40,10 +40,10 @@ class EntanglementForm(forms.ModelForm):
     class Meta:
         model = Entanglement
 
-class EntanglementVisitForm(VisitForm):
+class EntanglementObservationForm(ObservationForm):
 
-    class Meta(VisitForm.Meta):
-        model = EntanglementVisit
+    class Meta(ObservationForm.Meta):
+        model = EntanglementObservation
 
-visit_forms['Entanglement'] = EntanglementVisitForm
+observation_forms['Entanglement'] = EntanglementObservationForm
 

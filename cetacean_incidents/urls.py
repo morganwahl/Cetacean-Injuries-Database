@@ -29,12 +29,12 @@ urlpatterns += patterns("django.views",
 
 from django.contrib import databrowse
 from apps.taxons.models import Taxon
-from apps.incidents.models import Animal, Entanglement, EntanglementVisit
+from apps.incidents.models import Animal, Entanglement, EntanglementObservation
 
 databrowse.site.register(Animal)
 databrowse.site.register(Taxon)
 databrowse.site.register(Entanglement)
-databrowse.site.register(EntanglementVisit)
+databrowse.site.register(EntanglementObservation)
 
 urlpatterns += patterns('',
     (r'^databrowse/(.*)', databrowse.site.root),

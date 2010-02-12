@@ -1,9 +1,9 @@
 from django.contrib import admin
-from models import Animal, Case, Visit, Entanglement, EntanglementVisit
+from models import Animal, Case, Observation, Entanglement, EntanglementObservation
 
 admin.site.register(Animal)
 admin.site.register(Case)
-admin.site.register(Visit)
+admin.site.register(Observation)
 admin.site.register(Entanglement)
-admin.site.register(EntanglementVisit)
+admin.site.register(EntanglementObservation)
 

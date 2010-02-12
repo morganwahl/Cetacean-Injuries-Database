@@ -26,8 +26,8 @@
 {% if animal.observation_set.count %}
 <h4>observations:</h4>
 <ul>
-	{% for visit in animal.observation_set.all %}
-	<li><a href="{% url visit_detail object_id=visit.id %}">{{ visit }}</a></li>
+	{% for observation in animal.observation_set.all %}
+	<li><a href="{% url observation_detail object_id=observation.id %}">{{ observation }}</a></li>
 	{% endfor %}
 </ul>
 {% endif %}

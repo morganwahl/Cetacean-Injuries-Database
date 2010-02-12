@@ -24,16 +24,16 @@
 
 {% endblock %}
 
-{% block title %}{{ block.super }}: add an event to {{ case }}{% endblock %}
+{% block title %}{{ block.super }}: add an observation to {{ case }}{% endblock %}
 
 {% block content %}
-<h2>new event</h2>
-<form action="{% url add_visit case.id %}" method="post">
+<h2>new observation</h2>
+<form action="{% url add_observation case.id %}" method="post">
 	<div id="tabs">
 		<ul>
 			<li><a href="#observer">Observer / Reporter</a></li>
 			<li><a href="#animal">Animal</a></li>
-			<li><a href="#visit">Case Event Information</a></li>
+			<li><a href="#observation">Observation Information</a></li>
 			<li><a href="#response">Response Information</a></li>
 			<li><a href="#doc">Documentation</a></li>
 			<li><a href="#other">Other</a></li>
@@ -48,8 +48,8 @@
 		    {% include "labeled_field.html" %}
 		    {% endfor %}
 		</div>
-		<div id="visit">
-		    {% for f in visit_fields %}
+		<div id="observation">
+		    {% for f in observation_fields %}
 		    {% include "labeled_field.html" %}
 		    {% endfor %}
 		</div>

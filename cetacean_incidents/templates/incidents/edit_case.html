@@ -26,19 +26,19 @@
 </form>
 
 <div class="section">
-    <h3>Events:</h3>
-    {% if case.visit_set.count %}
+    <h3>Observation:</h3>
+    {% if case.observation_set.count %}
     <table>
-        {% for visit in case.visit_set.all %}
-        <tr><td>{{ visit }}</td></tr>
+        {% for observation in case.observation_set.all %}
+        <tr><td>{{ observation }}</td></tr>
         {% endfor %}
     </table>
     {% endif %}
-    <a href="{% url add_visit case.id %}">
-        {% if not case.visit_set.count %}
-        add the initial event
+    <a href="{% url add_observation case.id %}">
+        {% if not case.observation_set.count %}
+        add the initial observation
         {% else %}
-        add another event
+        add another observation
         {% endif %}
     </a>
 <div>

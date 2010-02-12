@@ -28,10 +28,10 @@
 </table>
 </div>
 <div>
-<h3>Visits</h3>
+<h3>Observations</h3>
 <ul>
-	{% for visit in case.visit_set.all %}
-	<li><a href="{% url visit_detail object_id=visit.id %}">{{ visit }}</a></li>
+	{% for observation in case.observation_set.all %}
+	<li><a href="{% url observation_detail object_id=observation.id %}">{{ observation }}</a></li>
 	{% endfor %}
 </ul>
 </div>

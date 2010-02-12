@@ -57,7 +57,7 @@ class Animal(models.Model):
     def get_absolute_url(self):
         return ('animal_detail', [str(self.id)]) 
 
-class Visit(models.Model):
+class Observation(models.Model):
     '''\
     A Visit is a source of data for an Animal. It has an observer and
     and date/time and details of how the observations were taken. Note that the
@@ -176,7 +176,7 @@ class CaseManager(models.Manager):
         # of the visit with the earilest report_datetime. A simple approach here
         # is to get all the cases that have _any_ visit in the year, then prune
         # the one's whose date's aren't actually in the year
-        cases = Case.objects.filter(visit__report_datetime__year__exact=year).distinct()
+        cases = Case.objects.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
 
 class Case(models.Model):
@@ -186,7 +186,7 @@ class Case(models.Model):
     and Strandings.
     '''
     
-    visit_model = Visit
+    observation_model = Observation
     
     animal = models.ForeignKey(
         Animal,
@@ -202,7 +202,7 @@ class Case(models.Model):
         blank= True,
         null= True,
         editable= False,
-        help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Visit is associated with it."
+        help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
     )
     names = models.CharField(
         max_length= 2048,
@@ -222,8 +222,8 @@ class Case(models.Model):
     names_set = property(_get_names_set,_put_names_set)
 
     def _get_current_name(self):
-        # Cases with no Visits yet don't get names
-        if not self.visit_set.count():
+        # Cases with no Observations yet don't get names
+        if not self.observation_set.count():
             return None
         s = {}
         s['year'] = unicode(self.date.year)
@@ -244,13 +244,13 @@ class Case(models.Model):
     past_names_set = property(_get_past_names_set)
 
     def _get_first_observation_date(self):
-        return self.visit_set.order_by('observation_datetime')[0].observation_datetime
+        return self.observation_set.order_by('observation_datetime')[0].observation_datetime
     first_observation_date = property(_get_first_observation_date)
     def _get_first_report_date(self):
-        return self.visit_set.order_by('report_datetime')[0].report_datetime
+        return self.observation_set.order_by('report_datetime')[0].report_datetime
     first_report_date = property(_get_first_report_date)
     def _get_case_date(self):
-        if not self.visit_set.count():
+        if not self.observation_set.count():
             return None
         # TODO more specific dates should override less specific ones
         return self.first_report_date
@@ -316,25 +316,25 @@ class Case(models.Model):
     
     objects = CaseManager()
     
-# since adding a new Visit whose case is this could change things like
-# case.date or even assign yearly_number, we need to listen for Visit
+# since adding a new Observation whose case is this could change things like
+# case.date or even assign yearly_number, we need to listen for Observation
 # saves
-def _visit_post_save(sender, **kwargs):
-    visit = kwargs['instance']
-    visit.case.save()
-models.signals.post_save.connect(_visit_post_save, sender=Visit)
+def _observation_post_save(sender, **kwargs):
+    observation = kwargs['instance']
+    observation.case.save()
+models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
-class EntanglementVisit(Visit):
+class EntanglementObservation(Observation):
     outcome = models.TextField(
         blank= True,
-        help_text= "What was the situation at the end of this Visit? was the animal disentangled? Was it determined to be non-life-threatening? etc.",
+        help_text= "What was the situation at the end of this Observation? was the animal disentangled? Was it determined to be non-life-threatening? etc.",
     )
 
 # TODO how to inherit signal handlers?
-models.signals.post_save.connect(_visit_post_save, sender=EntanglementVisit)
+models.signals.post_save.connect(_observation_post_save, sender=EntanglementObservation)
 
 class Entanglement(Case):
-    visit_model = EntanglementVisit
+    observation_model = EntanglementObservation
 
 Case.register_subclass(Entanglement)
 
