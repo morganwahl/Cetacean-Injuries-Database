@@ -1,5 +1,5 @@
 from django import forms
-from models import Case, Observation, Entanglement, EntanglementObservation
+from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation
 
 
 observation_forms = {}
@@ -28,11 +28,13 @@ class CreateCaseForm(CaseForm):
     # TODO get this info from the model
     type_names = (
         ('e', 'entanglement'),
+        ('s', 'shipstrike'),
     )
     case_type = forms.ChoiceField(choices=type_names)
     # type_models's keys should be values of the case_type field
     type_models = {
         'e': Entanglement,
+        's': Shipstrike,
     }
 
 class EntanglementForm(forms.ModelForm):
@@ -46,4 +48,16 @@ class EntanglementObservationForm(ObservationForm):
         model = EntanglementObservation
 
 observation_forms['Entanglement'] = EntanglementObservationForm
+
+class ShipstrikeForm(forms.ModelForm):
+    
+    class Meta:
+        model = Shipstrike
+
+class ShipstrikeObservationForm(ObservationForm):
+
+    class Meta(ObservationForm.Meta):
+        model = ShipstrikeObservation
+
+observation_forms['Shipstrike'] = ShipstrikeObservationForm
 

@@ -4,7 +4,7 @@ from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
-from cetacean_incidents.apps.vessels.models import VesselInfo
+from cetacean_incidents.apps.vessels.models import VesselInfo, StrikingVesselInfo
 from utils import probable_gender
 
 GENDERS = (
@@ -337,4 +337,19 @@ class Entanglement(Case):
     observation_model = EntanglementObservation
 
 Case.register_subclass(Entanglement)
+
+class ShipstrikeObservation(Observation):
+    striking_vessel = models.ForeignKey(
+        StrikingVesselInfo,
+        blank= True,
+        null= True,
+    )
+
+# TODO how to inherit signal handlers?
+models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObservation)
+
+class Shipstrike(Case):
+    observation_model = ShipstrikeObservation
+
+Case.register_subclass(Shipstrike)
 
