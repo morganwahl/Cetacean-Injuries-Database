@@ -11,17 +11,11 @@
 <h2>Edit {{ case }}</h2>
 
 <form action="" method="POST" class="section">
+    {% for f in form.fields $}
     <div class="field-wrapper">
-    	{% with form.national_id as f %}
-    		{% include "labeled_field.html" %}
-        {% endwith %}
-    	{% with form.regional_id as f %}
-    		{% include "labeled_field.html" %}
-        {% endwith %}
-    	{% with form.field_id as f %}
-    		{% include "labeled_field.html" %}
-        {% endwith %}
+		{% include "labeled_field.html" %}
     </div>
+    {% endfor %}
     <p><button type="submit">update case</button></p>
 </form>
 

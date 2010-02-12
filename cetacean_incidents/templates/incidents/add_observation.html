@@ -39,9 +39,12 @@
 			<li><a href="#other">Other</a></li>
 		</ul>
 		<div id="observer">
-		    {% for f in observer_fields %}
+		    {% with form.date as f %}
 		    {% include "labeled_field.html" %}
-		    {% endfor %}
+		    {% endwith %}
+		    {% with form.date as f %}
+		    {% include "labeled_field.html" %}
+		    {% endwith %}
 		</div>
 		<div id="animal">
 		    {% for f in animal_fields %}
@@ -60,11 +63,6 @@
 		</div>
 		<div id="doc">
 		    {% for f in doc_fields %}
-		    {% include "labeled_field.html" %}
-		    {% endfor %}
-		</div>
-		<div id="other">
-		    {% for f in other_fields %}
 		    {% include "labeled_field.html" %}
 		    {% endfor %}
 		</div>
