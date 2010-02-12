@@ -15,19 +15,19 @@ class Taxon(models.Model):
     # whereas positive ones are larger groupings.
 
     MAIN_RANKS = (
-        (-1.0, 'species'), # S
-        (0.0, 'genus'),    # P
-        (1.0, 'family'),   # L
-        (2.0, 'order'),    # E
+        (-1.0, 'species'),
+        (0.0, 'genus'),
+        (1.0, 'family'),
+        (2.0, 'order'),
     )
     # generate the super-, sub-, and infra-, ranks
     RANK_CHOICES = ()
     for rank in MAIN_RANKS:
         RANK_CHOICES += (
-            (rank[0] - 0.4, 'infra' + rank[1]),  # s
-            (rank[0] - 0.2, 'sub' + rank[1]),    # p
-            rank,                                # l
-            (rank[0] + 0.4, 'super' + rank[1]),  # e
+            (rank[0] - 0.4, 'infra' + rank[1]),
+            (rank[0] - 0.2, 'sub' + rank[1]),
+            rank,
+            (rank[0] + 0.4, 'super' + rank[1]),
         )
     
     name = models.CharField(

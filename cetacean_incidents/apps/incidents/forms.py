@@ -14,9 +14,7 @@ class ObservationForm(forms.ModelForm):
     class Meta:
         model = Observation
         # the case for a new observation is set by the view
-        # tags_seen is an many-to-many relationship with an intermediary model.
-        # ModelForm can't handle that.
-        exclude = ('case', 'tags_seen') 
+        exclude = ('case') 
 
 observation_forms['Case'] = ObservationForm
 

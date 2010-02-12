@@ -52,9 +52,6 @@ table {
 	width: inherit;
 	border: thin solid #babdb6; /* aluminium 3 */
 }
-table th {
-	text-align: right;
-}
 table td,th {
 	border: thin dotted #d3d7cf; /* aluminium 2 */
 	padding: .25em;
