@@ -1,267 +1,267 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-  <object pk="10" model="animals.taxon">
+  <object pk="10" model="taxons.taxon">
     <field type="CharField" name="name">Balaenidae</field>
     <field type="CharField" name="common_name">right whales and bowhead whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="14" model="animals.taxon">
+  <object pk="14" model="taxons.taxon">
     <field type="CharField" name="name">Balaenoptera</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">4</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">4</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="4" model="animals.taxon">
+  <object pk="4" model="taxons.taxon">
     <field type="CharField" name="name">Balaenopteridae</field>
     <field type="CharField" name="common_name">rorquals</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">3</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="1" model="animals.taxon">
+  <object pk="1" model="taxons.taxon">
     <field type="CharField" name="name">Cetacea</field>
     <field type="CharField" name="common_name">whales, dolphins, and porpoises</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
     <field type="FloatField" name="rank">2.0</field>
   </object>
-  <object pk="19" model="animals.taxon">
+  <object pk="19" model="taxons.taxon">
     <field type="CharField" name="name">Cetorhinidae</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">18</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">18</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="20" model="animals.taxon">
+  <object pk="20" model="taxons.taxon">
     <field type="CharField" name="name">Cetorhinus</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">19</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">19</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="40" model="animals.taxon">
+  <object pk="40" model="taxons.taxon">
     <field type="CharField" name="name">Delphinidae</field>
     <field type="CharField" name="common_name">oceanic dolphins</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">39</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">39</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="39" model="animals.taxon">
+  <object pk="39" model="taxons.taxon">
     <field type="CharField" name="name">Delphinoidea</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">13</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">13</field>
     <field type="FloatField" name="rank">1.4</field>
   </object>
-  <object pk="36" model="animals.taxon">
+  <object pk="36" model="taxons.taxon">
     <field type="CharField" name="name">Dermochelyidae</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">35</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">35</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="37" model="animals.taxon">
+  <object pk="37" model="taxons.taxon">
     <field type="CharField" name="name">Dermochelys</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">36</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">36</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="11" model="animals.taxon">
+  <object pk="11" model="taxons.taxon">
     <field type="CharField" name="name">Eubalaena</field>
     <field type="CharField" name="common_name">right whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">10</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">10</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="41" model="animals.taxon">
+  <object pk="41" model="taxons.taxon">
     <field type="CharField" name="name">Globicephala</field>
     <field type="CharField" name="common_name">pilot whales, calderon dolphins</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">40</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">40</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="32" model="animals.taxon">
+  <object pk="32" model="taxons.taxon">
     <field type="CharField" name="name">Kogia</field>
     <field type="CharField" name="common_name">small sperm whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">29</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">29</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="29" model="animals.taxon">
+  <object pk="29" model="taxons.taxon">
     <field type="CharField" name="name">Kogiidae</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">28</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">28</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="18" model="animals.taxon">
+  <object pk="18" model="taxons.taxon">
     <field type="CharField" name="name">Lamniformes</field>
     <field type="CharField" name="common_name">mackerel sharks</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">17</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">17</field>
     <field type="FloatField" name="rank">2.0</field>
   </object>
-  <object pk="5" model="animals.taxon">
+  <object pk="5" model="taxons.taxon">
     <field type="CharField" name="name">Megaptera</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">4</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">4</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="3" model="animals.taxon">
+  <object pk="3" model="taxons.taxon">
     <field type="CharField" name="name">Mysticeti</field>
     <field type="CharField" name="common_name">baleen whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
     <field type="FloatField" name="rank">1.8</field>
   </object>
-  <object pk="13" model="animals.taxon">
+  <object pk="13" model="taxons.taxon">
     <field type="CharField" name="name">Odontoceti</field>
     <field type="CharField" name="common_name">toothed whales: dolphins, orca, sperm whales, beaked whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">1</field>
     <field type="FloatField" name="rank">1.8</field>
   </object>
-  <object pk="25" model="animals.taxon">
+  <object pk="25" model="taxons.taxon">
     <field type="CharField" name="name">Phoca</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">24</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">24</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="24" model="animals.taxon">
+  <object pk="24" model="taxons.taxon">
     <field type="CharField" name="name">Phocidae</field>
     <field type="CharField" name="common_name">true seals, earless seals</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">23</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">23</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="30" model="animals.taxon">
+  <object pk="30" model="taxons.taxon">
     <field type="CharField" name="name">Physeter</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">27</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">27</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="27" model="animals.taxon">
+  <object pk="27" model="taxons.taxon">
     <field type="CharField" name="name">Physeteridae</field>
     <field type="CharField" name="common_name">sperm whales</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">28</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">28</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="28" model="animals.taxon">
+  <object pk="28" model="taxons.taxon">
     <field type="CharField" name="name">Physeteroidea</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">13</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">13</field>
     <field type="FloatField" name="rank">1.4</field>
   </object>
-  <object pk="23" model="animals.taxon">
+  <object pk="23" model="taxons.taxon">
     <field type="CharField" name="name">Pinnipedia</field>
     <field type="CharField" name="common_name">walruses and seals</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
     <field type="FloatField" name="rank">1.4</field>
   </object>
-  <object pk="17" model="animals.taxon">
+  <object pk="17" model="taxons.taxon">
     <field type="CharField" name="name">Selachimorpha</field>
     <field type="CharField" name="common_name">sharks</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
     <field type="FloatField" name="rank">2.4</field>
   </object>
-  <object pk="2" model="animals.taxon">
+  <object pk="2" model="taxons.taxon">
     <field type="CharField" name="name">Sirenia</field>
     <field type="CharField" name="common_name">sea cows</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
     <field type="FloatField" name="rank">2.0</field>
   </object>
-  <object pk="35" model="animals.taxon">
+  <object pk="35" model="taxons.taxon">
     <field type="CharField" name="name">Testudines</field>
     <field type="CharField" name="common_name">turtles and tortises</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel"><None></None></field>
     <field type="FloatField" name="rank">2.0</field>
   </object>
-  <object pk="7" model="animals.taxon">
+  <object pk="7" model="taxons.taxon">
     <field type="CharField" name="name">Trichechidae</field>
     <field type="CharField" name="common_name"></field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">2</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">2</field>
     <field type="FloatField" name="rank">1.0</field>
   </object>
-  <object pk="8" model="animals.taxon">
+  <object pk="8" model="taxons.taxon">
     <field type="CharField" name="name">Trichechus</field>
     <field type="CharField" name="common_name">manatees</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">7</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">7</field>
     <field type="FloatField" name="rank">0.0</field>
   </object>
-  <object pk="16" model="animals.taxon">
+  <object pk="16" model="taxons.taxon">
     <field type="CharField" name="name">acutorostrata</field>
     <field type="CharField" name="common_name">northern minke, common minke</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="44" model="animals.taxon">
+  <object pk="44" model="taxons.taxon">
     <field type="CharField" name="name">borealis</field>
     <field type="CharField" name="common_name">sei whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="33" model="animals.taxon">
+  <object pk="33" model="taxons.taxon">
     <field type="CharField" name="name">breviceps</field>
     <field type="CharField" name="common_name">pygmy sperm whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">32</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">32</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="38" model="animals.taxon">
+  <object pk="38" model="taxons.taxon">
     <field type="CharField" name="name">coriacea</field>
     <field type="CharField" name="common_name">leatherback turtle</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">37</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">37</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="12" model="animals.taxon">
+  <object pk="12" model="taxons.taxon">
     <field type="CharField" name="name">glacialis</field>
     <field type="CharField" name="common_name">north atlantic right whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">11</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">11</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="31" model="animals.taxon">
+  <object pk="31" model="taxons.taxon">
     <field type="CharField" name="name">macrocephalus</field>
     <field type="CharField" name="common_name">sperm whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">30</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">30</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="42" model="animals.taxon">
+  <object pk="42" model="taxons.taxon">
     <field type="CharField" name="name">macrorhynchus</field>
     <field type="CharField" name="common_name">short-finned pilot whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">41</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">41</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="9" model="animals.taxon">
+  <object pk="9" model="taxons.taxon">
     <field type="CharField" name="name">manatus</field>
     <field type="CharField" name="common_name">west indian manatee</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">8</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">8</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="21" model="animals.taxon">
+  <object pk="21" model="taxons.taxon">
     <field type="CharField" name="name">maximus</field>
     <field type="CharField" name="common_name">basking shark</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">20</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">20</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="43" model="animals.taxon">
+  <object pk="43" model="taxons.taxon">
     <field type="CharField" name="name">melas</field>
     <field type="CharField" name="common_name">long-finned pilot whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">41</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">41</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="22" model="animals.taxon">
+  <object pk="22" model="taxons.taxon">
     <field type="CharField" name="name">musculus</field>
     <field type="CharField" name="common_name">blue whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="6" model="animals.taxon">
+  <object pk="6" model="taxons.taxon">
     <field type="CharField" name="name">novaeangliae</field>
     <field type="CharField" name="common_name">humpback whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">5</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">5</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="15" model="animals.taxon">
+  <object pk="15" model="taxons.taxon">
     <field type="CharField" name="name">physalus</field>
     <field type="CharField" name="common_name">fin whale, finback, razorback, common rorqual</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">14</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="34" model="animals.taxon">
+  <object pk="34" model="taxons.taxon">
     <field type="CharField" name="name">sima</field>
     <field type="CharField" name="common_name">dwarf sperm whale</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">32</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">32</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
-  <object pk="26" model="animals.taxon">
+  <object pk="26" model="taxons.taxon">
     <field type="CharField" name="name">vitulina</field>
     <field type="CharField" name="common_name">harbor seal, harbour seal, common seal</field>
-    <field to="animals.taxon" name="supertaxon" rel="ManyToOneRel">25</field>
+    <field to="taxons.taxon" name="supertaxon" rel="ManyToOneRel">25</field>
     <field type="FloatField" name="rank">-1.0</field>
   </object>
 </django-objects>

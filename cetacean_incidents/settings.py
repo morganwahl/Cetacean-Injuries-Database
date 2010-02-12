@@ -50,7 +50,7 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.contacts',
     'cetacean_incidents.apps.datetime',
     'cetacean_incidents.apps.vessels',
-    'cetacean_incidents.apps.animals',
+    'cetacean_incidents.apps.taxons',
     'cetacean_incidents.apps.incidents',
 )
 

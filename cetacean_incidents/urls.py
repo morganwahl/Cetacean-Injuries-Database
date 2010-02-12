@@ -9,7 +9,7 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     
-    (r'^animals/', include('apps.animals.urls')),
+    (r'^taxons/', include('apps.taxons.urls')),
     (r'^incidents/', include('apps.incidents.urls')),
     
     url(r'^%s$' % settings.LOGIN_URL[1:], 'django.contrib.auth.views.login', name='login'),
@@ -28,7 +28,7 @@ urlpatterns += patterns("django.views",
 )
 
 from django.contrib import databrowse
-from apps.animals.models import Taxon
+from apps.taxons.models import Taxon
 from apps.incidents.models import Animal, Entanglement, EntanglementVisit
 
 databrowse.site.register(Animal)
