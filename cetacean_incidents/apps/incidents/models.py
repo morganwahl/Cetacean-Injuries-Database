@@ -59,10 +59,10 @@ class Animal(models.Model):
 
 class Observation(models.Model):
     '''\
-    A Visit is a source of data for an Animal. It has an observer and
+    An Obsevation is a source of data for an Animal. It has an observer and
     and date/time and details of how the observations were taken. Note that the
     observer data may be scanty if this isn't a firsthand report. It's an
-    abstract model for the common fields between different types of Visits.
+    abstract model for the common fields between different types of Observations.
     '''
 
     case = models.ForeignKey('Case')
@@ -158,7 +158,7 @@ class Observation(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('visit_detail', [str(self.id)]) 
+        return ('observation_detail', [str(self.id)]) 
 
     def __unicode__(self):
         ret = "observation on %s" % self.observation_datetime
@@ -172,9 +172,9 @@ class Observation(models.Model):
 
 class CaseManager(models.Manager):
     def cases_in_year(self, year):
-        # case.date isn't acutally in the database; it the visit.report_datetime
-        # of the visit with the earilest report_datetime. A simple approach here
-        # is to get all the cases that have _any_ visit in the year, then prune
+        # case.date isn't acutally in the database; it the observation.report_datetime
+        # of the observation with the earilest report_datetime. A simple approach here
+        # is to get all the cases that have _any_ observation in the year, then prune
         # the one's whose date's aren't actually in the year
         cases = Case.objects.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
@@ -295,11 +295,11 @@ class Case(models.Model):
     case_type = detailed_class_name
     
     def _get_probable_taxon(self):
-        return probable_taxon(self.visit_set)
+        return probable_taxon(self.observation_set)
     probable_taxon = property(_get_probable_taxon)
     
     def _get_probable_gender(self):
-        return probable_gender(self.visit_set)
+        return probable_gender(self.observation_set)
     probable_gender = property(_get_probable_gender)
     
     def __unicode__(self):
