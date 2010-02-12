@@ -32,6 +32,20 @@ class VesselInfo(models.Model):
         blank= True,
         null= True,
     )
+    description = models.TextField(
+        blank= True,
+    )
+    def __unicode__(self):
+        ret = 'unnamed vessel'
+        if self.name:
+            ret = "%s" % self.name
+        ret += " (vessel %i" % self.id
+        if self.flag:
+            ret += ", %s" % self.flag.iso
+        ret += ')'
+        return ret
+
+class StrikingVesselInfo(VesselInfo):
     length = models.FloatField(
         blank= True,
         null= True,
@@ -50,10 +64,7 @@ class VesselInfo(models.Model):
     # how tonnage relates to volume in cubic meters:
     # import math
     # tonnage_from_volume = lambda vol: vol * ( 0.2 + 0.02 * math.log10(vol))
-    description = models.TextField(
-        blank= True,
-    )
-    
+
     captain = models.ForeignKey(
         Contact,
         related_name= "captain_of",
@@ -69,12 +80,4 @@ class VesselInfo(models.Model):
         # but it's either one or the other. GPS gives you over-ground.
     )
 
-    def __unicode__(self):
-        ret = 'unnamed vessel'
-        if self.name:
-            ret = "%s" % self.name
-        ret += " (vessel %i" % self.id
-        if self.flag:
-            ret += ", %s" % self.flag.iso
-        ret += ')'
-        return ret
+

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from models import VesselInfo
+from models import VesselInfo, StrikingVesselInfo
 from forms import VesselAdminForm
 
 class VesselAdmin(admin.ModelAdmin):
@@ -7,4 +7,5 @@ class VesselAdmin(admin.ModelAdmin):
     
     form = VesselAdminForm
 admin.site.register(VesselInfo, VesselAdmin)
+admin.site.register(StrikingVesselInfo, VesselAdmin)
 
