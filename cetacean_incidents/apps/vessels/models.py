@@ -70,12 +70,12 @@ class StrikingVesselInfo(VesselInfo):
         related_name= "captain_of",
         blank= True,
         null= True,
-        help_text= "How to contact the captain and/or officer on duty.",
+        help_text= "How to contact the captain and/or officer on duty at the time of the strike.",
     )
     speed = models.FloatField(
         blank= True,
         null= True,
-        help_text= "In knots, over ground.",
+        help_text= "In knots, over ground, at thte time of the strike",
         # yes there's really no way to convert from over-ground to over-water,
         # but it's either one or the other. GPS gives you over-ground.
     )

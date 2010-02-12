@@ -14,11 +14,13 @@ GENDERS = (
 
 class Animal(models.Model):
     name = models.CharField(
+        blank= True,
+        null= True,
         max_length= 255,
         help_text= 'The name given to this particular animal (e.g. "Kingfisher"). Not an ID number.'
     )
     
-    determined_dead_after = models.DateField(
+    determined_dead_before = models.DateField(
         blank= True,
         null= True,
         help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking (i.e. if an animal is marked as not dead in an observation after this date, a warning will be displayed.)"
@@ -92,6 +94,7 @@ class Observation(models.Model):
         Location,
         blank= True,
         null= True,
+        unique= True,
         related_name= "observation",
     )
 
@@ -115,8 +118,6 @@ class Observation(models.Model):
         related_name = 'report',
     )
         
-    animal = models.ForeignKey(Animal)
-    
     taxon = models.ForeignKey(
         Taxon,
         blank= True,
@@ -168,7 +169,8 @@ class Observation(models.Model):
         return ret
     
     class Meta:
-        ordering = ['report_datetime', 'observation_datetime', 'id']
+        ordering = ['observation_datetime', 'report_datetime', 'id']
+
 
 class CaseManager(models.Manager):
     def cases_in_year(self, year):
@@ -181,9 +183,7 @@ class CaseManager(models.Manager):
 
 class Case(models.Model):
     '''\
-    A Case is an ongoing situation for an Animal that involves Visits. Case is
-    an abstract model for the common fields between Entanglements, Shipstrikes,
-    and Strandings.
+    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
     '''
     
     observation_model = Observation

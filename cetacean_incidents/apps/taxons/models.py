@@ -35,12 +35,12 @@ class Taxon(models.Model):
         help_text= 'The scientific name for this taxon (i.e. the one in Latin).',
         verbose_name= 'scientific name',
     )
-    common_name = models.CharField(
+    common_names = models.CharField(
         max_length = 255,
         blank= True,
-        help_text= "a comma-delimited list of common English name(s) for " + 
-                   'this taxon (e.g. "humpback whale" or "dolphins, ' +
-                   'porpises").',
+        help_text= '''\
+        a comma-delimited list of common English name(s) for this taxon (e.g. "humpback whale" or "dolphins, porpises").
+        '''
     )
     supertaxon = models.ForeignKey(
         'self',
