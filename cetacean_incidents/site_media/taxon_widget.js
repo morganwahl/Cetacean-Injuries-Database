@@ -45,7 +45,8 @@ function update_results(query) {
     $("#results_box").show();
     $.getJSON(
         // TODO error-handling!
-        "/animals/taxon_search",
+        // TODO get URL from django?
+        "/taxons/taxon_search",
         { q: query},
         function(taxons){
             // TODO this func is called asynchronously. make

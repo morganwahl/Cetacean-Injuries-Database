@@ -24,7 +24,7 @@ class TaxonWidget(forms.widgets.Input):
         
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         
-        return render_to_string('animals/taxon_widget.html', {
+        return render_to_string('taxons/taxon_widget.html', {
             'initial_taxon': taxon_value,
             'final_attrs': forms.util.flatatt(final_attrs),
         })

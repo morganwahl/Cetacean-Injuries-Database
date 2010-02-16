@@ -47,7 +47,7 @@ def testview(request):
     else:
         form = TestForm() # An unbound form
 
-    return render_to_response('animals/test.html', {
+    return render_to_response('taxons/test.html', {
         'form': form,
     })
 
