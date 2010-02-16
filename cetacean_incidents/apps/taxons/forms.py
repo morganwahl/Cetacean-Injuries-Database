@@ -1,5 +1,6 @@
 from django import forms
 from django.template.loader import render_to_string
+from models import Taxon
 
 class TaxonWidget(forms.widgets.Input):
     '''\

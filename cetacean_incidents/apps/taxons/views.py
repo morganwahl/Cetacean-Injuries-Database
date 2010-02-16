@@ -1,6 +1,6 @@
 import json
 from django.db.models import Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from models import Taxon
 from django.shortcuts import render_to_response
 
@@ -17,7 +17,7 @@ def taxon_search(request):
     words = query.split()
     if words:
         firstword = words[0]
-        results = Taxon.objects.filter(Q(name__istartswith=firstword) | Q(common_name__icontains=query)).order_by('-rank', 'name')
+        results = Taxon.objects.filter(Q(name__istartswith=firstword) | Q(common_names__icontains=query)).order_by('-rank', 'name')
     else:
         results = tuple()
     
@@ -30,7 +30,7 @@ def taxon_search(request):
             'id': result.id,
             'name': result.name,
             'display_name': unicode(result),
-            'common_name': result.common_name,
+            'common_names': result.common_names,
         })
     # TODO return 304 when not changed?
     

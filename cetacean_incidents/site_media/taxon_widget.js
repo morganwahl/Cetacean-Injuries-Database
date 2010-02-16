@@ -62,8 +62,8 @@ function update_results(query) {
                 var item = '<tr id="' + tr_id + '"><td class="taxon">';
                 item += '<div class="taxon_name">' + taxon.display_name + '</div>';
                 item += '<div class="taxon_id">' + taxon.id + '</div>';
-                if (taxon.common_name) {
-                    item += '<div class="common_name">' + taxon.common_name + '</div></td></tr>'
+                if (taxon.common_names) {
+                    item += '<div class="common_names">' + taxon.common_names + '</div></td></tr>'
                 }
                 $("#taxon_list").append(item);
                 var tr = $("#" + tr_id);
@@ -79,7 +79,8 @@ function update_results(query) {
                         id: $(this).find('.taxon_id').text()
                     }
                     $("#taxon_chosen").text(taxon.display_name);
-                    $("[name=taxon]").val(taxon.id);
+                    // TODO get name from django
+                    $("[name=taxon_field]").val(taxon.id);
                     $("#clear_taxon").show();
                     // hide the search results and disable the filter
                     $("#results_box").hide();

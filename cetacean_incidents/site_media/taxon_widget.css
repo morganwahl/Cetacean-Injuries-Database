@@ -13,7 +13,7 @@ td.taxon {
 .taxon_id {
     display: none;
 }
-.common_name {
+.common_names {
     font-style: italic;
     font-size: 85%;
     line-height: 95%;
