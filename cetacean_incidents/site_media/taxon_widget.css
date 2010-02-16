@@ -1,3 +1,6 @@
+input#taxon_filter {
+    width: 20em;
+}
 .searchlist {
     border: thin solid grey;
     text-align: left;

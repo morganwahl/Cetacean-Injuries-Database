@@ -41,7 +41,7 @@ function clear_results() {
 
 function update_results(query) {
     // start the 'throbber' to show we're waiting on the network
-    $("#results_box").html('<img src="/site_media//Loader3.gif"></img> <i>searching</i>'); 
+    $("#results_box").html('<img src="/site_media/Loader3.gif"></img> <i>searching</i>'); 
     $("#results_box").show();
     $.getJSON(
         // TODO error-handling!
