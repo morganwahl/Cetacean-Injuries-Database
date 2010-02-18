@@ -30,6 +30,10 @@ class Animal(models.Model):
         help_text= "if this animal is dead, has a necropsy been performed on it?",
     )
     
+    def _get_observation_set(self):
+        return Observation.objects.filter(case__animal=self)
+    observation_set = property(_get_observation_set)
+    
     def _get_probable_gender(self):
         return probable_gender(self.observation_set)
     probable_gender = property(_get_probable_gender)
@@ -39,6 +43,10 @@ class Animal(models.Model):
         choices= GENDERS,
         help_text= 'as determined from the genders indicated in specific observations',
     )
+    def get_probable_gender_display(self):
+        if self.probable_gender is None:
+            return None
+        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
     
     def _get_probable_taxon(self):
         return probable_taxon(self.observation_set)
@@ -52,8 +60,8 @@ class Animal(models.Model):
     
     def __unicode__(self):
         if self.name:
-            return self.name
-        return "animal %s" % self.pk
+            return "%06d %s" % (self.id, self.name)
+        return "%06d" % self.id
     
     @models.permalink
     def get_absolute_url(self):
@@ -151,7 +159,7 @@ class Observation(models.Model):
     wounded = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "were there any wounds?"
+        help_text= "were there any wounds? False means none were observered, True means they were, Null means we don't know whether any were observed or not."
     )
     wound_description = models.TextField(
         blank= True,
@@ -248,7 +256,7 @@ class Case(models.Model):
         else:
             s['taxon'] = u'Unknown taxon'
         s['type'] = self.case_type
-        return u"%(year)s#%(yearly_number)i (%(date)s) %(type)s of %(taxon)s" % s
+        return u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
         
     current_name = property(_get_current_name)
 

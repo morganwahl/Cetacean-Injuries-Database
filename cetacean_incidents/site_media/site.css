@@ -37,6 +37,10 @@ div#content {
 a {
 	color: #204a87; /* sky blue 3 */
 }
+p {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
 h1 {
     font-size: 200%;
     vertical-align: middle;
@@ -47,6 +51,12 @@ h1 * {
 h2 {
     font-size: 150%;
 }
+h3 {
+    font-size: 125%;
+}
+li {
+    margin-left: 2em;
+}
 
 table {
 	width: inherit;
@@ -55,6 +65,13 @@ table {
 table td,th {
 	border: thin dotted #d3d7cf; /* aluminium 2 */
 	padding: .25em;
+}
+table th, .fieldname {
+    font-weight: bold;
+    color: #888a85;
+}
+span.fieldname {
+    color: #555753;
 }
 
 ul.errorlist {

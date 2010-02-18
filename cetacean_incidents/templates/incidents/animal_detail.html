@@ -1,10 +1,11 @@
 {% extends "detail.html" %}
+{% load case_extras %}
 
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>{{ animal }}</h2>
 {{ block.super }}
+<h2>{{ animal }}</h2>
 {% endblock %}
 
 {% block ids-table-rows %}
@@ -12,22 +13,46 @@
 {% endblock %}
 
 {% block content %}
-<table>
-	<tr><th>name</th><td>{{ animal.name }}</td></tr>
-	<tr>
-		<th>gender</th>
-		<td>
-		{{ animal.probable_gender }}
-		</td>
-	</tr>
-</table>
+<div class="section">
+    <h3>Info:</h3>
+    <table>
+        <tr><th>name</th><td>{{ animal.name|default:"<i>none</i>" }}</td></tr>
+        <tr>
+            <th>taxon</th>
+            <td>
+                {% if animal.determined_taxon %}
+                {{ animal.determined_taxon }} ({{ animal.determined_taxon.common_names }})
+                {% else %}
+                <i>undetermined</i>{% if animal.probable_taxon %} (probably <i>{{ animal.probable_taxon }}</i>){% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>gender</th>
+            <td>
+                {% if animal.determined_gender %}
+                {{ animal.get_determined_gender_display|default:"unknown" }}
+                {% else %}
+                <i>undetermined</i>{% if animal.probable_gender %} (probably {{ animal.get_probable_gender_display }}){% endif %}
+                {% endif %}
+            </td>
+        </tr>
+        {% if animal.determined_dead_before %}
+        <tr><th>dead before</th><td>{{ animal.determined_dead_before }}</td></tr>
+        {% endif %}
+    </table>
+</div>
 
-{% if animal.observation_set.count %}
-<h4>observations:</h4>
-<ul>
-	{% for observation in animal.observation_set.all %}
-	<li><a href="{% url observation_detail object_id=observation.id %}">{{ observation }}</a></li>
-	{% endfor %}
-</ul>
-{% endif %}
+<div class="section">
+    <h3>Cases:</h3>
+    {% if animal.case_set.count %}
+    <ul>
+	    {% for case in animal.case_set.all %}
+	    <li>{% case_link case %}</li>
+	    {% endfor %}
+    </ul>
+    {% else %}
+    <i>none</i>
+    {% endif %}
+</div>
 {% endblock %}

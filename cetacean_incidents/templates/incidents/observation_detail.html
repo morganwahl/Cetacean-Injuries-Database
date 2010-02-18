@@ -2,18 +2,85 @@
 {% load animal_extras %}
 {% load case_extras %}
 
+{% block head %}
+{{ block.super }}
+<style type="text/css">
+/* for the layout table */
+.layout {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+td.layout {
+    vertical-align: top;
+}
+</style>
+{% endblock %}
+
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
 {% block header %}
-<h2>{{ observation }}</h2>
+<h2>{% case_link observation.case %}</h2>
+<h2 style="margin-left:2em;">{{ observation }}</h2>
 {{ block.super }}
 {% endblock %}
 
 {% block ids-table-rows %}
-<tr><th>Case #</th><td>{{ observation.case.id }}</td></tr>
+<tr><th>Case names</th><td>{{ observation.case.names }}</td></tr>
+<tr><th>local ID</th><td>{{ observation.id }}</td></tr>
 {% endblock %}
 
 {% block content %}
-	<div>{% case_link observation.case %}</div>
-	<div>{% animal_link observation.animal %}</div>
+<table class="layout"><tr class="layout"><td class="layout"> <!-- for making columns -->
+    <div class="section">
+        <h3>Observation</h3>
+        <table>
+            <tr><th>observation date and time</th><td>{{ observation.observation_datetime }}</td></tr>
+            <tr><th>observation location</th><td>{{ observation.location }}</td></tr>
+            <tr><th>observer</th><td>{{ observation.observer }}</td></tr>
+            <tr><th>vessel info for observer's vessel</th><td>{{ observation.observer_vessel }}</td></tr>
+        </table>
+        {% if observation.firsthand %}
+        <i>reported by the observer</i>
+        {% else %}
+        <h3>Reporting</h3>
+        <table>
+            <tr><th>report date and time</th><td>{{ observation.report_datetime }}</td></tr>
+            <tr><th>reporter</th><td>{{ observation.reporter }}</td></tr>
+        </table>
+        {% endif %}
+    </div>
+    <div class="section">
+        <h3>Animal identification</h3>
+        <table>
+            {% if observation.taxon %}
+            <tr><th>taxon</th><td>{{ observation.taxon }}</td></tr>
+            {% endif %}
+            {% if observation.gender %}
+            <tr><th>sex</th><td>{{ observation.gender }}</td></tr>
+            {% endif %}
+            <tr><th>description</th><td><pre>{{ observation.animal_description }}</pre></td></tr>
+        </table>
+    </div>
+    <div class="section">
+        <h3>Incident details</h3>
+        <table>
+            <tr><th>wounds?</th><td>{% if observation.wounded %}{{ observation.wound_description }}{% else %}<i>None observed</i>{% endif %}</td></tr>
+            <tr><th>biopsy samples taken?</th><td>{{ observation.biopsy }}</td></tr>
+        </table>
+    </div>
+</td><td class="layout">
+    {% block narrative_section %}
+    <div class="section">
+        <h3>Narrative</h3>
+        <div>{{ observation.narrative|linebreaks }}</div>
+    </div>
+    {% endblock %}
+    <div class="section">
+        {% if observation.import_notes %}
+        <h3>Import notes</h3>
+        <div style="font-family: Terminus, monospace; font-size:75%;">{{ observation.import_notes|linebreaks }}</div>
+        {% endif %}
+    </div>
+</td></tr></table> <!-- for making columns -->
 {% endblock %}
