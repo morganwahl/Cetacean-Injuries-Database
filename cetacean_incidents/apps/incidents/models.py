@@ -142,8 +142,9 @@ class Observation(models.Model):
         """
     )
     
-    biopsy = models.BooleanField(
-        default= False,
+    biopsy = models.NullBooleanField(
+        blank= True,
+        null= True,
         help_text= "where any biopsy samples taken?",
     )
     
@@ -156,7 +157,18 @@ class Observation(models.Model):
         blank= True,
         help_text= "describe wounds, noting severity and location on the animal.",
     )
-
+    
+    narrative = models.TextField(
+        blank= True,
+        help_text= "complete description of the observation."
+    )
+    
+    import_notes = models.TextField(
+        blank= True,
+        #editable= False, # note that this only means it's not editable in the admin interface
+        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
+    )
+    
     @models.permalink
     def get_absolute_url(self):
         return ('observation_detail', [str(self.id)]) 
@@ -192,8 +204,9 @@ class Case(models.Model):
         Animal,
     )
 
-    ole_investigation = models.BooleanField(
+    ole_investigation = models.NullBooleanField(
         blank= True,
+        null= True,
         verbose_name= "OLE Investigation",
         help_text= "Is there a corresponding Office of Law Enforcement investigation?",
     )

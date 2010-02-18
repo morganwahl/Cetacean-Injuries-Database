@@ -33,6 +33,12 @@ class DateTime(models.Model):
         null= True,
     )
     
+    import_notes = models.TextField(
+        blank= True,
+        #editable= False, # note that this only means it's not editable in the admin interface
+        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
+    )
+    
     def __unicode__(self):
         ret = u"%04d" % self.year
         if self.month:

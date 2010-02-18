@@ -80,4 +80,11 @@ class StrikingVesselInfo(VesselInfo):
         # but it's either one or the other. GPS gives you over-ground.
     )
 
+    import_notes = models.TextField(
+        blank= True,
+        editable= False, # note that this only means it's not editable in the admin interface
+        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
+    )
+    
+
 

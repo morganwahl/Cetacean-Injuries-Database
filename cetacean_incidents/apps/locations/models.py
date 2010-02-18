@@ -28,6 +28,7 @@ class Location(models.Model):
     # TODO form validation will be essential for this field!
     roughness = models.FloatField(
         blank= True,
+        null= True,
         help_text= '''\
         Indicate the uncertainty of the coordinates, in meters. Should be the
         radius of the circle around the coordinates that contains the actual
@@ -38,6 +39,12 @@ class Location(models.Model):
         coordinates) should be used instead of a single point, so as to not give
         a false sense of accuracy.
         '''
+    )
+
+    import_notes = models.TextField(
+        blank= True,
+        #editable= False, # note that this only means it's not editable in the admin interface
+        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
     
     def __unicode__(self):
