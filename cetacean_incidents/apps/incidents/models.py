@@ -6,6 +6,7 @@ from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.vessels.models import VesselInfo, StrikingVesselInfo
 from utils import probable_gender
+import re
 
 GENDERS = (
     ("f", "female"),
@@ -284,8 +285,13 @@ class Case(models.Model):
             # TODO more efficient way
             highest_so_far = 0
             for c in Case.objects.cases_in_year(year):
-                if c.yearly_number:
-                    highest_so_far = max(highest_so_far, c.yearly_number)
+                # look at all the former yearly_numbers in the case's name_sets
+                yearly_numbers = map(
+                    lambda name: int(re.search(r'\d+#(\d+)', name).group(1)),
+                    c.names_set,
+                )
+                for yearly_number in yearly_numbers:
+                    highest_so_far = max(highest_so_far, yearly_number)
             self.yearly_number = highest_so_far + 1
 
         # add the current_name to the names set, if necessary
