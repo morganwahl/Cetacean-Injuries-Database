@@ -266,9 +266,13 @@ class Case(models.Model):
     past_names_set = property(_get_past_names_set)
 
     def _get_first_observation_date(self):
+        if not self.observation_set.count():
+            return None
         return self.observation_set.order_by('observation_datetime')[0].observation_datetime
     first_observation_date = property(_get_first_observation_date)
     def _get_first_report_date(self):
+        if not self.observation_set.count():
+            return None
         return self.observation_set.order_by('report_datetime')[0].report_datetime
     first_report_date = property(_get_first_report_date)
     def _get_case_date(self):
