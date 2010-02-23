@@ -26,8 +26,9 @@ class Contact(models.Model):
         blank= True,
         help_text= "leave blank if same as name",
     )
-    person = models.BooleanField(
-        default= True,
+    person = models.NullBooleanField(
+        blank= True,
+        null= True,
         help_text= "Is this a person? (i.e. not an organization)"
     )
     
