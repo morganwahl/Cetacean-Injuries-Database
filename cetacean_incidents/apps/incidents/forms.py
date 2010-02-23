@@ -34,6 +34,22 @@ class CreateCaseForm(CaseForm):
         'e': Entanglement,
         's': Shipstrike,
     }
+class MergeCaseForm(forms.ModelForm):
+    
+    class Meta:
+        model = Case
+
+class ObservationForm(forms.ModelForm):
+
+    #taxon = TaxonField()
+
+    class Meta:
+        model = Observation
+        # the case for a new observation is set by the view
+        exclude = ('case') 
+
+observation_forms['Case'] = ObservationForm
+
 
 class EntanglementForm(forms.ModelForm):
     
