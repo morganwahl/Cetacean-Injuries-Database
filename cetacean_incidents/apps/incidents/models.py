@@ -93,6 +93,8 @@ class Observation(models.Model):
     )
     observation_datetime = models.OneToOneField(
         DateTime,
+        blank= True,
+        null= True,
         help_text= 'the start of the observation',
         related_name= 'observation',
     )
@@ -179,10 +181,12 @@ class Observation(models.Model):
         return ('observation_detail', [str(self.id)]) 
 
     def __unicode__(self):
-        ret = "observation on %s" % self.observation_datetime
+        ret = 'observation '
+        if self.observation_datetime:
+            ret += "on %s " % self.observation_datetime
         if self.observer:
-            ret += " by %s" % self.observer
-        ret += " (%d)" % self.id
+            ret += "by %s " % self.observer
+        ret += "(%d)" % self.id
         return ret
     
     class Meta:
