@@ -107,6 +107,8 @@ class Observation(models.Model):
     )
 
     def _is_firsthand(self):
+        if self.reporter is None and self.observer is None:
+            return None
         return self.reporter == self.observer
     firsthand = property(_is_firsthand)
     reporter = models.ForeignKey(
