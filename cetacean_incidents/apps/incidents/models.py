@@ -84,26 +84,23 @@ class Observation(models.Model):
         null= True,
         related_name= 'observed',
     )
-    observer_vessel = models.ForeignKey(
+    observer_vessel = models.OneToOneField(
         VesselInfo,
         blank= True,
         null= True,
-        unique= True,
         related_name= 'observed',
         help_text= 'the vessel the observer was on, if any',
     )
-    observation_datetime = models.ForeignKey(
+    observation_datetime = models.OneToOneField(
         DateTime,
-        unique = True,
         help_text= 'the start of the observation',
         related_name= 'observation',
     )
     # TODO duration?
-    location = models.ForeignKey(
+    location = models.OneToOneField(
         Location,
         blank= True,
         null= True,
-        unique= True,
         related_name= "observation",
     )
 
@@ -120,9 +117,8 @@ class Observation(models.Model):
         informed us of the incidents.
         ''',
     )
-    report_datetime = models.ForeignKey(
+    report_datetime = models.OneToOneField(
         DateTime,
-        unique = True,
         help_text = 'when we first heard about the observation',
         related_name = 'report',
     )
@@ -370,7 +366,7 @@ class Entanglement(Case):
 Case.register_subclass(Entanglement)
 
 class ShipstrikeObservation(Observation):
-    striking_vessel = models.ForeignKey(
+    striking_vessel = models.OneToOneField(
         StrikingVesselInfo,
         blank= True,
         null= True,
