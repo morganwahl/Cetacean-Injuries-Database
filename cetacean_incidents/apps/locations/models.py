@@ -25,6 +25,12 @@ class Location(models.Model):
         formats is handled elsewhere.
         '''
     )
+    def _get_coords_pair(self):
+        if self.coordinates is None:
+            return None
+        return map(float, self.coordinates.split(','))
+    coords_pair = property(_get_coords_pair)
+    
     # TODO form validation will be essential for this field!
     roughness = models.FloatField(
         blank= True,

@@ -2,21 +2,6 @@
 {% load animal_extras %}
 {% load case_extras %}
 
-{% block head %}
-{{ block.super }}
-<style type="text/css">
-/* for the layout table */
-.layout {
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-td.layout {
-    vertical-align: top;
-}
-</style>
-{% endblock %}
-
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
 {% block header %}
@@ -26,7 +11,7 @@ td.layout {
 {% endblock %}
 
 {% block ids-table-rows %}
-<tr><th>Case names</th><td>{{ observation.case.names }}</td></tr>
+<tr><th>Case name</th><td>{{ observation.case.current_name }}</td></tr>
 <tr><th>local ID</th><td>{{ observation.id }}</td></tr>
 {% endblock %}
 
@@ -36,17 +21,16 @@ td.layout {
         <h3>Observation</h3>
         <table>
             <tr><th>observation date and time</th><td>{{ observation.observation_datetime }}</td></tr>
-            <tr><th>observation location</th><td>{{ observation.location }}</td></tr>
+            <tr><th>observation location</th><td>
+                {% if observation.location %}{% with observation.location as l %}{% include "locations/location_insert.html" %}{% endwith %}{% else %}<i>none</i>{% endif %}
+            </td></tr>
             <tr><th>observer</th><td>{{ observation.observer }}</td></tr>
             <tr><th>vessel info for observer's vessel</th><td>{{ observation.observer_vessel }}</td></tr>
         </table>
-        {% if observation.firsthand %}
-        <i>reported by the observer</i>
-        {% else %}
         <h3>Reporting</h3>
         <table>
             <tr><th>report date and time</th><td>{{ observation.report_datetime }}</td></tr>
-            <tr><th>reporter</th><td>{{ observation.reporter }}</td></tr>
+            <tr><th>reporter</th><td>{% if observation.firsthand %}<i>reported by the observer</i>{% else %}{{ observation.reporter }}</td></tr>
         </table>
         {% endif %}
     </div>
@@ -59,7 +43,7 @@ td.layout {
             {% if observation.gender %}
             <tr><th>sex</th><td>{{ observation.gender }}</td></tr>
             {% endif %}
-            <tr><th>description</th><td><pre>{{ observation.animal_description }}</pre></td></tr>
+            <tr><th>description</th><td><pre>{{ observation.animal_description|default:"<i>none</i>" }}</pre></td></tr>
         </table>
     </div>
     <div class="section">
@@ -73,14 +57,14 @@ td.layout {
     {% block narrative_section %}
     <div class="section">
         <h3>Narrative</h3>
-        <div>{{ observation.narrative|linebreaks }}</div>
+        <div>{{ observation.narrative|default:"<i>nothing</i>"|linebreaks }}</div>
     </div>
     {% endblock %}
+    {% if observation.import_notes %}
     <div class="section">
-        {% if observation.import_notes %}
         <h3>Import notes</h3>
         <div style="font-family: Terminus, monospace; font-size:75%;">{{ observation.import_notes|linebreaks }}</div>
-        {% endif %}
     </div>
+    {% endif %}
 </td></tr></table> <!-- for making columns -->
 {% endblock %}

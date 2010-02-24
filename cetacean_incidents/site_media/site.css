@@ -66,6 +66,17 @@ table td,th {
 	border: thin dotted #d3d7cf; /* aluminium 2 */
 	padding: .25em;
 }
+
+/* for using tables for layout */
+.layout {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+td.layout {
+    vertical-align: top;
+}
+
 table th, .fieldname {
     font-weight: bold;
     color: #888a85;

@@ -1,0 +1,24 @@
+{# intended to be included in another template, with the location as l #}
+<table class="layout">
+    <tr class="layout">
+        {% if l.coordinates %}
+        <td class="layout">
+            <div>
+            <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=100x100&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
+            </div>
+            {% comment %}
+            <table>
+                <tr><th>lat.</th><td style="text-align:right;">{{ l.coords_pair.0|floatformat:"4" }}</td>
+                <tr><th>long.</th><td style="text-align:right;">{{ l.coords_pair.1|floatformat:"4" }}</td>
+            </table>
+            {% endcomment %}
+        </td>
+        {% endif %}
+        <td class="layout" style="vertical-align: middle;">
+            <p style="margin: .25em;">
+                {{ l.description }}
+            </p>
+        </td>
+    </tr>
+</table>
+

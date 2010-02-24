@@ -1,0 +1,9 @@
+{% extends "incidents/edit_entanglement.html" %}
+
+{% block narrative_section %}
+{{ block.super }}
+<div class="section">
+    <pre>{{ observation.outcome }}</pre>
+</div>
+{% endblock %}
+
