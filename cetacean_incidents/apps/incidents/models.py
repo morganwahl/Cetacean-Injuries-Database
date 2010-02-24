@@ -290,7 +290,7 @@ class Case(models.Model):
             year = self.date.year
             # TODO more efficient way
             highest_so_far = 0
-            for c in Case.objects.cases_in_year(year):
+            for c in Case.objects.all():
                 # look at all the former yearly_numbers in the case's name_sets
                 yearly_numbers = map(
                     lambda name: int(re.search(r'\d+#(\d+)', name).group(1)),
