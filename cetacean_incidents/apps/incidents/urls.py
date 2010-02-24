@@ -27,4 +27,5 @@ urlpatterns += patterns('',
     (r'^cases/create$', views.create_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'), 
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
+    (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
 )

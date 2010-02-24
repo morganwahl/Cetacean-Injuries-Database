@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 
 from models import Case, Entanglement
-from forms import CreateCaseForm, CaseForm, EntanglementForm, observation_forms
+from forms import CreateCaseForm, CaseForm, EntanglementForm, observation_forms, MergeCaseForm
 
 @login_required
 def edit_entanglement(request, case_id):
