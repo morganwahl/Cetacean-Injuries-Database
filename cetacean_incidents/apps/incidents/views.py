@@ -199,3 +199,40 @@ def merge_case(request, case1_id, case2_id):
         },
     )
 
+def animal_search(request):
+    '''\
+    Given a request with a query in the 'q' key of the GET string, returns a 
+    JSON list of Animals.
+    '''
+    
+    query = u''
+    if 'q' in request.GET:
+        query = request.GET['q']
+    
+    words = query.split()
+    if words:
+        firstword = words[0]
+        q = Q(name__icontains=firstword)
+        try:
+            q |= Q(id__exact=int(firstword))
+        except ValueError:
+            pass
+        results = Animal.objects.filter(q).order_by('-id')
+    else:
+        results = tuple()
+    
+    # since we wont have access to the handy properties and functions of the
+    # Animal objects, we have to call them now and include their output
+    # in the JSON
+    animals = []
+    for result in results:
+        animals.append({
+            'id': result.id,
+            'name': result.name,
+            'display_name': unicode(result),
+            'determined_taxon': unicode(result.determined_taxon),
+        })
+    # TODO return 304 when not changed?
+    
+    return HttpResponse(json.dumps(animals))
+

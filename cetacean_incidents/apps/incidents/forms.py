@@ -1,11 +1,57 @@
 from django import forms
 from django.forms import fields
+from django.template.loader import render_to_string
 from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 observation_forms = {}
 
+class AnimalForm(forms.ModelForm):
+    
+    class Meta:
+        model = Animal
+
+class AnimalWidget(forms.widgets.Input):
+    '''\
+    A widget that searches Animals while you type and allows you to select one
+    of them.
+    '''
+    
+    input_type = 'hidden'
+    
+    def render(self, name, value, attrs=None):
+        """
+        Returns this Widget rendered as HTML, as a Unicode string.
+
+        The 'value' given is not guaranteed to be valid input, so subclass
+        implementations should program defensively.
+        """
+        
+        # TODO error checks?
+        animal_value = ''
+        if not value is None:
+            animal_value = Animal.objects.get(id=value)
+        
+        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+        
+        return render_to_string('incidents/animal_widget.html', {
+            'initial_animal': animal_value,
+            'final_attrs': forms.util.flatatt(final_attrs),
+        })
+    
+    class Media:
+        css = {
+            'all': ('animal_widget.css',),
+        }
+        js = ('animal_widget.js',)
+
+class AnimalField(forms.IntegerField):
+    
+    def __init__(self, *args, **kwargs):
+        if (not 'widget' in kwargs):
+            kwargs['widget'] = AnimalWidget
+        return super(AnimalField, self).__init__(*args, **kwargs)
 
 class CaseForm(forms.ModelForm):
     

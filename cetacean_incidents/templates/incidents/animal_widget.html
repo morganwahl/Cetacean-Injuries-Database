@@ -1,0 +1,14 @@
+<div id="animal_widget" style="display: inline-block;">
+    {{ initial_animal }}
+    <div id="search_box" style="display: inline-block;">
+        search animals for
+        <input id="animal_filter" type="text" autocomplete="off">
+        <div id="results_box" class="searchlist" style="display: none;">
+            <i>no query</i>
+        </div>
+    </div>
+    <span id="animal_chosen"></span>
+    <button type="button" id="clear_animal">clear selection</button>
+    <input {{ final_attrs|safe }}>
+</div>
+

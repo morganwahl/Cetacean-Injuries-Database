@@ -1,0 +1,28 @@
+input#animal_filter {
+    width: 20em;
+}
+.searchlist {
+    border: thin solid grey;
+    text-align: left;
+}
+td.animal {
+    padding: .2em;
+}
+.animal_name {
+    font-weight: bold;
+    font-size: 125%;
+    line-height: 90%;
+}
+.animal_id {
+    display: none;
+}
+.determined_taxon {
+    font-style: italic;
+    font-size: 85%;
+    line-height: 95%;
+    padding-left: .2em;
+}
+.highlighted {
+    background-color: #729fcf; /* sky blue 1 */
+}
+

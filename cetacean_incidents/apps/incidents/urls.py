@@ -28,4 +28,5 @@ urlpatterns += patterns('',
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'), 
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
     (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
+    url(r'^animal_search$', views.animal_search, name='animal_search'),
 )
