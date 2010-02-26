@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 
-from models import Case, Entanglement
-from forms import CreateCaseForm, CaseForm, EntanglementForm, observation_forms, MergeCaseForm
+from models import Case, Entanglement, Animal
+from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm
 
 @login_required
 def edit_entanglement(request, case_id):
@@ -27,14 +27,7 @@ def edit_entanglement(request, case_id):
 
 @login_required
 def edit_case(request, case_id):
-    # dispatch based on case type
     case = Case.objects.get(id=case_id)
-    try:
-        return {
-            'Entanglement': edit_entanglement,
-        }[case.detailed_class_name](request, case_id)
-    except KeyError:
-        pass
 
     if request.method == 'POST':
         form = CaseForm(request.POST, instance=case)
@@ -59,7 +52,7 @@ def add_observation(request, case_id):
         form = form_class(request.POST, instance=new_observation)
         if form.is_valid():
             form.save()
-            return redirect('edit_case', case.id)
+            return redirect(case)
     else:
         form = form_class()
     
@@ -73,22 +66,47 @@ def add_observation(request, case_id):
     )
 
 @login_required
-def create_case(request):
+def create_animal(request):
     if request.method == 'POST':
-        form = CreateCaseForm(request.POST)
+        form = AnimalForm(request.POST)
         if form.is_valid():
-            # this is a little tricky: we'd like to make use of the form's
-            # ability to create a new case from it's fields, but we also need 
-            # that case to have a specific type, i.e. an Entanglement
-            new_case = form.save()
-            case_model = CreateCaseForm.type_models[form.cleaned_data['case_type']]
-            case_extension = case_model.objects.create(case_ptr= new_case)
-            return redirect('edit_case', case_extension.id)
+            new_animal = form.save()
+            return redirect('add_case', new_animal.id)
     else:
-        form = CreateCaseForm()
+        form = AnimalForm()
     return render_to_response(
-        'incidents/create_case.html',
-        {'form': form},
+        'incidents/create_animal.html',
+        {
+            'form': form,
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def add_case(request, animal_id):
+    if request.method == 'POST':
+        type_form = CaseTypeForm(request.POST)
+        # this instance of CaseForm is just to retrieve the fields from the POST,
+        # incase type_form isn't valid
+        case_form = CaseForm(request.POST)
+        if type_form.is_valid():
+            # transmogrify the generic Case into a Entanglement, Shipstrike, etc. note that this assumes those more specific cases don't have any required fields.
+            case_model = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
+            # re-create the case_form with an instance of subclass of Case
+            case_form = CaseForm(request.POST, instance=case_model())
+            if case_form.is_valid():
+                new_case = case_form.save()
+                return redirect('add_observation', new_case.id)
+    else:
+        case_form = CaseForm({'animal': animal_id})
+        type_form = CaseTypeForm()
+    return render_to_response(
+        'incidents/add_case.html',
+        {
+            'animal': Animal.objects.get(id=animal_id),
+            'type_form': type_form,
+            'case_form': case_form,
+        },
         context_instance= RequestContext(request),
     )
 

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}: create a new animal{% endblock %}
+
+{% block header %}
+<h2>new animal</h2>
+{% endblock %}
+
+{% block content %}
+<form action="{% url create_animal %}" method="post">
+    <div class="section">
+        {% for f in form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
+    	<button type="submit">create animal</button>
+    </div>
+</form>
+{% endblock %}
+

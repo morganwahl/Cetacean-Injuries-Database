@@ -58,15 +58,6 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
-class CreateCaseForm(forms.ModelForm):
-    # only difference is the use of an AnimalField, which allows search of 
-    # existing animals and indication of when to create a new Animal.
-    
-    animal = AnimalField()
-    
-    class Meta:
-        model = Case
-
 class EntanglementForm(forms.ModelForm):
     
     class Meta:
@@ -97,7 +88,7 @@ class CaseTypeForm(forms.Form):
         'e': EntanglementForm,
         's': ShipstrikeForm,
     }
-    
+
 class MergeCaseForm(forms.ModelForm):
     
     class Meta:

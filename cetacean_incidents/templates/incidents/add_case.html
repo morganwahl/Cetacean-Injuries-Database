@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}: add a new case for {{ animal }}{% endblock %}
+
+{% block header %}
+<h2>new case for {{ animal }}</h2>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    <div>
+        <div class="section">
+            {% for f in type_form %}
+            {% include "labeled_field.html" %}
+            {% endfor %}
+        </div>
+        <div class="section">
+            {% for f in case_form %}
+            {% include "labeled_field.html" %}
+            {% endfor %}
+        </div>
+    </div>
+	<button type="submit">create case</button>
+</form>
+{% endblock %}
+

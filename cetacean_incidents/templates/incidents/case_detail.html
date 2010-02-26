@@ -1,47 +1,15 @@
-{% extends "detail.html" %}
-{% load observation_extras %}
-{% load animal_extras %}
-
-{% block title %}{{ block.super }}: {{ case }}{% endblock %}
-
-{% block ids-table-rows %}
-<tr><th>local ID</th><td>{{ case.id }}</td></tr>
-<tr><th>current name</th><td>{{ case.current_name }}</td></tr>
-{% if case.past_names_set %}
-<tr><th>past names</th><td>
-    {% for past_name in case.past_names_set %}
-    {{ past_name }}<br>
-    {% endfor %}
-</td></tr>
-{% endif %}
-{% endblock %}
+{% extends "incidents/case_base.html" %}
 
 {% block header %}
 {{ block.super }}
 <div>
-    <h2>{{ case }}</h2>
-    {% comment %}
     <a href="{% url edit_case case.id %}">edit this case</a>
-    {% endcomment %}
 </div>
 {% endblock %}
 
-{% block content %}
-<div class="section">
-    <div>
-        <span class="fieldname">Animal</span> {% animal_link case.animal %}
-    </div>
-    <div>
-        <span class="fieldname">OLE investigation?</span> {{ case.ole_investigation|yesno:"yes,no,unknown" }}
-    </div>
-</div>
-<div class="section">
-    <h3>Observations</h3>
-    <table>
-        <tr><td><th>observer</th><th>date observed</th><th>date reported</th><th>start of narrative...</th>
-        {% for o in case.observation_set.all %}
-        <tr><td>{% observation_link o %}</td><td>{{ o.observer }}</td><td>{{ o.observation_datetime }}</td><td>{{ o.report_datetime }}</td><td>{{ o.narrative|truncatewords:9 }}</td></tr>
-        {% endfor %}
-    </table>
+{% block observations %}
+{{ block.super }}
+<div>
+    <a href="{% url add_observation case.id %}">add an observation</a>
 </div>
 {% endblock %}

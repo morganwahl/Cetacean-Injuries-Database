@@ -1,40 +1,19 @@
-{% extends "detail.html" %}
+{% extends "incidents/case_base.html" %}
 {% load observation_extras %}
 
-{% block title %}{{ block.super }}: edit {{ case }}{% endblock %}
+{% block title %}{{ block.super }} [editing]{% endblock %}
 
-{% block ids-table-rows %}
-<tr><th>local ID</th><td>{{ case.id }}</td></tr>
+{% block header %}
+{{ block.super }}
+[editing]
 {% endblock %}
 
-{% block content %}
-<h2>Edit {{ case }}</h2>
-
-<form action="" method="POST" class="section">
-    {% for f in form.fields $}
-    <div class="field-wrapper">
-		{% include "labeled_field.html" %}
-    </div>
+{% block case_fields %}
+<form action="" method="post">
+    {% for f in form %}
+    {% include "labeled_field.html" %}
     {% endfor %}
-    <p><button type="submit">update case</button></p>
+    <button type="submit">save changes</button>
 </form>
-
-<div class="section">
-    <h3>Observation:</h3>
-    {% if case.observation_set.count %}
-    <table>
-        {% for observation in case.observation_set.all %}
-        <tr><td>{{ observation }}</td></tr>
-        {% endfor %}
-    </table>
-    {% endif %}
-    <a href="{% url add_observation case.id %}">
-        {% if not case.observation_set.count %}
-        add the initial observation
-        {% else %}
-        add another observation
-        {% endif %}
-    </a>
-<div>
 {% endblock %}
 
