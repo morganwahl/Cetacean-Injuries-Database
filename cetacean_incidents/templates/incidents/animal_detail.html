@@ -6,6 +6,7 @@
 {% block header %}
 {{ block.super }}
 <h2>{{ animal }}</h2>
+<div><a href="{% url edit_animal animal.id %}">edit</a></div>
 {% endblock %}
 
 {% block ids-table-rows %}
@@ -39,6 +40,7 @@
         </tr>
         {% if animal.determined_dead_before %}
         <tr><th>dead before</th><td>{{ animal.determined_dead_before }}</td></tr>
+        <tr><th>necropsied?</t><td>{{ animal.necropsy|yesno:"yes,no" }}{% if not animal.necropsied %}<br><i>note that "no" is the same as "unknown" for this field</i>{% endif %}</td></tr>
         {% endif %}
     </table>
 </div>
@@ -54,5 +56,6 @@
     {% else %}
     <i>none</i>
     {% endif %}
+    <div><a href="{% url add_case animal.id %}">add a new case (and it's intial observation)</a>
 </div>
 {% endblock %}

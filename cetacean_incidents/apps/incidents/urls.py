@@ -25,6 +25,7 @@ urlpatterns = patterns('django.views.generic.list_detail',
 )
 urlpatterns += patterns('',
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
+    (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
     (r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'), 
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),

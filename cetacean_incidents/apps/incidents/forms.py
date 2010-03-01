@@ -46,17 +46,25 @@ class AnimalWidget(forms.widgets.Input):
         }
         js = ('animal_widget.js',)
 
-class AnimalField(forms.IntegerField):
+class AnimalField(forms.ModelChoiceField):
     
     def __init__(self, *args, **kwargs):
         if (not 'widget' in kwargs):
             kwargs['widget'] = AnimalWidget
-        return super(AnimalField, self).__init__(*args, **kwargs)
+        return super(AnimalField, self).__init__(queryset=Animal.objects.all(),*args, **kwargs)
 
 class CaseForm(forms.ModelForm):
     
     class Meta:
         model = Case
+
+class AddCaseForm(CaseForm):
+    '''\
+    A CaseForm minus the Animal field, for adding a case to an existing animal.
+    '''
+
+    class Meta(CaseForm.Meta):
+        exclude = ('animal',)
 
 class EntanglementForm(forms.ModelForm):
     
@@ -123,4 +131,7 @@ class ShipstrikeObservationForm(ObservationForm):
         model = ShipstrikeObservation
 
 observation_forms['Shipstrike'] = ShipstrikeObservationForm
+
+class TestForm(forms.Form):
+    animal_field = AnimalField()
 

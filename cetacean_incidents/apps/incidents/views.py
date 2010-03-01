@@ -7,7 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 
 from models import Case, Entanglement, Animal, Observation
-from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm
+from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
 from apps.locations.forms import LocationForm
 from apps.datetime.forms import DateTimeForm
 from apps.vessels.forms import VesselInfoForm
@@ -30,22 +30,43 @@ def create_animal(request):
     )
 
 @login_required
+def edit_animal(request, animal_id):
+    animal = Animal.objects.get(id=animal_id)
+    if request.method == 'POST':
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            form.save()
+            return redirect('animal_detail', animal.id)
+    else:
+        form = AnimalForm(instance=animal)
+    return render_to_response(
+        'incidents/edit_animal.html',
+        {
+            'animal': animal,
+            'form': form,
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
 def add_case(request, animal_id):
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
         # this instance of CaseForm is just to retrieve the fields from the POST,
         # incase type_form isn't valid
-        case_form = CaseForm(request.POST)
+        case_form = AddCaseForm(request.POST)
         if type_form.is_valid():
             # transmogrify the generic Case into a Entanglement, Shipstrike, etc. note that this assumes those more specific cases don't have any required fields.
-            case_model = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
-            # re-create the case_form with an instance of subclass of Case
-            case_form = CaseForm(request.POST, instance=case_model())
+            CaseModel = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
             if case_form.is_valid():
+                data = request.POST.copy()
+                data.update({'animal': animal_id})
+                # re-create the case_form with an instance of subclass of Case
+                case_form = CaseForm(data, instance=CaseModel())
                 new_case = case_form.save()
                 return redirect('add_observation', new_case.id)
     else:
-        case_form = CaseForm({'animal': animal_id})
+        case_form = AddCaseForm()
         type_form = CaseTypeForm()
     return render_to_response(
         'incidents/add_case.html',
