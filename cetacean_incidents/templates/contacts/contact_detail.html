@@ -1,0 +1,11 @@
+{% extends "contacts/contact_base.html" %}
+
+{% block title %}{{ block.super }}: {{ contact }}{% endblock %}
+
+{% block header %}
+{{ block.super }}
+<div>
+    <a href="{% url edit_contact contact.id %}">edit this contact</a>
+</div>
+{% endblock %}
+

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load contact_extras %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block title %}{{ block.super }}: new contact {% endblock %}
+
+{% block header %}
+<div>
+    <h2>new contact</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+<table class="layout"><tr class="layout"><td class="layout">
+<div class="section">
+    {% with form.name as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with form.sort_name as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with form.person as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with form.phone as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with form.email as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with form.address as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+</div>
+</td><td class="layout">
+<div class="section">
+    <h3>Affiliations</h3>
+    {% with form.affiliations as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+</div>
+<div class="section">
+    <h3>Notes</h3>
+    {% with form.notes as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+</div>
+</td></tr></table>
+<button type="submit">create contact</button>
+</form>
+{% endblock %}

@@ -74,6 +74,10 @@ class Contact(models.Model):
     class Meta:
         ordering = ('sort_name', 'name', 'id')
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('contact_detail', [str(self.id)]) 
+
     def __unicode__(self):
         return self.name
 

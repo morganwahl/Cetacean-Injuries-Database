@@ -1,0 +1,117 @@
+{% extends "detail.html" %}
+{% load contact_extras %}
+{% load observation_extras %}
+
+{% block ids-table-rows %}
+<tr><th>local ID</th><td>{{ contact.id }}</td></tr>
+{% endblock %}
+
+{% block header %}
+{{ block.super }}
+<div>
+    <h2>{{ contact }}</h2>
+</div>
+{% endblock %}
+
+{% block content %}
+{% block contact_fields %}
+<table class="layout"><tr class="layout"><td class="layout">
+<div class="section">
+    <div>
+        <span class="fieldname">name</span> {{ contact.name }}
+    </div>
+    <div>
+        <span class="fieldname">person, or organization?</span>  {{ contact.person|yesno:"person,organization,unknown" }}
+    </div>
+    {% if contact.phone %}
+    <div>
+        <span class="fieldname">phone number</span> {{ contact.phone }}
+    </div>
+    {% endif %}
+    {% if contact.email %}
+    <div>
+        <span class="fieldname">email address</span> {{ contact.email }}
+    </div>
+    {% endif %}
+    {% if contact.address %}
+    <div>
+        <span class="fieldname">mailling address</span> {{ contact.address }}
+    </div>
+    {% endif %}
+</div>
+</td><td class="layout">
+<div class="section">
+    <h3>Affiliations</h3>
+    {% if contact.affiliations.count %}
+    <ul>
+        {% for o in contact.affiliations.all %}
+        <li>{{ o }}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <i>none</i>
+    {% endif %}
+</div>
+<div class="section">
+    <h3>Notes</h3>
+    {% if contact.notes %}
+    <p>{{ contact.notes }}</p>
+    {% else %}
+    <i>nothing</i>
+    {% endif %}
+</div>
+</td></tr></table>
+{% endblock %}
+<div class="section">
+    <div>
+        <h3>Observations</h3>
+        {% if contact.observed.count %}
+        <table>
+            <tr>
+                <td></td>
+                <th>date observed</th>
+                <th>date reported</th>
+                <th>reporter</th>
+                <th>start of narrative...</th>
+            </tr>
+            {% for o in contact.observed.all %}
+            <tr>
+                <td>{% observation_link o %}</td>
+                <td>{{ o.observation_datetime }}</td>
+                <td>{{ o.report_datetime }}</td>
+                <td>{% if o.reporter %}{% contact_link o.reporter %}{% else %}<i>none</i>{% endif %}</td>
+                <td>{{ o.narrative|truncatewords:9 }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <i>no observations</i>
+        {% endif %}
+    </div>
+    <div>
+        <h3>Reports</h3>
+        {% if contact.reported.count %}
+        <table>
+            <tr>
+                <td></td>
+                <th>observer</th>
+                <th>date observed</th>
+                <th>date reported</th>
+                <th>start of narrative...</th>
+            </tr>
+            {% for o in contact.reported.all %}
+            <tr>
+                <td>{% observation_link o %}</td>
+                <td>{% if o.observer %}{% contact_link o.observer %}{% else %}<i>none</i>{% endif %}</td>
+                <td>{{ o.observation_datetime }}</td>
+                <td>{{ o.report_datetime }}</td>
+                <td>{{ o.narrative|truncatewords:9 }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <i>no reports</i>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
