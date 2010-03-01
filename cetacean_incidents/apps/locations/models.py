@@ -49,7 +49,7 @@ class Location(models.Model):
 
     import_notes = models.TextField(
         blank= True,
-        #editable= False, # note that this only means it's not editable in the admin interface
+        editable= False, # note that this only means it's not editable in the admin interface or ModelForm-generated forms
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
     

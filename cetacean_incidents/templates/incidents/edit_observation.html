@@ -2,22 +2,23 @@
 {% load animal_extras %}
 {% load case_extras %}
 
-{% block title %}{{ block.super }}: {{ case }}: new observation{% endblock %}
-
-{% block header %}
-{{ block.super }}
-<h2>{{ case }}</h2>
-<h2 style="margin-left:2em;">new observation</h2>
-{% endblock %}
-
-{% block ids-table-rows %}
-<tr><th>Case name</th><td>{{ case.current_name }}</td></tr>
-{% endblock %}
+{% block title %}{{ block.super }}: {{ case }}: {{ observation }} [editing]{% endblock %}
 
 {% block head %}
 {{ block.super }}
 {{ observation_form.media }}
 {{ observer_vessel_form.media }}
+{% endblock %}
+
+{% block header %}
+{{ block.super }}
+<h2>{{ case }}</h2>
+<h2 style="margin-left:2em;">{{ observation }} [editing]</h2>
+{% endblock %}
+
+{% block ids-table-rows %}
+<tr><th>Case name</th><td>{{ case.current_name }}</td></tr>
+<tr><th>local ID</th><td>{{ observation.id }}</td></tr>
 {% endblock %}
 
 {% block content %}
@@ -132,6 +133,6 @@
         </div>
     </div>
 </td></tr></table> <!-- for making columns -->
-<button type="submit">add observation to {{ case }}</button>
+<button type="submit">save changes</button>
 </form>
 {% endblock %}

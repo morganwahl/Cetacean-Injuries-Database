@@ -100,15 +100,14 @@ class ObservationForm(forms.ModelForm):
     types.
     '''
 
-    taxon = TaxonField()
+    #taxon = TaxonField()
 
     class Meta:
         model = Observation
-        # the case for a new observation is set by the view
-        exclude = ('case') 
-
+        # the case for a new observation is set by the view. The one-to-one 
+        # relations shouldn't be shown.
+        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel') 
 observation_forms['Case'] = ObservationForm
-
 
 class EntanglementObservationForm(ObservationForm):
 

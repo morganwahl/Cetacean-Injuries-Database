@@ -117,7 +117,7 @@ class Observation(models.Model):
         null= True,
         related_name= 'reported',
         help_text= '''\
-            Same as observer if this is a firsthand report. If not, this is who
+        Same as observer if this is a firsthand report. If not, this is who
         informed us of the incidents.
         ''',
     )

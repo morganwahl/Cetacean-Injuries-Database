@@ -74,3 +74,5 @@ class VesselAdminForm(forms.ModelForm):
     class Meta:
         model = VesselInfo
 
+VesselInfoForm = VesselAdminForm
+
