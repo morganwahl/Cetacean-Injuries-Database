@@ -14,8 +14,8 @@ observations_args = {
     'queryset': Observation.objects.all(),
     'template_object_name': 'observation',
 }
+urlpatterns = patterns('cetacean_incidents.generic_views',
 
-urlpatterns = patterns('django.views.generic.list_detail',
     (r'^animals/$', 'object_list', animals_args, 'all_animals'),
     (r'^animals/(?P<object_id>\d+)/$', 'object_detail', animals_args, 'animal_detail'),
     (r'^cases/$', 'object_list', cases_args, 'all_cases'),

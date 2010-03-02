@@ -7,7 +7,7 @@ contacts_args = {
     'template_object_name': 'contact',
 }
 
-urlpatterns = patterns('django.views.generic.list_detail',
+urlpatterns = patterns('cetacean_incidents.generic_views',
     (r'^$', 'object_list', contacts_args, 'all_contacts'),
     (r'^(?P<object_id>\d+)/$', 'object_detail', contacts_args, 'contact_detail'),
 )
