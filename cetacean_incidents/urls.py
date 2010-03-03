@@ -28,6 +28,14 @@ urlpatterns += patterns("django.views",
     ),
 )
 
+# we re-use some widgets from the admin interface which expect this
+js_info_dict = {
+    'packages': ('django.conf',),
+}
+urlpatterns += patterns('',
+    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
+)
+
 from django.contrib import databrowse
 from apps.taxons.models import Taxon
 from apps.incidents.models import Animal, Entanglement, EntanglementObservation
@@ -40,4 +48,5 @@ databrowse.site.register(EntanglementObservation)
 urlpatterns += patterns('',
     (r'^databrowse/(.*)', databrowse.site.root),
 )
+
 
