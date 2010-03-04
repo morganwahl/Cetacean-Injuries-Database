@@ -22,3 +22,9 @@ class ContactForm(forms.ModelForm):
     class Meta:
         model = Contact
 
+class OrganizationForm(forms.ModelForm):
+    
+    class Meta:
+        model = Organization
+
+
