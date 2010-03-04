@@ -43,6 +43,15 @@
     {% with form.affiliations as f %}
     {% include "unlabeled_field.html" %}
     {% endwith %}
+    <div>
+        <span class="fieldname">add new organizations to be affiliated with:</span>
+        {{ new_affiliations_formset.management_form }}
+        <div>
+            {% for aff_form in new_affiliations_formset.forms %}
+            {{ aff_form.as_p }}
+            {% endfor %}
+        </div>
+    </div>
 </div>
 <div class="section">
     <h3>Notes</h3>
