@@ -6,38 +6,37 @@ from models import Contact
 from forms import ContactForm
 
 @login_required
-def create_contact(request):
-    if request.method == 'POST':
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            new_contact = form.save()
-            return redirect('contact_detail', new_contact.id)
+def _create_or_edit_contact(request, contact_id=None):
+    if not contact_id is None:
+        # we're editing an existing contact
+        contact = Contact.objects.get(id=contact_id)
+        template = 'contacts/edit_contact.html'
     else:
-        form = ContactForm()
-    return render_to_response(
-        'contacts/create_contact.html',
-        {
-            'form': form,
-        },
-        context_instance= RequestContext(request),
-    )
-
-@login_required
-def edit_contact(request, contact_id):
-    contact = Contact.objects.get(id=contact_id)
+        # we're creating a new contact
+        contact = None # the default for ContactForm(instance=)
+        template = 'contacts/create_contact.html'
+    
     if request.method == 'POST':
         form = ContactForm(request.POST, instance=contact)
         if form.is_valid():
-            form.save()
+            contact = form.save()
             return redirect('contact_detail', contact.id)
     else:
         form = ContactForm(instance=contact)
     return render_to_response(
-        'contacts/edit_contact.html',
+        template,
         {
             'contact': contact,
             'form': form,
         },
         context_instance= RequestContext(request),
     )
+
+@login_required
+def create_contact(*args, **kwargs):
+    return _create_or_edit_contact(*args, **kwargs)
+
+@login_required
+def edit_contact(*args, **kwargs):
+    return _create_or_edit_contact(*args, **kwargs)
 
