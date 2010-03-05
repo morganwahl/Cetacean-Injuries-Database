@@ -19,6 +19,7 @@ class VesselInfo(models.Model):
     imo_number = models.IntegerField(
         blank= True,
         null= True,
+        verbose_name= "IMO number",
         help_text= "The International Maritime Organization number assigned to the ship. Should be a 7-digit number usually preceded with \"IMO\"."
         # Note that this most certainly _not_ unique, since we're just trying to
         # capture data for _one_ observatioin.
