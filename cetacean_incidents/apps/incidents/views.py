@@ -78,44 +78,61 @@ def add_case(request, animal_id):
         context_instance= RequestContext(request),
     )
 
-@login_required
-def edit_observation(request, observation_id):
-    observation = Observation.objects.get(id=observation_id)
-    # transmogrify the observation instance into one specific to the case type
-    case = observation.case.detailed
-    observation = case.observation_model.objects.get(observation_ptr=observation)
+def _add_or_edit_observation(request, case_id=None, observation_id=None):
+    if not observation_id is None:
+        observation = Observation.objects.get(id=observation_id)
+        # transmogrify the observation instance into one specific to the case type
+        case = observation.case.detailed
+        observation = case.observation_model.objects.get(observation_ptr=observation)
+        location = observation.location
+        report_datetime = observation.report_datetime
+        observation_datetime = observation.observation_datetime
+        observer_vessel = observation.observer_vessel
+        template = 'incidents/edit_observation.html'
+
+    elif not case_id is None:
+        observation = None # None is the default for ModelForm(instance=)
+        case = Case.objects.get(id=case_id).detailed
+        location = None
+        report_datetime = None
+        observation_datetime = None
+        observer_vessel = None
+        template = 'incidents/add_observation.html'
+
     FormClass = observation_forms[case.detailed_class_name]
-    
     if request.method == 'POST':
         observation_form = FormClass(request.POST, instance=observation)
-        location_form = LocationForm(request.POST, instance=observation.location)
-        report_datetime_form = DateTimeForm(request.POST, prefix='report', instance=observation.report_datetime)
-        observation_datetime_form = DateTimeForm(request.POST, prefix='observation', instance=observation.observation_datetime)
-        observer_vessel_form = VesselInfoForm(request.POST, instance=observation.observer_vessel)
+        location_form = LocationForm(request.POST, instance=location, prefix='location')
+        report_datetime_form = DateTimeForm(request.POST, prefix='report', instance=report_datetime)
+        observation_datetime_form = DateTimeForm(request.POST, prefix='observation', instance=observation_datetime)
+        observer_vessel_form = VesselInfoForm(request.POST, instance=observer_vessel, prefix='vessel')
         # this bit of functionality just checks if all the forms are valid
         valid = reduce(operator.and_, map(lambda f: f.is_valid(), (
             observation_form,
             location_form,
             report_datetime_form,
             observation_datetime_form,
-            observer_vessel_form
+            observer_vessel_form,
         )))
         if valid:
-            location_form.save()
-            report_datetime_form.save()
-            observation_datetime_form.save()
-            observer_vessel_form.save()
-            observation_form.save()
+            observation = observation_form.save(commit=False)
+            observation.case = case
+            observation.location = location_form.save()
+            observation.report_datetime = report_datetime_form.save()
+            observation.observer_vessel = observer_vessel_form.save()
+            observation.observation_datetime = observation_datetime_form.save()
+            observation.save()
+            # TODO any m2m fields on observations?
             return redirect(observation)
     else:
         observation_form = FormClass(instance=observation)
-        location_form = LocationForm(instance=observation.location)
-        report_datetime_form = DateTimeForm(prefix='report', instance=observation.report_datetime)
-        observation_datetime_form = DateTimeForm(prefix='observation', instance=observation.observation_datetime)
-        observer_vessel_form = VesselInfoForm()
-    
+        location_form = LocationForm(instance=location, prefix='location')
+        report_datetime_form = DateTimeForm(prefix='report', instance=report_datetime)
+        observation_datetime_form = DateTimeForm(prefix='observation', instance=observation_datetime)
+        observer_vessel_form = VesselInfoForm(prefix='vessel', instance=observer_vessel)
+
     return render_to_response(
-        'incidents/edit_observation.html',
+        template,
         {
             'case': case,
             'observation': observation,
@@ -129,53 +146,12 @@ def edit_observation(request, observation_id):
     )
 
 @login_required
+def edit_observation(request, observation_id):
+    return _add_or_edit_observation(request, observation_id=observation_id)
+
+@login_required
 def add_observation(request, case_id):
-    case = Case.objects.get(id=case_id).detailed
-    FormClass = observation_forms[case.detailed_class_name]
-    if request.method == 'POST':
-        observation_form = FormClass(request.POST)
-        location_form = LocationForm(request.POST)
-        report_datetime_form = DateTimeForm(request.POST, prefix='report')
-        observation_datetime_form = DateTimeForm(request.POST, prefix='observation')
-        observer_vessel_form = VesselInfoForm(request.POST)
-        # this bit of functionality just checks if all the forms are valid
-        valid = reduce(operator.and_, map(lambda f: f.is_valid(), (
-            observation_form,
-            location_form,
-            report_datetime_form,
-            observation_datetime_form,
-            observer_vessel_form,
-        )))
-        if valid:
-            new_observation = observation_form.save(commit=False)
-            # fill in all the fields that ObservationForm leaves out
-            new_observation.case = case
-            new_observation.location = location_form.save()
-            new_observation.report_datetime = report_datetime_form.save()
-            new_observation.observer_vessel = observer_vessel_form.save()
-            new_observation.observation_datetime = observation_datetime_form.save()
-            new_observation.save()
-            # TODO any m2m fields on observations?
-            return redirect(new_observation)
-    else:
-        observation_form = FormClass()
-        location_form = LocationForm()
-        report_datetime_form = DateTimeForm(prefix='report')
-        observation_datetime_form = DateTimeForm(prefix='observation')
-        observer_vessel_form = VesselInfoForm()
-    
-    return render_to_response(
-        'incidents/add_observation.html',
-        {
-            'case': case,
-            'observation_form': observation_form,
-            'location_form': location_form,
-            'report_datetime_form': report_datetime_form,
-            'observation_datetime_form': observation_datetime_form,
-            'observer_vessel_form': observer_vessel_form,
-        },
-        context_instance= RequestContext(request),
-    )
+    return _add_or_edit_observation(request, case_id=case_id)
 
 @login_required
 def edit_case(request, case_id):
