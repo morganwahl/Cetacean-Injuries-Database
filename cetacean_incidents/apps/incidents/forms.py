@@ -109,6 +109,10 @@ class ObservationForm(forms.ModelForm):
     '''
 
     #taxon = TaxonField()
+    observer_on_vessel = forms.BooleanField(
+        required= False,
+        help_text= "Was the observer on a vessel?"
+    )
 
     class Meta:
         model = Observation

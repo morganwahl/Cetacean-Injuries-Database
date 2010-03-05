@@ -4,8 +4,8 @@
 
 {% block head %}
 {{ block.super }}
-{{ observation_form.media }}
-{{ observer_vessel_form.media }}
+{{ forms.observation.media }}
+{{ forms.observer_vessel.media }}
 {# TODO media-import cleanup #}
 <link 
     rel="stylesheet"
@@ -51,7 +51,7 @@
                 <tr>
                     <th>report date and time</th>
                     <td>
-                        {% with report_datetime_form as d_form %}
+                        {% with forms.report_datetime as d_form %}
                         {% include "datetime/edit_datetime_include.html" %}
                         {% endwith %}
                     </td>
@@ -60,7 +60,7 @@
                     <th>reporter</th>
                     <td>
                         {# TODO firsthandedness #}
-                        {% with observation_form.reporter as f %}
+                        {% with forms.observation.reporter as f %}
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
                     </td>
@@ -70,10 +70,15 @@
 		<div id="observation">
             <h3>Observation</h3>
             <table>
+                <tr><th>observer</th><td>
+                    {% with forms.observation.observer as f %}
+                    {% include "unlabeled_field.html" %}
+                    {% endwith %}
+                </td></tr>
                 <tr>
                     <th>observation date and time</th>
                     <td>
-                        {% with observation_datetime_form as d_form %}
+                        {% with forms.observation_datetime as d_form %}
                         {% include "datetime/edit_datetime_include.html" %}
                         {% endwith %}
                     </td>
@@ -81,22 +86,35 @@
                 <tr>
                     <th>observation location</th>
                     <td>
-                        {% with location_form as l_form %}
+                        {% with forms.location as l_form %}
                         {% include "locations/edit_location_include.html" %}
                         {% endwith %}
+                        {% with forms.observation.observer_on_vessel as f %}
+                        {% include "labeled_field.html" %}
+                        {% endwith %}
+                        <script type="text/javascript">
+                            $().ready(function(){
+                                var checkbox_sel = "#id_{{ forms.observation.observer_on_vessel.html_name }}";
+                                $(checkbox_sel).change(function(event){
+                                    if ( $(checkbox_sel + ":checked").val() ) {
+                                        $("#vessel_info").show();
+                                    } else {
+                                        $("#vessel_info").hide();
+                                    }
+                                });
+                                $(checkbox_sel).change();
+                            });
+                        </script>
                     </td>
                 </tr>
-                <tr><th>observer</th><td>
-                {% with observation_form.observer as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-                </td></tr>
-                <tr>
+                <tr id="vessel_info">
                     <th>vessel info for observer's vessel</th>
                     <td>
-                        {% for f in observer_vessel_form %}
-                        {% include "labeled_field.html" %}
-                        {% endfor %}
+                        <div>
+                            {% for f in forms.observer_vessel %}
+                            {% include "labeled_field.html" %}
+                            {% endfor %}
+                        </div>
                     </td>
                 </tr>
             </table>
@@ -105,19 +123,19 @@
             <h3>Animal identification</h3>
             <table>
                 <tr><th>taxon</th><td>
-                {% with observation_form.taxon as f %}
+                {% with forms.observation.taxon as f %}
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 </td></tr>
                 <tr><th>sex</th><td>
-                {% with observation_form.gender as f %}
+                {% with forms.observation.gender as f %}
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 </td></tr>
                 <tr>
                 <th>description</th>
                 <td>
-                {% with observation_form.animal_description as f %}
+                {% with forms.observation.animal_description as f %}
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 </td>
@@ -130,17 +148,17 @@
                 <tr>
                     <th>wounds?</th>
                     <td>
-                        {% with observation_form.wounded as f %}
+                        {% with forms.observation.wounded as f %}
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
-                        {% with observation_form.wound_description as f %}
+                        {% with forms.observation.wound_description as f %}
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
                     </td>
                 </tr>
                 <tr><th>biopsy samples taken?</th>
                 <td>
-                {% with observation_form.biopsy as f %}
+                {% with forms.observation.biopsy as f %}
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 </td></tr>
@@ -151,7 +169,7 @@
     <div class="section">
         <h3>Narrative</h3>
         <div>
-            {% with observation_form.narrative as f %}
+            {% with forms.observation.narrative as f %}
             {% include "unlabeled_field.html" %}
             {% endwith %}
         </div>

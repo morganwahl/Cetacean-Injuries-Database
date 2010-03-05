@@ -91,56 +91,63 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         template = 'incidents/edit_observation.html'
 
     elif not case_id is None:
-        observation = None # None is the default for ModelForm(instance=)
         case = Case.objects.get(id=case_id).detailed
+        observation = None # None is the default for ModelForm(instance=)
         location = None
         report_datetime = None
         observation_datetime = None
         observer_vessel = None
         template = 'incidents/add_observation.html'
 
-    FormClass = observation_forms[case.detailed_class_name]
+    data = None
     if request.method == 'POST':
-        observation_form = FormClass(request.POST, instance=observation)
-        location_form = LocationForm(request.POST, instance=location, prefix='location')
-        report_datetime_form = DateTimeForm(request.POST, prefix='report', instance=report_datetime)
-        observation_datetime_form = DateTimeForm(request.POST, prefix='observation', instance=observation_datetime)
-        observer_vessel_form = VesselInfoForm(request.POST, instance=observer_vessel, prefix='vessel')
-        # this bit of functionality just checks if all the forms are valid
-        valid = reduce(operator.and_, map(lambda f: f.is_valid(), (
-            observation_form,
-            location_form,
-            report_datetime_form,
-            observation_datetime_form,
-            observer_vessel_form,
-        )))
+        data = request.POST
+    FormClass = observation_forms[case.detailed_class_name]
+    forms = {
+        'observation': FormClass(
+            data,
+            initial= {'observer_on_vessel': observer_vessel is not None},
+            instance= observation
+        ),
+        'location': LocationForm(data, instance=location, prefix='location'),
+        'report_datetime': DateTimeForm(data, prefix='report', instance=report_datetime),
+        'observation_datetime': DateTimeForm(data, prefix='observation', instance=observation_datetime),
+        'observer_vessel': VesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
+    }
+    forms_to_check = forms.copy()
+    
+    if request.method == 'POST' and forms_to_check['observation'].is_valid():
+        del forms_to_check['observation']
+        # check ObservationForm.observer_on_vessel
+        observer_vessel_exists = forms['observation'].cleaned_data['observer_on_vessel']
+        if not observer_vessel_exists:
+            del forms_to_check['observer_vessel']
+        
+        # this bit of functionalness just checks if all the forms are valid
+        valid = reduce(operator.and_, map(lambda f: f.is_valid(), forms_to_check.itervalues()))
         if valid:
-            observation = observation_form.save(commit=False)
+            observation = forms['observation'].save(commit=False)
             observation.case = case
-            observation.location = location_form.save()
-            observation.report_datetime = report_datetime_form.save()
-            observation.observer_vessel = observer_vessel_form.save()
-            observation.observation_datetime = observation_datetime_form.save()
+            observation.location = forms['location'].save()
+            observation.report_datetime = forms['report_datetime'].save()
+            observation.observation_datetime = forms['observation_datetime'].save()
+            if observer_vessel_exists:
+                observation.observer_vessel = forms['observer_vessel'].save()
+            else:
+                if not observation.observer_vessel is None:
+                    vesselinfo = observation.observer_vessel
+                    observation.observer_vessel = None
+                    vesselinfo.delete()
             observation.save()
             # TODO any m2m fields on observations?
             return redirect(observation)
-    else:
-        observation_form = FormClass(instance=observation)
-        location_form = LocationForm(instance=location, prefix='location')
-        report_datetime_form = DateTimeForm(prefix='report', instance=report_datetime)
-        observation_datetime_form = DateTimeForm(prefix='observation', instance=observation_datetime)
-        observer_vessel_form = VesselInfoForm(prefix='vessel', instance=observer_vessel)
 
     return render_to_response(
         template,
         {
             'case': case,
             'observation': observation,
-            'observation_form': observation_form,
-            'location_form': location_form,
-            'report_datetime_form': report_datetime_form,
-            'observation_datetime_form': observation_datetime_form,
-            'observer_vessel_form': observer_vessel_form,
+            'forms': forms,
         },
         context_instance= RequestContext(request),
     )
