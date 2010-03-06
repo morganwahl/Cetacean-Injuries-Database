@@ -1,5 +1,6 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
+{% load contact_extras %}
 {% load case_extras %}
 
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
@@ -39,7 +40,7 @@
                     {% endif %}
                 </td>
             </tr>
-            <tr><th>observer</th><td>{{ observation.observer }}</td></tr>
+            <tr><th>observer</th><td>{% contact_link observation.observer %}</td></tr>
             <tr>
                 <th>vessel info for observer's vessel</th>
                 <td>{{ observation.observer_vessel }}</td>
@@ -57,7 +58,7 @@
                     {% if observation.firsthand %}
                     <i>reported by the observer</i>
                     {% else %}
-                    {{ observation.reporter }}
+                    {% contact_link observation.reporter %}
                     {% endif %}
                 </td>
             </tr>
