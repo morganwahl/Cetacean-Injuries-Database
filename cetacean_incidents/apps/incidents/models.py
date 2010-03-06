@@ -292,12 +292,11 @@ class Case(models.Model):
             highest_so_far = 0
             for c in Case.objects.all():
                 # look at all the former yearly_numbers in the case's name_sets
-                yearly_numbers = map(
-                    lambda name: int(re.search(r'\d+#(\d+)', name).group(1)),
-                    c.names_set,
-                )
-                for yearly_number in yearly_numbers:
-                    highest_so_far = max(highest_so_far, yearly_number)
+                for name in c.names_set:
+                    match = re.search(r'%4d#(\d+)' % year, name)
+                    if match:
+                        yearly_number = int(match.group(1))
+                        highest_so_far = max(highest_so_far, yearly_number)
             self.yearly_number = highest_so_far + 1
 
         # add the current_name to the names set, if necessary
