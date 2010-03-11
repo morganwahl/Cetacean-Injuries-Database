@@ -21,6 +21,9 @@
         $('#tabs').tabs();
     });
 </script>
+<style type="text/css">
+    [name={{ forms.observation.narrative.name }}] { width: 100%; }
+</style>
 {% endblock %}
 
 {% block title %}{{ block.super }}: {{ case }}: {% block observation_title %}NO TITLE!{% endblock %}{% endblock %}
@@ -36,8 +39,15 @@
 {% endblock %}
 
 {% block content %}
-<form action="" method="post">
-<table class="layout"><tr class="layout"><td class="layout"> <!-- for making columns -->
+<form action="" method="post"><div>
+    <div class="section">
+        <h3>Narrative</h3>
+        <div>
+            {% with forms.observation.narrative as f %}
+            {% include "unlabeled_field.html" %}
+            {% endwith %}
+        </div>
+    </div>
 	<div id="tabs">
 		<ul>
 			<li><a href="#reporting">Reporting</a></li>
@@ -165,16 +175,6 @@
             </table>
         </div>
 	</div>
-</td><td class="layout">
-    <div class="section">
-        <h3>Narrative</h3>
-        <div>
-            {% with forms.observation.narrative as f %}
-            {% include "unlabeled_field.html" %}
-            {% endwith %}
-        </div>
-    </div>
-</td></tr></table> <!-- for making columns -->
-<button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
-</form>
+    <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
+</div></form>
 {% endblock %}
