@@ -4,6 +4,7 @@ from django.template.loader import render_to_string
 from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.contacts.models import Contact
 
 observation_forms = {}
 
@@ -112,6 +113,27 @@ class ObservationForm(forms.ModelForm):
     observer_on_vessel = forms.BooleanField(
         required= False,
         help_text= "Was the observer on a vessel?"
+    )
+    new_reporter = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('other', 'use an existing contact'),
+            ('none', 'no contact info for the reporter'),
+        ),
+        initial= 'other',
+        widget= forms.RadioSelect,
+        help_text= "create a new contact for the reporter?",
+    )
+    new_observer = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('other', 'use an existing contact'),
+            ('reporter', 'same contact info as reporter'),
+            ('none', 'no contact info for the observer'),
+        ),
+        initial= 'other',
+        widget= forms.RadioSelect,
+        help_text= "create a new contact for the observer?",
     )
 
     class Meta:

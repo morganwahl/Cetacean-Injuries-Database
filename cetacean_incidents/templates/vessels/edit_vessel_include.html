@@ -1,0 +1,30 @@
+{# intended to be included in another template, with a VesselInfoForm as v_form and a ContactForm as c_form #}
+{# assumes RadioHider is already defined #}
+<div>
+    <script type="text/javascript">
+        $().ready(function(){
+            {# TODO get the values from v_form.new_vesselcontact.field #}
+            RadioHider.init('vessel-new_vesselcontact', {
+                'new': 'vesselcontact_new_contact',
+                'other': 'vesselcontact_existing_contact'
+            });
+        });
+    </script>
+    {% with v_form.new_vesselcontact as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+    <table id="vesselcontact_new_contact" style="display:none;">
+        {{ c_form.as_table }}
+    </table>
+    <div id="vesselcontact_existing_contact">
+        {% with v_form.contact as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </div>
+    {% for f in v_form %}
+    {% ifnotequal f.label_tag v_form.new_vesselcontact.label_tag %}
+    {% include "labeled_field.html" %}
+    {% endifnotequal %}
+    {% endfor %}
+</div>
+

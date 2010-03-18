@@ -74,5 +74,37 @@ class VesselAdminForm(forms.ModelForm):
     class Meta:
         model = VesselInfo
 
-VesselInfoForm = VesselAdminForm
+class VesselInfoForm(VesselAdminForm):
+    
+    new_vesselcontact = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('other', 'use an existing contact'),
+            ('none', 'no contact info'),
+        ),
+        initial= 'other',
+        widget= forms.RadioSelect,
+        help_text= "create a new contact for the vessel's contact?",
+    )
+    
+    class Meta(VesselAdminForm.Meta):
+        pass
+
+class ObserverVesselInfoForm(VesselAdminForm):
+    
+    new_vesselcontact = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('reporter', 'use the same contact as the reporter'),
+            ('observer', 'use the same contact as the observer'),
+            ('other', 'use an existing contact'),
+            ('none', 'no contact info'),
+        ),
+        initial= 'other',
+        widget= forms.RadioSelect,
+        help_text= "create a new contact for the vessel's contact?",
+    )
+    
+    class Meta(VesselAdminForm.Meta):
+        pass
 

@@ -10,7 +10,8 @@ from models import Case, Entanglement, Animal, Observation
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
 from apps.locations.forms import LocationForm
 from apps.datetime.forms import DateTimeForm
-from apps.vessels.forms import VesselInfoForm
+from apps.vessels.forms import ObserverVesselInfoForm
+from apps.contacts.forms import ContactForm
 
 @login_required
 def create_animal(request):
@@ -109,37 +110,107 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
             initial= {'observer_on_vessel': observer_vessel is not None},
             instance= observation
         ),
+        'new_reporter': ContactForm(data, prefix='new_reporter'),
+        'new_observer': ContactForm(data, prefix='new_observer'),
         'location': LocationForm(data, instance=location, prefix='location'),
         'report_datetime': DateTimeForm(data, prefix='report', instance=report_datetime),
         'observation_datetime': DateTimeForm(data, prefix='observation', instance=observation_datetime),
-        'observer_vessel': VesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
+        'observer_vessel': ObserverVesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
+        'new_vesselcontact': ContactForm(data, prefix="new_vesselcontact"),
     }
+    # _not_ a deep-copy.
     forms_to_check = forms.copy()
     
-    if request.method == 'POST' and forms_to_check['observation'].is_valid():
-        del forms_to_check['observation']
-        # check ObservationForm.observer_on_vessel
-        observer_vessel_exists = forms['observation'].cleaned_data['observer_on_vessel']
-        if not observer_vessel_exists:
-            del forms_to_check['observer_vessel']
-        
-        # this bit of functionalness just checks if all the forms are valid
-        valid = reduce(operator.and_, map(lambda f: f.is_valid(), forms_to_check.itervalues()))
-        if valid:
+    if request.method == 'POST':
+        # this 'loop' is just so we can break out when an invalid form is found
+        for once in (None,):
+            if not forms['observation'].is_valid():
+                break
+            del forms_to_check['observation']
+            
+            # check ObservationForm.new_reporter
+            if forms['observation'].cleaned_data['new_reporter'] == 'new':
+                if not forms['new_reporter'].is_valid():
+                    break
+            # if the contact is new, we just checked the ContactForm's
+            # validity; if it's not new, then we shouldn't check it's
+            # validity. either way, remove it from the list
+            del forms_to_check['new_reporter']
+
+            # check ObservationForm.new_observer
+            if forms['observation'].cleaned_data['new_observer'] == 'new':
+                if not forms['new_observer'].is_valid():
+                    break
+            del forms_to_check['new_observer']
+            
+            # check ObservationForm.observer_on_vessel
+            observer_vessel_exists = forms['observation'].cleaned_data['observer_on_vessel']
+            if not observer_vessel_exists:
+                # observer_vessel
+                del forms_to_check['observer_vessel']
+                del forms_to_check['new_vesselcontact']
+            else:
+                if not forms['observer_vessel'].is_valid():
+                    break
+                del forms_to_check['observer_vessel']
+                # check ObserverVesselInfoForm.new_vesselcontact
+                if forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'new':
+                    if not forms['new_vesselcontact'].is_valid():
+                        break
+                del forms_to_check['new_vesselcontact']
+            
+            # this bit of functionalness just checks if all the remaining forms are valid
+            valid = reduce(operator.and_, map(lambda f: f.is_valid(), forms_to_check.itervalues()))
+            if not valid:
+                break
+            
+            # at this point all the forms contain valid data, so start storing
+            
+
             observation = forms['observation'].save(commit=False)
             observation.case = case
-            observation.location = forms['location'].save()
+
             observation.report_datetime = forms['report_datetime'].save()
+
+            if forms['observation'].cleaned_data['new_reporter'] == 'new':
+                observation.reporter = forms['new_reporter'].save()
+            elif forms['observation'].cleaned_data['new_reporter'] == 'none':
+                observation.reporter = None
+                # TODO deleting contacts?
+
+            observation.location = forms['location'].save()
+
             observation.observation_datetime = forms['observation_datetime'].save()
+
+            if forms['observation'].cleaned_data['new_observer'] == 'new':
+                observation.observer = forms['new_observer'].save()
+            elif forms['observation'].cleaned_data['new_observer'] == 'reporter':
+                observation.observer = observation.reporter
+            elif forms['observation'].cleaned_data['new_observer'] == 'none':
+                observation.observer = None
+
             if observer_vessel_exists:
-                observation.observer_vessel = forms['observer_vessel'].save()
+                vessel_info = forms['observer_vessel'].save(commit=False)
+                if forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'new':
+                    vessel_info.contact = forms['new_vesselcontact'].save()
+                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'reporter':
+                    vessel_info.contact = observation.reporter
+                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'observer':
+                    vessel_info.contact = observation.observer
+                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'none':
+                    vessel_info.contact = None
+                vessel_info.save()
+                # TODO any m2m fields on Vesselinfo?
+                observation.observer_vessel = vessel_info
             else:
                 if not observation.observer_vessel is None:
                     vesselinfo = observation.observer_vessel
                     observation.observer_vessel = None
                     vesselinfo.delete()
+
             observation.save()
             # TODO any m2m fields on observations?
+
             return redirect(observation)
 
     return render_to_response(
