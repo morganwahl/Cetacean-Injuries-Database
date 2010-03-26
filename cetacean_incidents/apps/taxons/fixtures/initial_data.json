@@ -1,0 +1,442 @@
+[
+  {
+    "pk": 10, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Balaenidae", 
+      "common_names": "right whales and bowhead whales", 
+      "supertaxon": 3
+    }
+  }, 
+  {
+    "pk": 14, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Balaenoptera", 
+      "common_names": "", 
+      "supertaxon": 4
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Balaenopteridae", 
+      "common_names": "rorquals", 
+      "supertaxon": 3
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 2.0, 
+      "name": "Cetacea", 
+      "common_names": "whales, dolphins, and porpoises", 
+      "supertaxon": null
+    }
+  }, 
+  {
+    "pk": 19, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Cetorhinidae", 
+      "common_names": "", 
+      "supertaxon": 18
+    }
+  }, 
+  {
+    "pk": 20, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Cetorhinus", 
+      "common_names": "", 
+      "supertaxon": 19
+    }
+  }, 
+  {
+    "pk": 40, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Delphinidae", 
+      "common_names": "oceanic dolphins", 
+      "supertaxon": 39
+    }
+  }, 
+  {
+    "pk": 39, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.3999999999999999, 
+      "name": "Delphinoidea", 
+      "common_names": "", 
+      "supertaxon": 13
+    }
+  }, 
+  {
+    "pk": 36, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Dermochelyidae", 
+      "common_names": "", 
+      "supertaxon": 35
+    }
+  }, 
+  {
+    "pk": 37, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Dermochelys", 
+      "common_names": "", 
+      "supertaxon": 36
+    }
+  }, 
+  {
+    "pk": 11, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Eubalaena", 
+      "common_names": "right whales", 
+      "supertaxon": 10
+    }
+  }, 
+  {
+    "pk": 41, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Globicephala", 
+      "common_names": "pilot whales, calderon dolphins", 
+      "supertaxon": 40
+    }
+  }, 
+  {
+    "pk": 32, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Kogia", 
+      "common_names": "small sperm whales", 
+      "supertaxon": 29
+    }
+  }, 
+  {
+    "pk": 29, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Kogiidae", 
+      "common_names": "", 
+      "supertaxon": 28
+    }
+  }, 
+  {
+    "pk": 18, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 2.0, 
+      "name": "Lamniformes", 
+      "common_names": "mackerel sharks", 
+      "supertaxon": 17
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Megaptera", 
+      "common_names": "", 
+      "supertaxon": 4
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.8, 
+      "name": "Mysticeti", 
+      "common_names": "baleen whales", 
+      "supertaxon": 1
+    }
+  }, 
+  {
+    "pk": 13, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.8, 
+      "name": "Odontoceti", 
+      "common_names": "toothed whales: dolphins, orca, sperm whales, beaked whales", 
+      "supertaxon": 1
+    }
+  }, 
+  {
+    "pk": 25, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Phoca", 
+      "common_names": "", 
+      "supertaxon": 24
+    }
+  }, 
+  {
+    "pk": 24, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Phocidae", 
+      "common_names": "true seals, earless seals", 
+      "supertaxon": 23
+    }
+  }, 
+  {
+    "pk": 30, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Physeter", 
+      "common_names": "", 
+      "supertaxon": 27
+    }
+  }, 
+  {
+    "pk": 27, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Physeteridae", 
+      "common_names": "sperm whales", 
+      "supertaxon": 28
+    }
+  }, 
+  {
+    "pk": 28, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.3999999999999999, 
+      "name": "Physeteroidea", 
+      "common_names": "", 
+      "supertaxon": 13
+    }
+  }, 
+  {
+    "pk": 23, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.3999999999999999, 
+      "name": "Pinnipedia", 
+      "common_names": "walruses and seals", 
+      "supertaxon": null
+    }
+  }, 
+  {
+    "pk": 17, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 2.3999999999999999, 
+      "name": "Selachimorpha", 
+      "common_names": "sharks", 
+      "supertaxon": null
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 2.0, 
+      "name": "Sirenia", 
+      "common_names": "sea cows", 
+      "supertaxon": null
+    }
+  }, 
+  {
+    "pk": 35, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 2.0, 
+      "name": "Testudines", 
+      "common_names": "turtles and tortises", 
+      "supertaxon": null
+    }
+  }, 
+  {
+    "pk": 7, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 1.0, 
+      "name": "Trichechidae", 
+      "common_names": "", 
+      "supertaxon": 2
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": 0.0, 
+      "name": "Trichechus", 
+      "common_names": "manatees", 
+      "supertaxon": 7
+    }
+  }, 
+  {
+    "pk": 16, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "acutorostrata", 
+      "common_names": "northern minke, common minke", 
+      "supertaxon": 14
+    }
+  }, 
+  {
+    "pk": 44, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "borealis", 
+      "common_names": "sei whale", 
+      "supertaxon": 14
+    }
+  }, 
+  {
+    "pk": 33, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "breviceps", 
+      "common_names": "pygmy sperm whale", 
+      "supertaxon": 32
+    }
+  }, 
+  {
+    "pk": 38, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "coriacea", 
+      "common_names": "leatherback turtle", 
+      "supertaxon": 37
+    }
+  }, 
+  {
+    "pk": 12, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "glacialis", 
+      "common_names": "north atlantic right whale", 
+      "supertaxon": 11
+    }
+  }, 
+  {
+    "pk": 31, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "macrocephalus", 
+      "common_names": "sperm whale", 
+      "supertaxon": 30
+    }
+  }, 
+  {
+    "pk": 42, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "macrorhynchus", 
+      "common_names": "short-finned pilot whale", 
+      "supertaxon": 41
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "manatus", 
+      "common_names": "west indian manatee", 
+      "supertaxon": 8
+    }
+  }, 
+  {
+    "pk": 21, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "maximus", 
+      "common_names": "basking shark", 
+      "supertaxon": 20
+    }
+  }, 
+  {
+    "pk": 43, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "melas", 
+      "common_names": "long-finned pilot whale", 
+      "supertaxon": 41
+    }
+  }, 
+  {
+    "pk": 22, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "musculus", 
+      "common_names": "blue whale", 
+      "supertaxon": 14
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "novaeangliae", 
+      "common_names": "humpback whale", 
+      "supertaxon": 5
+    }
+  }, 
+  {
+    "pk": 15, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "physalus", 
+      "common_names": "fin whale, finback, razorback, common rorqual", 
+      "supertaxon": 14
+    }
+  }, 
+  {
+    "pk": 34, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "sima", 
+      "common_names": "dwarf sperm whale", 
+      "supertaxon": 32
+    }
+  }, 
+  {
+    "pk": 26, 
+    "model": "taxons.taxon", 
+    "fields": {
+      "rank": -1.0, 
+      "name": "vitulina", 
+      "common_names": "harbor seal, harbour seal, common seal", 
+      "supertaxon": 25
+    }
+  }
+]

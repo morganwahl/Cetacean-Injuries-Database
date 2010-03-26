@@ -1,0 +1,2442 @@
+[
+  {
+    "pk": "AF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 4, 
+      "iso3": "AFG", 
+      "printable_name": "Afghanistan", 
+      "name": "AFGHANISTAN"
+    }
+  }, 
+  {
+    "pk": "AX", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 248, 
+      "iso3": "ALA", 
+      "printable_name": "\u00c5land Islands", 
+      "name": "ALAND ISLANDS"
+    }
+  }, 
+  {
+    "pk": "AL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 8, 
+      "iso3": "ALB", 
+      "printable_name": "Albania", 
+      "name": "ALBANIA"
+    }
+  }, 
+  {
+    "pk": "DZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 12, 
+      "iso3": "DZA", 
+      "printable_name": "Algeria", 
+      "name": "ALGERIA"
+    }
+  }, 
+  {
+    "pk": "AS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 16, 
+      "iso3": "ASM", 
+      "printable_name": "American Samoa", 
+      "name": "AMERICAN SAMOA"
+    }
+  }, 
+  {
+    "pk": "AD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 20, 
+      "iso3": "AND", 
+      "printable_name": "Andorra", 
+      "name": "ANDORRA"
+    }
+  }, 
+  {
+    "pk": "AO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 24, 
+      "iso3": "AGO", 
+      "printable_name": "Angola", 
+      "name": "ANGOLA"
+    }
+  }, 
+  {
+    "pk": "AI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 660, 
+      "iso3": "AIA", 
+      "printable_name": "Anguilla", 
+      "name": "ANGUILLA"
+    }
+  }, 
+  {
+    "pk": "AQ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 10, 
+      "iso3": "ATA", 
+      "printable_name": "Antarctica", 
+      "name": "ANTARCTICA"
+    }
+  }, 
+  {
+    "pk": "AG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 28, 
+      "iso3": "ATG", 
+      "printable_name": "Antigua and Barbuda", 
+      "name": "ANTIGUA AND BARBUDA"
+    }
+  }, 
+  {
+    "pk": "AR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 32, 
+      "iso3": "ARG", 
+      "printable_name": "Argentina", 
+      "name": "ARGENTINA"
+    }
+  }, 
+  {
+    "pk": "AM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 51, 
+      "iso3": "ARM", 
+      "printable_name": "Armenia", 
+      "name": "ARMENIA"
+    }
+  }, 
+  {
+    "pk": "AW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 533, 
+      "iso3": "ABW", 
+      "printable_name": "Aruba", 
+      "name": "ARUBA"
+    }
+  }, 
+  {
+    "pk": "AU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 36, 
+      "iso3": "AUS", 
+      "printable_name": "Australia", 
+      "name": "AUSTRALIA"
+    }
+  }, 
+  {
+    "pk": "AT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 40, 
+      "iso3": "AUT", 
+      "printable_name": "Austria", 
+      "name": "AUSTRIA"
+    }
+  }, 
+  {
+    "pk": "AZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 31, 
+      "iso3": "AZE", 
+      "printable_name": "Azerbaijan", 
+      "name": "AZERBAIJAN"
+    }
+  }, 
+  {
+    "pk": "BS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 44, 
+      "iso3": "BHS", 
+      "printable_name": "Bahamas", 
+      "name": "BAHAMAS"
+    }
+  }, 
+  {
+    "pk": "BH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 48, 
+      "iso3": "BHR", 
+      "printable_name": "Bahrain", 
+      "name": "BAHRAIN"
+    }
+  }, 
+  {
+    "pk": "BD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 50, 
+      "iso3": "BGD", 
+      "printable_name": "Bangladesh", 
+      "name": "BANGLADESH"
+    }
+  }, 
+  {
+    "pk": "BB", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 52, 
+      "iso3": "BRB", 
+      "printable_name": "Barbados", 
+      "name": "BARBADOS"
+    }
+  }, 
+  {
+    "pk": "BY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 112, 
+      "iso3": "BLR", 
+      "printable_name": "Belarus", 
+      "name": "BELARUS"
+    }
+  }, 
+  {
+    "pk": "BE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 56, 
+      "iso3": "BEL", 
+      "printable_name": "Belgium", 
+      "name": "BELGIUM"
+    }
+  }, 
+  {
+    "pk": "BZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 84, 
+      "iso3": "BLZ", 
+      "printable_name": "Belize", 
+      "name": "BELIZE"
+    }
+  }, 
+  {
+    "pk": "BJ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 204, 
+      "iso3": "BEN", 
+      "printable_name": "Benin", 
+      "name": "BENIN"
+    }
+  }, 
+  {
+    "pk": "BM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 60, 
+      "iso3": "BMU", 
+      "printable_name": "Bermuda", 
+      "name": "BERMUDA"
+    }
+  }, 
+  {
+    "pk": "BT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 64, 
+      "iso3": "BTN", 
+      "printable_name": "Bhutan", 
+      "name": "BHUTAN"
+    }
+  }, 
+  {
+    "pk": "BO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 68, 
+      "iso3": "BOL", 
+      "printable_name": "Bolivia", 
+      "name": "BOLIVIA"
+    }
+  }, 
+  {
+    "pk": "BA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 70, 
+      "iso3": "BIH", 
+      "printable_name": "Bosnia and Herzegovina", 
+      "name": "BOSNIA AND HERZEGOVINA"
+    }
+  }, 
+  {
+    "pk": "BW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 72, 
+      "iso3": "BWA", 
+      "printable_name": "Botswana", 
+      "name": "BOTSWANA"
+    }
+  }, 
+  {
+    "pk": "BV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 74, 
+      "iso3": "BVT", 
+      "printable_name": "Bouvet Island", 
+      "name": "BOUVET ISLAND"
+    }
+  }, 
+  {
+    "pk": "BR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 76, 
+      "iso3": "BRA", 
+      "printable_name": "Brazil", 
+      "name": "BRAZIL"
+    }
+  }, 
+  {
+    "pk": "IO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 86, 
+      "iso3": "IOT", 
+      "printable_name": "British Indian Ocean Territory", 
+      "name": "BRITISH INDIAN OCEAN TERRITORY"
+    }
+  }, 
+  {
+    "pk": "BN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 96, 
+      "iso3": "BRN", 
+      "printable_name": "Brunei Darussalam", 
+      "name": "BRUNEI DARUSSALAM"
+    }
+  }, 
+  {
+    "pk": "BG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 100, 
+      "iso3": "BGR", 
+      "printable_name": "Bulgaria", 
+      "name": "BULGARIA"
+    }
+  }, 
+  {
+    "pk": "BF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 854, 
+      "iso3": "BFA", 
+      "printable_name": "Burkina Faso", 
+      "name": "BURKINA FASO"
+    }
+  }, 
+  {
+    "pk": "BI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 108, 
+      "iso3": "BDI", 
+      "printable_name": "Burundi", 
+      "name": "BURUNDI"
+    }
+  }, 
+  {
+    "pk": "KH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 116, 
+      "iso3": "KHM", 
+      "printable_name": "Cambodia", 
+      "name": "CAMBODIA"
+    }
+  }, 
+  {
+    "pk": "CM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 120, 
+      "iso3": "CMR", 
+      "printable_name": "Cameroon", 
+      "name": "CAMEROON"
+    }
+  }, 
+  {
+    "pk": "CA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 124, 
+      "iso3": "CAN", 
+      "printable_name": "Canada", 
+      "name": "CANADA"
+    }
+  }, 
+  {
+    "pk": "CV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 132, 
+      "iso3": "CPV", 
+      "printable_name": "Cape Verde", 
+      "name": "CAPE VERDE"
+    }
+  }, 
+  {
+    "pk": "KY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 136, 
+      "iso3": "CYM", 
+      "printable_name": "Cayman Islands", 
+      "name": "CAYMAN ISLANDS"
+    }
+  }, 
+  {
+    "pk": "CF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 140, 
+      "iso3": "CAF", 
+      "printable_name": "Central African Republic", 
+      "name": "CENTRAL AFRICAN REPUBLIC"
+    }
+  }, 
+  {
+    "pk": "TD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 148, 
+      "iso3": "TCD", 
+      "printable_name": "Chad", 
+      "name": "CHAD"
+    }
+  }, 
+  {
+    "pk": "CL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 152, 
+      "iso3": "CHL", 
+      "printable_name": "Chile", 
+      "name": "CHILE"
+    }
+  }, 
+  {
+    "pk": "CN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 156, 
+      "iso3": "CHN", 
+      "printable_name": "China", 
+      "name": "CHINA"
+    }
+  }, 
+  {
+    "pk": "CX", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 162, 
+      "iso3": "CXR", 
+      "printable_name": "Christmas Island", 
+      "name": "CHRISTMAS ISLAND"
+    }
+  }, 
+  {
+    "pk": "CC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 166, 
+      "iso3": "CCK", 
+      "printable_name": "Cocos (Keeling) Islands", 
+      "name": "COCOS (KEELING) ISLANDS"
+    }
+  }, 
+  {
+    "pk": "CO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 170, 
+      "iso3": "COL", 
+      "printable_name": "Colombia", 
+      "name": "COLOMBIA"
+    }
+  }, 
+  {
+    "pk": "KM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 174, 
+      "iso3": "COM", 
+      "printable_name": "Comoros", 
+      "name": "COMOROS"
+    }
+  }, 
+  {
+    "pk": "CG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 178, 
+      "iso3": "COG", 
+      "printable_name": "Congo", 
+      "name": "CONGO"
+    }
+  }, 
+  {
+    "pk": "CD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 180, 
+      "iso3": "COD", 
+      "printable_name": "Democratic Republic of the Congo", 
+      "name": "CONGO, THE DEMOCRATIC REPUBLIC OF THE"
+    }
+  }, 
+  {
+    "pk": "CK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 184, 
+      "iso3": "COK", 
+      "printable_name": "Cook Islands", 
+      "name": "COOK ISLANDS"
+    }
+  }, 
+  {
+    "pk": "CR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 188, 
+      "iso3": "CRI", 
+      "printable_name": "Costa Rica", 
+      "name": "COSTA RICA"
+    }
+  }, 
+  {
+    "pk": "CI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 384, 
+      "iso3": "CIV", 
+      "printable_name": "C\u00f4te d'Ivoire", 
+      "name": "COTE D'IVOIRE"
+    }
+  }, 
+  {
+    "pk": "HR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 191, 
+      "iso3": "HRV", 
+      "printable_name": "Croatia", 
+      "name": "CROATIA"
+    }
+  }, 
+  {
+    "pk": "CU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 192, 
+      "iso3": "CUB", 
+      "printable_name": "Cuba", 
+      "name": "CUBA"
+    }
+  }, 
+  {
+    "pk": "CY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 196, 
+      "iso3": "CYP", 
+      "printable_name": "Cyprus", 
+      "name": "CYPRUS"
+    }
+  }, 
+  {
+    "pk": "CZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 203, 
+      "iso3": "CZE", 
+      "printable_name": "Czech Republic", 
+      "name": "CZECH REPUBLIC"
+    }
+  }, 
+  {
+    "pk": "DK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 208, 
+      "iso3": "DNK", 
+      "printable_name": "Denmark", 
+      "name": "DENMARK"
+    }
+  }, 
+  {
+    "pk": "DJ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 262, 
+      "iso3": "DJI", 
+      "printable_name": "Djibouti", 
+      "name": "DJIBOUTI"
+    }
+  }, 
+  {
+    "pk": "DM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 212, 
+      "iso3": "DMA", 
+      "printable_name": "Dominica", 
+      "name": "DOMINICA"
+    }
+  }, 
+  {
+    "pk": "DO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 214, 
+      "iso3": "DOM", 
+      "printable_name": "Dominican Republic", 
+      "name": "DOMINICAN REPUBLIC"
+    }
+  }, 
+  {
+    "pk": "EC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 218, 
+      "iso3": "ECU", 
+      "printable_name": "Ecuador", 
+      "name": "ECUADOR"
+    }
+  }, 
+  {
+    "pk": "EG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 818, 
+      "iso3": "EGY", 
+      "printable_name": "Egypt", 
+      "name": "EGYPT"
+    }
+  }, 
+  {
+    "pk": "SV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 222, 
+      "iso3": "SLV", 
+      "printable_name": "El Salvador", 
+      "name": "EL SALVADOR"
+    }
+  }, 
+  {
+    "pk": "GQ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 226, 
+      "iso3": "GNQ", 
+      "printable_name": "Equatorial Guinea", 
+      "name": "EQUATORIAL GUINEA"
+    }
+  }, 
+  {
+    "pk": "ER", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 232, 
+      "iso3": "ERI", 
+      "printable_name": "Eritrea", 
+      "name": "ERITREA"
+    }
+  }, 
+  {
+    "pk": "EE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 233, 
+      "iso3": "EST", 
+      "printable_name": "Estonia", 
+      "name": "ESTONIA"
+    }
+  }, 
+  {
+    "pk": "ET", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 231, 
+      "iso3": "ETH", 
+      "printable_name": "Ethiopia", 
+      "name": "ETHIOPIA"
+    }
+  }, 
+  {
+    "pk": "FK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 238, 
+      "iso3": "FLK", 
+      "printable_name": "Falkland Islands (Malvinas)", 
+      "name": "FALKLAND ISLANDS (MALVINAS)"
+    }
+  }, 
+  {
+    "pk": "FO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 234, 
+      "iso3": "FRO", 
+      "printable_name": "Faeroe Islands", 
+      "name": "FAROE ISLANDS"
+    }
+  }, 
+  {
+    "pk": "FJ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 242, 
+      "iso3": "FJI", 
+      "printable_name": "Fiji", 
+      "name": "FIJI"
+    }
+  }, 
+  {
+    "pk": "FI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 246, 
+      "iso3": "FIN", 
+      "printable_name": "Finland", 
+      "name": "FINLAND"
+    }
+  }, 
+  {
+    "pk": "FR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 250, 
+      "iso3": "FRA", 
+      "printable_name": "France", 
+      "name": "FRANCE"
+    }
+  }, 
+  {
+    "pk": "GF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 254, 
+      "iso3": "GUF", 
+      "printable_name": "French Guiana", 
+      "name": "FRENCH GUIANA"
+    }
+  }, 
+  {
+    "pk": "PF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 258, 
+      "iso3": "PYF", 
+      "printable_name": "French Polynesia", 
+      "name": "FRENCH POLYNESIA"
+    }
+  }, 
+  {
+    "pk": "TF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 260, 
+      "iso3": "ATF", 
+      "printable_name": "French Southern Territories", 
+      "name": "FRENCH SOUTHERN TERRITORIES"
+    }
+  }, 
+  {
+    "pk": "GA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 266, 
+      "iso3": "GAB", 
+      "printable_name": "Gabon", 
+      "name": "GABON"
+    }
+  }, 
+  {
+    "pk": "GM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 270, 
+      "iso3": "GMB", 
+      "printable_name": "Gambia", 
+      "name": "GAMBIA"
+    }
+  }, 
+  {
+    "pk": "GE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 268, 
+      "iso3": "GEO", 
+      "printable_name": "Georgia", 
+      "name": "GEORGIA"
+    }
+  }, 
+  {
+    "pk": "DE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 276, 
+      "iso3": "DEU", 
+      "printable_name": "Germany", 
+      "name": "GERMANY"
+    }
+  }, 
+  {
+    "pk": "GH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 288, 
+      "iso3": "GHA", 
+      "printable_name": "Ghana", 
+      "name": "GHANA"
+    }
+  }, 
+  {
+    "pk": "GI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 292, 
+      "iso3": "GIB", 
+      "printable_name": "Gibraltar", 
+      "name": "GIBRALTAR"
+    }
+  }, 
+  {
+    "pk": "GR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 300, 
+      "iso3": "GRC", 
+      "printable_name": "Greece", 
+      "name": "GREECE"
+    }
+  }, 
+  {
+    "pk": "GL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 304, 
+      "iso3": "GRL", 
+      "printable_name": "Greenland", 
+      "name": "GREENLAND"
+    }
+  }, 
+  {
+    "pk": "GD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 308, 
+      "iso3": "GRD", 
+      "printable_name": "Grenada", 
+      "name": "GRENADA"
+    }
+  }, 
+  {
+    "pk": "GP", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 312, 
+      "iso3": "GLP", 
+      "printable_name": "Guadeloupe", 
+      "name": "GUADELOUPE"
+    }
+  }, 
+  {
+    "pk": "GU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 316, 
+      "iso3": "GUM", 
+      "printable_name": "Guam", 
+      "name": "GUAM"
+    }
+  }, 
+  {
+    "pk": "GT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 320, 
+      "iso3": "GTM", 
+      "printable_name": "Guatemala", 
+      "name": "GUATEMALA"
+    }
+  }, 
+  {
+    "pk": "GG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 831, 
+      "iso3": "GGY", 
+      "printable_name": "Guernsey", 
+      "name": "GUERNSEY"
+    }
+  }, 
+  {
+    "pk": "GN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 324, 
+      "iso3": "GIN", 
+      "printable_name": "Guinea", 
+      "name": "GUINEA"
+    }
+  }, 
+  {
+    "pk": "GW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 624, 
+      "iso3": "GNB", 
+      "printable_name": "Guinea-Bissau", 
+      "name": "GUINEA-BISSAU"
+    }
+  }, 
+  {
+    "pk": "GY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 328, 
+      "iso3": "GUY", 
+      "printable_name": "Guyana", 
+      "name": "GUYANA"
+    }
+  }, 
+  {
+    "pk": "HT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 332, 
+      "iso3": "HTI", 
+      "printable_name": "Haiti", 
+      "name": "HAITI"
+    }
+  }, 
+  {
+    "pk": "HM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 334, 
+      "iso3": "HMD", 
+      "printable_name": "Heard Island and Mcdonald Islands", 
+      "name": "HEARD ISLAND AND MCDONALD ISLANDS"
+    }
+  }, 
+  {
+    "pk": "VA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 336, 
+      "iso3": "VAT", 
+      "printable_name": "Holy See", 
+      "name": "HOLY SEE (VATICAN CITY STATE)"
+    }
+  }, 
+  {
+    "pk": "HN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 340, 
+      "iso3": "HND", 
+      "printable_name": "Honduras", 
+      "name": "HONDURAS"
+    }
+  }, 
+  {
+    "pk": "HK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 344, 
+      "iso3": "HKG", 
+      "printable_name": "Hong Kong Special Administrative Region of China", 
+      "name": "HONG KONG"
+    }
+  }, 
+  {
+    "pk": "HU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 348, 
+      "iso3": "HUN", 
+      "printable_name": "Hungary", 
+      "name": "HUNGARY"
+    }
+  }, 
+  {
+    "pk": "IS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 352, 
+      "iso3": "ISL", 
+      "printable_name": "Iceland", 
+      "name": "ICELAND"
+    }
+  }, 
+  {
+    "pk": "IN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 356, 
+      "iso3": "IND", 
+      "printable_name": "India", 
+      "name": "INDIA"
+    }
+  }, 
+  {
+    "pk": "ID", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 360, 
+      "iso3": "IDN", 
+      "printable_name": "Indonesia", 
+      "name": "INDONESIA"
+    }
+  }, 
+  {
+    "pk": "IR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 364, 
+      "iso3": "IRN", 
+      "printable_name": "Iran, Islamic Republic of", 
+      "name": "IRAN, ISLAMIC REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "IQ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 368, 
+      "iso3": "IRQ", 
+      "printable_name": "Iraq", 
+      "name": "IRAQ"
+    }
+  }, 
+  {
+    "pk": "IE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 372, 
+      "iso3": "IRL", 
+      "printable_name": "Ireland", 
+      "name": "IRELAND"
+    }
+  }, 
+  {
+    "pk": "IM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 833, 
+      "iso3": "IMN", 
+      "printable_name": "Isle of Man", 
+      "name": "ISLE OF MAN"
+    }
+  }, 
+  {
+    "pk": "IL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 376, 
+      "iso3": "ISR", 
+      "printable_name": "Israel", 
+      "name": "ISRAEL"
+    }
+  }, 
+  {
+    "pk": "IT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 380, 
+      "iso3": "ITA", 
+      "printable_name": "Italy", 
+      "name": "ITALY"
+    }
+  }, 
+  {
+    "pk": "JM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 388, 
+      "iso3": "JAM", 
+      "printable_name": "Jamaica", 
+      "name": "JAMAICA"
+    }
+  }, 
+  {
+    "pk": "JP", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 392, 
+      "iso3": "JPN", 
+      "printable_name": "Japan", 
+      "name": "JAPAN"
+    }
+  }, 
+  {
+    "pk": "JE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 832, 
+      "iso3": "JEY", 
+      "printable_name": "Jersey", 
+      "name": "JERSEY"
+    }
+  }, 
+  {
+    "pk": "JO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 400, 
+      "iso3": "JOR", 
+      "printable_name": "Jordan", 
+      "name": "JORDAN"
+    }
+  }, 
+  {
+    "pk": "KZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 398, 
+      "iso3": "KAZ", 
+      "printable_name": "Kazakhstan", 
+      "name": "KAZAKHSTAN"
+    }
+  }, 
+  {
+    "pk": "KE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 404, 
+      "iso3": "KEN", 
+      "printable_name": "Kenya", 
+      "name": "KENYA"
+    }
+  }, 
+  {
+    "pk": "KI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 296, 
+      "iso3": "KIR", 
+      "printable_name": "Kiribati", 
+      "name": "KIRIBATI"
+    }
+  }, 
+  {
+    "pk": "KP", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 408, 
+      "iso3": "PRK", 
+      "printable_name": "Democratic People's Republic of Korea", 
+      "name": "KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "KR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 410, 
+      "iso3": "KOR", 
+      "printable_name": "Republic of Korea", 
+      "name": "KOREA, REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "KW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 414, 
+      "iso3": "KWT", 
+      "printable_name": "Kuwait", 
+      "name": "KUWAIT"
+    }
+  }, 
+  {
+    "pk": "KG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 417, 
+      "iso3": "KGZ", 
+      "printable_name": "Kyrgyzstan", 
+      "name": "KYRGYZSTAN"
+    }
+  }, 
+  {
+    "pk": "LA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 418, 
+      "iso3": "LAO", 
+      "printable_name": "Lao People's Democratic Republic", 
+      "name": "LAO PEOPLE'S DEMOCRATIC REPUBLIC"
+    }
+  }, 
+  {
+    "pk": "LV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 428, 
+      "iso3": "LVA", 
+      "printable_name": "Latvia", 
+      "name": "LATVIA"
+    }
+  }, 
+  {
+    "pk": "LB", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 422, 
+      "iso3": "LBN", 
+      "printable_name": "Lebanon", 
+      "name": "LEBANON"
+    }
+  }, 
+  {
+    "pk": "LS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 426, 
+      "iso3": "LSO", 
+      "printable_name": "Lesotho", 
+      "name": "LESOTHO"
+    }
+  }, 
+  {
+    "pk": "LR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 430, 
+      "iso3": "LBR", 
+      "printable_name": "Liberia", 
+      "name": "LIBERIA"
+    }
+  }, 
+  {
+    "pk": "LY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 434, 
+      "iso3": "LBY", 
+      "printable_name": "Libyan Arab Jamahiriya", 
+      "name": "LIBYAN ARAB JAMAHIRIYA"
+    }
+  }, 
+  {
+    "pk": "LI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 438, 
+      "iso3": "LIE", 
+      "printable_name": "Liechtenstein", 
+      "name": "LIECHTENSTEIN"
+    }
+  }, 
+  {
+    "pk": "LT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 440, 
+      "iso3": "LTU", 
+      "printable_name": "Lithuania", 
+      "name": "LITHUANIA"
+    }
+  }, 
+  {
+    "pk": "LU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 442, 
+      "iso3": "LUX", 
+      "printable_name": "Luxembourg", 
+      "name": "LUXEMBOURG"
+    }
+  }, 
+  {
+    "pk": "MO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 446, 
+      "iso3": "MAC", 
+      "printable_name": "Macao Special Administrative Region of China", 
+      "name": "MACAO"
+    }
+  }, 
+  {
+    "pk": "MK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 807, 
+      "iso3": "MKD", 
+      "printable_name": "The former Yugoslav Republic of Macedonia", 
+      "name": "MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "MG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 450, 
+      "iso3": "MDG", 
+      "printable_name": "Madagascar", 
+      "name": "MADAGASCAR"
+    }
+  }, 
+  {
+    "pk": "MW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 454, 
+      "iso3": "MWI", 
+      "printable_name": "Malawi", 
+      "name": "MALAWI"
+    }
+  }, 
+  {
+    "pk": "MY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 458, 
+      "iso3": "MYS", 
+      "printable_name": "Malaysia", 
+      "name": "MALAYSIA"
+    }
+  }, 
+  {
+    "pk": "MV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 462, 
+      "iso3": "MDV", 
+      "printable_name": "Maldives", 
+      "name": "MALDIVES"
+    }
+  }, 
+  {
+    "pk": "ML", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 466, 
+      "iso3": "MLI", 
+      "printable_name": "Mali", 
+      "name": "MALI"
+    }
+  }, 
+  {
+    "pk": "MT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 470, 
+      "iso3": "MLT", 
+      "printable_name": "Malta", 
+      "name": "MALTA"
+    }
+  }, 
+  {
+    "pk": "MH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 584, 
+      "iso3": "MHL", 
+      "printable_name": "Marshall Islands", 
+      "name": "MARSHALL ISLANDS"
+    }
+  }, 
+  {
+    "pk": "MQ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 474, 
+      "iso3": "MTQ", 
+      "printable_name": "Martinique", 
+      "name": "MARTINIQUE"
+    }
+  }, 
+  {
+    "pk": "MR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 478, 
+      "iso3": "MRT", 
+      "printable_name": "Mauritania", 
+      "name": "MAURITANIA"
+    }
+  }, 
+  {
+    "pk": "MU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 480, 
+      "iso3": "MUS", 
+      "printable_name": "Mauritius", 
+      "name": "MAURITIUS"
+    }
+  }, 
+  {
+    "pk": "YT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 175, 
+      "iso3": "MYT", 
+      "printable_name": "Mayotte", 
+      "name": "MAYOTTE"
+    }
+  }, 
+  {
+    "pk": "MX", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 484, 
+      "iso3": "MEX", 
+      "printable_name": "Mexico", 
+      "name": "MEXICO"
+    }
+  }, 
+  {
+    "pk": "FM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 583, 
+      "iso3": "FSM", 
+      "printable_name": "Micronesia, Federated States of", 
+      "name": "MICRONESIA, FEDERATED STATES OF"
+    }
+  }, 
+  {
+    "pk": "MD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 498, 
+      "iso3": "MDA", 
+      "printable_name": "Republic of Moldova", 
+      "name": "MOLDOVA, REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "MC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 492, 
+      "iso3": "MCO", 
+      "printable_name": "Monaco", 
+      "name": "MONACO"
+    }
+  }, 
+  {
+    "pk": "MN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 496, 
+      "iso3": "MNG", 
+      "printable_name": "Mongolia", 
+      "name": "MONGOLIA"
+    }
+  }, 
+  {
+    "pk": "ME", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 499, 
+      "iso3": "MNE", 
+      "printable_name": "Montenegro", 
+      "name": "MONTENEGRO"
+    }
+  }, 
+  {
+    "pk": "MS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 500, 
+      "iso3": "MSR", 
+      "printable_name": "Montserrat", 
+      "name": "MONTSERRAT"
+    }
+  }, 
+  {
+    "pk": "MA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 504, 
+      "iso3": "MAR", 
+      "printable_name": "Morocco", 
+      "name": "MOROCCO"
+    }
+  }, 
+  {
+    "pk": "MZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 508, 
+      "iso3": "MOZ", 
+      "printable_name": "Mozambique", 
+      "name": "MOZAMBIQUE"
+    }
+  }, 
+  {
+    "pk": "MM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 104, 
+      "iso3": "MMR", 
+      "printable_name": "Myanmar", 
+      "name": "MYANMAR"
+    }
+  }, 
+  {
+    "pk": "NA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 516, 
+      "iso3": "NAM", 
+      "printable_name": "Namibia", 
+      "name": "NAMIBIA"
+    }
+  }, 
+  {
+    "pk": "NR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 520, 
+      "iso3": "NRU", 
+      "printable_name": "Nauru", 
+      "name": "NAURU"
+    }
+  }, 
+  {
+    "pk": "NP", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 524, 
+      "iso3": "NPL", 
+      "printable_name": "Nepal", 
+      "name": "NEPAL"
+    }
+  }, 
+  {
+    "pk": "NL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 528, 
+      "iso3": "NLD", 
+      "printable_name": "Netherlands", 
+      "name": "NETHERLANDS"
+    }
+  }, 
+  {
+    "pk": "AN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 530, 
+      "iso3": "ANT", 
+      "printable_name": "Netherlands Antilles", 
+      "name": "NETHERLANDS ANTILLES"
+    }
+  }, 
+  {
+    "pk": "NC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 540, 
+      "iso3": "NCL", 
+      "printable_name": "New Caledonia", 
+      "name": "NEW CALEDONIA"
+    }
+  }, 
+  {
+    "pk": "NZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 554, 
+      "iso3": "NZL", 
+      "printable_name": "New Zealand", 
+      "name": "NEW ZEALAND"
+    }
+  }, 
+  {
+    "pk": "NI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 558, 
+      "iso3": "NIC", 
+      "printable_name": "Nicaragua", 
+      "name": "NICARAGUA"
+    }
+  }, 
+  {
+    "pk": "NE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 562, 
+      "iso3": "NER", 
+      "printable_name": "Niger", 
+      "name": "NIGER"
+    }
+  }, 
+  {
+    "pk": "NG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 566, 
+      "iso3": "NGA", 
+      "printable_name": "Nigeria", 
+      "name": "NIGERIA"
+    }
+  }, 
+  {
+    "pk": "NU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 570, 
+      "iso3": "NIU", 
+      "printable_name": "Niue", 
+      "name": "NIUE"
+    }
+  }, 
+  {
+    "pk": "NF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 574, 
+      "iso3": "NFK", 
+      "printable_name": "Norfolk Island", 
+      "name": "NORFOLK ISLAND"
+    }
+  }, 
+  {
+    "pk": "MP", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 580, 
+      "iso3": "MNP", 
+      "printable_name": "Northern Mariana Islands", 
+      "name": "NORTHERN MARIANA ISLANDS"
+    }
+  }, 
+  {
+    "pk": "NO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 578, 
+      "iso3": "NOR", 
+      "printable_name": "Norway", 
+      "name": "NORWAY"
+    }
+  }, 
+  {
+    "pk": "OM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 512, 
+      "iso3": "OMN", 
+      "printable_name": "Oman", 
+      "name": "OMAN"
+    }
+  }, 
+  {
+    "pk": "PK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 586, 
+      "iso3": "PAK", 
+      "printable_name": "Pakistan", 
+      "name": "PAKISTAN"
+    }
+  }, 
+  {
+    "pk": "PW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 585, 
+      "iso3": "PLW", 
+      "printable_name": "Palau", 
+      "name": "PALAU"
+    }
+  }, 
+  {
+    "pk": "PS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 275, 
+      "iso3": "PSE", 
+      "printable_name": "Occupied Palestinian Territory", 
+      "name": "PALESTINIAN TERRITORY, OCCUPIED"
+    }
+  }, 
+  {
+    "pk": "PA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 591, 
+      "iso3": "PAN", 
+      "printable_name": "Panama", 
+      "name": "PANAMA"
+    }
+  }, 
+  {
+    "pk": "PG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 598, 
+      "iso3": "PNG", 
+      "printable_name": "Papua New Guinea", 
+      "name": "PAPUA NEW GUINEA"
+    }
+  }, 
+  {
+    "pk": "PY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 600, 
+      "iso3": "PRY", 
+      "printable_name": "Paraguay", 
+      "name": "PARAGUAY"
+    }
+  }, 
+  {
+    "pk": "PE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 604, 
+      "iso3": "PER", 
+      "printable_name": "Peru", 
+      "name": "PERU"
+    }
+  }, 
+  {
+    "pk": "PH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 608, 
+      "iso3": "PHL", 
+      "printable_name": "Philippines", 
+      "name": "PHILIPPINES"
+    }
+  }, 
+  {
+    "pk": "PN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 612, 
+      "iso3": "PCN", 
+      "printable_name": "Pitcairn", 
+      "name": "PITCAIRN"
+    }
+  }, 
+  {
+    "pk": "PL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 616, 
+      "iso3": "POL", 
+      "printable_name": "Poland", 
+      "name": "POLAND"
+    }
+  }, 
+  {
+    "pk": "PT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 620, 
+      "iso3": "PRT", 
+      "printable_name": "Portugal", 
+      "name": "PORTUGAL"
+    }
+  }, 
+  {
+    "pk": "PR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 630, 
+      "iso3": "PRI", 
+      "printable_name": "Puerto Rico", 
+      "name": "PUERTO RICO"
+    }
+  }, 
+  {
+    "pk": "QA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 634, 
+      "iso3": "QAT", 
+      "printable_name": "Qatar", 
+      "name": "QATAR"
+    }
+  }, 
+  {
+    "pk": "RE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 638, 
+      "iso3": "REU", 
+      "printable_name": "R\u00e9union", 
+      "name": "REUNION"
+    }
+  }, 
+  {
+    "pk": "RO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 642, 
+      "iso3": "ROU", 
+      "printable_name": "Romania", 
+      "name": "ROMANIA"
+    }
+  }, 
+  {
+    "pk": "RU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 643, 
+      "iso3": "RUS", 
+      "printable_name": "Russian Federation", 
+      "name": "RUSSIAN FEDERATION"
+    }
+  }, 
+  {
+    "pk": "RW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 646, 
+      "iso3": "RWA", 
+      "printable_name": "Rwanda", 
+      "name": "RWANDA"
+    }
+  }, 
+  {
+    "pk": "SH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 654, 
+      "iso3": "SHN", 
+      "printable_name": "Saint Helena", 
+      "name": "SAINT HELENA"
+    }
+  }, 
+  {
+    "pk": "KN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 659, 
+      "iso3": "KNA", 
+      "printable_name": "Saint Kitts and Nevis", 
+      "name": "SAINT KITTS AND NEVIS"
+    }
+  }, 
+  {
+    "pk": "LC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 662, 
+      "iso3": "LCA", 
+      "printable_name": "Saint Lucia", 
+      "name": "SAINT LUCIA"
+    }
+  }, 
+  {
+    "pk": "PM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 666, 
+      "iso3": "SPM", 
+      "printable_name": "Saint Pierre and Miquelon", 
+      "name": "SAINT PIERRE AND MIQUELON"
+    }
+  }, 
+  {
+    "pk": "VC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 670, 
+      "iso3": "VCT", 
+      "printable_name": "Saint Vincent and the Grenadines", 
+      "name": "SAINT VINCENT AND THE GRENADINES"
+    }
+  }, 
+  {
+    "pk": "WS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 882, 
+      "iso3": "WSM", 
+      "printable_name": "Samoa", 
+      "name": "SAMOA"
+    }
+  }, 
+  {
+    "pk": "SM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 674, 
+      "iso3": "SMR", 
+      "printable_name": "San Marino", 
+      "name": "SAN MARINO"
+    }
+  }, 
+  {
+    "pk": "ST", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 678, 
+      "iso3": "STP", 
+      "printable_name": "Sao Tome and Principe", 
+      "name": "SAO TOME AND PRINCIPE"
+    }
+  }, 
+  {
+    "pk": "SA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 682, 
+      "iso3": "SAU", 
+      "printable_name": "Saudi Arabia", 
+      "name": "SAUDI ARABIA"
+    }
+  }, 
+  {
+    "pk": "SN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 686, 
+      "iso3": "SEN", 
+      "printable_name": "Senegal", 
+      "name": "SENEGAL"
+    }
+  }, 
+  {
+    "pk": "RS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 688, 
+      "iso3": "SRB", 
+      "printable_name": "Serbia", 
+      "name": "SERBIA"
+    }
+  }, 
+  {
+    "pk": "SC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 690, 
+      "iso3": "SYC", 
+      "printable_name": "Seychelles", 
+      "name": "SEYCHELLES"
+    }
+  }, 
+  {
+    "pk": "SL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 694, 
+      "iso3": "SLE", 
+      "printable_name": "Sierra Leone", 
+      "name": "SIERRA LEONE"
+    }
+  }, 
+  {
+    "pk": "SG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 702, 
+      "iso3": "SGP", 
+      "printable_name": "Singapore", 
+      "name": "SINGAPORE"
+    }
+  }, 
+  {
+    "pk": "SK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 703, 
+      "iso3": "SVK", 
+      "printable_name": "Slovakia", 
+      "name": "SLOVAKIA"
+    }
+  }, 
+  {
+    "pk": "SI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 705, 
+      "iso3": "SVN", 
+      "printable_name": "Slovenia", 
+      "name": "SLOVENIA"
+    }
+  }, 
+  {
+    "pk": "SB", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 90, 
+      "iso3": "SLB", 
+      "printable_name": "Solomon Islands", 
+      "name": "SOLOMON ISLANDS"
+    }
+  }, 
+  {
+    "pk": "SO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 706, 
+      "iso3": "SOM", 
+      "printable_name": "Somalia", 
+      "name": "SOMALIA"
+    }
+  }, 
+  {
+    "pk": "ZA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 710, 
+      "iso3": "ZAF", 
+      "printable_name": "South Africa", 
+      "name": "SOUTH AFRICA"
+    }
+  }, 
+  {
+    "pk": "GS", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 239, 
+      "iso3": "SGS", 
+      "printable_name": "South Georgia and the South Sandwich Islands", 
+      "name": "SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS"
+    }
+  }, 
+  {
+    "pk": "ES", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 724, 
+      "iso3": "ESP", 
+      "printable_name": "Spain", 
+      "name": "SPAIN"
+    }
+  }, 
+  {
+    "pk": "LK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 144, 
+      "iso3": "LKA", 
+      "printable_name": "Sri Lanka", 
+      "name": "SRI LANKA"
+    }
+  }, 
+  {
+    "pk": "SD", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 736, 
+      "iso3": "SDN", 
+      "printable_name": "Sudan", 
+      "name": "SUDAN"
+    }
+  }, 
+  {
+    "pk": "SR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 740, 
+      "iso3": "SUR", 
+      "printable_name": "Suriname", 
+      "name": "SURINAME"
+    }
+  }, 
+  {
+    "pk": "SJ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 744, 
+      "iso3": "SJM", 
+      "printable_name": "Svalbard and Jan Mayen Islands", 
+      "name": "SVALBARD AND JAN MAYEN"
+    }
+  }, 
+  {
+    "pk": "SZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 748, 
+      "iso3": "SWZ", 
+      "printable_name": "Swaziland", 
+      "name": "SWAZILAND"
+    }
+  }, 
+  {
+    "pk": "SE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 752, 
+      "iso3": "SWE", 
+      "printable_name": "Sweden", 
+      "name": "SWEDEN"
+    }
+  }, 
+  {
+    "pk": "CH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 756, 
+      "iso3": "CHE", 
+      "printable_name": "Switzerland", 
+      "name": "SWITZERLAND"
+    }
+  }, 
+  {
+    "pk": "SY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 760, 
+      "iso3": "SYR", 
+      "printable_name": "Syrian Arab Republic", 
+      "name": "SYRIAN ARAB REPUBLIC"
+    }
+  }, 
+  {
+    "pk": "TW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 158, 
+      "iso3": "TWN", 
+      "printable_name": "Taiwan, Province of China", 
+      "name": "TAIWAN, PROVINCE OF CHINA"
+    }
+  }, 
+  {
+    "pk": "TJ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 762, 
+      "iso3": "TJK", 
+      "printable_name": "Tajikistan", 
+      "name": "TAJIKISTAN"
+    }
+  }, 
+  {
+    "pk": "TZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 834, 
+      "iso3": "TZA", 
+      "printable_name": "United Republic of Tanzania", 
+      "name": "TANZANIA, UNITED REPUBLIC OF"
+    }
+  }, 
+  {
+    "pk": "TH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 764, 
+      "iso3": "THA", 
+      "printable_name": "Thailand", 
+      "name": "THAILAND"
+    }
+  }, 
+  {
+    "pk": "TL", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 626, 
+      "iso3": "TLS", 
+      "printable_name": "Timor-Leste", 
+      "name": "TIMOR-LESTE"
+    }
+  }, 
+  {
+    "pk": "TG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 768, 
+      "iso3": "TGO", 
+      "printable_name": "Togo", 
+      "name": "TOGO"
+    }
+  }, 
+  {
+    "pk": "TK", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 772, 
+      "iso3": "TKL", 
+      "printable_name": "Tokelau", 
+      "name": "TOKELAU"
+    }
+  }, 
+  {
+    "pk": "TO", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 776, 
+      "iso3": "TON", 
+      "printable_name": "Tonga", 
+      "name": "TONGA"
+    }
+  }, 
+  {
+    "pk": "TT", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 780, 
+      "iso3": "TTO", 
+      "printable_name": "Trinidad and Tobago", 
+      "name": "TRINIDAD AND TOBAGO"
+    }
+  }, 
+  {
+    "pk": "TN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 788, 
+      "iso3": "TUN", 
+      "printable_name": "Tunisia", 
+      "name": "TUNISIA"
+    }
+  }, 
+  {
+    "pk": "TR", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 792, 
+      "iso3": "TUR", 
+      "printable_name": "Turkey", 
+      "name": "TURKEY"
+    }
+  }, 
+  {
+    "pk": "TM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 795, 
+      "iso3": "TKM", 
+      "printable_name": "Turkmenistan", 
+      "name": "TURKMENISTAN"
+    }
+  }, 
+  {
+    "pk": "TC", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 796, 
+      "iso3": "TCA", 
+      "printable_name": "Turks and Caicos Islands", 
+      "name": "TURKS AND CAICOS ISLANDS"
+    }
+  }, 
+  {
+    "pk": "TV", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 798, 
+      "iso3": "TUV", 
+      "printable_name": "Tuvalu", 
+      "name": "TUVALU"
+    }
+  }, 
+  {
+    "pk": "UG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 800, 
+      "iso3": "UGA", 
+      "printable_name": "Uganda", 
+      "name": "UGANDA"
+    }
+  }, 
+  {
+    "pk": "UA", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 804, 
+      "iso3": "UKR", 
+      "printable_name": "Ukraine", 
+      "name": "UKRAINE"
+    }
+  }, 
+  {
+    "pk": "AE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 784, 
+      "iso3": "ARE", 
+      "printable_name": "United Arab Emirates", 
+      "name": "UNITED ARAB EMIRATES"
+    }
+  }, 
+  {
+    "pk": "GB", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 826, 
+      "iso3": "GBR", 
+      "printable_name": "United Kingdom of Great Britain and Northern Ireland", 
+      "name": "UNITED KINGDOM"
+    }
+  }, 
+  {
+    "pk": "US", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 840, 
+      "iso3": "USA", 
+      "printable_name": "United States of America", 
+      "name": "UNITED STATES"
+    }
+  }, 
+  {
+    "pk": "UM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 581, 
+      "iso3": "UMI", 
+      "printable_name": "United States Minor Outlying Islands", 
+      "name": "UNITED STATES MINOR OUTLYING ISLANDS"
+    }
+  }, 
+  {
+    "pk": "UY", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 858, 
+      "iso3": "URY", 
+      "printable_name": "Uruguay", 
+      "name": "URUGUAY"
+    }
+  }, 
+  {
+    "pk": "UZ", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 860, 
+      "iso3": "UZB", 
+      "printable_name": "Uzbekistan", 
+      "name": "UZBEKISTAN"
+    }
+  }, 
+  {
+    "pk": "VU", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 548, 
+      "iso3": "VUT", 
+      "printable_name": "Vanuatu", 
+      "name": "VANUATU"
+    }
+  }, 
+  {
+    "pk": "VE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 862, 
+      "iso3": "VEN", 
+      "printable_name": "Venezuela (Bolivarian Republic of)", 
+      "name": "VENEZUELA"
+    }
+  }, 
+  {
+    "pk": "VN", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 704, 
+      "iso3": "VNM", 
+      "printable_name": "Viet Nam", 
+      "name": "VIET NAM"
+    }
+  }, 
+  {
+    "pk": "VG", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 92, 
+      "iso3": "VGB", 
+      "printable_name": "British Virgin Islands", 
+      "name": "VIRGIN ISLANDS, BRITISH"
+    }
+  }, 
+  {
+    "pk": "VI", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 850, 
+      "iso3": "VIR", 
+      "printable_name": "United States Virgin Islands", 
+      "name": "VIRGIN ISLANDS, U.S."
+    }
+  }, 
+  {
+    "pk": "WF", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 876, 
+      "iso3": "WLF", 
+      "printable_name": "Wallis and Futuna Islands", 
+      "name": "WALLIS AND FUTUNA"
+    }
+  }, 
+  {
+    "pk": "EH", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 732, 
+      "iso3": "ESH", 
+      "printable_name": "Western Sahara", 
+      "name": "WESTERN SAHARA"
+    }
+  }, 
+  {
+    "pk": "YE", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 887, 
+      "iso3": "YEM", 
+      "printable_name": "Yemen", 
+      "name": "YEMEN"
+    }
+  }, 
+  {
+    "pk": "ZM", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 894, 
+      "iso3": "ZMB", 
+      "printable_name": "Zambia", 
+      "name": "ZAMBIA"
+    }
+  }, 
+  {
+    "pk": "ZW", 
+    "model": "countries.country", 
+    "fields": {
+      "numcode": 716, 
+      "iso3": "ZWE", 
+      "printable_name": "Zimbabwe", 
+      "name": "ZIMBABWE"
+    }
+  }
+]

@@ -1,4 +1,8 @@
+# CPython compiled files
 *.pyc
+
+# Jython compiled files
+*$py.class
 
 # install-specific files with corresponding *-example files
 /cetacean_incidents/local_settings.py
