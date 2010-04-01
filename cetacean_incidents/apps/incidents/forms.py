@@ -36,7 +36,9 @@ class AnimalWidget(forms.widgets.Input):
         
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         
-        return render_to_string('incidents/animal_widget.html', {
+        # assumes the the django.template.loaders.app_directories.load_template_source 
+        # is being used, which is the default.
+        return render_to_string('animal_widget.html', {
             'initial_animal': animal_value,
             'final_attrs': forms.util.flatatt(final_attrs),
         })
