@@ -49,4 +49,3 @@ urlpatterns += patterns('',
     (r'^databrowse/(.*)', databrowse.site.root),
 )
 
-

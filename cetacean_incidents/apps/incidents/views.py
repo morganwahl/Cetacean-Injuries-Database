@@ -204,9 +204,9 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
                 observation.observer_vessel = vessel_info
             else:
                 if not observation.observer_vessel is None:
-                    vesselinfo = observation.observer_vessel
+                    vessel_info = observation.observer_vessel
                     observation.observer_vessel = None
-                    vesselinfo.delete()
+                    vessel_info.delete()
 
             observation.save()
             # TODO any m2m fields on observations?

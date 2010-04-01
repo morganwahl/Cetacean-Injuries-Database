@@ -45,4 +45,4 @@ class TaxonField(forms.IntegerField):
 
 class TestForm(forms.Form):
     taxon_field = TaxonField()
-    
+
