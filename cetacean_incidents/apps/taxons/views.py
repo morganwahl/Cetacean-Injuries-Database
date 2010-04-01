@@ -36,18 +36,3 @@ def taxon_search(request):
     
     return HttpResponse(json.dumps(taxons))
 
-from forms import TestForm
-def testview(request):
-    if request.method == 'POST': # If the form has been submitted...
-        form = TestForm(request.POST) # A form bound to the POST data
-        if form.is_valid(): # All validation rules pass
-            # Process the data in form.cleaned_data
-            # ...
-            return HttpResponseRedirect('/') # Redirect after POST
-    else:
-        form = TestForm() # An unbound form
-
-    return render_to_response('taxons/test.html', {
-        'form': form,
-    })
-

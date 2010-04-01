@@ -45,6 +45,4 @@ class TaxonField(forms.IntegerField):
             kwargs['widget'] = TaxonWidget
         return super(TaxonField, self).__init__(*args, **kwargs)
 
-class TestForm(forms.Form):
-    taxon_field = TaxonField()
 

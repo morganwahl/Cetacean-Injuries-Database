@@ -160,6 +160,3 @@ class ShipstrikeObservationForm(ObservationForm):
 
 observation_forms['Shipstrike'] = ShipstrikeObservationForm
 
-class TestForm(forms.Form):
-    animal_field = AnimalField()
-
