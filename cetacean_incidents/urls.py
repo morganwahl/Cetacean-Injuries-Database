@@ -1,6 +1,7 @@
 from django.conf.urls.defaults import *
-from django.contrib import admin
 from django.conf import settings
+from generic_views import direct_to_template
+from django.contrib import admin
 
 admin.autodiscover()
 
@@ -16,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^%s$' % settings.LOGIN_URL[1:], 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
-    (r'^$', 'django.views.generic.simple.direct_to_template', {'template': 'home.html'}, "home")
+    (r'^$', direct_to_template, {'template': 'home.html'}, "home")
 )
 
 # name the MEDIA_URL for use in templates.
