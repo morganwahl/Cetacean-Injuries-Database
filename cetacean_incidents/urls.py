@@ -9,9 +9,9 @@ urlpatterns = patterns('',
     (r'^admin/doc/', include('django.contrib.admindocs.urls')),
     (r'^admin/', include(admin.site.urls)),
     
-    (r'^contacts/', include('apps.contacts.urls')),
-    (r'^taxons/', include('apps.taxons.urls')),
-    (r'^incidents/', include('apps.incidents.urls')),
+    (r'^contacts/', include('cetacean_incidents.apps.contacts.urls')),
+    (r'^taxons/', include('cetacean_incidents.apps.taxons.urls')),
+    (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
     
     url(r'^%s$' % settings.LOGIN_URL[1:], 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
@@ -37,8 +37,8 @@ urlpatterns += patterns('',
 )
 
 from django.contrib import databrowse
-from apps.taxons.models import Taxon
-from apps.incidents.models import Animal, Entanglement, EntanglementObservation
+from cetacean_incidents.apps.taxons.models import Taxon
+from cetacean_incidents.apps.incidents.models import Animal, Entanglement, EntanglementObservation
 
 databrowse.site.register(Animal)
 databrowse.site.register(Taxon)

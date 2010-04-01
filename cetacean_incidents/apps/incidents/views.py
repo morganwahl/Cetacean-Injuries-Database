@@ -8,10 +8,10 @@ from django.template import RequestContext
 
 from models import Case, Entanglement, Animal, Observation
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
-from apps.locations.forms import LocationForm
-from apps.datetime.forms import DateTimeForm
-from apps.vessels.forms import ObserverVesselInfoForm
-from apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.locations.forms import LocationForm
+from cetacean_incidents.apps.datetime.forms import DateTimeForm
+from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
+from cetacean_incidents.apps.contacts.forms import ContactForm
 
 @login_required
 def create_animal(request):
