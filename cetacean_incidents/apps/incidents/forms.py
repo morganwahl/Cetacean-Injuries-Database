@@ -10,6 +10,15 @@ observation_forms = {}
 
 class AnimalForm(forms.ModelForm):
     
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = Animal.determined_taxon.field
+    determined_taxon = TaxonField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+    
     class Meta:
         model = Animal
 
@@ -111,7 +120,14 @@ class ObservationForm(forms.ModelForm):
     types.
     '''
 
-    #taxon = TaxonField()
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = Observation.taxon.field
+    taxon = TaxonField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
     observer_on_vessel = forms.BooleanField(
         required= False,
         help_text= "Was the observer on a vessel?"

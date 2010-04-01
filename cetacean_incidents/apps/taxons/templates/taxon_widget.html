@@ -1,25 +1,25 @@
-<div id="taxon_widget" style="display: inline-block;">
+<div class="taxon_widget">
+    <!-- TODO noscript -->
     <script type="text/javascript">
         {# TODO disable autoescape in JS #}
         // TODO don't execute until taxon_widget.js has been loaded
         TaxonWidget.init(
             '{{ name }}',
-            'taxon_filter',
-            'results_box',
-            'taxon_chosen',
-            'clear_taxon'
+            '{{ name }}_taxon_filter',
+            '{{ name }}_results_box',
+            '{{ name }}_taxon_chosen',
+            '{{ name }}_clear_taxon'
         );
     </script>
-    {{ initial_taxon }}
-    <div id="search_box" style="display: inline-block;">
-        search taxons for
-        <input id="taxon_filter" type="text" autocomplete="off">
-        <div id="results_box" class="searchlist" style="display: none;">
+    <div class="taxon_widget_search_box">
+        search taxons for:
+        <input id="{{ name }}_taxon_filter" class="taxon_widget_filter" type="text" autocomplete="off">
+        <div id="{{ name }}_results_box" class="taxon_widget_searchlist" style="display: none;">
             <i>no query</i>
         </div>
     </div>
-    <span id="taxon_chosen"></span>
-    <button type="button" id="clear_taxon">clear selection</button>
+    <span id="{{ name }}_taxon_chosen">{{ initial_display_name }}</span>
+    <button id="{{ name }}_clear_taxon" type="button">clear taxon</button>
     <input {{ final_attrs|safe }}>
 </div>
 

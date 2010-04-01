@@ -2,6 +2,11 @@
 
 {% block title %}{{ block.super }}: {{ animal }} [editing] {% endblock %}
 
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
 {% block header %}
 <h2>{{ animal }} [editing]</h2>
 {% endblock %}
