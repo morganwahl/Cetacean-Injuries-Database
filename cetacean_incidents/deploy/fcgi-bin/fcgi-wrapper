@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# setup the virtualenv
+source /home/morgan/Development/django-env/bin/activate
+
+# this directory must be writable by the webserver
+PYTHON_EGG_CACHE="/home/morgan/Development/django-env/var/python-eggs"
+export PYTHON_EGG_CACHE
+
+exec ./ci.fcgi
