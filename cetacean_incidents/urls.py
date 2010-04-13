@@ -14,14 +14,17 @@ urlpatterns = patterns('',
     (r'^taxons/', include('cetacean_incidents.apps.taxons.urls')),
     (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
     
-    url(r'^%s$' % settings.LOGIN_URL[1:], 'django.contrib.auth.views.login', name='login'),
+    # strip the initial '/' from the login url
+    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
     (r'^$', direct_to_template, {'template': 'home.html'}, "home")
 )
 
-# name the MEDIA_URL for use in templates.
+# name the MEDIA_URL for use in templates. also has django serve up media if
+# the hosting webserver doesn't.
 urlpatterns += patterns("django.views",
+    # strip the initial '/' from the url
     url(r"^%s(?P<path>.*)$" % settings.MEDIA_URL[1:],
         "static.serve",
         {"document_root": settings.MEDIA_ROOT},

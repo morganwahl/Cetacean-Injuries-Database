@@ -1,6 +1,6 @@
-from local_settings import *
 import os
 from os import path
+from cetacean_incidents.local_settings import *
 
 SITE_ID = 1
 
@@ -12,11 +12,13 @@ USE_I18N = True
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = '/site_media/'
-MEDIA_ROOT = PROJECT_PATH + '/site_media/'
-ADMIN_MEDIA_PREFIX = '/site_media/admin/'
+# only needed when serving static media with django itself
+MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 
-LOGIN_URL = '/login/' 
-LOGIN_REDIRECT_URL = '/'
+ADMIN_MEDIA_PREFIX = URL_PREFIX + MEDIA_URL[1:] + 'admin/'
+
+LOGIN_URL = URL_PREFIX + 'login/' 
+LOGIN_REDIRECT_URL = URL_PREFIX
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -26,7 +28,7 @@ TEMPLATE_LOADERS = (
 )
 
 TEMPLATE_DIRS = (
-    PROJECT_PATH + '/templates/',
+    path.join(PROJECT_PATH, 'templates/'),
 )
 
 MIDDLEWARE_CLASSES = (
