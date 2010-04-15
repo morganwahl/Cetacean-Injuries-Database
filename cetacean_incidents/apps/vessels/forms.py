@@ -1,9 +1,11 @@
 from django import forms
 from django.forms.util import flatatt
+
+from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+
 from models import VesselInfo
 from cetacean_incidents.apps.countries.models import Country
-from django.conf import settings
 
 class FlagSelect(forms.Select):
     '''\
@@ -30,7 +32,7 @@ class FlagSelect(forms.Select):
                     $("#%(id)s > img.flag").remove()
                     if ( select.val() == '' )
                         return;
-                    var icon_url = "%(media)sflags/" + select.val().toLowerCase()  + ".png";
+                    var icon_url = "%(media)s" + select.val().toLowerCase()  + ".png";
                     // set the margin to 1/4 the image size
                     $("#%(id)s").prepend("<img style=\\"margin: 4px;\\" class=\\"flag\\" src=\\"" + icon_url + "\\">");
                 });
@@ -40,7 +42,7 @@ class FlagSelect(forms.Select):
         </script>
         ''' % {
             'id': attrs ['id'],
-            'media': settings.MEDIA_URL,
+            'media': reverse('site-media', kwargs={'path': 'flags/'}),
         }]
 
         span_attrs = self.build_attrs(attrs)
