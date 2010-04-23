@@ -1,4 +1,5 @@
 from django.db import models
+from utils import dec_to_dms, dms_to_dec
 
 class Location(models.Model):
     '''\
@@ -15,7 +16,17 @@ class Location(models.Model):
         be noted.
         '''
     )
-
+    
+    # this one was tough to decide one. Using GeoDjango is overkill; my main
+    # concern was not losing precision to rounding when converting from
+    # degrees-minutes-seconds to decimal degrees. ideally, we would store
+    # coordinates in base-30 (so that converting from DMS or decimal wouldn't
+    # produce a repeating-decimal that had to be rounded off), but then when
+    # somebody looks at the database itself, or a dump of this model, they
+    # have to have that explained to them. My not-so-great comprimise is to use
+    # a string which allows for a really high precision, base-10 decimal repre-
+    # sentation. This still leaves it up to views (and/or forms) to present 
+    # this data nicely, but it's at least understandable in a database dump.
     coordinates = models.CharField(
         max_length = 127,
         blank= True,
@@ -29,7 +40,22 @@ class Location(models.Model):
         if self.coordinates is None:
             return None
         return map(float, self.coordinates.split(','))
-    coords_pair = property(_get_coords_pair)
+    def _set_coords_pair(self, pair):
+        if not len(pair) >= 2:
+            # TODO throw an exception?
+            return
+        self.coordinates = "%.16f,%.16f" % pair
+    coords_pair = property(_get_coords_pair, _set_coords_pair)
+    def _get_dms_coords_pair(self):
+        if self.coordinates is None:
+            return None
+        return map( dec_to_dms, self.coords_pair)
+    def _set_dms_coords_pair(self, pair):
+        if not len(pair) >= 2:
+            # TODO throw an exception?
+            return
+        self.coords_pair = map(dms_to_dec, pair)
+    dms_coords_pair = property(_get_dms_coords_pair, _set_dms_coords_pair)
     
     # TODO form validation will be essential for this field!
     roughness = models.FloatField(
