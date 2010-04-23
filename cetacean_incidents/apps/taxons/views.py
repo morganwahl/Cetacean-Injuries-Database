@@ -1,4 +1,7 @@
-import simplejson as json# for 2.5 compat.
+try:
+    import simplejson as json# for 2.5 compat.
+except ImportError:
+    import json
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from models import Taxon

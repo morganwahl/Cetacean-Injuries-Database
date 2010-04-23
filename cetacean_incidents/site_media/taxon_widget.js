@@ -1,5 +1,3 @@
-google.load("jquery", "1", {uncompressed: true});
-
 // there's three states to switch between:
 //   1. if the chosen_taxon is empty and the taxon_filter is emtpy,
 //      the results_box and the clear_taxon button are hidden,
@@ -18,7 +16,7 @@ google.load("jquery", "1", {uncompressed: true});
 // query->no_query (2->1)
 
 TaxonWidget = {
-    init: function (field_name, filter_id, results_id, chosen_id, clear_id) {
+    init: function (field_name, filter_id, results_id, chosen_id, clear_id, query_url, throbber_url) {
         var clear_results = function () {
             $("#" + results_id).hide();
             return;
@@ -34,12 +32,12 @@ TaxonWidget = {
         function update_results(query) {
             // start the 'throbber' to show we're waiting on the network
             // TODO get URL from django
-            $("#" + results_id).html('<img src="/site_media/Loader3.gif"></img> <i>searching</i>'); 
+            $("#" + results_id).html('<img src="' + throbber_url + '"></img> <i>searching</i>'); 
             $("#" + results_id).show();
             $.getJSON(
                 // TODO error-handling!
                 // TODO get URL from django
-                "/taxons/taxon_search",
+                query_url,
                 { q: query},
                 function(taxons){
                     // position the results box under the filter input
@@ -111,18 +109,16 @@ TaxonWidget = {
         }
 
 
-        google.setOnLoadCallback(function() {
-            $(document).ready(function() {
-                $("#" + filter_id).keyup(check_filter);
-                //check_filter();
+        $(document).ready(function() {
+            $("#" + filter_id).keyup(check_filter);
+            //check_filter();
 
-                $("#" + clear_id).click(clear_taxon);
-                //clear_taxon();
-                
-                if ($("[name=" + field_name + "]").val()) {
-                    taxon_selected();
-                }
-            });
+            $("#" + clear_id).click(clear_taxon);
+            //clear_taxon();
+            
+            if ($("[name=" + field_name + "]").val()) {
+                taxon_selected();
+            }
         });
     }
 }

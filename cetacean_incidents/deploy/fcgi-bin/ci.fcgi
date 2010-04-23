@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys, os
 
-PROJECT_DIR = "/home/morgan/Development/ci"
+PROJECT_DIR = "/home/ci/ci"
 
 # Add a custom Python path.
 sys.path = [

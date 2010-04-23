@@ -53,9 +53,7 @@ class AnimalWidget(forms.widgets.Input):
         })
     
     class Media:
-        css = {
-            'all': ('animal_widget.css',),
-        }
+        css = {'all': ('animal_widget.css',)}
         js = ('animal_widget.js',)
 
 class AnimalField(forms.ModelChoiceField):
