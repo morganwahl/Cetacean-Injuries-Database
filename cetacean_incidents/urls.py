@@ -24,8 +24,8 @@ urlpatterns = patterns('',
 # name the MEDIA_URL for use in templates. also has django serve up media if
 # the hosting webserver doesn't.
 urlpatterns += patterns("django.views",
-    # strip the initial '/' from the url
-    url(r"^%s(?P<path>.*)$" % settings.MEDIA_URL[1:],
+    # strip URL_PREFIX from MEDIA_URL
+    url(r"^%s(?P<path>.*)$" % settings.MEDIA_URL[len(settings.URL_PREFIX):],
         "static.serve",
         {"document_root": settings.MEDIA_ROOT},
         name="site-media",

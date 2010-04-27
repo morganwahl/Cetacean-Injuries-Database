@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
+from django.forms import Media
 
 from models import Case, Entanglement, Animal, Observation
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
@@ -213,12 +214,18 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
 
             return redirect(observation)
 
+    template_media = Media(
+        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js'),
+    )
+    
     return render_to_response(
         template,
         {
             'case': case,
             'observation': observation,
             'forms': forms,
+            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
         context_instance= RequestContext(request),
     )
