@@ -202,7 +202,10 @@ class NiceLocationForm(LocationForm):
         # have the superclass instantiate a Location
         location = super(NiceLocationForm, self).save(commit=False, *args, **kwargs)
         
-        location.dms_coords_pair = (self.cleaned_data['coordinates_lat_input'], self.cleaned_data['coordinates_lng_input'])
+        if self.cleaned_data['coordinates_lat_input'] is None or self.cleaned_data['coordinates_lng_input'] is None:
+            location.dms_coords_pair = None
+        else:
+            location.dms_coords_pair = (self.cleaned_data['coordinates_lat_input'], self.cleaned_data['coordinates_lng_input'])
         
         if commit:
             location.save()

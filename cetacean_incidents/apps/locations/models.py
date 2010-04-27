@@ -37,10 +37,13 @@ class Location(models.Model):
         '''
     )
     def _get_coords_pair(self):
-        if self.coordinates is None:
+        if not self.coordinates:
             return None
         return tuple(map(float, self.coordinates.split(',')))
     def _set_coords_pair(self, pair):
+        if not pair:
+            self.coordinates = ''
+            return
         if not len(pair) >= 2:
             # TODO throw an exception?
             return
@@ -51,6 +54,9 @@ class Location(models.Model):
             return None
         return tuple(map( dec_to_dms, self.coords_pair))
     def _set_dms_coords_pair(self, pair):
+        if not pair:
+            self.coords_pair = None
+            return
         if not len(pair) >= 2:
             # TODO throw an exception?
             return
