@@ -26,7 +26,7 @@
 {% endblock %}
 
 {% block content %}
-<table class="layout"><tr class="layout"><td class="layout"> <!-- for making columns -->
+<table class="layout"><tr class="layout"><td class="layout" width="50%"> <!-- for making columns -->
     <div class="section">
         <h3>Observation</h3>
         <table>
@@ -103,7 +103,7 @@
             <tr><th>biopsy samples taken?</th><td>{{ observation.biopsy }}</td></tr>
         </table>
     </div>
-</td><td class="layout">
+</td><td class="layout" width="50%">
     <div class="section">
         <h3>Narrative</h3>
         <div>{{ observation.narrative|default:"<i>nothing</i>"|linebreaks }}</div>
