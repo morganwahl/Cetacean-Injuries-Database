@@ -8,8 +8,6 @@ from cetacean_incidents.apps.contacts.models import Contact
 
 observation_forms = {}
 
-from django.core.urlresolvers import reverse
-
 class AnimalForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we sepcify our own

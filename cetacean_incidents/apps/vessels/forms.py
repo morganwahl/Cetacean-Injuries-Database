@@ -14,7 +14,7 @@ class FlagSelect(forms.Select):
     '''
     
     class Media:
-        js = (reverse('site-media', kwargs={'path': 'jquery/jquery-1.3.2.min.js'}),)
+        js = ('jquery/jquery-1.3.2.min.js',)
     
     def render(self, name, value, attrs=None, choices=()):
         if value is None:

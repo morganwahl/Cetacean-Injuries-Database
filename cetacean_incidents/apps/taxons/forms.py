@@ -1,7 +1,6 @@
 from django import forms
 from django.template.loader import render_to_string
 from models import Taxon
-from django.core.urlresolvers import reverse
 #from django.core.validators import EMPTY_VALUES
 EMPTY_VALUES = (None, '', [], (), {})
 
