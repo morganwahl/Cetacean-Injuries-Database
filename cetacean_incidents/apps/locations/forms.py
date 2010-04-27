@@ -32,13 +32,20 @@ class LocationForm(forms.ModelForm):
 
 class NiceLocationForm(LocationForm):
     
+    def __init__(self, *args, **kwargs):
+        super(NiceLocationForm, self).__init__(*args, **kwargs)
+        if self.instance.coordinates:
+            (lat,lng) = self.instance.coords_pair
+            self.initial['coordinates_lat_input'] = lat
+            self.initial['coordinates_lng_input'] = lng
+            
     # TODO surely there's a library to take care of this; perferably with
     # localization...
     _dms_re = re.compile(
+        # don't forget to double-escape, since it's a unicode string
         u'^[^NSEW\\d\\-\u2212\\.]*'
         + r'(?P<pre_dir>[NSEW])?' # match a direction
-        + r'\D*'
-        # don't forget to double-escape, since it's a unicode string
+        + u'[^\\-\u2212\\d]*'
         + u'(?P<sign>[\\-\u2212])?' # match a minus sign
         + r'[^\d\.]*' 
         + r'('
@@ -50,19 +57,18 @@ class NiceLocationForm(LocationForm):
         + r')'
         + r'[^\dNSEW]*'
         + r'(?P<post_dir>[NSEW])?' # match a direction
-        + u'[^NSEW\\d\\-\u2212\\.]*$',
+        + u'[^\\d\\-\u2212\\.]*$',
         re.IGNORECASE
     )
     
     def _clean_coordinate(self, value, is_lat):
-        import pdb; pdb.set_trace()
         parsed = self._dms_re.search(value)
         if not parsed:
             raise forms.ValidationError(u"can't figure out format of coordinate")
         
         def clean_direction(direction):
             for d in 'NSEW':
-                if re.match('(?i%s)' % d, direction):
+                if re.match('%s' % d, direction, re.IGNORECASE):
                     direction = unicode(d)
                     break
             if is_lat and direction not in ('N', 'S'):
@@ -90,7 +96,12 @@ class NiceLocationForm(LocationForm):
             if neg and (pre_dir or post_dir):
                 raise forms.ValidationError(u"can't figure out format of coordinate: both minus sign and direction")
         else:
-            neg = False
+            neg = (
+                pre_dir == 'S'
+                or pre_dir == 'W'
+                or post_dir == 'S'
+                or post_dir == 'W'
+            )
         
         def not_none(x,y):
             if x is None:
@@ -109,7 +120,7 @@ class NiceLocationForm(LocationForm):
         if minutes:
             minutes = float(minutes)
         else:
-            degrees = 0.0
+            minutes = 0.0
         
         seconds = parsed.group('dms_seconds')
         if seconds:
@@ -125,12 +136,13 @@ class NiceLocationForm(LocationForm):
         label= "Latitude",
         help_text= u"the latitude as \u201c42.323342 S\u201d or \u201c-42.323342\u201d or \u201c42 19' 24.04\" S\u201d, etc"
     )
+    
 
     def clean_coordinates_lat_input(self):
         value = self.cleaned_data['coordinates_lat_input']
         if not re.search('\S', value, re.UNICODE):
             return None
-        return self._clean_coordinate(value, True)
+        return self._clean_coordinate(value, is_lat=True)
 
     coordinates_lng_input = forms.CharField(
         required= False,
@@ -142,37 +154,40 @@ class NiceLocationForm(LocationForm):
         value = self.cleaned_data['coordinates_lng_input']
         if not re.search('\S', value, re.UNICODE):
             return None
-        return self._clean_coordinate(value, False)
+        return self._clean_coordinate(value, is_lat=False)
     
-    _roughness_field = Location._meta.get_field('roughness')
-    _roughnesses = (
-            ('', '<unknown>'),
-            ('10', "good GPS fix"),
-            ('50', "not so good GPS fix"),
-            (unicode(15 * MILE_IN_METERS), "general area (e.g. Mass Bay)"), # Cap Cod Bay is roughly 30mi across
-            (unicode(325 * MILE_IN_METERS), "region (e.g. the Northeast)"), # 650mi from the Chesapeake to Nova Scotia
-    )
-    _initial_roughness = ''
-    if _roughness_field.default:
-        _initial_roughness = _roughness_field.default
-        if not _roughness_field.blank:
-            _roughnesses = _roughnesses[1:]
-        
-    roughness = forms.ChoiceField(
-        choices= _roughnesses,
-        initial= _initial_roughness,
-        # TODO onion distance?
-        required= _roughness_field.blank != True,
-        label= _roughness_field.verbose_name.capitalize(),
-        help_text= u'''\
-            A guess as to the distance these coordinates are off by, at most.
-        ''',
-    )
-    
-    def clean_roughness(self):
-        if self.cleaned_data['roughness'] == '':
-            return None
-        return float(self.cleaned_data['roughness'])
+    # TODO This make sense when creating a new Location, but not when editing
+    # an existing one
+    #
+    #_roughness_field = Location._meta.get_field('roughness')
+    #_roughnesses = (
+    #        ('', '<unknown>'),
+    #        ('10', "good GPS fix"),
+    #        ('50', "not so good GPS fix"),
+    #        (unicode(15 * MILE_IN_METERS), "general area (e.g. Mass Bay)"), # Cap Cod Bay is roughly 30mi across
+    #        (unicode(325 * MILE_IN_METERS), "region (e.g. the Northeast)"), # 650mi from the Chesapeake to Nova Scotia
+    #)
+    #_initial_roughness = ''
+    #if _roughness_field.default:
+    #    _initial_roughness = _roughness_field.default
+    #    if not _roughness_field.blank:
+    #        _roughnesses = _roughnesses[1:]
+    #    
+    #roughness = forms.ChoiceField(
+    #    choices= _roughnesses,
+    #    initial= _initial_roughness,
+    #    # TODO onion distance?
+    #    required= _roughness_field.blank != True,
+    #    label= _roughness_field.verbose_name.capitalize(),
+    #    help_text= u'''\
+    #        A guess as to the distance these coordinates are off by, at most.
+    #    ''',
+    #)
+    #
+    #def clean_roughness(self):
+    #    if self.cleaned_data['roughness'] == '':
+    #        return None
+    #    return float(self.cleaned_data['roughness'])
     
     def clean(self):
         cleaned_data = self.cleaned_data
@@ -191,12 +206,12 @@ class NiceLocationForm(LocationForm):
         
         if commit:
             location.save()
-            location.save_m2m()
+            self.save_m2m()
         
         return location
 
     # don't forget Meta classes aren't inherited
     class Meta:
         model = Location
-        exclude = ('coordinates')
+        exclude = ('coordinates', 'roughness')
     

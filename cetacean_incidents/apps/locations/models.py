@@ -17,7 +17,7 @@ class Location(models.Model):
         '''
     )
     
-    # this one was tough to decide one. Using GeoDjango is overkill; my main
+    # this one was tough to decide on. Using GeoDjango is overkill; my main
     # concern was not losing precision to rounding when converting from
     # degrees-minutes-seconds to decimal degrees. ideally, we would store
     # coordinates in base-30 (so that converting from DMS or decimal wouldn't
@@ -39,17 +39,17 @@ class Location(models.Model):
     def _get_coords_pair(self):
         if self.coordinates is None:
             return None
-        return map(float, self.coordinates.split(','))
+        return tuple(map(float, self.coordinates.split(',')))
     def _set_coords_pair(self, pair):
         if not len(pair) >= 2:
             # TODO throw an exception?
             return
-        self.coordinates = "%.16f,%.16f" % pair
+        self.coordinates = "%.16f,%.16f" % tuple(pair)
     coords_pair = property(_get_coords_pair, _set_coords_pair)
     def _get_dms_coords_pair(self):
         if self.coordinates is None:
             return None
-        return map( dec_to_dms, self.coords_pair)
+        return tuple(map( dec_to_dms, self.coords_pair))
     def _set_dms_coords_pair(self, pair):
         if not len(pair) >= 2:
             # TODO throw an exception?
