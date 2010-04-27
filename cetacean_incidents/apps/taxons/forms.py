@@ -43,10 +43,8 @@ class TaxonWidget(forms.widgets.Widget):
         })
     
     class Media:
-        css = {
-            'all': ('taxon_widget.css',),
-        }
-        js = ('http://www.google.com/jsapi','taxon_widget.js')
+        css = {'all': ('taxon_widget.css',)}
+        js = ('jquery/jquery-1.3.2.min.js', 'taxon_widget.js')
 
 class TaxonField(forms.Field):
     # based on ModelChoiceField, except you can't choose queryset, and there

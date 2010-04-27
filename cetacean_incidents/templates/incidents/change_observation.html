@@ -4,21 +4,10 @@
 
 {% block head %}
 {{ block.super }}
-{{ forms.observation.media }}
-{{ forms.observer_vessel.media }}
-<script type="text/javascript" src="{% url jsi18n %}"></script>
-{{ forms.new_reporter.media }}
-{# TODO media-import cleanup #}
-<link 
-    rel="stylesheet"
-    type="text/css"
-    href="{% url site-media path="jqueryui/overcast/jquery-ui-1.7.2.custom.css" %}"
-    >
-<script type="text/javascript" src="http://www.google.com/jsapi?key=INSERT-YOUR-KEY"></script>
+<!-- all media -->
+{{ all_media }}
+<!-- template JS -->
 <script type="text/javascript">
-    google.load("jquery", "1", {uncompressed: true});
-    google.load("jqueryui", "1", {uncompressed: true});
-
     $(function(){
         $('#tabs').tabs();
     });
