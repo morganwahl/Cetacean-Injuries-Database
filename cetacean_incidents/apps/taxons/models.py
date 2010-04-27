@@ -51,6 +51,13 @@ class Taxon(models.Model):
     )
     rank = models.FloatField(choices=RANK_CHOICES)
     
+    def _get_ancestors(self):
+        if self.supertaxon is None:
+            return []
+        return self.supertaxon.ancestors + [self.supertaxon]
+    'a list of ancestor Taxa, starting at a root'
+    ancestors = property(_get_ancestors)
+    
     def _is_binomial(self):
         if not self.rank is None:
             return self.rank < 0

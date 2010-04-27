@@ -16,24 +16,24 @@ def probable_taxon(observations):
     taxon_ids = filter( lambda x: not x is None, taxon_ids )
     if len(taxon_ids) == 0:
         return None
-
+    
     taxon_ids = set(taxon_ids)
     taxa = set()
     for id in taxon_ids:
         taxa.add(Taxon.objects.get(id=id))
         
+    # remove taxa that are ancestors of other taxa in the set
+    for taxon in frozenset(taxa):
+        # be sure a taxon's ancestors property doesn't include itself!
+        taxa -= set(taxon.ancestors)
+
     if len(taxa) == 1:
         return taxa.pop()
     
     supertaxa = []
     depth = float('inf')
     for taxon in taxa:
-        ancestors = []
-        while taxon is not None:
-            ancestors.append(taxon)
-            taxon = taxon.supertaxon
-        # reverse so root is first
-        ancestors.reverse()
+        ancestors = taxon.ancestors
         depth = min(depth, len(ancestors))
         supertaxa.append(ancestors)
     
