@@ -214,7 +214,7 @@ class Case(models.Model):
     animal = models.ForeignKey(
         Animal,
     )
-
+    
     ole_investigation = models.NullBooleanField(
         blank= True,
         null= True,
@@ -357,9 +357,9 @@ def _observation_post_save(sender, **kwargs):
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
 class EntanglementObservation(Observation):
-    outcome = models.TextField(
+    entanglement_details = models.TextField(
         blank= True,
-        help_text= "What was the situation at the end of this Observation? was the animal disentangled? Was it determined to be non-life-threatening? etc.",
+        help_text= "details of how the animal was entangled",
     )
 
 # TODO how to inherit signal handlers?

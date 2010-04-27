@@ -8,6 +8,8 @@ from cetacean_incidents.apps.contacts.models import Contact
 
 observation_forms = {}
 
+from django.core.urlresolvers import reverse
+
 class AnimalForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we sepcify our own
@@ -120,7 +122,7 @@ class ObservationForm(forms.ModelForm):
 
     # ModelForm won't fill in all the handy args for us if we sepcify our own
     # field
-    _f = Observation.taxon.field
+    _f = Observation._meta.get_field('taxon')
     taxon = TaxonField(
         required= _f.blank != True,
         help_text= _f.help_text,
