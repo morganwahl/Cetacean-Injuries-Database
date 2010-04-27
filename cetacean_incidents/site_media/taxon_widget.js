@@ -22,6 +22,21 @@ TaxonWidget = {
             return;
         }
         
+        // TODO call this when the page layout changes
+        var place_results_box = function() {
+            // position the results box under the filter input
+            var offset = $("#" + filter_id).offset();
+            var width = $("#" + filter_id).outerWidth();
+            var height = $("#" + filter_id).outerHeight();
+            var left = offset.left;
+            var top = offset.top + height;
+            $("#" + results_id).css({
+                position: 'absolute',
+                top: top,
+                left: left
+            }).width(width);
+        }
+        
         var taxon_selected = function() {
             $("#" + clear_id).show();
             // hide the search results and disable the filter
@@ -29,7 +44,7 @@ TaxonWidget = {
             $("#" + filter_id).attr('disabled', 'disabled');
         }
 
-        function update_results(query) {
+        var update_results = function(query) {
             // start the 'throbber' to show we're waiting on the network
             // TODO get URL from django
             $("#" + results_id).html('<img src="' + throbber_url + '"></img> <i>searching</i>'); 
@@ -40,17 +55,7 @@ TaxonWidget = {
                 query_url,
                 { q: query},
                 function(taxons){
-                    // position the results box under the filter input
-                    var offset = $("#" + filter_id).offset();
-                    var width = $("#" + filter_id).outerWidth();
-                    var height = $("#" + filter_id).outerHeight();
-                    var left = offset.left;
-                    var top = offset.top + height;
-                    $("#" + results_id).css({
-                        position: 'absolute',
-                        top: top,
-                        left: left
-                    }).width(width);
+                    place_results_box();
 
                     // TODO this func is called asynchronously. make
                     // sure old results don't overright newer ones.
