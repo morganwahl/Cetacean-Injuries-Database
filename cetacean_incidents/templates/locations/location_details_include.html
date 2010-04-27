@@ -1,4 +1,4 @@
-{# intended to be included in another template, with the location as l #}
+{# intended to be included in another template, with the Location as l #}
 <table class="layout">
     <tr class="layout">
         {% if l.coordinates %}
@@ -6,12 +6,41 @@
             <div>
             <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=100x100&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
             </div>
-            {% comment %}
             <table>
-                <tr><th>lat.</th><td style="text-align:right;">{{ l.coords_pair.0|floatformat:"4" }}</td>
-                <tr><th>long.</th><td style="text-align:right;">{{ l.coords_pair.1|floatformat:"4" }}</td>
+                <tr id="{{ l.id }}_lat_dec"><th>lat.</th><td style="text-align:right;">{{ l.coords_pair.0|floatformat:"4" }}</td>
+                <tr id="{{ l.id }}_lng_dec"><th>long.</th><td style="text-align:right;">{{ l.coords_pair.1|floatformat:"4" }}</td>
+                <tr id="{{ l.id }}_lat_dms"><th>lat.</th><td style="text-align:right;">{{ l.dms_coords_pair.0.0 }}&#x00b0;{{ l.dms_coords_pair.0.1 }}&#x2032;{{ l.dms_coords_pair.0.2 }}&#x2033;</td></tr>
+                <tr id="{{ l.id }}_lng_dms"><th>long.</th><td style="text-align:right;">{{ l.dms_coords_pair.1.0 }}&#x00b0;{{ l.dms_coords_pair.1.1 }}&#x2032;{{ l.dms_coords_pair.2.2 }}&#x2033;</td></tr>
             </table>
-            {% endcomment %}
+            <form id="{{ l.id }}_coords_format">
+                <input type="radio" name="coords_format" checked="checked" value="dec">decimal
+                <input type="radio" name="coords_format" value="dms">deg. min. sec.
+                <script type="text/javascript">
+                    function update_coords_format(value) {
+                        if (value == 'dec') {
+                            $("#{{ l.id }}_lat_dec").show();
+                            $("#{{ l.id }}_lng_dec").show();
+                            $("#{{ l.id }}_lat_dms").hide();
+                            $("#{{ l.id }}_lng_dms").hide();
+                        }
+                        if (value == 'dms') {
+                            $("#{{ l.id }}_lat_dec").hide();
+                            $("#{{ l.id }}_lng_dec").hide();
+                            $("#{{ l.id }}_lat_dms").show();
+                            $("#{{ l.id }}_lng_dms").show();
+                        }
+                    }
+                    
+                    $().ready(function(){
+                        var radios = $("form#{{ l.id }}_coords_format input[name=\"coords_format\"]");
+                        radios.change(function(event){
+                            update_coords_format($(this).val());
+                        });
+                        $("#{{ l.id }}_lat_dms").hide();
+                        $("#{{ l.id }}_lng_dms").hide();
+                    });
+                </script>
+            </form>
         </td>
         {% endif %}
         <td class="layout" style="vertical-align: middle;">

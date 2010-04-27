@@ -9,7 +9,7 @@ from django.forms import Media
 
 from models import Case, Entanglement, Animal, Observation
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
-from cetacean_incidents.apps.locations.forms import LocationForm
+from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
@@ -113,7 +113,7 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         ),
         'new_reporter': ContactForm(data, prefix='new_reporter'),
         'new_observer': ContactForm(data, prefix='new_observer'),
-        'location': LocationForm(data, instance=location, prefix='location'),
+        'location': NiceLocationForm(data, instance=location, prefix='location'),
         'report_datetime': DateTimeForm(data, prefix='report', instance=report_datetime),
         'observation_datetime': DateTimeForm(data, prefix='observation', instance=observation_datetime),
         'observer_vessel': ObserverVesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
