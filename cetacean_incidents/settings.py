@@ -21,7 +21,7 @@ MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 LOGIN_URL = URL_PREFIX + 'login/' 
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = URL_PREFIX
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
