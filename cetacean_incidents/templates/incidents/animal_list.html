@@ -1,12 +1,26 @@
 {% extends "base.html" %}
 {% load animal_extras %}
 
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+{% endblock %}
+
 {% block title %}{{ block.super }}: Animals{% endblock %}
 
 {% block content %}
-<ul>
+<table class="sortable">
+    <tr>
+        <th>animal</th>
+        <th>name</th>
+        <th>cases</th>
+    </tr>
 	{% for animal in animal_list %}
-	<li>{% animal_link animal %}</li>
+	<tr>
+	    <td>{% animal_link animal %}</td>
+	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
+	    <td>{{ animal.case_set.count }}</td>
+    </tr>
 	{% endfor %}
-</ul>
+</table>
 {% endblock %}

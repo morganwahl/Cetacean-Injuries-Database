@@ -1,17 +1,27 @@
 {% extends "base.html" %}
 {% load contact_extras %}
 
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+{% endblock %}
+
 {% block title %}{{ block.super }}: Contacts{% endblock %}
 
 {% block header %}<h2>All Contacts</h2>{% endblock %}
 
 {% block content %}
 {% if contact_list %}
-<ul>
+<table class="sortable">
+    <tr>
+        <th>contact</th>
+    </tr>
+    <tr>
     {% for contact in contact_list %}
-    <li>{% contact_link contact %}</li>
+        <td>{% contact_link contact %}</td>
     {% endfor %}
-</ul>
+    </tr>
+</table>
 {% else %}
 <i>No contacts yet!</i>
 {% endif %}
