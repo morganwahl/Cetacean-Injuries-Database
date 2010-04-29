@@ -6,9 +6,10 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.forms import Media
+from django.db import transaction
 
 from models import Case, Entanglement, Animal, Observation
-from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm
+from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
@@ -216,7 +217,7 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
 
     template_media = Media(
         css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js'),
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js'),
     )
     
     return render_to_response(
@@ -401,3 +402,95 @@ def animal_search(request):
     
     return HttpResponse(json.dumps(animals))
 
+@login_required
+def entanglement_report_form(request):
+    '''\
+    A single page to quickly create a new Case for a new Animal and its
+    initial Observation.
+    '''
+
+    # fill in some defaults specific to this view
+    data = None
+    if request.method == 'POST':
+        data = request.POST.copy()
+    forms = {
+        'animal': AnimalForm(data, prefix='animal'),
+        'case': EntanglementForm(data, prefix='case'),
+        'observation': EntanglementObservationForm(data, prefix='observation'),
+        'new_reporter': ContactForm(data, prefix='new_reporter'),
+        'location': NiceLocationForm(data, prefix='location'),
+        'report_datetime': DateTimeForm(data, prefix='report_time'),
+        'observation_datetime': DateTimeForm(data, prefix='observation_time'),
+    }
+    
+    if request.method == 'POST':
+        class _SomeValidationFailed(Exception):
+            pass
+
+        # hafta use transactions, since the Case won't validate without an
+        # Animal, but we can't fill in an Animal until it's saved, but we
+        # don't wanna save unless the Observation, etc. are valid.
+        @transaction.commit_on_success
+        def _try_saving():
+            if not forms['animal'].is_valid():
+                raise _SomeValidationFailed
+            animal = forms['animal'].save()
+            data['case-animal'] = animal.id
+            # TODO don't repeat yourself... get the Form class and prefix from the existing instance of forms['case']
+            forms['case'] = EntanglementForm(data, prefix='case')
+            
+            if not forms['case'].is_valid():
+                raise _SomeValidationFailed
+            case = forms['case'].save()
+            
+            if not forms['observation'].is_valid():
+                raise _SomeValidationFailed
+            
+            # TODO the commit=False save is necessary because ObservationForm
+            # doesn't have a Case field
+            observation = forms['observation'].save(commit=False)
+            observation.case = case
+
+            # check ObservationForm.new_reporter
+            if forms['observation'].cleaned_data['new_reporter'] == 'new':
+                if not forms['new_reporter'].is_valid():
+                    raise _SomeValidationFailed
+                observation.reporter = forms['new_reporter'].save()
+
+            if not forms['location'].is_valid():
+                raise _SomeValidationFailed
+            observation.location = forms['location'].save()
+
+            if not forms['report_datetime'].is_valid():
+                raise _SomeValidationFailed
+            observation.report_datetime = forms['report_datetime'].save()
+
+            if not forms['observation_datetime'].is_valid():
+                raise _SomeValidationFailed
+            observation.observation_datetime = forms['observation_datetime'].save()
+
+            observation.save()
+            forms['observation'].save_m2m()
+
+            return case
+        
+        try:
+            return redirect(_try_saving())
+        except _SomeValidationFailed:
+            pass
+
+    template_media = Media(
+        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
+    )
+
+    media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
+    
+    return render_to_response(
+        'incidents/entanglement_report_form.html',
+        {
+            'forms': forms,
+            'media': media,
+        },
+        context_instance= RequestContext(request),
+    )
+    

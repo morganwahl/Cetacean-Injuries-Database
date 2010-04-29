@@ -32,4 +32,5 @@ urlpatterns += patterns('',
     (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
     url(r'^animal_search$', views.animal_search, name='animal_search'),
+    (r'^entanglement_report_form/$', views.entanglement_report_form, {}, 'entanglement_report_form'),
 )
