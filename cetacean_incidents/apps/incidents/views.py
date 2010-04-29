@@ -216,7 +216,7 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
 
     template_media = Media(
         css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js'),
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js'),
     )
     
     return render_to_response(
