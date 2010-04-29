@@ -151,10 +151,22 @@ class Observation(models.Model):
         """
     )
     
+    documentation = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "were any photos or videos taken?",
+    )
+    
     biopsy = models.NullBooleanField(
         blank= True,
         null= True,
         help_text= "where any biopsy samples taken?",
+    )
+    
+    tagged = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "were any tags put on the animal?",
     )
     
     wounded = models.NullBooleanField(
@@ -218,6 +230,7 @@ class Case(models.Model):
     ole_investigation = models.NullBooleanField(
         blank= True,
         null= True,
+        default= False,
         verbose_name= "OLE Investigation",
         help_text= "Is there a corresponding Office of Law Enforcement investigation?",
     )
@@ -357,6 +370,15 @@ def _observation_post_save(sender, **kwargs):
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
 class EntanglementObservation(Observation):
+    anchored = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "was the animal anchored?",
+    )
+    gear_description = models.TextField(
+        blank= True,
+        help_text= "describe the entangling gear",
+    )
     entanglement_details = models.TextField(
         blank= True,
         help_text= "details of how the animal was entangled",
