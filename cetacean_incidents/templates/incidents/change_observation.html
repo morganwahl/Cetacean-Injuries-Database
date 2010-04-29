@@ -12,22 +12,6 @@
         $('#tabs').tabs();
     });
 </script>
-<script type="text/javascript">
-    var RadioHider = {
-        'init': function(radio_name, val_to_id_map) {
-            var radio_sel = "[name=" + radio_name + "]";
-            $(radio_sel).change(function(event){
-                for (var val in val_to_id_map) {
-                    var id = val_to_id_map[val];
-                    if ($(this).val() == val)
-                        $('#' + id).show();
-                    else
-                        $('#' + id).hide();
-                }
-            });
-        },
-    }
-</script>
 <style type="text/css">
     [name={{ forms.observation.narrative.name }}] { width: 100%; }
 </style>
@@ -112,7 +96,6 @@
                     {% include "unlabeled_field.html" %}
                     {% endwith %}
                 </div>
-                {# TODO firsthandedness #}
              </div>
 	    </div>
 	    <div id="observation">

@@ -136,9 +136,11 @@ class ObservationForm(forms.ModelForm):
             ('other', 'use an existing contact'),
             ('none', 'no contact info for the reporter'),
         ),
-        initial= 'other',
+        initial= 'none',
+        required= False,
         widget= forms.RadioSelect,
-        help_text= "create a new contact for the reporter?",
+        #help_text= "create a new contact for the reporter?",
+        # help_text isn't really necessary; the choices are self-explanitory
     )
     new_observer = forms.ChoiceField(
         choices= (
@@ -147,9 +149,11 @@ class ObservationForm(forms.ModelForm):
             ('reporter', 'same contact info as reporter'),
             ('none', 'no contact info for the observer'),
         ),
-        initial= 'other',
+        initial= 'none',
+        required= False,
         widget= forms.RadioSelect,
-        help_text= "create a new contact for the observer?",
+        #help_text= "create a new contact for the observer?",
+        # help_text isn't really necessary; the choices are self-explanitory
     )
 
     class Meta:

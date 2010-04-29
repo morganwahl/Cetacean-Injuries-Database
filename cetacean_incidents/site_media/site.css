@@ -60,11 +60,15 @@ li {
 
 table {
 	width: inherit;
-	border: thin solid #babdb6; /* aluminium 3 */
 }
 table td,th {
-	border: thin dotted #d3d7cf; /* aluminium 2 */
 	padding: .25em;
+}
+table.bordered {
+	border: thin solid #babdb6; /* aluminium 3 */
+}
+table.bordered td,th {
+	border: thin dotted #d3d7cf; /* aluminium 2 */
 }
 
 /* for using tables for layout */
@@ -98,7 +102,7 @@ ul.errorlist {
 }
 
 .field_wrapper {
-	border: thin dashed #555753; /* aluminium 5 */
+	/* border: thin dashed #555753; */ /* aluminium 5 */
 	padding: .125em;
 	margin: .125em;
 	text-align: left;

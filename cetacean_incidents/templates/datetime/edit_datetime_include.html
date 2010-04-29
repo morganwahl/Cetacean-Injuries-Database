@@ -1,5 +1,9 @@
 {# intended to be included in another template, with a DateTimeForm as d_form #}
 <table>
+    {# TODO seconds? timezone? for now, assume U.S. Eastern time in the view #}
+    <caption>
+        please use 24-hour, EST/EDT time
+    </caption>
     <tr>
         {% for f in d_form %}
         {% ifnotequal f.label_tag d_form.second.label_tag %}
@@ -7,7 +11,6 @@
         {% endifnotequal %}
         {% endfor %}
     </tr>
-    {# TODO seconds? timezone? for now, assume U.S. Eastern time in the view #}
     <tr>
         {% for f in d_form %}
         {% ifnotequal f.label_tag d_form.second.label_tag %}
