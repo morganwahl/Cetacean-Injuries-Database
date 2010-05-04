@@ -10,6 +10,6 @@ var RadioHider = {
                     $('#' + id).hide();
             }
         });
-    },
+    }
 }
 
