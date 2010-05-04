@@ -40,6 +40,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'django.middleware.transaction.TransactionMiddleware',
+    'reversion.middleware.RevisionMiddleware',
 )
 
 ROOT_URLCONF = 'cetacean_incidents.urls'
@@ -53,6 +55,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.databrowse',
     'django_extensions',
+    'reversion',
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
     'cetacean_incidents.apps.contacts',

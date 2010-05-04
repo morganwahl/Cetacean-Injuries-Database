@@ -1,4 +1,7 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 from models import Taxon
 
-admin.site.register(Taxon)
+class TaxonAdmin(VersionAdmin):
+    pass
+admin.site.register(Taxon, TaxonAdmin)

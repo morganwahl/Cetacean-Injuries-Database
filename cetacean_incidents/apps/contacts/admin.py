@@ -1,7 +1,8 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 from models import Contact, Organization
 
-class ContactAdmin(admin.ModelAdmin):
+class ContactAdmin(VersionAdmin):
 
     def join_all(self, queryset):
         strings = []
@@ -20,5 +21,7 @@ class ContactAdmin(admin.ModelAdmin):
 
 admin.site.register(Contact, ContactAdmin)
 
-admin.site.register(Organization)
+class OrganizationAdmin(VersionAdmin):
+    pass
+admin.site.register(Organization, OrganizationAdmin)
 
