@@ -4,10 +4,10 @@
 {% block sidebar %}
 {{ block.super }}
 <div id="ids_block">
-	<h3>ID's</h3>
-	<table>
-		{% block ids-table-rows %}
-		{% endblock %}
-	</table>
+    <h3>ID's</h3>
+    <dl>
+        {% block ids-dl %}
+        {% endblock %}
+    </dl>
 </div>
 {% endblock %}

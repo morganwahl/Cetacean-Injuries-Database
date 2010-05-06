@@ -1,108 +1,121 @@
 <!DOCTYPE html> <!-- the HTML5 doctype -->
 <html>
-	<head>
-	    {% block head %}
- 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <head>
+        {% block head %}
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
-		<!-- Blueprint CSS Framework --> 
-		{% comment %}
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/screen.css" %}"
-		    type="text/css" 
-		    media="screen, projection">
-		<link 
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/print.css" %}"
-		    type="text/css"
-		    media="print">
-		<link 
-		    rel="stylesheet" 
-		    href="{% url site-media path="blueprint/src/typography.css" %}" 
-		    type="text/css" 
-		    media="screen, projection">
+        <!-- Blueprint CSS Framework --> 
+        {% comment %}
         {% endcomment %}
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/src/reset.css" %}"
-		    type="text/css"
-		    media="screen, projection">
-		<!--[if lt IE 8]>
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/ie.css" %}"
-		    type="text/css"
-		    media="screen, projection">
-		<![endif]-->
-		
-		<!-- our own CSS -->
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="site.css" %}"
-		    type="text/css"
-		    >
-		
-		<style type="text/css">
-			#sidebar {
-				float: right;
-				border-left: solid thin grey;
-				border-bottom: solid thin grey;
-				background-color: inherit;
-			}
-			#sidebar div {
-				border: thin solid grey;
-				background-color: inherit;
-				padding: .25em;
-				margin: .25em;
-			}
-			#logo {
-			    margin: .25em;
-			}
-		</style>
-		
-		<title>
-		    {% block title %}Marine Mammal Injury Database{% endblock %}
-		</title>
-		
-		{% endblock head %}
-	</head>
-	<body>
-		<div id="sidebar">
-			{% block sidebar %}
-			<div id="account_corner">
-				{% if user.is_authenticated %}
-				logged in as {{ user.username }}
-				<a href="{% url logout %}">log out</a>
-				{% else %}
-				<a href="{% url login %}">log in</a>
-				{% endif %}
-			</div>
-			{% endblock %}
-		</div>
-		<div id="masthead">
-		    <h1>
-		        <a href="{% url home %}" class="large">
+        <link
+            rel="stylesheet"
+            href="{% url site-media path="blueprint/src/reset.css" %}"
+            type="text/css"
+            media="screen, projection">
+        <!--[if lt IE 8]>
+            <link
+                rel="stylesheet"
+                href="{% url site-media path="blueprint/ie.css" %}"
+                type="text/css"
+                media="screen, projection">
+        <![endif]-->
+        <link
+            rel="stylesheet"
+            href="{% url site-media path="blueprint/screen.css" %}"
+            type="text/css" 
+            media="screen, projection">
+        <link 
+            rel="stylesheet"
+            href="{% url site-media path="blueprint/print.css" %}"
+            type="text/css"
+            media="print">
+        <link 
+            rel="stylesheet" 
+            href="{% url site-media path="blueprint/src/typography.css" %}" 
+            type="text/css" 
+            media="screen, projection">
+
+        <!-- our own CSS -->
+        <link
+            rel="stylesheet"
+            href="{% url site-media path="site.css" %}"
+            type="text/css"
+            >
+
+        <style type="text/css">
+            #sidebar {
+                float: right;
+                /* the width style color form doesn't work in IE (what does?) */
+                /* border-left: thin solid grey; */
+                border-left-width: thin;
+                border-left-style: solid;
+                border-left-color: grey;
+                /* border-bottom: solid thin grey; */
+                border-bottom-width: thin;
+                border-bottom-style: solid;
+                border-bottom-color: grey;
+                /* IE seems to think 'inherit' means 'transparent' */
+                /* background-color: inherit; */
+                background-color: #eeeeec; /* aluminium 1 */
+            }
+            #sidebar div {
+                /* again, IE doesn't understand the border-shorthand syntax */
+                /* border: thin solid grey; */
+                border-width: thin;
+                border-style: solid;
+                border-color: grey;
+                background-color: inherit;
+                padding: .25em;
+                margin: .25em;
+            }
+            #logo {
+                margin: .25em;
+            }
+        </style>
+
+        <title>
+            {% block title %}Marine Mammal Injury Database{% endblock %}
+        </title>
+
+        {% endblock head %}
+    </head>
+    <body>
+        <div id="sidebar">
+            {% block sidebar %}
+            <div id="account_corner">
+                {% if user.is_authenticated %}
+                logged in as {{ user.username }}
+                <a href="{% url logout %}">log out</a>
+                {% else %}
+                <a href="{% url login %}">log in</a>
+                {% endif %}
+            </div>
+            {% endblock %}
+        </div>
+        <div id="masthead">
+            <h1>
+                <a href="{% url home %}" class="large">
                     <img id="logo" src="{% url site-media path="NOAA_logo.png" %}">
-		            Marine Mammal Injury Database
-		        </a>
-		    </h1>
-		</div>
-		<div id="header">
+                    Marine Mammal Injury Database
+                </a>
+            </h1>
+        </div>
+        <div id="header">
             {% block header %}
             {% endblock header %}
-	    </div>
-		{% if messages %}
-		<div id="messages">
-		    <ul>
-			    {% for message in messages %}
-		        <li>{{ message }}</li>
-    		    {% endfor %}
-		    </u>
-		</div>
-		{% endif %}
-		<div id="content">
-			{% block content %}NO CONTENT!{% endblock %}
-		</div>
-	</body>
+        </div>
+        {% if messages %}
+        <div id="messages">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        <div id="content">
+            {% block content %}NO CONTENT!{% endblock %}
+        </div>
+    </body>
 </html>
 

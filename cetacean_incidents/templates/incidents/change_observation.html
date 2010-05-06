@@ -25,8 +25,8 @@
 <h2 style="margin-left:2em;">{% block observation_header %}NO HEADER!{% endblock %}</h2>
 {% endblock %}
 
-{% block ids-table-rows %}
-<tr><th>Case name</th><td>{{ case.current_name }}</td></tr>
+{% block ids-dl %}
+<dt>Case name</dt><dd>{{ case.current_name }}</dd>
 {% endblock %}
 
 {% block content %}

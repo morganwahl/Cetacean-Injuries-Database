@@ -20,9 +20,9 @@
 </div>
 {% endblock %}
 
-{% block ids-table-rows %}
-<tr><th>Case name</th><td>{{ observation.case.current_name }}</td></tr>
-<tr><th>local ID</th><td>{{ observation.id }}</td></tr>
+{% block ids-dl %}
+<dt>Case name</dt><dd>{{ observation.case.current_name }}</dd>
+<dt>local ID</dt><dd>{{ observation.id }}</dd>
 {% endblock %}
 
 {% block content %}

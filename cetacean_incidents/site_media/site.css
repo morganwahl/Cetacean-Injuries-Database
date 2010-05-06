@@ -1,24 +1,25 @@
 /*
-	the Tango palette from http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines
-	
-	butter	#fce94f #edd400 #c4a000
-	orange	#fcaf3e	#f57900	#ce5c00
-	chocolate #e9b96e #c17d11 #8f5902
-	chameleon	#8ae234 #73d216 #4e9a06
-	sky blue	#729fcf #3465a4 #204a87
-	plum	#ad7fa8 #75507b #5c3566
-	scarlet red	#ef2929 #cc0000 #a40000
-	aluminium	#eeeeec #d3d7cf #babdb6
-		#888a85 #555753 #2e3436
+    the Tango palette from http://tango.freedesktop.org/Tango_Icon_Theme_Guidelines
+
+    butter	#fce94f #edd400 #c4a000
+    orange	#fcaf3e	#f57900	#ce5c00
+    chocolate #e9b96e #c17d11 #8f5902
+    chameleon	#8ae234 #73d216 #4e9a06
+    sky blue	#729fcf #3465a4 #204a87
+    plum	#ad7fa8 #75507b #5c3566
+    scarlet red	#ef2929 #cc0000 #a40000
+    aluminium	#eeeeec #d3d7cf #babdb6
+        #888a85 #555753 #2e3436
 */
 
 
 body {
-	background-color: #eeeeec; /* aluminium 1 */
-	color: #2e3436; /* aluminium 6 */
-	font-family: Helvetica, "Sans", "Trebuchet MS", Arial, sans-serif;
-	font-size: 12pt;
-	margin: 0;
+    background-color: #eeeeec; /* aluminium 1 */
+    color: #2e3436; /* aluminium 6 */
+    font-family: Helvetica, "Sans", "Trebuchet MS", Arial, sans-serif;
+    font-size: 12pt;
+    text-align: left;
+    margin: 0;
 }
 div#masthead {
     padding: .5em;
@@ -35,7 +36,7 @@ div#content {
     padding: .5em;
 }
 a {
-	color: #204a87; /* sky blue 3 */
+    color: #204a87; /* sky blue 3 */
 }
 p {
     margin-top: .5em;
@@ -43,12 +44,14 @@ p {
 }
 h1 {
     font-size: 200%;
+    font-weight: bold;
     vertical-align: middle;
 }
 h1 * {
-    vertical-align: inherit;
+    vertical-align: middle;
 }
 h2 {
+    font-weight: bold;
     font-size: 150%;
 }
 h3 {
@@ -59,16 +62,19 @@ li {
 }
 
 table {
-	width: inherit;
+    width: inherit;
 }
 table td,th {
-	padding: .25em;
+    padding: .25em;
 }
 table.bordered {
-	border: thin solid #babdb6; /* aluminium 3 */
+    border: thin solid #babdb6; /* aluminium 3 */
 }
 table.bordered td,th {
-	border: thin dotted #d3d7cf; /* aluminium 2 */
+    border: thin dotted #d3d7cf; /* aluminium 2 */
+}
+table caption {
+    background: transparent;
 }
 
 /* for using tables for layout */
@@ -90,20 +96,20 @@ span.fieldname {
 }
 
 ul.errorlist {
-	list-style-type: none;
-	background-color: #ef2929; /* scarlet red 1 */
-	border: thin dashed #a40000; /* scarlet red 3 */
+    list-style-type: none;
+    background-color: #ef2929; /* scarlet red 1 */
+    border: thin dashed #a40000; /* scarlet red 3 */
 }
 
 .section {
-	border: 2px solid #729fcf; /* sky blue 1 */
-	margin: .25em;
-	padding: .25em;
+    border: 2px solid #729fcf; /* sky blue 1 */
+    margin: .25em;
+    padding: .25em;
 }
 
 .field_wrapper {
-	/* border: thin dashed #555753; */ /* aluminium 5 */
-	padding: .125em;
-	margin: .125em;
-	text-align: left;
+    /* border: thin dashed #555753; */ /* aluminium 5 */
+    padding: .125em;
+    margin: .125em;
+    text-align: left;
 }

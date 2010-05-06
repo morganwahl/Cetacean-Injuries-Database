@@ -7,9 +7,9 @@
 {% block observation_header %}{{ observation }} [editing]{% endblock %}
 
 
-{% block ids-table-rows %}
+{% block ids-dl %}
 {{ block.super }}
-<tr><th>local ID</th><td>{{ observation.id }}</td></tr>
+<dt>local ID</dt><dd>{{ observation.id }}</dd>
 {% endblock %}
 
 {% block submit_button %}save changes{% endblock %}

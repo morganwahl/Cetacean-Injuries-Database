@@ -5,15 +5,16 @@
 
 {% block title %}{{ block.super }}: {{ case }}{% endblock %}
 
-{% block ids-table-rows %}
-<tr><th>local ID</th><td>{{ case.id }}</td></tr>
-<tr><th>current name</th><td>{{ case.current_name }}</td></tr>
+{% block ids-dl %}
+<dt>local ID</dt><dd>{{ case.id }}</dd>
+<dt>current name</dt><dd>{{ case.current_name }}</dd>
 {% if case.past_names_set %}
-<tr><th>past names</th><td>
+<dt>past names</dt>
+<dd>
     {% for past_name in case.past_names_set %}
     {{ past_name }}<br>
     {% endfor %}
-</td></tr>
+</dd>
 {% endif %}
 {% endblock %}
 

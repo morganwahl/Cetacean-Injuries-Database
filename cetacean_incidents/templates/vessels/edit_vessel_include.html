@@ -16,7 +16,7 @@
     <table id="vesselcontact_new_contact" style="display:none;">
         {{ c_form.as_table }}
     </table>
-    <div id="vesselcontact_existing_contact">
+    <div id="vesselcontact_existing_contact" style="display:none;">
         {% with v_form.contact as f %}
         {% include "labeled_field.html" %}
         {% endwith %}

@@ -9,8 +9,8 @@
 <div><a href="{% url edit_animal animal.id %}">edit</a></div>
 {% endblock %}
 
-{% block ids-table-rows %}
-<tr><th>Animal #</th><td>{{ animal.id }}</td></tr>
+{% block ids-dl %}
+<dt>local ID</dt><dd>{{ animal.id }}</dd>
 {% endblock %}
 
 {% block content %}
@@ -40,7 +40,13 @@
         </tr>
         {% if animal.determined_dead_before %}
         <tr><th>dead before</th><td>{{ animal.determined_dead_before }}</td></tr>
-        <tr><th>necropsied?</t><td>{{ animal.necropsy|yesno:"yes,no" }}{% if not animal.necropsied %}<br><i>note that "no" is the same as "unknown" for this field</i>{% endif %}</td></tr>
+        <tr>
+            <th>necropsied?</th>
+            <td>
+                {{ animal.necropsy|yesno:"yes,no" }}{% if not animal.necropsied %}<br>
+                <i>note that "no" is the same as "unknown" for this field</i>{% endif %}
+            </td>
+        </tr>
         {% endif %}
     </table>
 </div>
@@ -49,13 +55,14 @@
     <h3>Cases:</h3>
     {% if animal.case_set.count %}
     <ul>
-	    {% for case in animal.case_set.all %}
-	    <li>{% case_link case %}</li>
-	    {% endfor %}
+        {% for case in animal.case_set.all %}
+        <li>{% case_link case %}</li>
+        {% endfor %}
     </ul>
     {% else %}
     <i>none</i>
     {% endif %}
-    <div><a href="{% url add_case animal.id %}">add a new case (and it's intial observation)</a>
+    <a href="{% url add_case animal.id %}">add a new case (and it's intial observation)</a>
 </div>
 {% endblock %}
+
