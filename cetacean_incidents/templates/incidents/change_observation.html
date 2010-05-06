@@ -30,185 +30,204 @@
 {% endblock %}
 
 {% block content %}
-<form action="" method="post"><div>
-    <div class="section">
-        <h3>Narrative</h3>
-        <div>
-            {% with forms.observation.narrative as f %}
-            {% include "unlabeled_field.html" %}
-            {% endwith %}
+<form action="" method="post">
+    <div>
+        <div id="tabs">
+            <ul>
+                <li>
+                    <a href="#reporting">
+                        Reporting
+                        {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="#observation">
+                        Observation
+                        {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="#animal">
+                        Animal
+                        {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="#incident">
+                        Incident
+                        {% if forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.biopsy.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+            </ul>
+            <div id="reporting">
+                <h3>Reporting</h3>
+                <div class="section">
+                    <h4>report date and time</h4>
+                    {% with forms.report_datetime as d_form %}
+                    {% include "datetime/edit_datetime_include.html" %}
+                    {% endwith %}
+                </div>
+                <div class="section">
+                    <h4>reporter</h4>
+                    <script type="text/javascript">
+                        $().ready(function(){
+                            RadioHider.init('new_reporter', {
+                                {# TODO get the values from forms.observation.new_reporter.field #}
+                                'new': 'reporter_new_contact',
+                                'other': 'reporter_existing_contact'
+                            });
+                        });
+                    </script>
+                    {% with forms.observation.new_reporter as f %}
+                    {% include "unlabeled_field.html" %}
+                    {% endwith %}
+                    <table id="reporter_new_contact" style="display:none;">
+                        {{ forms.new_reporter.as_table }}
+                    </table>
+                    <div id="reporter_existing_contact" style="display:none;">
+                        {% with forms.observation.reporter as f %}
+                        {% include "unlabeled_field.html" %}
+                        {% endwith %}
+                    </div>
+                </div>
+            </div> <!-- id="reporting" -->
+            <div id="observation">
+                <h3>Observation</h3>
+                <div class="section">
+                    <h4>observer</h4>
+                    <script type="text/javascript">
+                        $().ready(function(){
+                            RadioHider.init('new_observer', {
+                                {# TODO get the values from forms.observation.new_observer.field #}
+                                'new': 'observer_new_contact',
+                                'other': 'observer_existing_contact'
+                            });
+                        });
+                    </script>
+                    {% with forms.observation.new_observer as f %}
+                    {% include "unlabeled_field.html" %}
+                    {% endwith %}
+                    <table id="observer_new_contact" style="display:none;">
+                        {{ forms.new_observer.as_table }}
+                    </table>
+                    <div id="observer_existing_contact" style="display:none;">
+                        {% with forms.observation.observer as f %}
+                        {% include "unlabeled_field.html" %}
+                        {% endwith %}
+                    </div>
+                    {# TODO firsthandedness #}
+                </div> <!-- class="section" -->
+                <div class="section">
+                    <h4>observation date and time</h4>
+                    {% with forms.observation_datetime as d_form %}
+                    {% include "datetime/edit_datetime_include.html" %}
+                    {% endwith %}
+                </div>
+                <div class="section">
+                    <h4>observation location</h4>
+                    {% with forms.location as l_form %}
+                    {% include "locations/edit_location_include.html" %}
+                    {% endwith %}
+                </div>
+                <div class="section">
+                    {% with forms.observation.observer_on_vessel as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    <script type="text/javascript">
+                        $().ready(function(){
+                            var checkbox_sel = "[name={{ forms.observation.observer_on_vessel.html_name }}]";
+                            $(checkbox_sel).change(function(event){
+                                if ( $(checkbox_sel + ":checked").val() ) {
+                                    $("#vessel_info").show();
+                                } else {
+                                    $("#vessel_info").hide();
+                                }
+                            });
+                            $(checkbox_sel).change();
+                        });
+                    </script>
+                    <div id="vessel_info">
+                        <h4>vessel info for observer's vessel</h4>
+                        {% with forms.observer_vessel as v_form %}
+                        {% with forms.new_vesselcontact as c_form %}
+                        {% include "vessels/edit_vessel_include.html" %}
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
+                </div> <!-- class="section" -->
+            </div> <!-- id="observation" -->
+            <div id="animal">
+                <h3>Animal identification</h3>
+                <table>
+                    <tr>
+                        <th>taxon</th>
+                        <td>
+                            {% with forms.observation.taxon as f %}
+                            {% include "unlabeled_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>sex</th>
+                        <td>
+                            {% with forms.observation.gender as f %}
+                            {% include "unlabeled_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>description</th>
+                        <td>
+                            {% with forms.observation.animal_description as f %}
+                            {% include "bigtext_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                </table>
+            </div> <!-- id="animal" -->
+            <div id="incident">
+                <h3>Incident details</h3>
+                <table>
+                    <tr>
+                        <th>wounds?</th>
+                        <td>
+                            {% with forms.observation.wounded as f %}
+                            {% include "unlabeled_field.html" %}
+                            {% endwith %}
+                            {% with forms.observation.wound_description as f %}
+                            {% include "bigtext_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>biopsy samples taken?</th>
+                        <td>
+                            {% with forms.observation.biopsy as f %}
+                            {% include "unlabeled_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                </table>
+            </div> <!-- id="incident" -->
+        </div> <!-- id="tabs" -->
+        <div class="section">
+            <h3>Narrative</h3>
+            <div>
+                {% with forms.observation.narrative as f %}
+                {% include "unlabeled_field.html" %}
+                {% endwith %}
+            </div>
         </div>
+        <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
     </div>
-	<div id="tabs">
-		<ul>
-			<li><a href="#reporting">
-			    Reporting
-			    {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %}
-			    <div class="ui-state-error">errors!</div>
-			    {% endif %}
-			</a></li>
-			<li><a href="#observation">
-			    Observation
-			    {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
-			    <div class="ui-state-error">errors!</div>
-			    {% endif %}
-		    </a></li>
-			<li><a href="#animal">
-			    Animal
-			    {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors %}
-			    <div class="ui-state-error">errors!</div>
-			    {% endif %}
-			</a></li>
-			<li><a href="#incident">
-			    Incident
-			    {% if forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.biopsy.errors %}
-			    <div class="ui-state-error">errors!</div>
-			    {% endif %}
-		    </a></li>
-		</ul>
-	    <div id="reporting">
-            <h3>Reporting</h3>
-            <div>
-                <h4>report date and time</h4>
-                {% with forms.report_datetime as d_form %}
-                {% include "datetime/edit_datetime_include.html" %}
-                {% endwith %}
-            </div>
-            <div>
-                <h4>reporter</h4>
-                <script type="text/javascript">
-                    $().ready(function(){
-                        RadioHider.init('new_reporter', {
-                        {# TODO get the values from forms.observation.new_reporter.field #}
-                            'new': 'reporter_new_contact',
-                            'other': 'reporter_existing_contact'
-                        });
-                    });
-                </script>
-                {% with forms.observation.new_reporter as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                <table id="reporter_new_contact" style="display:none;">
-                    {{ forms.new_reporter.as_table }}
-                </table>
-                <div id="reporter_existing_contact">
-                    {% with forms.observation.reporter as f %}
-                    {% include "unlabeled_field.html" %}
-                    {% endwith %}
-                </div>
-             </div>
-	    </div>
-	    <div id="observation">
-            <h3>Observation</h3>
-            <div>
-                <h4>observer</h4>
-                <script type="text/javascript">
-                    $().ready(function(){
-                        RadioHider.init('new_observer', {
-                        {# TODO get the values from forms.observation.new_observer.field #}
-                            'new': 'observer_new_contact',
-                            'other': 'observer_existing_contact'
-                        });
-                    });
-                </script>
-                {% with forms.observation.new_observer as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                <table id="observer_new_contact" style="display:none;">
-                    {{ forms.new_observer.as_table }}
-                </table>
-                <div id="observer_existing_contact">
-                    {% with forms.observation.observer as f %}
-                    {% include "unlabeled_field.html" %}
-                    {% endwith %}
-                </div>
-                {# TODO firsthandedness #}
-            </div>
-            <div>
-                <h4>observation date and time</h4>
-                {% with forms.observation_datetime as d_form %}
-                {% include "datetime/edit_datetime_include.html" %}
-                {% endwith %}
-            </div>
-            <div>
-                <h4>observation location</h4>
-                {% with forms.location as l_form %}
-                {% include "locations/edit_location_include.html" %}
-                {% endwith %}
-            </div>
-            <div>
-                {% with forms.observation.observer_on_vessel as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-                <script type="text/javascript">
-                    $().ready(function(){
-                        var checkbox_sel = "[name={{ forms.observation.observer_on_vessel.html_name }}]";
-                        $(checkbox_sel).change(function(event){
-                            if ( $(checkbox_sel + ":checked").val() ) {
-                                $("#vessel_info").show();
-                            } else {
-                                $("#vessel_info").hide();
-                            }
-                        });
-                        $(checkbox_sel).change();
-                    });
-                </script>
-                <div id="vessel_info">
-                    <h4>vessel info for observer's vessel</h4>
-                    {% with forms.observer_vessel as v_form %}
-                    {% with forms.new_vesselcontact as c_form %}
-                    {% include "vessels/edit_vessel_include.html" %}
-                    {% endwith %}
-                    {% endwith %}
-                </div>
-            </div>
-	    </div> <!-- id="observation" -->
-        <div id="animal">
-            <h3>Animal identification</h3>
-            <table>
-                <tr><th>taxon</th><td>
-                {% with forms.observation.taxon as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                </td></tr>
-                <tr><th>sex</th><td>
-                {% with forms.observation.gender as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                </td></tr>
-                <tr>
-                <th>description</th>
-                <td>
-                {% with forms.observation.animal_description as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                </td>
-                </tr>
-            </table>
-        </div>
-        <div id="incident">
-            <h3>Incident details</h3>
-            <table>
-                <tr>
-                    <th>wounds?</th>
-                    <td>
-                        {% with forms.observation.wounded as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                        {% with forms.observation.wound_description as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                    </td>
-                </tr>
-                <tr><th>biopsy samples taken?</th>
-                <td>
-                {% with forms.observation.biopsy as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
-                </td></tr>
-            </table>
-        </div>
-	</div>
-    <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
-</div></form>
+</form>
 {% endblock %}
+
