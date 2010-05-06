@@ -33,9 +33,10 @@
                     
                     $().ready(function(){
                         {# TODO How to properly handle importing jquery? #}
-                        var radios = $("form#{{ l.id }}_coords_format input[name=\"coords_format\"]");
-                        radios.change(function(event){
-                            update_coords_format($(this).val());
+                        var selector = "form#{{ l.id }}_coords_format input[name=\"coords_format\"]"
+                        $(selector).change(function(event){
+                            update_coords_format($(selector + ':checked').val());
+                            $(this).blur();
                         });
                         $("#{{ l.id }}_lat_dms").hide();
                         $("#{{ l.id }}_lng_dms").hide();
