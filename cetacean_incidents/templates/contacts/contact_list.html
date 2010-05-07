@@ -16,16 +16,17 @@
     <tr>
         <th>contact</th>
     </tr>
-    <tr>
     {% for contact in contact_list %}
+    <tr>
         <td>{% contact_link contact %}</td>
-    {% endfor %}
     </tr>
+    {% endfor %}
 </table>
 {% else %}
 <i>No contacts yet!</i>
 {% endif %}
 <div>
-<a href="{% url create_contact%}">new contact</a>
+    <a href="{% url create_contact%}">new contact</a>
 </div>
 {% endblock %}
+
