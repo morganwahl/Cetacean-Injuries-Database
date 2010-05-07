@@ -71,7 +71,7 @@ class VesselAdminForm(forms.ModelForm):
     
     # note that we need to set things like required and help_text manually; it
     # won't be based on the Vessel.flag's attributes.
-    flag = FlagField(required= False)
+    flag = FlagField(required= False, initial='US')
     
     class Meta:
         model = VesselInfo
