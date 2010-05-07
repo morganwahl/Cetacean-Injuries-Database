@@ -3,6 +3,14 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from models import Contact, Organization
 from django.core.urlresolvers import reverse
 
+class EmailInput(forms.TextInput):
+    '''\
+    Just like a django.forms.TextWidget, except with the 'type' attribute set
+    to 'email' (a backward-compatible HTML5 input-element type).
+    '''
+    
+    input_type = 'email'
+
 class ContactForm(forms.ModelForm):
     
     affiliations = forms.ModelMultipleChoiceField(
@@ -13,6 +21,17 @@ class ContactForm(forms.ModelForm):
         ),
         required = not Contact.affiliations.field.blank,
         help_text = Contact.affiliations.field.help_text,
+    )
+    
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = Contact._meta.get_field('email')
+    email = forms.EmailField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        max_length= _f.max_length,
+        label= _f.verbose_name.capitalize(),
+        widget=EmailInput,
     )
     
     def _media(self):
