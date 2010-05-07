@@ -69,10 +69,15 @@ class FlagField(forms.ModelChoiceField):
 
 class VesselAdminForm(forms.ModelForm):
     
-    # note that we need to set things like required and help_text manually; it
-    # won't be based on the Vessel.flag's attributes.
-    flag = FlagField(required= False, initial='US')
-    
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = VesselInfo._meta.get_field('flag')
+    flag = FlagField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
     class Meta:
         model = VesselInfo
 
