@@ -20,24 +20,26 @@
         <td class="layout" style="width:50%;">
             <div class="section">
                 <div>
-                    <span class="fieldname">name</span> {{ contact.name }}
+                    <span class="fieldname">name:</span> {{ contact.name }}
                 </div>
                 <div>
                     <span class="fieldname">person, or organization?</span>  {{ contact.person|yesno:"person,organization,unknown" }}
                 </div>
                 {% if contact.phone %}
                 <div>
-                    <span class="fieldname">phone number</span> {{ contact.phone }}
+                    <span class="fieldname">phone number:</span> {{ contact.phone }}
                 </div>
                 {% endif %}
                 {% if contact.email %}
                 <div>
-                    <span class="fieldname">email address</span> {{ contact.email }}
+                    <span class="fieldname">email address:</span> {{ contact.email }}
                 </div>
                 {% endif %}
                 {% if contact.address %}
                 <div>
-                    <span class="fieldname">mailling address</span> {{ contact.address }}
+                    <span class="fieldname">mailling address:</span>
+                    {# mailing addresses may contain significant newlines #}
+                    <pre>{{ contact.address }}</pre>
                 </div>
                 {% endif %}
             </div>
