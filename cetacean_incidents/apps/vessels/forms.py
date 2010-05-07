@@ -76,6 +76,7 @@ class VesselAdminForm(forms.ModelForm):
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
+        initial='US',
     )
 
     class Meta:
