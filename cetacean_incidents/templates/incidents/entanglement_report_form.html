@@ -11,24 +11,6 @@
 
 {% block content %}
 <form method="POST"><table>
-    <tr><td colspan="2" style="width: 100%">
-        {% for name, form in forms.items %}
-        {% if form.errors %}
-        <div>
-            <h4>{{ name }}</h4>
-            {% for field in form %}
-	        {% if field.errors %}
-	        <ul class="errorlist ui-state-error">
-		        {% for e in field.errors %}
-		        <li class="ui-state-error-text">{{ field.label_tag }}:{{ e }}</li>
-		        {% endfor %}
-	        </ul>
-	        {% endif %}
-	        {% endfor %}
-	    </div>
-	    {% endif %}
-	    {% endfor %}
-    </td></tr>
     <tr><td style="width:50%; vertical-align:top;">
     <div class="section">
         <h3>report date and time</h3>
