@@ -41,8 +41,7 @@ class Contact(models.Model):
         blank= True,
     )
     
-    email = models.CharField(
-        max_length= 255,
+    email = models.EmailField(
         blank= True,
         verbose_name= "email address",
     )
