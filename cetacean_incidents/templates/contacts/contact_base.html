@@ -15,52 +15,57 @@
 
 {% block content %}
 {% block contact_fields %}
-<table class="layout"><tr class="layout"><td class="layout">
-<div class="section">
-    <div>
-        <span class="fieldname">name</span> {{ contact.name }}
-    </div>
-    <div>
-        <span class="fieldname">person, or organization?</span>  {{ contact.person|yesno:"person,organization,unknown" }}
-    </div>
-    {% if contact.phone %}
-    <div>
-        <span class="fieldname">phone number</span> {{ contact.phone }}
-    </div>
-    {% endif %}
-    {% if contact.email %}
-    <div>
-        <span class="fieldname">email address</span> {{ contact.email }}
-    </div>
-    {% endif %}
-    {% if contact.address %}
-    <div>
-        <span class="fieldname">mailling address</span> {{ contact.address }}
-    </div>
-    {% endif %}
-</div>
-</td><td class="layout">
-<div class="section">
-    <h3>Affiliations</h3>
-    {% if contact.affiliations.count %}
-    <ul>
-        {% for o in contact.affiliations.all %}
-        <li>{{ o }}</li>
-        {% endfor %}
-    </ul>
-    {% else %}
-    <i>none</i>
-    {% endif %}
-</div>
-<div class="section">
-    <h3>Notes</h3>
-    {% if contact.notes %}
-    <p>{{ contact.notes }}</p>
-    {% else %}
-    <i>nothing</i>
-    {% endif %}
-</div>
-</td></tr></table>
+<table class="layout">
+    <tr class="layout">
+        <td class="layout" style="width:50%;">
+            <div class="section">
+                <div>
+                    <span class="fieldname">name</span> {{ contact.name }}
+                </div>
+                <div>
+                    <span class="fieldname">person, or organization?</span>  {{ contact.person|yesno:"person,organization,unknown" }}
+                </div>
+                {% if contact.phone %}
+                <div>
+                    <span class="fieldname">phone number</span> {{ contact.phone }}
+                </div>
+                {% endif %}
+                {% if contact.email %}
+                <div>
+                    <span class="fieldname">email address</span> {{ contact.email }}
+                </div>
+                {% endif %}
+                {% if contact.address %}
+                <div>
+                    <span class="fieldname">mailling address</span> {{ contact.address }}
+                </div>
+                {% endif %}
+            </div>
+        </td>
+        <td class="layout" style="width:50%;">
+            <div class="section">
+                <h3>Affiliations</h3>
+                {% if contact.affiliations.count %}
+                <ul>
+                    {% for o in contact.affiliations.all %}
+                    <li>{{ o }}</li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <i>none</i>
+                {% endif %}
+            </div>
+            <div class="section">
+                <h3>Notes</h3>
+                {% if contact.notes %}
+                <p>{{ contact.notes }}</p>
+                {% else %}
+                <i>nothing</i>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</table>
 {% endblock %}
 <div class="section">
     <div>
@@ -115,3 +120,4 @@
     </div>
 </div>
 {% endblock %}
+
