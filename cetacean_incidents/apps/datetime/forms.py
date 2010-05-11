@@ -81,16 +81,22 @@ class NiceDateTimeForm(DateTimeForm):
             hour = int(hour)
         else:
             hour = None
+        self.cleaned_data['hour'] = hour
+        self.cleaned_data['hour'] = self.clean_hour()
 
         if not minute in EMPTY_VALUES:
             minute = int(minute)
         else:
             minute = None
+        self.cleaned_data['minute'] = minute
+        self.cleaned_data['minute'] = self.clean_minute()
 
         if not second in EMPTY_VALUES:
             second = float(second)
         else:
             second = None
+        self.cleaned_data['second'] = second
+        self.cleaned_data['second'] = self.clean_second()
 
         return {
             'hour': hour,
