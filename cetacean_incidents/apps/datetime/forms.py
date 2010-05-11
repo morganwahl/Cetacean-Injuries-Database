@@ -62,3 +62,53 @@ class DateTimeForm(forms.ModelForm):
     class Meta:
         model = DateTime
 
+class NiceDateTimeForm(DateTimeForm):
+
+    # TODO fill in time from an instance
+    
+    # note that we can't use a TimeField since datetime.time doesn't have a way
+    # to indicate unknown hours minutes and seconds
+    time = forms.CharField(
+        required=False,
+    )
+    
+    def clean_time(self):
+        timestring = self.cleaned_data['time']
+        parts = timestring.split(':') + [None, None]
+        (hour, minute, second) = parts[0:3]
+
+        if not hour in EMPTY_VALUES:
+            hour = int(hour)
+        else:
+            hour = None
+
+        if not minute in EMPTY_VALUES:
+            minute = int(minute)
+        else:
+            minute = None
+
+        if not second in EMPTY_VALUES:
+            second = float(second)
+        else:
+            second = None
+
+        return {
+            'hour': hour,
+            'minute': minute,
+            'second': second,
+        }
+    
+    def clean(self):
+        # break out the 'time' cleaned data into the model's actual fields
+        cleaned_data = self.cleaned_data
+        self.cleaned_data['hour'] = cleaned_data['time']['hour']
+        self.cleaned_data['minute'] = cleaned_data['time']['minute']
+        self.cleaned_data['second'] = cleaned_data['time']['second']
+        
+        import pdb
+        
+        return super(NiceDateTimeForm, self).clean()
+    
+    class Meta(DateTimeForm.Meta):
+        # hour and minute are combined into 'time'
+        exclude = ('hour', 'minute', 'second')

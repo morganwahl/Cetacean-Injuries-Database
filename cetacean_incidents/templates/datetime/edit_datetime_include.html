@@ -1,26 +1,28 @@
-{# intended to be included in another template, with a DateTimeForm as d_form #}
+{# intended to be included in another template, with a NiceDateTimeForm as d_form #}
 <table>
     {# TODO seconds? timezone? for now, assume U.S. Eastern time in the view #}
     <caption>
         please use 24-hour, EST/EDT time
+        {% if d_form.non_field_errors %}
+        <ul class="errorlist ui-state-error">
+            {% for e in d_form.non_field_errors %}
+            <li class="ui-state-error-text">{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </caption>
     <tr>
         {% for f in d_form %}
-        {% ifnotequal f.label_tag d_form.second.label_tag %}
         <th>{{ f.label_tag }}</th>
-        {% endifnotequal %}
         {% endfor %}
     </tr>
     <tr>
         {% for f in d_form %}
-        {% ifnotequal f.label_tag d_form.second.label_tag %}
         <td>{{ f }}</td>
-        {% endifnotequal %}
         {% endfor %}
     </tr>
     <tr>
         {% for f in d_form %}
-        {% ifnotequal f.label_tag d_form.second.label_tag %}
         <td>
 	        {% if f.errors %}
 	        <ul class="errorlist ui-state-error">
@@ -30,7 +32,7 @@
 	        </ul>
 	        {% endif %}
         </td>
-        {% endifnotequal %}
         {% endfor %}
     </tr>
 </table>
+

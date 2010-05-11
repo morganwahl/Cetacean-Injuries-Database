@@ -11,7 +11,7 @@ from django.db import transaction
 from models import Case, Entanglement, Animal, Observation
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetime.forms import DateTimeForm
+from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
 
@@ -419,8 +419,8 @@ def entanglement_report_form(request):
         'observation': EntanglementObservationForm(data, prefix='observation'),
         'new_reporter': ContactForm(data, prefix='new_reporter'),
         'location': NiceLocationForm(data, prefix='location'),
-        'report_datetime': DateTimeForm(data, prefix='report_time'),
-        'observation_datetime': DateTimeForm(data, prefix='observation_time'),
+        'report_datetime': NiceDateTimeForm(data, prefix='report_time'),
+        'observation_datetime': NiceDateTimeForm(data, prefix='observation_time'),
     }
     
     if request.method == 'POST':
