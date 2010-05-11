@@ -4,6 +4,26 @@ from models import DateTime
 
 class DateTimeForm(forms.ModelForm):
     
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = DateTime._meta.get_field('year')
+    year = forms.IntegerField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+        widget= forms.TextInput(attrs={'size':'4'}),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # field
+    _f = DateTime._meta.get_field('day')
+    day = forms.IntegerField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+        widget= forms.TextInput(attrs={'size':'2'}),
+    )
+
     def clean_hour(self):
         hour = self.cleaned_data['hour']
         if not hour in EMPTY_VALUES:
@@ -70,6 +90,7 @@ class NiceDateTimeForm(DateTimeForm):
     # to indicate unknown hours minutes and seconds
     time = forms.CharField(
         required=False,
+        widget= forms.TextInput(attrs={'size':'8'}),
     )
     
     def clean_time(self):

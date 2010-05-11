@@ -1,4 +1,5 @@
 import operator
+from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
@@ -413,14 +414,15 @@ def entanglement_report_form(request):
     data = None
     if request.method == 'POST':
         data = request.POST.copy()
+    this_year = unicode(datetime.today().year)
     forms = {
         'animal': AnimalForm(data, prefix='animal'),
         'case': EntanglementForm(data, prefix='case'),
         'observation': EntanglementObservationForm(data, prefix='observation'),
         'new_reporter': ContactForm(data, prefix='new_reporter'),
         'location': NiceLocationForm(data, prefix='location'),
-        'report_datetime': NiceDateTimeForm(data, prefix='report_time'),
-        'observation_datetime': NiceDateTimeForm(data, prefix='observation_time'),
+        'report_datetime': NiceDateTimeForm(data, prefix='report_time', initial={'year': this_year}),
+        'observation_datetime': NiceDateTimeForm(data, prefix='observation_time', initial={'year': this_year}),
     }
     
     if request.method == 'POST':
