@@ -104,17 +104,16 @@ class NiceDateTimeForm(DateTimeForm):
             'second': second,
         }
     
-    def clean(self):
-        # break out the 'time' cleaned data into the model's actual fields
-        cleaned_data = self.cleaned_data
-        self.cleaned_data['hour'] = cleaned_data['time']['hour']
-        self.cleaned_data['minute'] = cleaned_data['time']['minute']
-        self.cleaned_data['second'] = cleaned_data['time']['second']
-        
-        import pdb
-        
-        return super(NiceDateTimeForm, self).clean()
+    def save(self, commit=True):
+        instance = super(NiceDateTimeForm, self).save(commit)
+        # because they were excluded we need to save these manually
+        instance.hour = self.cleaned_data['time']['hour']
+        instance.minute = self.cleaned_data['time']['minute']
+        instance.second = self.cleaned_data['time']['second']
+        if commit:
+            instance.save()
+        return instance
     
     class Meta(DateTimeForm.Meta):
-        # hour and minute are combined into 'time'
         exclude = ('hour', 'minute', 'second')
+

@@ -51,7 +51,7 @@ class DateTime(models.Model):
             ret += u" %02dh" % self.hour
             if not self.minute is None:
                 ret += u" %02dm" % self.minute
-                if self.second:
+                if not self.second is None:
                     ret += u" %02ds" % self.second
         return ret
     
