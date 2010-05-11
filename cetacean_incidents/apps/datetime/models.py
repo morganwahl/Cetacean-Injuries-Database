@@ -39,18 +39,20 @@ class DateTime(models.Model):
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
     
+    # note that giving only a year and a hour is OK, so you can indicate
+    # time-of-day without knowing what day it was exactly
     def __unicode__(self):
         ret = u"%04d" % self.year
         if not self.month is None:
             ret += u"-%02d" % self.month
             if not self.day is None:
                 ret += u"-%02d" % self.day
-                if not self.hour is None:
-                    ret += u" %02dh" % self.hour
-                    if not self.minute is None:
-                        ret += u" %02dm" % self.minute
-                        if self.second:
-                            ret += u" %02ds" % self.second
+        if not self.hour is None:
+            ret += u" %02dh" % self.hour
+            if not self.minute is None:
+                ret += u" %02dm" % self.minute
+                if self.second:
+                    ret += u" %02ds" % self.second
         return ret
     
     class Meta:
