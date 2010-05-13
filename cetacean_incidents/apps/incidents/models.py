@@ -216,6 +216,31 @@ class CaseManager(models.Manager):
         cases = Case.objects.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
 
+class YearCaseNumber(models.Model):
+    '''\
+    A little table to do the bookkeeping when assigning yearly-numbers cases. 
+    'year' is a year, 'case' is a case, 'number' is any yearly_number
+    held by that case for that year, including it's current one.
+    
+    Assigning unique numbers to each case in a year is complicated; once a 
+    case-number in a given year has been assigned to a case, it mustn't ever
+    be assigned to a different one, even if that case is changed to a different
+    year or merged with another case. Ideally, if a case was assigned, say, 
+    2003#67 and then it's date was changed to 2004, it would be assigned the
+    next unused yearly_number for 2004. If it was then changed back to 2003,
+    it would be assigned #67 again. Thus, this table stores all past and current
+    year-case-yearly_number combinations. Current numbers are marked
+    accordingly.
+    '''
+    
+    year = models.IntegerField()
+    case = models.ForeignKey('Case')
+    number = models.IntegerField()
+    current = models.BooleanField()
+    
+    class Meta:
+        ordering = ('year', 'number')
+
 class Case(models.Model):
     '''\
     A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
@@ -235,12 +260,20 @@ class Case(models.Model):
         help_text= "Is there a corresponding Office of Law Enforcement investigation?",
     )
     
-    yearly_number = models.IntegerField(
-        blank= True,
-        null= True,
-        editable= False,
-        help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
-    )
+    #yearly_number = models.IntegerField(
+    #    blank= True,
+    #    null= True,
+    #    editable= False,
+    #    help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
+    #)
+    def _get_yearly_number(self):
+        try:
+            number = YearCaseNumber.objects.get(case=self, current=True).number
+        except YearCaseNumber.DoesNotExist:
+            number = None
+        return number
+    yearly_number = property(_get_yearly_number)
+    
     names = models.TextField(
         #max_length= 2048,
         blank= False,
@@ -299,18 +332,45 @@ class Case(models.Model):
 
     def save(self, *args, **kwargs):
         # if we don't have a yearly_number, set one if possible
-        if self.yearly_number is None and (not self.date is None):
-            year = self.date.year
-            # TODO more efficient way
-            highest_so_far = 0
-            for c in Case.objects.all():
-                # look at all the former yearly_numbers in the case's name_sets
-                for name in c.names_set:
-                    match = re.search(r'%4d#(\d+)' % year, name)
-                    if match:
-                        yearly_number = int(match.group(1))
-                        highest_so_far = max(highest_so_far, yearly_number)
-            self.yearly_number = highest_so_far + 1
+        if self.date:
+            def _next_number_in_year(year):
+                this_year = YearCaseNumber.objects.filter(year=year)
+                if this_year.count():
+                    return this_year.order_by('number')[0].number + 1
+                else:
+                    return 1
+        
+            # do we have a newly assigned date and no yearly-number?
+            try:
+                current_year_case_number = YearCaseNumber.objects.get(case=self, current=True)
+                # is our current year different from the one in our current
+                # yearly_number assignment
+                if self.date.year != current_year_case_number.year:
+                    current_year_case_number.current = False
+                    current_year_case_number.save()
+                    try:
+                        # do we have a previous assignment for our current year?
+                        new_year_case_number = YearCaseNumber.objects.get(case=self, year=self.date.year)
+                        new_year_case_number.current = True
+                    except YearCaseNumber.DoesNotExist:
+                        # add a new entry for this year-case combo
+                        new_year_case_number = YearCaseNumber(
+                            case=self,
+                            year=self.date.year,
+                            number= _next_number_in_year(self.date.year),
+                            current=True,
+                        )
+                    new_year_case_number.save()
+            except YearCaseNumber.DoesNotExist:
+                # assign a new number
+                # find the highest number assigned in our year so far.
+                new_year_case_number = YearCaseNumber(
+                    case=self,
+                    year=self.date.year,
+                    number= _next_number_in_year(self.date.year),
+                    current=True,
+                )
+                new_year_case_number.save()
 
         # add the current_name to the names set, if necessary
         if not self.current_name is None:
@@ -360,7 +420,14 @@ class Case(models.Model):
         return ('case_detail', [str(self.id)]) 
     
     objects = CaseManager()
-    
+
+def _get_observation_dates(contact):
+    return DateTime.objects.filter(observation__observer=contact)
+Contact.observation_dates = property(_get_observation_dates)
+def _get_report_dates(contact):
+    return DateTime.objects.filter(report__reporter=contact)
+Contact.report_dates = property(_get_report_dates)
+
 # since adding a new Observation whose case is this could change things like
 # case.date or even assign yearly_number, we need to listen for Observation
 # saves
