@@ -84,7 +84,21 @@ class DateTimeForm(forms.ModelForm):
 
 class NiceDateTimeForm(DateTimeForm):
 
-    # TODO fill in time from an instance
+    def __init__(self, *args, **kwargs):
+        super(NiceDateTimeForm, self).__init__(*args, **kwargs)
+        # if an initial value wasn't given for 'time', get one from the
+        # instance. note that a new instance was already create if one wasn't
+        # passed in
+        if not 'time' in self.initial:
+            time_data = forms.models.model_to_dict(self.instance, ('hour', 'minute', 'second'))
+            time = ''
+            if time_data['hour'] not in EMPTY_VALUES:
+                time = u'%02i' % time_data['hour']
+            if time_data['minute'] not in EMPTY_VALUES:
+                time += ':' + u'%02i' % time_data['minute']
+            if time_data['second'] not in EMPTY_VALUES:
+                time += ':' + u'%02i' % time_data['second']
+            self.initial['time'] = time
     
     # note that we can't use a TimeField since datetime.time doesn't have a way
     # to indicate unknown hours minutes and seconds

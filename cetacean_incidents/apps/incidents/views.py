@@ -116,8 +116,8 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         'new_reporter': ContactForm(data, prefix='new_reporter'),
         'new_observer': ContactForm(data, prefix='new_observer'),
         'location': NiceLocationForm(data, instance=location, prefix='location'),
-        'report_datetime': DateTimeForm(data, prefix='report', instance=report_datetime),
-        'observation_datetime': DateTimeForm(data, prefix='observation', instance=observation_datetime),
+        'report_datetime': NiceDateTimeForm(data, prefix='report', instance=report_datetime),
+        'observation_datetime': NiceDateTimeForm(data, prefix='observation', instance=observation_datetime),
         'observer_vessel': ObserverVesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
         'new_vesselcontact': ContactForm(data, prefix="new_vesselcontact"),
     }
