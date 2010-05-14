@@ -252,6 +252,17 @@ class Case(models.Model):
         Animal,
     )
     
+    valid = models.IntegerField(
+        choices= (
+            (0, 'invalid'),
+            (1, 'suspected'),
+            (2, 'confirmed'),
+        ),
+        default= 1,
+        verbose_name= 'Validity',
+        help_text= "Invalid cases don't count towards year-totals."
+    )
+    
     ole_investigation = models.NullBooleanField(
         blank= True,
         null= True,
