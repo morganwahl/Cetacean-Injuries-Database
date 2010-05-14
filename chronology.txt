@@ -1,0 +1,35 @@
+General order to do thing in (and a timeframe):
+
+jan. - Define an initial database model necessary for tracking entanglements. (done)
+jan. - Define an initial database model necessary for tracking shipstrikes.
+jan. - Implement the entanglement model and a usable interface.
+feb. - Refine the entanglement models and interface upon feedback.
+feb. - Implement the shipstrike model (and interface).
+feb. - Refine the shipstrike models and interface upon feedback.
+by mar. 1st - Database "goes live": begins actually storing entanglement data on a
+     properly backed-up server.
+mar? - import data from old MS-Access entanglement databases
+mar? - begin storing shipstrike data
+apr? - implement importation of data from national databases
+may? - new interface features, particularly mapping of locations.
+jun/jul? - extension to strandings?
+
+TODO in order of importance:
+
+Contact-editing should work!
+gear analysis model/pages
+OLE status should be obvious on case and observation pages
+use ITIS numbers in Taxon management
+    import from ITIS
+shipstrike pages
+make observation editing page more intuitive
+deletion!
+    with warnings
+case merging!
+add icons for actions
+contacts/animals management.
+    prompt for deletion when they are no longer referred to by cases/observations
+
+git hosting at NOAA
+directions for successor
+
