@@ -35,6 +35,11 @@
         <span class="fieldname">Animal</span> {% animal_link case.animal %}
     </div>
     <div>
+        <span class="fieldname">Validity</span>
+        {% include "incidents/case-valid-icon.html" %}
+        {{ case.get_valid_display }}
+    </div>
+    <div>
         <span class="fieldname">OLE investigation?</span>  {{ case.ole_investigation|yesno:"yes,no,unknown" }}
     </div>
     {% endblock %}
