@@ -11,25 +11,6 @@
         alt="OLE"
         title="there's an OLE investigation for this case">
     {% endif %}
-    {% ifequal case.valid 0 %}
-    <img
-        src="{% url site-media path="icons/invalid.png"%}"
-        alt="invalid"
-        title="this case is invalid">
-    {% endifequal %}
-    {% comment %}
-    {% ifequal case.valid 1 %}
-    <img
-        src="{% url site-media path="icons/suspected.png"%}"
-        alt="suspected"
-        title="this case is merely suspected (i.e. not confirmed or invalid)">
-    {% endifequal %}
-    {% endcomment %}
-    {% ifequal case.valid 2 %}
-    <img
-        src="{% url site-media path="icons/confirmed.png"%}"
-        alt="confirmed"
-        title="this case is confirmed">
-    {% endifequal %}
+    {% include "incidents/case-valid-icon.html" %}
 {% if case.ole_investigation %}</span>{% endif %}
 {% endspaceless %}
