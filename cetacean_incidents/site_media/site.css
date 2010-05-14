@@ -120,3 +120,19 @@ ul.errorlist {
     margin: .125em;
     text-align: left;
 }
+
+span.ole-true {
+    background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */
+    border: thin solid #ef2929; /* scarlet red 1 */
+    color: #a40000;  /* scarlet red 3 */
+}
+span.ole-true a {
+    color: #a40000;  /* scarlet red 3 */
+}
+div.ole-warning {
+    background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
+    color: #a40000;  /* scarlet red 3 */
+    border: thin solid #a40000;  /* scarlet red 3 */
+    text-align: center;
+}
+

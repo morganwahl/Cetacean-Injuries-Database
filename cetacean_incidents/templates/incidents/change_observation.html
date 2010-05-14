@@ -21,6 +21,9 @@
 
 {% block header %}
 {{ block.super }}
+{% if case.ole_investigation %}
+{% include "incidents/ole-warning.html" %}
+{% endif %}
 <h2>{{ case }}</h2>
 <h2 style="margin-left:2em;">{% block observation_header %}NO HEADER!{% endblock %}</h2>
 {% endblock %}
