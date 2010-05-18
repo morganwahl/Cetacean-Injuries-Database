@@ -11,3 +11,8 @@ present in:
 <SITE_MEDIA>/jqueryui/overcast/jquery-ui-1.7.2.custom.css
 <SITE_MEDIA>/jqueryui/jquery-ui-1.7.2.custom.min.js
 
+Uses the flag 'silk' iconsets from famfamfam.com (Mark James) (CC3.0-AT license)
+The OLE icon is derived from one of these.
+
+uses the sorttable.js script by Stuart Langridge (x11 license)
+
