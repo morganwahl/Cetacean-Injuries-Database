@@ -435,18 +435,18 @@ def entanglement_report_form(request):
         @transaction.commit_on_success
         def _try_saving():
             if not forms['animal'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('animal', forms['animal'])
             animal = forms['animal'].save()
             data['case-animal'] = animal.id
             # TODO don't repeat yourself... get the Form class and prefix from the existing instance of forms['case']
             forms['case'] = EntanglementForm(data, prefix='case')
             
             if not forms['case'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('case', forms['case'])
             case = forms['case'].save()
             
             if not forms['observation'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('observation', forms['observation'])
             
             # TODO the commit=False save is necessary because ObservationForm
             # doesn't have a Case field
@@ -456,19 +456,19 @@ def entanglement_report_form(request):
             # check ObservationForm.new_reporter
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 if not forms['new_reporter'].is_valid():
-                    raise _SomeValidationFailed
+                    raise _SomeValidationFailed('new_reporter', forms['new_reporter'])
                 observation.reporter = forms['new_reporter'].save()
 
             if not forms['location'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('location', forms['location'])
             observation.location = forms['location'].save()
 
             if not forms['report_datetime'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('report_datetime', forms['report_datetime'])
             observation.report_datetime = forms['report_datetime'].save()
 
             if not forms['observation_datetime'].is_valid():
-                raise _SomeValidationFailed
+                raise _SomeValidationFailed('observation_datetime', forms['observation_datetime'])
             observation.observation_datetime = forms['observation_datetime'].save()
 
             observation.save()
@@ -478,7 +478,7 @@ def entanglement_report_form(request):
         
         try:
             return redirect(_try_saving())
-        except _SomeValidationFailed:
+        except _SomeValidationFailed as (formname, form):
             pass
 
     template_media = Media(
