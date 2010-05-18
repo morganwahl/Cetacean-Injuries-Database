@@ -18,7 +18,6 @@ TODO in order of importance:
 
 Contact-editing should work!
 gear analysis model/pages
-OLE status should be obvious on case and observation pages
 use ITIS numbers in Taxon management
     import from ITIS
 shipstrike pages
