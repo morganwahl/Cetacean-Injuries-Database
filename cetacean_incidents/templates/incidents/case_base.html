@@ -3,6 +3,12 @@
 {% load animal_extras %}
 {% load contact_extras %}
 
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{% endblock %}
+
 {% block title %}{{ block.super }}: {{ case }}{% endblock %}
 
 {% block ids-dl %}
@@ -48,15 +54,17 @@
     <h3>Observations</h3>
     {% block observations %}
     {% if case.observation_set.count %}
-    <table>
-        <tr>
-            <td></td>
-            <th>observer</th>
-            <th>date observed</th>
-            <th>reporter</th>
-            <th>date reported</th>
-            <th>start of narrative...</th>
-        </tr>
+    <table class="sortable">
+        <thead>
+            <tr>
+                <td></td>
+                <th sorttable_customkey="{{ observer.sort_name }}">observer</th>
+                <th>date observed</th>
+                <th sorttable_customkey="{{ observer.sort_name }}">reporter</th>
+                <th>date reported</th>
+                <th class="sortable_nosort">start of narrative...</th>
+            </tr>
+        </thead>
         {% for o in case.observation_set.all %}
         <tr>
             <td>{% observation_link o %}</td>

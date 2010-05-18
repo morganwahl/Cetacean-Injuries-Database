@@ -5,6 +5,7 @@
 {% block head %}
 {{ block.super }}
 <script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
 {% endblock %}
 
 {% block title %}{{ block.super }}: Cases{% endblock %}
@@ -13,16 +14,18 @@
 
 {% block content %}
 <table class="sortable">
-	<tr>
-		<th>case</th>
-		<th>type</th>
-		<th>animal</th>
-		<th>first observation</th>
-		<th>first report</th>
-	</tr>
+	<thead>
+	    <tr>
+		    <th class="sorttable_numeric">case</th>
+		    <th>type</th>
+		    <th>animal</th>
+		    <th>first observation</th>
+		    <th>first report</th>
+		</tr>
+	</thead>
 	{% for case in case_list %}
 	<tr>
-		<td>{% case_link case %}</td>
+		<td sorttable_customkey="{{ case.date.year|default:0 }}.{{ case.yearly_number|default:0|stringformat:"010d" }}{{ case.id|stringformat:"010d" }}">{% case_link case %}</td>
 		<td>{{ case.case_type }}</td>
 		<td>{% animal_link case.animal %}</td>
 		<td>{{ case.first_observation_date }}</td>

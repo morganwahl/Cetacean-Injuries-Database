@@ -2,6 +2,13 @@
 {% load contact_extras %}
 {% load observation_extras %}
 
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{% endblock %}
+
+
 {% block ids-table-rows %}
 <tr><th>local ID</th><td>{{ contact.id }}</td></tr>
 {% endblock %}
@@ -73,14 +80,16 @@
     <div>
         <h3>Observations</h3>
         {% if contact.observed.count %}
-        <table>
-            <tr>
-                <td></td>
-                <th>date observed</th>
-                <th>date reported</th>
-                <th>reporter</th>
-                <th>start of narrative...</th>
-            </tr>
+        <table class="sortable">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>date observed</th>
+                    <th>date reported</th>
+                    <th>reporter</th>
+                    <th class="sorttable_nosort">start of narrative...</th>
+                <tr>
+            </thead>
             {% for o in contact.observed.all %}
             <tr>
                 <td>{% observation_link o %}</td>
@@ -98,14 +107,16 @@
     <div>
         <h3>Reports</h3>
         {% if contact.reported.count %}
-        <table>
-            <tr>
-                <td></td>
-                <th>observer</th>
-                <th>date observed</th>
-                <th>date reported</th>
-                <th>start of narrative...</th>
-            </tr>
+        <table class="sortable">
+            <thead>
+                <tr>
+                    <td></td>
+                    <th>observer</th>
+                    <th>date observed</th>
+                    <th>date reported</th>
+                    <th class="sorttable_nosort">start of narrative...</th>
+                </tr>
+            </thead>
             {% for o in contact.reported.all %}
             <tr>
                 <td>{% observation_link o %}</td>

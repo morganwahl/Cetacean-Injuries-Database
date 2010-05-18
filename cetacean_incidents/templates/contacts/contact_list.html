@@ -4,6 +4,7 @@
 {% block head %}
 {{ block.super }}
 <script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
 {% endblock %}
 
 {% block title %}{{ block.super }}: Contacts{% endblock %}
@@ -13,12 +14,14 @@
 {% block content %}
 {% if contact_list %}
 <table class="sortable">
-    <tr>
-        <th>contact</th>
-    </tr>
+    <thead>
+        <tr>
+            <th>contact</th>
+        </tr>
+    </thead>
     {% for contact in contact_list %}
     <tr>
-        <td>{% contact_link contact %}</td>
+        <td sorttable_customkey="{{ contact.sort_name }}">{% contact_link contact %}</td>
     </tr>
     {% endfor %}
 </table>

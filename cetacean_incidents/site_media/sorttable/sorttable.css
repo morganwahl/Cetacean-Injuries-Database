@@ -8,6 +8,9 @@ table.sortable thead {
 table.sortable th:after {
     content: ' ▸◂';
 }
+table.sortable th.sorttable_nosort:after {
+    content: '';
+}
 table.sortable th.sorttable_sorted:after {
     /* let the JS handle it */
     content: '';
