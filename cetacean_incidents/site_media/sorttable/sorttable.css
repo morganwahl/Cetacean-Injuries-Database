@@ -1,0 +1,19 @@
+/* Sortable tables */
+table.sortable thead {
+    background-color:#eee;
+    color:#666666;
+    font-weight: bold;
+    cursor: default;
+}
+table.sortable th:after {
+    content: ' ▸◂';
+}
+table.sortable th.sorttable_sorted:after {
+    /* let the JS handle it */
+    content: '';
+}
+table.sortable th.sorttable_sorted_reverse:after {
+    /* let the JS handle it */
+    content: '';
+}
+
