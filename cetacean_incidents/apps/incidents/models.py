@@ -347,7 +347,7 @@ class Case(models.Model):
             def _next_number_in_year(year):
                 this_year = YearCaseNumber.objects.filter(year=year)
                 if this_year.count():
-                    return this_year.order_by('number')[0].number + 1
+                    return this_year.order_by('-number')[0].number + 1
                 else:
                     return 1
         
