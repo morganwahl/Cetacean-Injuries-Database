@@ -8,6 +8,8 @@ from cetacean_incidents.apps.vessels.models import VesselInfo, StrikingVesselInf
 from utils import probable_gender
 import re
 
+import reversion
+
 GENDERS = (
     ("f", "female"),
     ("m", "male"),
@@ -206,6 +208,15 @@ class Observation(models.Model):
     class Meta:
         ordering = ['observation_datetime', 'report_datetime', 'id']
 
+# have revisions follow the OneToOne fields
+reversion.register(Observation, 
+    follow= [
+        f.name for f in filter(
+            lambda x: isinstance(x, models.OneToOneField),
+            Observation._meta.fields
+        )
+    ],
+)
 
 class CaseManager(models.Manager):
     def cases_in_year(self, year):
