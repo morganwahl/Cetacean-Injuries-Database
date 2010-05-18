@@ -438,6 +438,9 @@ def entanglement_report_form(request):
                 raise _SomeValidationFailed('animal', forms['animal'])
             animal = forms['animal'].save()
             data['case-animal'] = animal.id
+            # required fields that have defaults
+            # TODO get these automatically
+            data['case-valid'] = Case._meta.get_field('valid').default
             # TODO don't repeat yourself... get the Form class and prefix from the existing instance of forms['case']
             forms['case'] = EntanglementForm(data, prefix='case')
             
