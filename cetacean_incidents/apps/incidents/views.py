@@ -16,6 +16,8 @@ from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeFor
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
 
+from reversion import revision
+
 @login_required
 def create_animal(request):
     if request.method == 'POST':
@@ -431,8 +433,12 @@ def entanglement_report_form(request):
 
         # hafta use transactions, since the Case won't validate without an
         # Animal, but we can't fill in an Animal until it's saved, but we
-        # don't wanna save unless the Observation, etc. are valid.
+        # don't wanna save unless the Observation, etc. are valid. Note that
+        # the Transaction middleware doesn't help since the view method doesn't
+        # return an exception if one of the forms was invalid.
+        # Revisions should always correspond to transactions!
         @transaction.commit_on_success
+        @revision.create_on_success
         def _try_saving():
             if not forms['animal'].is_valid():
                 raise _SomeValidationFailed('animal', forms['animal'])
