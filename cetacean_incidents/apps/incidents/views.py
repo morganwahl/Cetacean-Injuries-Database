@@ -7,14 +7,16 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.forms import Media
+from django.forms.models import modelformset_factory
 from django.db import transaction
 
-from models import Case, Entanglement, Animal, Observation
+from models import Case, Entanglement, Animal, Observation, GearType
 from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
+import cetacean_incidents
 
 from reversion import revision
 
@@ -83,6 +85,28 @@ def add_case(request, animal_id):
         },
         context_instance= RequestContext(request),
     )
+
+def _entanglement_detail(request, entanglement):
+    return render_to_response(
+        'incidents/entanglement_detail.html',
+        {
+            'case': entanglement,
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def case_detail(request, case_id):
+    case = Case.objects.get(id=case_id).detailed
+    if isinstance(case, Entanglement):
+        return _entanglement_detail(request, entanglement=case)
+    else:
+        return cetacean_incidents.generic_views.object_detail(
+            request,
+            object_id= case_id,
+            queryset= Case.objects.all(),
+            template_object_name= 'case',
+        )
 
 def _add_or_edit_observation(request, case_id=None, observation_id=None):
     if not observation_id is None:
@@ -242,9 +266,26 @@ def edit_observation(request, observation_id):
 def add_observation(request, case_id):
     return _add_or_edit_observation(request, case_id=case_id)
 
+def _edit_entanglement(request, entanglement):
+    if request.method == 'POST':
+        form = EntanglementForm(request.POST, instance=entanglement)
+        if form.is_valid():
+            form.save()
+            return redirect(entanglement)
+    else:
+		form = EntanglementForm(instance=entanglement)
+    return render_to_response('incidents/edit_entanglement.html', {
+        'taxon': entanglement.probable_taxon,
+        'gender': entanglement.probable_gender,
+        'form': form,
+        'case': entanglement,
+    })
+
 @login_required
 def edit_case(request, case_id):
-    case = Case.objects.get(id=case_id)
+    case = Case.objects.get(id=case_id).detailed
+    if isinstance(case, Entanglement):
+        return _edit_entanglement(request, entanglement=case)
 
     if request.method == 'POST':
         form = CaseForm(request.POST, instance=case)

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation
+from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation, GearType
 
 class AnimalAdmin(VersionAdmin):
     pass
@@ -25,6 +25,10 @@ admin.site.register(Observation, ObservationAdmin)
 class EntanglementObservationAdmin(ObservationAdmin):
     pass
 admin.site.register(EntanglementObservation, EntanglementObservationAdmin)
+
+class GearTypeAdmin(VersionAdmin):
+    pass
+admin.site.register(GearType, GearTypeAdmin)
 
 class ShipstrikeObservationAdmin(ObservationAdmin):
     pass

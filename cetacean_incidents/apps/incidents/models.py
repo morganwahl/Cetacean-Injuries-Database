@@ -479,7 +479,135 @@ models.signals.post_save.connect(_observation_post_save, sender=EntanglementObse
 class Entanglement(Case):
     observation_model = EntanglementObservation
 
+    gear_fieldnumber = models.CharField(
+        max_length= 255,
+        blank= True,
+        null= True,
+        verbose_name= "Gear Field No.",
+        help_text= "the gear-analysis-specific field no.",
+    )
+
+    gear_recovered = models.NullBooleanField(
+        default= None,
+        blank= True,
+        null= True,
+        help_text= "was any gear recovered?",
+    )
+    
+    # TODO does gear_analyzed imply gear_recovered
+    gear_analyzed = models.NullBooleanField(
+        default= None,
+        blank= True,
+        null= True,
+        help_text= "was the gear analyzed?",
+    )
+    analyzed_datetime = models.DateField(
+        blank= True,
+        null= True,
+    )
+    analyzed_by = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+    )
+    
+    gear_types = models.ManyToManyField(
+        'GearType',
+        blank= True,
+        null= True,
+    )
+    
+    def _get_implied_geartypes(self):
+        if not self.gear_types.count():
+            return set()
+        implied_geartypes = set()
+        for geartype in self.gear_types.all():
+            implied_geartypes |= geartype.implied_supertypes
+        return frozenset(implied_geartypes - set(self.gear_types.all()))
+    implied_gear_types = property(_get_implied_geartypes)
+
 Case.register_subclass(Entanglement)
+
+class GearType(models.Model):
+    name= models.CharField(
+        max_length= 512,
+    )
+    supertypes= models.ManyToManyField(
+        'self',
+        symmetrical= False,
+        blank= True,
+        null= True,
+        related_name= 'subtypes',
+        help_text= 'what other types would be implied by this type?'
+    )
+    
+    def _get_implied_supertypes(self, ignore_types= set()):
+        '''\
+        The ignore_types arg is a set of GearTypes that won't be included in the 
+        results. It's used to prevent infinite loops in recursive calls.
+        '''
+        
+        # be sure 'self' is in ignore_types.
+        ignore_types |= set([self])
+        # traverse supertypes and return a set of all GearTypes seen
+        implied_supertypes = set(self.supertypes.all()) - ignore_types
+        to_traverse = implied_supertypes.copy()
+        for supertype in to_traverse:
+            implied_supertypes |= supertype._get_implied_supertypes(
+                ignore_types= ignore_types | implied_supertypes,
+            )
+        return frozenset(implied_supertypes)
+    implied_supertypes = property(_get_implied_supertypes)
+    
+    # TODO cycle-check in get_attribute for supertypes, since you could change
+    # the supertypes of an instance w/o saving it.
+    
+    class DAGException(Exception):
+        '''\
+        Exceptions thrown when a GearType instance would violate the directed
+        acyclic graph nature of GearTypes. E.g. when it's in it's own list of
+        supertypes.
+        '''
+        pass
+    
+    def _cyclecheck(self):
+        # check for cycles in supertypes!
+        if self in self.supertypes.all():
+            raise GearType.DAGException(
+                "%s can't be a supertype of itself!" % unicode(self),
+            )
+        # assume no other instances in the database contain cycles. If so, 
+        # there can only be a cycle if this instance is in the all_supertypes 
+        # property of one of the GearTypes in it supertypes.
+        checked_so_far = set([])
+        for proposed_supertype in self.supertypes.all():
+            to_check = proposed_supertype._get_implied_supertypes(
+                ignore_types= checked_so_far,
+            )
+            if self in to_check:
+                raise GearType.DAGException(
+                    # TODO determined what the cycle would be
+                    "%s can't be a supertype of %s, that would create a cycle!" % (
+                        unicode(proposed_supertype),
+                        unicode(self),
+                    )
+                )
+            checked_so_far |= to_check # not strictly necessary, but makes 
+                                       # things more efficient. TODO: it's 
+                                       # still sub- optimal.
+
+
+    # TODO save() is not the place for this error-checking! m2m relationships
+    # are saved as soon as they are assigned to.
+    def save(self, *args, **kwargs):
+        # just accessing self.supertypes will throw an exception unless self
+        # has a primarykey
+        if (not self.id is None) and self.supertypes.count():
+            self._cyclecheck()
+        return super(GearType, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return self.name    
 
 class ShipstrikeObservation(Observation):
     striking_vessel = models.OneToOneField(

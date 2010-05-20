@@ -1,0 +1,44 @@
+{% extends "incidents/case_detail.html" %}
+{% load contact_extras %}
+
+{% block ids-dl %}
+{{ block.super }}
+<dt>gear-analysis field #</dt>
+<dd>{{ case.gear_fieldnumber|default:"<i>none</i>" }}</dd>
+{% endblock %}
+
+{% block case_fields %}
+{{ block.super }}
+<div>
+    <span class="fieldname">was gear recovered?</span> {{ case.gear_recovered|yesno:"yes,no,unknown" }}
+</div>
+<div>
+    <span class="fieldname">was gear analyzed?</span>
+    {{ case.gear_analyzed|yesno:"yes,no,unknown" }}{% if case.analyzed_datetime or case.analyzed_by %},{% endif %}
+    {% if case.gear_analyzed %}
+    {% if case.analyzed_datetime %}
+        on {{ case.analyzed_datetime }}
+    {% endif %}
+    {% if case.analyzed_by %}
+        by {% contact_link case.analyzed_by %}
+    {% endif %}
+    {% endif %}
+</div>
+{% if case.gear_types.count %}
+<span class="fieldname">gear types:</span>
+<ul>
+    {% for geartype in case.gear_types.all %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% if case.implied_gear_types %}
+<i>implied gear types:</i>
+<ul>
+    {% for geartype in case.implied_gear_types %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endif %}
+{% endblock %}
+
