@@ -64,6 +64,11 @@ h2 {
 h3 {
     font-size: 125%;
 }
+
+ul {
+    padding: 0;
+    margin: .25em;
+}
 li {
     margin-left: 2em;
 }

@@ -13,7 +13,7 @@
 
 {% block ids-dl %}
 <dt>local ID</dt><dd>{{ case.id }}</dd>
-<dt>current name</dt><dd>{{ case.current_name }}</dd>
+<dt>current name</dt><dd>{{ case.current_name|default:"<i>none</i>" }}</dd>
 {% if case.past_names_set %}
 <dt>past names</dt>
 <dd>
@@ -38,10 +38,10 @@
 <div class="section">
     {% block case_fields %}
     <div>
-        <span class="fieldname">Animal</span> {% animal_link case.animal %}
+        <span class="fieldname">Animal:</span> {% animal_link case.animal %}
     </div>
     <div>
-        <span class="fieldname">Validity</span>
+        <span class="fieldname">Validity:</span>
         {% include "incidents/case-valid-icon.html" %}
         {{ case.get_valid_display }}
     </div>
