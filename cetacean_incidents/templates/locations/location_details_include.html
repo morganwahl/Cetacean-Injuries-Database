@@ -4,7 +4,7 @@
         {% if l.coordinates %}
         <td class="layout">
             <div>
-            <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=100x100&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
+            <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=200x150&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
             </div>
             <table>
                 <tr id="{{ l.id }}_lat_dec"><th>lat.</th><td style="text-align:right;">{{ l.coords_pair.0|floatformat:"4" }}</td>
