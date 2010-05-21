@@ -18,16 +18,17 @@ TODO in order of importance:
 
 Contact-editing should work!
 gear analysis model/pages
-use ITIS numbers in Taxon management
-    import from ITIS
+add OLE and animal-name fields to new-entanglement-form
 shipstrike pages
 make observation editing page more intuitive
 deletion!
     with warnings
 case merging!
-add icons for actions
 contacts/animals management.
     prompt for deletion when they are no longer referred to by cases/observations
+use ITIS numbers in Taxon management
+    import from ITIS
+add icons for actions
 
 git hosting at NOAA
 directions for successor

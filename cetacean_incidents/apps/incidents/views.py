@@ -449,7 +449,7 @@ def animal_search(request):
 @login_required
 def entanglement_report_form(request):
     '''\
-    A single page to quickly create a new Case for a new Animal and its
+    A single page to quickly create a new Entanglement for a new Animal and its
     initial Observation.
     '''
 

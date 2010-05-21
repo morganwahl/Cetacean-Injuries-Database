@@ -1,3 +1,5 @@
+# -*- encoding: utf-8 -*-
+
 from django.db import models
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
@@ -20,13 +22,13 @@ class Animal(models.Model):
         blank= True,
         null= True,
         max_length= 255,
-        help_text= 'The name given to this particular animal (e.g. "Kingfisher"). Not an ID number.'
+        help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
     
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking (i.e. if an animal is marked as not dead in an observation after this date, a warning will be displayed.)"
+        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking; e.g. if an animal is marked as not dead in an observation after this date, a warning will be displayed."
     )
     necropsy = models.BooleanField(
         default= False,
@@ -133,8 +135,7 @@ class Observation(models.Model):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'The most specific taxon that can be applied to this ' +
-            'animal. (e.g. a species)',
+        help_text= 'The most specific taxon (e.g. a species) that can be applied to this animal.',
     )
 
     gender = models.CharField(

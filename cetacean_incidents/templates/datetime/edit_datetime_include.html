@@ -2,7 +2,7 @@
 <table>
     {# TODO seconds? timezone? for now, assume U.S. Eastern time in the view #}
     <caption>
-        please use 24-hour, EST/EDT time
+        <i>please use 24-hour, colon-delimited, EST/EDT time. eg. &#x201c;15:30&#x201d;</i>
         {% if d_form.non_field_errors %}
         <ul class="errorlist ui-state-error">
             {% for e in d_form.non_field_errors %}

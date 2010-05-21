@@ -76,9 +76,15 @@
     {% with forms.observation.tagged as f %}
     {% include "labeled_field.html" %}
     {% endwith %}
+    {% with forms.case.ole_investigation as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
     </td><td style="width:50%; vertical-align:top;">
     <div class="section">
         <h3>Animal</h3>
+        {% with forms.animal.name as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
         {% with forms.observation.taxon as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
