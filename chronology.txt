@@ -29,6 +29,36 @@ contacts/animals management.
 use ITIS numbers in Taxon management
     import from ITIS
 add icons for actions
+date-picker widget for non-uncertain dates
+case-date should be based on observation-date, not report-
+IE form submission!
+selected taxon should be clear
+    in IE!
+    make search box disappear
+search for "G. species" in taxon widget
+gear-description hlep-text: "describe physical characteristics of gear"
+test "70 10.1N" in lat/lng input
+back to tabbed forms!
+    links at bottom of each tab to proceed to the next one
+    narrative on the side?
+    submit button is in last tab
+observer platform field in Observations
+    aerial
+    naval
+        whale-watch
+        commerical marine (incl. fisherman)
+        recreational
+        research
+        gov. (incl. DoD, USGS)
+    land
+    other
+    unknown
+make clear what the vessel-info fields are that are hidden
+administrative page for cleaning up animals with no cases.
+administrative page for duplicate contacts
+case-list sorts by case (most recent first)
+search/query! (on homepage)
+list of recent stuff (on homepage)
 
 git hosting at NOAA
 directions for successor
