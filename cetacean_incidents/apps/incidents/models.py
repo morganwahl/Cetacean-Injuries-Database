@@ -518,14 +518,14 @@ class Entanglement(Case):
         null= True,
     )
     
-    def _get_implied_geartypes(self):
+    @property
+    def implied_geartypes(self):
         if not self.gear_types.count():
             return set()
         implied_geartypes = set()
         for geartype in self.gear_types.all():
             implied_geartypes |= geartype.implied_supertypes
         return frozenset(implied_geartypes - set(self.gear_types.all()))
-    implied_gear_types = property(_get_implied_geartypes)
 
 Case.register_subclass(Entanglement)
 
