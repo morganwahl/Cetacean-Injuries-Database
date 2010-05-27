@@ -36,7 +36,7 @@
                 <li>
                     <a href="#reporting">
                         Reporting
-                        {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %}
+                        {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
                     </a>
@@ -52,17 +52,19 @@
                 <li>
                     <a href="#animal">
                         Animal
-                        {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors %}
+                        {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
                     </a>
                 </li>
                 <li>
                     <a href="#incident">
+                        {% block incident_tab %}
                         Incident
-                        {% if forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.biopsy.errors %}
+                        {% if forms.observation.wound_description.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
+                        {% endblock %}
                     </a>
                 </li>
             </ul>
@@ -97,9 +99,20 @@
                         {% endwith %}
                     </div>
                 </div>
+                <div class="section">
+                    {% with forms.observation.documentation as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                </div>
             </div> <!-- id="reporting" -->
             <div id="observation">
                 <h3>Observation</h3>
+                <div class="section">
+                    <h4>observation date and time</h4>
+                    {% with forms.observation_datetime as d_form %}
+                    {% include "datetime/edit_datetime_include.html" %}
+                    {% endwith %}
+                </div>
                 <div class="section">
                     <h4>observer</h4>
                     <script type="text/javascript">
@@ -122,14 +135,7 @@
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
                     </div>
-                    {# TODO firsthandedness #}
                 </div> <!-- class="section" -->
-                <div class="section">
-                    <h4>observation date and time</h4>
-                    {% with forms.observation_datetime as d_form %}
-                    {% include "datetime/edit_datetime_include.html" %}
-                    {% endwith %}
-                </div>
                 <div class="section">
                     <h4>observation location</h4>
                     {% with forms.location as l_form %}
@@ -191,30 +197,19 @@
                         </td>
                     </tr>
                 </table>
+                <div>
+                    {% with forms.observation.biopsy as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                </div>
             </div> <!-- id="animal" -->
             <div id="incident">
                 <h3>Incident details</h3>
-                <table>
-                    <tr>
-                        <th>wounds?</th>
-                        <td>
-                            {% with forms.observation.wounded as f %}
-                            {% include "unlabeled_field.html" %}
-                            {% endwith %}
-                            {% with forms.observation.wound_description as f %}
-                            {% include "bigtext_field.html" %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>biopsy samples taken?</th>
-                        <td>
-                            {% with forms.observation.biopsy as f %}
-                            {% include "unlabeled_field.html" %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                </table>
+                {% block incident_tab_body %}
+                {% with forms.observation.wound_description as f %}
+                {% include "bigtext_field.html" %}
+                {% endwith %}
+                {% endblock %}
             </div> <!-- id="incident" -->
         </div> <!-- id="tabs" -->
         <div class="section">
