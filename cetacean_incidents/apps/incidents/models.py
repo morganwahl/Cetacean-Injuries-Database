@@ -623,7 +623,7 @@ class GearType(models.Model):
             )
         # assume no other instances in the database contain cycles. If so, 
         # there can only be a cycle if this instance is in the all_supertypes 
-        # property of one of the GearTypes in it supertypes.
+        # property of one of the GearTypes in its supertypes.
         checked_so_far = set([])
         for proposed_supertype in self.supertypes.all():
             to_check = proposed_supertype._get_implied_supertypes(
