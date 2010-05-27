@@ -20,6 +20,7 @@ Contact-editing should work!
 gear analysis model/pages
 add OLE and animal-name fields to new-entanglement-form
 shipstrike pages
+add link to admin interface (next to 'logout')
 make observation editing page more intuitive
 deletion!
     with warnings
@@ -59,6 +60,7 @@ administrative page for duplicate contacts
 case-list sorts by case (most recent first)
 search/query! (on homepage)
 list of recent stuff (on homepage)
+make subclass the DateTimeField instead of using the DateTime app
 
 git hosting at NOAA
 directions for successor
