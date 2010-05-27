@@ -1,5 +1,5 @@
 import unittest
-from models import GearType, GearTypeRelation
+from models import Animal, Entanglement, GearType, GearTypeRelation
 
 class GearTypeTestCase(unittest.TestCase):
     def setUp(self):
@@ -55,5 +55,49 @@ class GearTypeTestCase(unittest.TestCase):
         self.assertRaises(
             GearTypeRelation.DAGException,
             GearTypeRelation(subtype=line, supertype=long_line).save,
+        )
+
+class EntanglementTestCase(unittest.TestCase):
+    def test_geartypes(self):
+        a1 = Animal(name='animal 1')
+        a1.save()
+        c1 = Entanglement(animal=a1)
+        c1.save()
+        line = GearType(name='line')
+        line.save()
+        long_line = GearType(name='long line')
+        long_line.save()
+        GearTypeRelation(supertype=line, subtype=long_line).save()
+        longer_line = GearType(name='longer line')
+        longer_line.save()
+        GearTypeRelation(supertype=long_line, subtype=longer_line).save()
+        
+        self.assertEqual(
+            set(c1.gear_types.all()),
+            set(),
+        )
+        self.assertEqual(
+            set(c1.implied_gear_types),
+            set(),
+        )
+        
+        c1.gear_types.add(long_line)
+        self.assertEqual(
+            set(c1.gear_types.all()),
+            set([long_line]),
+        )
+        self.assertEqual(
+            set(c1.implied_gear_types),
+            set([line]),
+        )
+        
+        c1.gear_types.add(longer_line)
+        self.assertEqual(
+            set(c1.gear_types.all()),
+            set([long_line, longer_line]),
+        )
+        self.assertEqual(
+            set(c1.implied_gear_types),
+            set([line]),
         )
 

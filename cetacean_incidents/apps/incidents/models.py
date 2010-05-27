@@ -473,6 +473,11 @@ class EntanglementObservation(Observation):
         blank= True,
         help_text= "details of how the animal was entangled",
     )
+    gear_retrieved = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "was gear removed from the animal for later analysis?"
+    )
 
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_observation_post_save, sender=EntanglementObservation)
@@ -495,7 +500,7 @@ class Entanglement(Case):
         help_text= "was any gear recovered?",
     )
     
-    # TODO does gear_analyzed imply gear_recovered
+    # TODO does gear_analyzed imply gear_recovered?
     gear_analyzed = models.NullBooleanField(
         default= None,
         blank= True,
@@ -519,7 +524,7 @@ class Entanglement(Case):
     )
     
     @property
-    def implied_geartypes(self):
+    def implied_gear_types(self):
         if not self.gear_types.count():
             return set()
         implied_geartypes = set()
