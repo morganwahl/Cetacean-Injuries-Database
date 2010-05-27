@@ -529,12 +529,62 @@ class Entanglement(Case):
 
 Case.register_subclass(Entanglement)
 
+class GearTypeRelation(models.Model):
+    '''\
+    Intended to be used as the 'through' model in a ManyToManyField('self') 
+    when implementing a Directed Acyclic Graph (DAG). Basically just does 
+    cycle-checking when a new relation is added.
+    '''
+    
+    class DAGException(Exception):
+        '''\
+        Exception thrown when a GearTypeRelation would violate the directed-
+        acyclic-graph nature of GearTypes. E.g. when the subtype and supertype
+        are the same.
+        '''
+        pass
+
+    subtype = models.ForeignKey(
+        'GearType',
+        related_name= 'subtype_relations',
+    )
+    supertype = models.ForeignKey(
+        'GearType',
+        related_name= 'supertype_relations',
+    )
+    
+    def save(self, *args, **kwargs):
+        
+        # check if this new relation would create a cycle in the DAG
+        if self.subtype == self.supertype:
+            raise self.DAGException(
+                "\"%r\" can't be a supertype of itself!" % unicode(self.subtype),
+            )
+            
+        if self.subtype in self.supertype.implied_supertypes:
+            raise self.DAGException(
+                # TODO determined what the cycle would be
+                "%s can't be a supertype of %s, that would create a cycle!" % (
+                    unicode(self.supertype),
+                   unicode(self.subtype),
+                )
+            )
+
+        return super(self.__class__, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return "%r -> %r" % (self.subtype, self.supertype)
+    
+    class Meta:
+        unique_together = ('subtype', 'supertype')
+
 class GearType(models.Model):
     name= models.CharField(
         max_length= 512,
     )
     supertypes= models.ManyToManyField(
         'self',
+        through= GearTypeRelation,
         symmetrical= False,
         blank= True,
         null= True,
@@ -542,34 +592,28 @@ class GearType(models.Model):
         help_text= 'what other types would be implied by this type?'
     )
     
-    def _get_implied_supertypes(self, ignore_types= set()):
-        '''\
-        The ignore_types arg is a set of GearTypes that won't be included in the 
-        results. It's used to prevent infinite loops in recursive calls.
-        '''
+    def _get_implied_supertypes_with_ignore(self, ignore_types):
+        # The ignore_types arg is a set of GearTypes that won't be included in 
+        # the results. It's used to prevent infinite loops in recursive calls.
         
         # be sure 'self' is in ignore_types.
         ignore_types |= set([self])
         # traverse supertypes and return a set of all GearTypes seen
         implied_supertypes = set(self.supertypes.all()) - ignore_types
-        to_traverse = implied_supertypes.copy()
-        for supertype in to_traverse:
-            implied_supertypes |= supertype._get_implied_supertypes(
-                ignore_types= ignore_types | implied_supertypes,
-            )
+        if len(implied_supertypes):
+            to_traverse = implied_supertypes.copy()
+            for supertype in to_traverse:
+                implied_supertypes |= supertype._get_implied_supertypes_with_ignore(
+                    ignore_types= ignore_types | implied_supertypes,
+                )
         return frozenset(implied_supertypes)
-    implied_supertypes = property(_get_implied_supertypes)
+
+    @property
+    def implied_supertypes(self):
+        return self._get_implied_supertypes_with_ignore(ignore_types=set())
     
     # TODO cycle-check in get_attribute for supertypes, since you could change
     # the supertypes of an instance w/o saving it.
-    
-    class DAGException(Exception):
-        '''\
-        Exceptions thrown when a GearType instance would violate the directed
-        acyclic graph nature of GearTypes. E.g. when it's in it's own list of
-        supertypes.
-        '''
-        pass
     
     def _cyclecheck(self):
         # check for cycles in supertypes!
@@ -597,15 +641,6 @@ class GearType(models.Model):
                                        # things more efficient. TODO: it's 
                                        # still sub- optimal.
 
-
-    # TODO save() is not the place for this error-checking! m2m relationships
-    # are saved as soon as they are assigned to.
-    def save(self, *args, **kwargs):
-        # just accessing self.supertypes will throw an exception unless self
-        # has a primarykey
-        if (not self.id is None) and self.supertypes.count():
-            self._cyclecheck()
-        return super(GearType, self).save(*args, **kwargs)
     
     def __unicode__(self):
         return self.name    
