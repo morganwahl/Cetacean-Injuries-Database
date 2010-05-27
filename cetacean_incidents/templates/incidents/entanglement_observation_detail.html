@@ -1,9 +1,42 @@
-{% extends "incidents/edit_entanglement.html" %}
+{% extends "incidents/observation_detail.html" %}
 
-{% block narrative_section %}
-{{ block.super }}
-<div class="section">
-    <pre>{{ observation.outcome }}</pre>
-</div>
+{% comment %}
+    anchored = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "was the animal anchored?",
+    )
+    gear_description = models.TextField(
+        blank= True,
+        help_text= "describe the entangling gear",
+    )
+    entanglement_details = models.TextField(
+        blank= True,
+        help_text= "details of how the animal was entangled",
+    )
+    gear_retrieved = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "was gear removed from the animal for later analysis?"
+    )
+{% endcomment %}
+
+{% block case_type_fields %}
+<h3>Entanglement</h3>
+<table>
+    <tr><th>anchored?</th><td><i>{{ observation.anchored|yesno:"yes,no,unknown" }}</i></td></tr>
+    <tr>
+        <th>gear</th>
+        <td>
+            <p>
+                {{ observation.gear_description|default:"<i>undescribed</i>" }}
+            </p>
+            <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
+         </td>
+     </tr>
+     <tr>
+        <th>entanglement description</th>
+        <td>{{ observation.entanglement_details|default:"<i>none</i>" }}</td>
+     </tr>
+</table>
 {% endblock %}
-

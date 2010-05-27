@@ -108,6 +108,31 @@ def case_detail(request, case_id):
             template_object_name= 'case',
         )
 
+def _entanglement_observation_detail(request, entanglementobservation):
+    return render_to_response(
+        'incidents/entanglement_observation_detail.html',
+        {
+            'observation': entanglementobservation,
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def observation_detail(request, observation_id):
+    observation = Observation.objects.get(id=observation_id)
+    try:
+        return _entanglement_observation_detail(request, observation.entanglementobservation)
+    except EntanglementObservation.DoesNotExist:
+        pass
+    
+    # fall back on generic templates
+    return cetacean_incidents.generic_views.object_detail(
+        request,
+        observation_id,
+        queryset= Observation.objects.all(),
+        template_object_name= 'observation',
+    )
+        
 def _add_or_edit_observation(request, case_id=None, observation_id=None):
     if not observation_id is None:
         observation = Observation.objects.get(id=observation_id)

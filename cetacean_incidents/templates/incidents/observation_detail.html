@@ -111,6 +111,11 @@
         </td>
         <td class="layout" width="50%">
             <div class="section">
+                {% block case_type_fields %}
+                <h3>CASE SPECIFIC FIELDS HERE!</h3>
+                {% endblock %}
+            </div>
+            <div class="section">
                 <h3>Narrative</h3>
                 <div>{{ observation.narrative|default:"<i>nothing</i>"|linebreaks }}</div>
             </div>
