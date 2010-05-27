@@ -172,9 +172,11 @@ class Observation(models.Model):
         help_text= "were any tags put on the animal?",
     )
     
+    # TODO is this needed? surely a wound description would suffice...
     wounded = models.NullBooleanField(
         blank= True,
         null= True,
+        default= True,
         help_text= "were there any wounds? False means none were observered, True means they were, Null means we don't know whether any were observed or not."
     )
     wound_description = models.TextField(
@@ -507,9 +509,10 @@ class Entanglement(Case):
         null= True,
         help_text= "was the gear analyzed?",
     )
-    analyzed_datetime = models.DateField(
+    analyzed_date = models.DateField(
         blank= True,
         null= True,
+        help_text= "please use YYYY-MM-DD",
     )
     analyzed_by = models.ForeignKey(
         Contact,
