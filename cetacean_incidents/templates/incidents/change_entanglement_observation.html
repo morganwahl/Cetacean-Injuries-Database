@@ -1,0 +1,25 @@
+{% extends "incidents/change_observation.html" %}
+
+{% block incident_tab %}
+{{ block.super }}
+{% if forms.observation.anchored.errors %}
+<div class="ui-state-error">errors!</div>
+{% endif %}
+{% endblock %}
+
+{% block incident_tab_body %}
+{{ block.super }}
+{% with forms.observation.anchored as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.gear_description as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% with forms.observation.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.entanglement_details as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% endblock %}
+

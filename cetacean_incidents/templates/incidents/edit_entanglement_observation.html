@@ -1,0 +1,13 @@
+{% extends "incidents/change_entanglement_observation.html" %}
+
+{% block observation_title %}{{ observation }} [editing]{% endblock %}
+
+{% block observation_header %}{{ observation }} [editing]{% endblock %}
+
+{% block ids-dl %}
+{{ block.super }}
+<dt>local ID</dt><dd>{{ observation.id }}</dd>
+{% endblock %}
+
+{% block submit_button %}save changes{% endblock %}
+

@@ -144,6 +144,8 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         observation_datetime = observation.observation_datetime
         observer_vessel = observation.observer_vessel
         template = 'incidents/edit_observation.html'
+        if isinstance(case, Entanglement):
+            template = 'incidents/edit_entanglement_observation.html'
 
     elif not case_id is None:
         case = Case.objects.get(id=case_id).detailed
@@ -153,6 +155,8 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         observation_datetime = None
         observer_vessel = None
         template = 'incidents/add_observation.html'
+        if isinstance(case, Entanglement):
+            template = 'incidents/add_entanglement_observation.html'
 
     data = None
     if request.method == 'POST':
