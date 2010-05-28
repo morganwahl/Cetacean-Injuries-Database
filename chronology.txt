@@ -33,7 +33,6 @@ selected taxon should be clear
     in IE!
     make search box disappear
 search for "G. species" in taxon widget
-gear-description hlep-text: "describe physical characteristics of gear"
 test "70 10.1N" in lat/lng input
 back to tabbed forms!
     links at bottom of each tab to proceed to the next one

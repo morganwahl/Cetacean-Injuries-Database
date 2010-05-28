@@ -471,7 +471,7 @@ class EntanglementObservation(Observation):
     )
     gear_description = models.TextField(
         blank= True,
-        help_text= "describe the entangling gear",
+        help_text= "describe physical characteristics of gear",
     )
     entanglement_details = models.TextField(
         blank= True,
