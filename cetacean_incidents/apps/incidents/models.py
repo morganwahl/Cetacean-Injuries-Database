@@ -354,7 +354,7 @@ class Case(models.Model):
         if not self.observation_set.count():
             return None
         # TODO more specific dates should override less specific ones
-        return self.first_report_date
+        return self.first_observation_date
 
     def save(self, *args, **kwargs):
         # if we don't have a yearly_number, set one if possible

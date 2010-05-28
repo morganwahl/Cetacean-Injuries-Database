@@ -31,7 +31,6 @@ use ITIS numbers in Taxon management
     import from ITIS
 add icons for actions
 date-picker widget for non-uncertain dates
-case-date should be based on observation-date, not report-
 IE form submission!
 selected taxon should be clear
     in IE!
