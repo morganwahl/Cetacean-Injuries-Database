@@ -22,47 +22,6 @@ class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
 
-class AnimalWidget(forms.widgets.Input):
-    '''\
-    A widget that searches Animals while you type and allows you to select one
-    of them.
-    '''
-    
-    input_type = 'hidden'
-    
-    def render(self, name, value, attrs=None):
-        """
-        Returns this Widget rendered as HTML, as a Unicode string.
-
-        The 'value' given is not guaranteed to be valid input, so subclass
-        implementations should program defensively.
-        """
-        
-        # TODO error checks?
-        animal_value = ''
-        if not value is None:
-            animal_value = Animal.objects.get(id=value)
-        
-        final_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
-        
-        # assumes the the django.template.loaders.app_directories.load_template_source 
-        # is being used, which is the default.
-        return render_to_string('animal_widget.html', {
-            'initial_animal': animal_value,
-            'final_attrs': forms.util.flatatt(final_attrs),
-        })
-    
-    class Media:
-        css = {'all': ('animal_widget.css',)}
-        js = ('animal_widget.js',)
-
-class AnimalField(forms.ModelChoiceField):
-    
-    def __init__(self, *args, **kwargs):
-        if (not 'widget' in kwargs):
-            kwargs['widget'] = AnimalWidget
-        return super(AnimalField, self).__init__(queryset=Animal.objects.all(),*args, **kwargs)
-
 class CaseForm(forms.ModelForm):
     
     class Meta:
