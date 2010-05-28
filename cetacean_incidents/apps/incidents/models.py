@@ -629,36 +629,6 @@ class GearType(models.Model):
     def implied_supertypes(self):
         return self._get_implied_supertypes_with_ignore(ignore_types=set())
     
-    # TODO cycle-check in get_attribute for supertypes, since you could change
-    # the supertypes of an instance w/o saving it.
-    
-    def _cyclecheck(self):
-        # check for cycles in supertypes!
-        if self in self.supertypes.all():
-            raise GearType.DAGException(
-                "%s can't be a supertype of itself!" % unicode(self),
-            )
-        # assume no other instances in the database contain cycles. If so, 
-        # there can only be a cycle if this instance is in the all_supertypes 
-        # property of one of the GearTypes in its supertypes.
-        checked_so_far = set([])
-        for proposed_supertype in self.supertypes.all():
-            to_check = proposed_supertype._get_implied_supertypes(
-                ignore_types= checked_so_far,
-            )
-            if self in to_check:
-                raise GearType.DAGException(
-                    # TODO determined what the cycle would be
-                    "%s can't be a supertype of %s, that would create a cycle!" % (
-                        unicode(proposed_supertype),
-                        unicode(self),
-                    )
-                )
-            checked_so_far |= to_check # not strictly necessary, but makes 
-                                       # things more efficient. TODO: it's 
-                                       # still sub- optimal.
-
-    
     def __unicode__(self):
         return self.name    
 
