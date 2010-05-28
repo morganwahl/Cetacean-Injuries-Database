@@ -106,6 +106,9 @@
         {% with forms.observation.entanglement_details as f %}
         {% include "bigtext_field.html" %}
         {% endwith %}
+        {% with forms.case.gear_types as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
     </div>
     <div class="section">
         {% with forms.observation.narrative as f %}

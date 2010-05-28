@@ -562,7 +562,6 @@ class GearTypeRelation(models.Model):
     )
     
     def save(self, *args, **kwargs):
-        
         # check if this new relation would create a cycle in the DAG
         if self.subtype == self.supertype:
             raise self.DAGException(
@@ -586,6 +585,13 @@ class GearTypeRelation(models.Model):
     class Meta:
         unique_together = ('subtype', 'supertype')
 
+class RootGearTypeManager(models.Manager):
+    def get_query_set(self):
+        qs = super(RootGearTypeManager, self).get_query_set()
+        # filter out all GearTypes that are the subtype in a GearTypeRelation
+        # TODO simplier way to query for that?
+        return qs.annotate(supertypes_num=models.Count('supertypes')).filter(supertypes_num=0)
+
 class GearType(models.Model):
     name= models.CharField(
         max_length= 512,
@@ -599,6 +605,9 @@ class GearType(models.Model):
         related_name= 'subtypes',
         help_text= 'what other types would be implied by this type?'
     )
+    
+    objects = models.Manager()
+    roots = RootGearTypeManager()
     
     def _get_implied_supertypes_with_ignore(self, ignore_types):
         # The ignore_types arg is a set of GearTypes that won't be included in 
