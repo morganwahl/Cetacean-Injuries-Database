@@ -18,6 +18,7 @@ TODO in order of importance:
 
 Contact-editing should work!
 gear analysis model/pages
+    gear-owner model/pages
 shipstrike pages
 make observation editing page more intuitive
 deletion!
