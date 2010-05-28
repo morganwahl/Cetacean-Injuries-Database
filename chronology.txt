@@ -18,9 +18,7 @@ TODO in order of importance:
 
 Contact-editing should work!
 gear analysis model/pages
-add OLE and animal-name fields to new-entanglement-form
 shipstrike pages
-add link to admin interface (next to 'logout')
 make observation editing page more intuitive
 deletion!
     with warnings
@@ -31,7 +29,6 @@ use ITIS numbers in Taxon management
     import from ITIS
 add icons for actions
 date-picker widget for non-uncertain dates
-IE form submission!
 selected taxon should be clear
     in IE!
     make search box disappear
