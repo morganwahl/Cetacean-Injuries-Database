@@ -291,13 +291,13 @@ class Case(models.Model):
     #    editable= False,
     #    help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
     #)
-    def _get_yearly_number(self):
+    @property
+    def yearly_number(self):
         try:
             number = YearCaseNumber.objects.get(case=self, current=True).number
         except YearCaseNumber.DoesNotExist:
             number = None
         return number
-    yearly_number = property(_get_yearly_number)
     
     names = models.TextField(
         #max_length= 2048,
@@ -316,7 +316,8 @@ class Case(models.Model):
         self.names = ','.join(new_names)
     names_set = property(_get_names_set,_put_names_set)
 
-    def _get_current_name(self):
+    @property
+    def current_name(self):
         # Cases with no Observations yet don't get names
         if not self.observation_set.count():
             return None
@@ -331,29 +332,29 @@ class Case(models.Model):
             s['taxon'] = u'Unknown taxon'
         s['type'] = self.case_type
         return u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
-        
-    current_name = property(_get_current_name)
-
-    def _get_past_names_set(self):
+    
+    @property
+    def past_names_set(self):
         return self.names_set - set([self.current_name])
-    past_names_set = property(_get_past_names_set)
 
-    def _get_first_observation_date(self):
+    @property
+    def first_observation_date(self):
         if not self.observation_set.count():
             return None
         return self.observation_set.order_by('observation_datetime')[0].observation_datetime
-    first_observation_date = property(_get_first_observation_date)
-    def _get_first_report_date(self):
+
+    @property
+    def first_report_date(self):
         if not self.observation_set.count():
             return None
         return self.observation_set.order_by('report_datetime')[0].report_datetime
-    first_report_date = property(_get_first_report_date)
-    def _get_case_date(self):
+    
+    @property
+    def date(self):
         if not self.observation_set.count():
             return None
         # TODO more specific dates should override less specific ones
         return self.first_report_date
-    date = property(_get_case_date)
 
     def save(self, *args, **kwargs):
         # if we don't have a yearly_number, set one if possible
@@ -411,7 +412,9 @@ class Case(models.Model):
     def register_subclass(clas, subclass):
         clas._subclasses.add(subclass)
     detailed_classes = property(lambda : frozenset(_subclasses))
-    def _get_detailed_instance(self):
+
+    @property
+    def detailed(self):
         '''Get the more specific instance of this Case, if any.'''
         for clas in self._subclasses:
             subcases = clas.objects.filter(case_ptr= self.id)
@@ -419,18 +422,17 @@ class Case(models.Model):
                 return subcases.all()[0]
         return self
     def _get_detailed_class_name(self):
-        return self._get_detailed_instance().__class__.__name__
-    detailed = property(_get_detailed_instance)
+        return self.detailed.__class__.__name__
     detailed_class_name = property(_get_detailed_class_name) 
     case_type = detailed_class_name
     
-    def _get_probable_taxon(self):
+    @property
+    def probable_taxon(self):
         return probable_taxon(self.observation_set)
-    probable_taxon = property(_get_probable_taxon)
     
-    def _get_probable_gender(self):
+    @property
+    def probable_gender(self):
         return probable_gender(self.observation_set)
-    probable_gender = property(_get_probable_gender)
     
     def __unicode__(self):
         if self.current_name is None:
