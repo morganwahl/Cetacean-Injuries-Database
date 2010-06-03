@@ -1,6 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import VesselInfo, StrikingVesselInfo
+from models import VesselInfo
 from forms import VesselAdminForm
 
 class VesselAdmin(VersionAdmin):
@@ -8,8 +8,4 @@ class VesselAdmin(VersionAdmin):
     
     form = VesselAdminForm
 admin.site.register(VesselInfo, VesselAdmin)
-
-class StrikingVesselAdmin(VesselAdmin):
-    pass
-admin.site.register(StrikingVesselInfo, StrikingVesselAdmin)
 

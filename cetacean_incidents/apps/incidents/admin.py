@@ -1,6 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation, GearType, GearTypeRelation
+from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation, GearType, GearTypeRelation, StrikingVesselInfo
+from cetacean_incidents.apps.vessels.admin import VesselAdmin
 
 class AnimalAdmin(VersionAdmin):
     pass
@@ -37,4 +38,8 @@ admin.site.register(GearTypeRelation, GearTypeRelationAdmin)
 class ShipstrikeObservationAdmin(ObservationAdmin):
     pass
 admin.site.register(ShipstrikeObservation, ShipstrikeObservationAdmin)
+
+class StrikingVesselAdmin(VesselAdmin):
+    pass
+admin.site.register(StrikingVesselInfo, StrikingVesselAdmin)
 

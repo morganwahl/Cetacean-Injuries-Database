@@ -6,10 +6,11 @@ from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
-from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation, GearType
+from models import Animal, Case, Observation, Entanglement, EntanglementObservation, Shipstrike, ShipstrikeObservation, GearType, StrikingVesselInfo
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.vessels.forms import VesselAdminForm
 
 observation_forms = {}
 
@@ -117,6 +118,22 @@ class EntanglementForm(forms.ModelForm):
     
     class Meta:
         model = Entanglement
+
+class StrikingVesselInfoForm(VesselAdminForm):
+    
+    new_vesselcontact = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('other', 'use an existing contact'),
+            ('none', 'no contact info'),
+        ),
+        initial= 'none',
+        widget= forms.RadioSelect,
+        #help_text= "create a new contact for the vessel's contact?",
+    )
+    
+    class Meta(VesselAdminForm.Meta):
+        model = StrikingVesselInfo
 
 class ShipstrikeForm(forms.ModelForm):
     
