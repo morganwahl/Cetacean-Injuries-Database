@@ -52,11 +52,13 @@ observer platform field in Observations
     unknown
 make clear what the vessel-info fields are that are hidden
 administrative page for cleaning up animals with no cases.
+administrative page for cleaning up cases with no observations.
 administrative page for duplicate contacts
 case-list sorts by case (most recent first)
 search/query! (on homepage)
 list of recent stuff (on homepage)
 make subclass the DateTimeField instead of using the DateTime app
+google-charts venn-diagram for gear-types
 
 git hosting at NOAA
 directions for successor
