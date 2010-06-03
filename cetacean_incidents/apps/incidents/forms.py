@@ -227,6 +227,11 @@ observation_forms['Entanglement'] = EntanglementObservationForm
 
 class ShipstrikeObservationForm(ObservationForm):
 
+    striking_vessel_info = forms.BooleanField(
+        required= False,
+        help_text= "Is there any info about the striking vessel?"
+    )
+
     class Meta(ObservationForm.Meta):
         model = ShipstrikeObservation
 

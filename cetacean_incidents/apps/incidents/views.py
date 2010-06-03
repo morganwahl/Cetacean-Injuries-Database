@@ -10,8 +10,8 @@ from django.forms import Media
 from django.forms.models import modelformset_factory
 from django.db import transaction
 
-from models import Case, Entanglement, Animal, Observation, GearType
-from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm
+from models import Case, Entanglement, Animal, Observation, GearType, EntanglementObservation, ShipstrikeObservation
+from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm, ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
@@ -117,12 +117,25 @@ def _entanglement_observation_detail(request, entanglementobservation):
         context_instance= RequestContext(request),
     )
 
+def _shipstrike_observation_detail(request, shipstikeobservation):
+    return render_to_response(
+        'incidents/shipstrike_observation_detail.html',
+        {
+            'observation': shipstikeobservation,
+        },
+        context_instance= RequestContext(request),
+    )
+
 @login_required
 def observation_detail(request, observation_id):
     observation = Observation.objects.get(id=observation_id)
     try:
         return _entanglement_observation_detail(request, observation.entanglementobservation)
     except EntanglementObservation.DoesNotExist:
+        pass
+    try:
+        return _shipstrike_observation_detail(request, observation.shipstrikeobservation)
+    except ShipstrikeObservation.DoesNotExist:
         pass
     
     # fall back on generic templates
