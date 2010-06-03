@@ -218,12 +218,11 @@ class ObservationForm(forms.ModelForm):
 observation_forms['Case'] = ObservationForm
 
 class EntanglementObservationForm(ObservationForm):
-
+    
     class Meta(ObservationForm.Meta):
         model = EntanglementObservation
 
 observation_forms['Entanglement'] = EntanglementObservationForm
-
 
 class ShipstrikeObservationForm(ObservationForm):
 
