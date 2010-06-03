@@ -260,6 +260,13 @@ class Case(models.Model):
     A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
     '''
     
+    nmfs_id = models.CharField(
+        max_length= 255,
+        blank= True,
+        null= True,
+        verbose_name= "NMFS case number",
+    )
+    
     observation_model = Observation
     
     animal = models.ForeignKey(

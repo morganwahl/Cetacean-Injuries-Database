@@ -22,6 +22,7 @@
     {% endfor %}
 </dd>
 {% endif %}
+<dt>NMFS case number</dt><dd>{{ case.nmfs_id|default:"<i>none</i>" }}</dd>
 {% endblock %}
 
 {% block header %}
