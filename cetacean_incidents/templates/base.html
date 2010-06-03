@@ -72,6 +72,7 @@
 			<div id="account_corner">
 				{% if user.is_authenticated %}
 				logged in as {{ user.username }}
+				{% if user.is_staff %}<a href="{% url admin:index %}">admin site</a>{% endif %}
 				<a href="{% url logout %}">log out</a>
 				{% else %}
 				<a href="{% url login %}">log in</a>
