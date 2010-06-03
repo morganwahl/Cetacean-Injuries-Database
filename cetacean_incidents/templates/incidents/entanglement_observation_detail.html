@@ -1,26 +1,5 @@
 {% extends "incidents/observation_detail.html" %}
 
-{% comment %}
-    anchored = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "was the animal anchored?",
-    )
-    gear_description = models.TextField(
-        blank= True,
-        help_text= "describe the entangling gear",
-    )
-    entanglement_details = models.TextField(
-        blank= True,
-        help_text= "details of how the animal was entangled",
-    )
-    gear_retrieved = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "was gear removed from the animal for later analysis?"
-    )
-{% endcomment %}
-
 {% block case_type_fields %}
 <h3>Entanglement</h3>
 <table>
