@@ -1,8 +1,9 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from models import Entanglement, EntanglementObservation, GearType, GearTypeRelation
 
-from cetacean_incidents.apps.incidents.admin import CaseAdmin
+from cetacean_incidents.apps.incidents.admin import CaseAdmin, ObservationAdmin
 
 class EntanglementAdmin(CaseAdmin):
     pass

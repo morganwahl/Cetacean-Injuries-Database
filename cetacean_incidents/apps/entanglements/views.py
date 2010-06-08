@@ -1,27 +1,22 @@
-import operator
 from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext
 from django.forms import Media
 from django.forms.models import modelformset_factory
 from django.db import transaction
 
-from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
-from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
-from cetacean_incidents.apps.contacts.forms import ContactForm
-from cetacean_incidents.apps.incidents.models import Case, Animal, Observation
-from cetacean_incidents.apps.incidents.forms import CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
-import cetacean_incidents
-
-from models import Entanglement, GearType, EntanglementObservation
-from forms import EntanglementForm, EntanglementObservationForm
-
 from reversion import revision
+
+from cetacean_incidents.apps.locations.forms import NiceLocationForm
+from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
+from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.incidents.models import Case
+from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
+
+from models import GearType
+from forms import EntanglementForm, EntanglementObservationForm
 
 def entanglement_detail(request, entanglement):
     return render_to_response(

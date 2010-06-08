@@ -1,28 +1,25 @@
 import operator
-from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, redirect
-from django.core.urlresolvers import reverse
-from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import redirect
+from django.shortcuts import render_to_response
+from django.http import HttpResponse
 from django.template import RequestContext
 from django.forms import Media
-from django.forms.models import modelformset_factory
-from django.db import transaction
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
+from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.appless_forms import CaseTypeForm
+
+from cetacean_incidents import generic_views
+
 from cetacean_incidents.apps.entanglements.views import entanglement_detail, entanglementobservation_detail, edit_entanglement
 from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
-import cetacean_incidents
 
 from models import Case, Animal, Observation
 from forms import CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
-
-from reversion import revision
 
 @login_required
 def create_animal(request):
@@ -96,7 +93,7 @@ def case_detail(request, case_id):
     if isinstance(case, Entanglement):
         return entanglement_detail(request, entanglement=case)
     else:
-        return cetacean_incidents.generic_views.object_detail(
+        return generic_views.object_detail(
             request,
             object_id= case_id,
             queryset= Case.objects.all(),
@@ -119,7 +116,7 @@ def observation_detail(request, observation_id):
         pass
     
     # fall back on generic templates
-    return cetacean_incidents.generic_views.object_detail(
+    return generic_views.object_detail(
         request,
         observation_id,
         queryset= Observation.objects.all(),

@@ -1,8 +1,9 @@
 from django.contrib import admin
 
-from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
+from cetacean_incidents.apps.vessels.admin import VesselAdmin
+from cetacean_incidents.apps.incidents.admin import CaseAdmin, ObservationAdmin
 
-from cetacean_incidents.apps.incidents.admin import CaseAdmin
+from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
 class ShipstrikeAdmin(CaseAdmin):
     pass
