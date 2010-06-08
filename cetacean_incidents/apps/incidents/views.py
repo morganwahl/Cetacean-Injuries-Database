@@ -14,6 +14,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.appless_forms import CaseTypeForm
 from cetacean_incidents.apps.entanglements.views import entanglement_detail, entanglementobservation_detail, edit_entanglement
 from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 import cetacean_incidents
@@ -60,7 +61,7 @@ def edit_animal(request, animal_id):
     )
 
 @login_required
-def _add_case(request, animal_id):
+def add_case(request, animal_id):
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
         # this instance of CaseForm is just to retrieve the fields from the POST,
