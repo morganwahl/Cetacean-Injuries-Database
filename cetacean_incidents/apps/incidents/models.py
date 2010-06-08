@@ -254,10 +254,33 @@ class YearCaseNumber(models.Model):
     class Meta:
         ordering = ('year', 'number')
 
+# TODO there's probably a way to get a list of all the subclasses,
+# but for now we'll just collected them ourselves.
+class CaseMeta(models.Model.__metaclass__):
+    
+    case_class = None
+    
+    # TODO should probably do a check if the passed classdef has this as a 
+    # metaclass, to handle all the various inheritance edge cases this doesn't.
+    # For now though, our inheritance DAG is just a 2-level tree with Case as
+    # the root...
+    def __new__(self, name, bases, dict):
+        the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+        if self.case_class is None and name == 'Case':
+            self.case_class = the_class
+            self.case_class._subclasses = set()
+            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+        elif self.case_class in bases:
+            self.case_class._subclasses.add(the_class)
+            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+        return the_class
+        
 class Case(models.Model):
     '''\
     A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
     '''
+    
+    __metaclass__ = CaseMeta
     
     nmfs_id = models.CharField(
         max_length= 255,
@@ -410,14 +433,6 @@ class Case(models.Model):
                 self.names_set |= frozenset([self.current_name])
 
         return super(Case, self).save(*args, **kwargs)
-
-    # TODO there's probably a way to get a list of all the subclasses,
-    # but for now we'll just add them one-by-one.
-    _subclasses = set()
-    @classmethod
-    def register_subclass(clas, subclass):
-        clas._subclasses.add(subclass)
-    detailed_classes = property(lambda : frozenset(_subclasses))
 
     @property
     def detailed(self):

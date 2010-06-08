@@ -58,5 +58,3 @@ models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObserv
 class Shipstrike(Case):
     observation_model = ShipstrikeObservation
 
-Case.register_subclass(Shipstrike)
-

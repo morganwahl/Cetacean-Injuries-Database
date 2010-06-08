@@ -81,8 +81,6 @@ class Entanglement(Case):
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])
 
-Case.register_subclass(Entanglement)
-
 class GearTypeRelation(models.Model):
     '''\
     Intended to be used as the 'through' model in a ManyToManyField('self') 
