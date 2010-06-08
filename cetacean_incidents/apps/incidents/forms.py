@@ -12,6 +12,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselAdminForm
 
+case_forms = {}
 observation_forms = {}
 
 class AnimalForm(forms.ModelForm):
@@ -27,6 +28,30 @@ class AnimalForm(forms.ModelForm):
     
     class Meta:
         model = Animal
+
+class CaseTypeFormMeta(forms.Form.__metaclass__):
+    
+    def __new__(self, name, bases, dict):
+        type_names = []
+        type_models = {}
+        for c in Case.detailed_classes:
+            type_names.append( (c.__name__, c._meta.verbose_name) )
+            # type_models's keys should be values of the case_type field
+            type_models[c.__name__] = c
+        type_names = tuple(type_names)
+        
+        dict['type_names'] = type_names
+        dict['case_type'] = forms.ChoiceField(choices=type_names)
+        dict['type_models'] = type_models
+        return super(CaseTypeFormMeta, self).__new__(self, name, bases, dict)
+
+class CaseTypeForm(forms.Form):
+    '''\
+    An form with the case-type field needed when creating new cases.
+    '''
+    
+    # this form is almost entirely dynamically created
+    __metaclass__ = CaseTypeFormMeta
 
 class CaseForm(forms.ModelForm):
     

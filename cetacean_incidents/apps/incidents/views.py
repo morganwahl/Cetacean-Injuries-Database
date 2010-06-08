@@ -11,7 +11,6 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
-from cetacean_incidents.appless_forms import CaseTypeForm
 
 from cetacean_incidents import generic_views
 
@@ -19,7 +18,7 @@ from cetacean_incidents.apps.entanglements.views import entanglement_detail, ent
 from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 
 from models import Case, Animal, Observation
-from forms import CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
 
 @login_required
 def create_animal(request):
