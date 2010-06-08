@@ -1,5 +1,6 @@
 import unittest
-from models import Animal, Entanglement, GearType, GearTypeRelation
+from cetacean_incidents.apps.incidents.models import Animal
+from models import Entanglement, GearType, GearTypeRelation
 
 class GearTypeTestCase(unittest.TestCase):
     def setUp(self):

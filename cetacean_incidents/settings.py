@@ -63,5 +63,7 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.vessels',
     'cetacean_incidents.apps.taxons',
     'cetacean_incidents.apps.incidents',
+    'cetacean_incidents.apps.entanglements',
+    'cetacean_incidents.apps.shipstrikes',
 )
 

@@ -10,13 +10,16 @@ from django.forms import Media
 from django.forms.models import modelformset_factory
 from django.db import transaction
 
-from models import Case, Entanglement, Animal, Observation, GearType, EntanglementObservation, ShipstrikeObservation
-from forms import CaseForm, EntanglementForm, observation_forms, MergeCaseForm, AnimalForm, CaseTypeForm, AddCaseForm, EntanglementObservationForm, ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import DateTimeForm, NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.entanglements.views import entanglement_detail, entanglementobservation_detail, edit_entanglement
+from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 import cetacean_incidents
+
+from models import Case, Animal, Observation
+from forms import CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
 
 from reversion import revision
 
@@ -57,7 +60,7 @@ def edit_animal(request, animal_id):
     )
 
 @login_required
-def add_case(request, animal_id):
+def _add_case(request, animal_id):
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
         # this instance of CaseForm is just to retrieve the fields from the POST,
@@ -86,20 +89,11 @@ def add_case(request, animal_id):
         context_instance= RequestContext(request),
     )
 
-def _entanglement_detail(request, entanglement):
-    return render_to_response(
-        'incidents/entanglement_detail.html',
-        {
-            'case': entanglement,
-        },
-        context_instance= RequestContext(request),
-    )
-
 @login_required
 def case_detail(request, case_id):
     case = Case.objects.get(id=case_id).detailed
     if isinstance(case, Entanglement):
-        return _entanglement_detail(request, entanglement=case)
+        return entanglement_detail(request, entanglement=case)
     else:
         return cetacean_incidents.generic_views.object_detail(
             request,
@@ -108,33 +102,18 @@ def case_detail(request, case_id):
             template_object_name= 'case',
         )
 
-def _entanglement_observation_detail(request, entanglementobservation):
-    return render_to_response(
-        'incidents/entanglement_observation_detail.html',
-        {
-            'observation': entanglementobservation,
-        },
-        context_instance= RequestContext(request),
-    )
-
-def _shipstrike_observation_detail(request, shipstikeobservation):
-    return render_to_response(
-        'incidents/shipstrike_observation_detail.html',
-        {
-            'observation': shipstikeobservation,
-        },
-        context_instance= RequestContext(request),
-    )
-
 @login_required
 def observation_detail(request, observation_id):
     observation = Observation.objects.get(id=observation_id)
     try:
-        return _entanglement_observation_detail(request, observation.entanglementobservation)
+        # TODO
+        # try accessing the corresponding entanglementobservation and redirect
+        # to entanglement.views.observation_detail
+        return entanglementobservation_detail(request, observation.entanglementobservation)
     except EntanglementObservation.DoesNotExist:
         pass
     try:
-        return _shipstrike_observation_detail(request, observation.shipstrikeobservation)
+        return shipstrikeobservation_detail(request, observation.shipstrikeobservation)
     except ShipstrikeObservation.DoesNotExist:
         pass
     
@@ -308,26 +287,11 @@ def edit_observation(request, observation_id):
 def add_observation(request, case_id):
     return _add_or_edit_observation(request, case_id=case_id)
 
-def _edit_entanglement(request, entanglement):
-    if request.method == 'POST':
-        form = EntanglementForm(request.POST, instance=entanglement)
-        if form.is_valid():
-            form.save()
-            return redirect(entanglement)
-    else:
-		form = EntanglementForm(instance=entanglement)
-    return render_to_response('incidents/edit_entanglement.html', {
-        'taxon': entanglement.probable_taxon,
-        'gender': entanglement.probable_gender,
-        'form': form,
-        'case': entanglement,
-    })
-
 @login_required
 def edit_case(request, case_id):
     case = Case.objects.get(id=case_id).detailed
     if isinstance(case, Entanglement):
-        return _edit_entanglement(request, entanglement=case)
+        return edit_entanglement(request, entanglement=case)
 
     if request.method == 'POST':
         form = CaseForm(request.POST, instance=case)
@@ -487,210 +451,4 @@ def animal_search(request):
     # TODO return 304 when not changed?
     
     return HttpResponse(json.dumps(animals))
-
-@login_required
-def entanglement_report_form(request):
-    '''\
-    A single page to quickly create a new Entanglement for a new Animal and its
-    initial Observation.
-    '''
-
-    # fill in some defaults specific to this view
-    data = None
-    if request.method == 'POST':
-        data = request.POST.copy()
-    this_year = unicode(datetime.today().year)
-    forms = {
-        'animal': AnimalForm(data, prefix='animal'),
-        'case': EntanglementForm(data, prefix='case'),
-        'observation': EntanglementObservationForm(data, prefix='observation'),
-        'new_reporter': ContactForm(data, prefix='new_reporter'),
-        'location': NiceLocationForm(data, prefix='location'),
-        'report_datetime': NiceDateTimeForm(data, prefix='report_time', initial={'year': this_year}),
-        'observation_datetime': NiceDateTimeForm(data, prefix='observation_time', initial={'year': this_year}),
-    }
-    
-    if request.method == 'POST':
-        class _SomeValidationFailed(Exception):
-            pass
-
-        # hafta use transactions, since the Case won't validate without an
-        # Animal, but we can't fill in an Animal until it's saved, but we
-        # don't wanna save unless the Observation, etc. are valid. Note that
-        # the Transaction middleware doesn't help since the view method doesn't
-        # return an exception if one of the forms was invalid.
-        # Revisions should always correspond to transactions!
-        @transaction.commit_on_success
-        @revision.create_on_success
-        def _try_saving():
-            if not forms['animal'].is_valid():
-                raise _SomeValidationFailed('animal', forms['animal'])
-            animal = forms['animal'].save()
-            data['case-animal'] = animal.id
-            # required fields that have defaults
-            # TODO get these automatically
-            data['case-valid'] = Case._meta.get_field('valid').default
-            # TODO don't repeat yourself... get the Form class and prefix from the existing instance of forms['case']
-            forms['case'] = EntanglementForm(data, prefix='case')
-            
-            if not forms['case'].is_valid():
-                raise _SomeValidationFailed('case', forms['case'])
-            case = forms['case'].save()
-            
-            if not forms['observation'].is_valid():
-                raise _SomeValidationFailed('observation', forms['observation'])
-            
-            # TODO the commit=False save is necessary because ObservationForm
-            # doesn't have a Case field
-            observation = forms['observation'].save(commit=False)
-            observation.case = case
-
-            # check ObservationForm.new_reporter
-            if forms['observation'].cleaned_data['new_reporter'] == 'new':
-                if not forms['new_reporter'].is_valid():
-                    raise _SomeValidationFailed('new_reporter', forms['new_reporter'])
-                observation.reporter = forms['new_reporter'].save()
-
-            if not forms['location'].is_valid():
-                raise _SomeValidationFailed('location', forms['location'])
-            observation.location = forms['location'].save()
-
-            if not forms['report_datetime'].is_valid():
-                raise _SomeValidationFailed('report_datetime', forms['report_datetime'])
-            observation.report_datetime = forms['report_datetime'].save()
-
-            if not forms['observation_datetime'].is_valid():
-                raise _SomeValidationFailed('observation_datetime', forms['observation_datetime'])
-            observation.observation_datetime = forms['observation_datetime'].save()
-
-            observation.save()
-            forms['observation'].save_m2m()
-
-            return case
-        
-        try:
-            return redirect(_try_saving())
-        except _SomeValidationFailed as (formname, form):
-            pass
-
-    template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
-    )
-
-    media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
-    
-    return render_to_response(
-        'incidents/entanglement_report_form.html',
-        {
-            'forms': forms,
-            'media': media,
-        },
-        context_instance= RequestContext(request),
-    )
-
-@login_required
-def shipstrike_report_form(request):
-    '''\
-    A single page to quickly create a new Shipstrike for a new Animal and its
-    initial Observation.
-    '''
-
-    form_kwargs = {}
-    if request.method == 'POST':
-        form_kwargs['data'] = request.POST.copy()
-    this_year = unicode(datetime.today().year)
-    forms = {
-        'animal': AnimalForm(prefix='animal', **form_kwargs),
-        'case': ShipstrikeForm(prefix='case', **form_kwargs),
-        'observation': ShipstrikeObservationForm(prefix='observation', **form_kwargs),
-        'new_reporter': ContactForm(prefix='new_reporter', **form_kwargs),
-        'location': NiceLocationForm(prefix='location', **form_kwargs),
-        'report_datetime': NiceDateTimeForm(prefix='report_time', initial={'year': this_year}, **form_kwargs),
-        'observation_datetime': NiceDateTimeForm(prefix='observation_time', initial={'year': this_year}, **form_kwargs),
-        'striking_vessel': StrikingVesselInfoForm(prefix='striking_vessel', **form_kwargs),
-        'new_striking_vessel_contact': ContactForm(prefix='new_striking_vessel_contact', **form_kwargs),
-    }
-    
-    if request.method == 'POST':
-        class _SomeValidationFailed(Exception):
-            pass
-
-        # hafta use transactions, since the Case won't validate without an
-        # Animal, but we can't fill in an Animal until it's saved, but we
-        # don't wanna save unless the Observation, etc. are valid. Note that
-        # the Transaction middleware doesn't help since the view method doesn't
-        # return an exception if one of the forms was invalid.
-        # Revisions should always correspond to transactions!
-        @transaction.commit_on_success
-        @revision.create_on_success
-        def _try_saving():
-            if not forms['animal'].is_valid():
-                raise _SomeValidationFailed('animal', forms['animal'])
-            animal = forms['animal'].save()
-            data = request.POST.copy()
-            data['case-animal'] = animal.id
-            # required fields that have defaults
-            # TODO get these automatically
-            data['case-valid'] = Case._meta.get_field('valid').default
-            # TODO don't repeat yourself... get the Form class and prefix from the existing instance of forms['case']
-            forms['case'] = ShipstrikeForm(data, prefix='case')
-            
-            if not forms['case'].is_valid():
-                raise _SomeValidationFailed('case', forms['case'])
-            case = forms['case'].save()
-            
-            if not forms['observation'].is_valid():
-                raise _SomeValidationFailed('observation', forms['observation'])
-            
-            # TODO the commit=False save is necessary because ObservationForm
-            # doesn't have a Case field
-            observation = forms['observation'].save(commit=False)
-            observation.case = case
-
-            # check ObservationForm.new_reporter
-            if forms['observation'].cleaned_data['new_reporter'] == 'new':
-                if not forms['new_reporter'].is_valid():
-                    raise _SomeValidationFailed('new_reporter', forms['new_reporter'])
-                observation.reporter = forms['new_reporter'].save()
-            
-            if forms['observation'].cleaned_data['striking_vessel_info']:
-                if not forms['striking_vessel_info'].is_valid():
-                    raise _SomeValidationFailed('striking_vessel_info', forms['striking_vessel_info'])
-            
-            if not forms['location'].is_valid():
-                raise _SomeValidationFailed('location', forms['location'])
-            observation.location = forms['location'].save()
-
-            if not forms['report_datetime'].is_valid():
-                raise _SomeValidationFailed('report_datetime', forms['report_datetime'])
-            observation.report_datetime = forms['report_datetime'].save()
-
-            if not forms['observation_datetime'].is_valid():
-                raise _SomeValidationFailed('observation_datetime', forms['observation_datetime'])
-            observation.observation_datetime = forms['observation_datetime'].save()
-
-            observation.save()
-            forms['observation'].save_m2m()
-
-            return case
-        
-        try:
-            return redirect(_try_saving())
-        except _SomeValidationFailed as (formname, form):
-            print "error in form %s: %s" % (formname, unicode(form.errors))
-
-    template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
-    )
-
-    media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
-    
-    return render_to_response(
-        'incidents/shipstrike_report_form.html',
-        {
-            'forms': forms,
-            'media': media,
-        },
-        context_instance= RequestContext(request),
-    )
 

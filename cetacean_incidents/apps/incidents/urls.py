@@ -24,7 +24,7 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
 urlpatterns += patterns('',
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
     (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
-    (r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
+    #(r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
     (r'^cases/(\d+)/$', views.case_detail, {}, 'case_detail'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'), 
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
@@ -32,6 +32,13 @@ urlpatterns += patterns('',
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
     url(r'^animal_search$', views.animal_search, name='animal_search'),
-    (r'^entanglement_report_form/$', views.entanglement_report_form, {}, 'entanglement_report_form'),
-    (r'^shipstrike_report_form/$', views.shipstrike_report_form, {}, 'shipstrike_report_form'),
 )
+
+# for backwards compatibility on old /incidents/ URLs
+urlpatterns += patterns('cetacean_incidents.apps.entanglements.views',
+    (r'^entanglement_report_form/$', 'entanglement_report_form', {}, 'entanglement_report_form'),
+)
+urlpatterns += patterns('cetacean_incidents.apps.shipstrikes.views',
+    (r'^shipstrike_report_form/$', 'shipstrike_report_form', {}, 'shipstrike_report_form'),
+)
+

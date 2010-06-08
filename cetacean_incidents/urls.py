@@ -13,6 +13,8 @@ urlpatterns = patterns('',
     (r'^contacts/', include('cetacean_incidents.apps.contacts.urls')),
     (r'^taxons/', include('cetacean_incidents.apps.taxons.urls')),
     (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
+    (r'^entanglements/', include('cetacean_incidents.apps.entanglements.urls')),
+    (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),
     
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
@@ -42,7 +44,8 @@ urlpatterns += patterns('',
 
 from django.contrib import databrowse
 from cetacean_incidents.apps.taxons.models import Taxon
-from cetacean_incidents.apps.incidents.models import Animal, Entanglement, EntanglementObservation
+from cetacean_incidents.apps.incidents.models import Animal
+from cetacean_incidents.apps.entanglements.models import Entanglement, EntanglementObservation
 
 databrowse.site.register(Animal)
 databrowse.site.register(Taxon)
