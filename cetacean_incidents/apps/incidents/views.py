@@ -26,7 +26,7 @@ def create_animal(request):
         form = AnimalForm(request.POST)
         if form.is_valid():
             new_animal = form.save()
-            return redirect('add_case', new_animal.id)
+            return redirect(new_animal)
     else:
         form = AnimalForm()
     return render_to_response(
@@ -72,7 +72,7 @@ def add_case(request, animal_id):
                 # re-create the case_form with an instance of subclass of Case
                 case_form = CaseForm(data, instance=CaseModel())
                 new_case = case_form.save()
-                return redirect('add_observation', new_case.id)
+                return redirect(new_case.detailed)
     else:
         case_form = AddCaseForm()
         type_form = CaseTypeForm()
