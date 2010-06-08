@@ -18,6 +18,7 @@ from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalFor
 from models import GearType
 from forms import EntanglementForm, EntanglementObservationForm
 
+@login_required
 def entanglement_detail(request, entanglement):
     return render_to_response(
         'incidents/entanglement_detail.html',
@@ -27,6 +28,7 @@ def entanglement_detail(request, entanglement):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def entanglementobservation_detail(request, entanglementobservation):
     return render_to_response(
         'incidents/entanglement_observation_detail.html',
@@ -36,6 +38,7 @@ def entanglementobservation_detail(request, entanglementobservation):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def edit_entanglement(request, entanglement):
     if request.method == 'POST':
         form = EntanglementForm(request.POST, instance=entanglement)
