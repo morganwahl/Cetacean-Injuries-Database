@@ -1,9 +1,9 @@
 {% extends "incidents/observation_detail.html" %}
 {% load contact_extras %}
-{% load countries_tags %}
+{% load vessel_extras %}
 
 {% block case_type_fields %}
-<h3>Shipstrike</h3>
+<h3>Striking Vessel</h3>
 {% if observation.striking_vessel %}
 {% with observation.striking_vessel as sv %}
 <table>
@@ -11,7 +11,7 @@
     <tr><th>IMO number</th><td>{{ sv.imo_number }}</td></tr>
     {% endif %}
     {% if sv.name or sv.flag %}
-    <tr><th>{% if sv.name %}name{% endif %}{% if sv.name and sv.flag %} and {% endif %}{% if sv.flag %}flag{% endif %}</th><td>{{ sv.flag }}{{ sv.flag|iso_flag }}</td></tr>
+    <tr><th>{% if sv.name %}name{% endif %}{% if sv.name and sv.flag %} and {% endif %}{% if sv.flag %}flag{% endif %}</th><td>{{ sv.name|default:"" }}{% if sv.flag %}{% flag_icon sv.flag %}{% endif %}</td></tr>
     {% endif %}
     <tr>
         <th>contact</th>
@@ -19,13 +19,30 @@
         {% if sv.contact %}
         {% contact_link sv.contact %}
         {% else %}
-        <i>no contact info</i>
+        <i>no contact info for this vessel</i>
         {% endif %}
         </td>
     </tr>
+    {% if sv.captain %}
+    <tr><th>captain (or officer on duty at the time)</th><td>{% contact_link sv.captain %}</td></tr>
+    {% endif %}
+    {# don't worry about 0 values for dimensions and tonnage, since that would be nonsensical (and thus indicate 'unknown') #}
+    {% if sv.length %}
+    <tr><th>length</th><td>{{ sv.length|floatformat:-3 }} m</td></tr>
+    {% endif %}
+    {% if sv.draft %}
+    <tr><th>maximum draft</th><td>{{ sv.draft|floatformat:-2 }} m</td></tr>
+    {% endif %}
+    {% if sv.tonnage %}
+    <tr><th>Gross Tonnage</th><td>{{ sv.tonnage|floatformat }}</td></tr>
+    {% endif %}
+    {# compare to None since it may be 0 #}
+    {% ifnotequal sv.speed None%}
+    <tr><th>speed at time of strike</th><td>{{ sv.speed|floatformat:-2 }} knot{{ sv.speed|pluralize }} over ground</td></tr>
+    {% endifnotequal %}
 </table>
 {% endwith %}
 {% else %}
-<i>no info for striking vessel</i>
+<i>no info</i>
 {% endif %}
 {% endblock %}
