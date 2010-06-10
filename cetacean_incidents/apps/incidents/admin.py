@@ -1,7 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 from models import Animal, Case, Observation
-from cetacean_incidents.apps.vessels.admin import VesselAdmin
 
 class AnimalAdmin(VersionAdmin):
     pass

@@ -7,6 +7,10 @@
 <dd>{{ case.gear_fieldnumber|default:"<i>none</i>" }}</dd>
 {% endblock %}
 
+{% block edit_link %}
+<a href="{% url edit_entanglement case.id %}">edit this entanglement</a>
+{% endblock %}
+
 {% block case_fields %}
 {{ block.super }}
 <div>

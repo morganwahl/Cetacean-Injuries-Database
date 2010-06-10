@@ -226,6 +226,9 @@ class CaseManager(models.Manager):
         # of the observation with the earilest report_datetime. A simple approach here
         # is to get all the cases that have _any_ observation in the year, then prune
         # the one's whose date's aren't actually in the year
+        # TODO initially fetch cases with an observation whose report _or_ 
+        # observation dates are in the year we're looking for.
+        # TODO use YearCaseNumber ?
         cases = Case.objects.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
 

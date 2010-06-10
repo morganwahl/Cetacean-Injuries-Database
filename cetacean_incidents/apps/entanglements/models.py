@@ -28,7 +28,7 @@ models.signals.post_save.connect(_observation_post_save, sender=EntanglementObse
 
 class Entanglement(Case):
     observation_model = EntanglementObservation
-
+    
     gear_fieldnumber = models.CharField(
         max_length= 255,
         blank= True,

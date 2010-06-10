@@ -41,13 +41,13 @@ class CaseTypeFormMeta(forms.Form.__metaclass__):
         type_names = tuple(type_names)
         
         dict['type_names'] = type_names
-        dict['case_type'] = forms.ChoiceField(choices=type_names)
+        dict['case_type'] = forms.ChoiceField(choices=(('','<select a case type>'),) + type_names)
         dict['type_models'] = type_models
         return super(CaseTypeFormMeta, self).__new__(self, name, bases, dict)
 
 class CaseTypeForm(forms.Form):
     '''\
-    An form with the case-type field needed when creating new cases.
+    A form with the case-type field needed when creating new cases.
     '''
     
     # this form is almost entirely dynamically created
