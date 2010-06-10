@@ -469,7 +469,7 @@ class Case(models.Model):
     def __unicode__(self):
         if self.current_name is None:
             if self.id:
-                return u"Case %i" % self.id
+                return u"%s (%i)" % (self.detailed_class_name, self.id)
             else:
                 return u"<new case>"
         return self.current_name
