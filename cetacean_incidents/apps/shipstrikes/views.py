@@ -93,8 +93,9 @@ def shipstrike_report_form(request):
                 observation.reporter = forms['new_reporter'].save()
             
             if forms['observation'].cleaned_data['striking_vessel_info']:
-                if not forms['striking_vessel_info'].is_valid():
-                    raise _SomeValidationFailed('striking_vessel_info', forms['striking_vessel_info'])
+                if not forms['striking_vessel'].is_valid():
+                    raise _SomeValidationFailed('striking_vessel', forms['striking_vessel'])
+                observation.striking_vessel = forms['striking_vessel'].save()
             
             if not forms['location'].is_valid():
                 raise _SomeValidationFailed('location', forms['location'])
