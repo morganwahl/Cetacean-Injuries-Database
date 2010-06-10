@@ -5,10 +5,10 @@
 {{ media }}
 {% endblock %}
 
-{% block title %}{{ block.super }}: add a new case for {{ animal }}{% endblock %}
+{% block title %}{{ block.super }}: add a new case{% if animal %} for {{ animal }}{% endif %}{% endblock %}
 
 {% block header %}
-<h2>new case for {{ animal }}</h2>
+<h2>new case{% if animal %} for {{ animal }}{% endif %}</h2>
 {% endblock %}
 
 {% block content %}
