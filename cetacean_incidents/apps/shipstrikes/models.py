@@ -62,3 +62,7 @@ models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObserv
 class Shipstrike(Case):
     observation_model = ShipstrikeObservation
 
+    @models.permalink
+    def get_absolute_url(self):
+        return('shipstrike_detail', [str(self.id)])
+

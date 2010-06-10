@@ -15,19 +15,14 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
 
+from cetacean_incidents.apps.incidents.views import edit_case
+
 from models import Entanglement, GearType, EntanglementObservation
 from forms import EntanglementForm, EntanglementObservationForm
 
 @login_required
-def entanglement_detail(request, entanglement_id):
-    entanglement = Entanglement.objects.get(id=entanglement_id)
-    return render_to_response(
-        'entanglements/entanglement_detail.html',
-        {
-            'case': entanglement,
-        },
-        context_instance= RequestContext(request),
-    )
+def edit_entanglement(request, case_id):
+    return edit_case(request, case_id=case_id, template='entanglements/edit_entanglement.html', form_class=EntanglementForm)
 
 @login_required
 def entanglementobservation_detail(request, entanglementobservation_id):
@@ -39,23 +34,6 @@ def entanglementobservation_detail(request, entanglementobservation_id):
         },
         context_instance= RequestContext(request),
     )
-
-@login_required
-def edit_entanglement(request, entanglement_id):
-    entanglement = Entanglement.objects.get(id=entanglement_id)
-    if request.method == 'POST':
-        form = EntanglementForm(request.POST, instance=entanglement)
-        if form.is_valid():
-            form.save()
-            return redirect(entanglement)
-    else:
-		form = EntanglementForm(instance=entanglement)
-    return render_to_response('entanglements/edit_entanglement.html', {
-        'taxon': entanglement.probable_taxon,
-        'gender': entanglement.probable_gender,
-        'form': form,
-        'case': entanglement,
-    })
 
 @login_required
 def entanglement_report_form(request):

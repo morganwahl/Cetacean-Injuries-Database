@@ -14,8 +14,6 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 
 from cetacean_incidents import generic_views
 
-from cetacean_incidents.apps.entanglements.views import entanglement_detail, entanglementobservation_detail, edit_entanglement
-from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 
 from models import Case, Animal, Observation
 from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes
@@ -134,19 +132,10 @@ def add_case(request, animal_id):
 @login_required
 def case_detail(request, case_id):
     case = Case.objects.get(id=case_id).detailed
-    if not case.__class__ is Case:
-        # avoid redirect loops!
-        # TODO is this the best way to detect that? what if middleware is 
-        # altering the URLs?
-        # TODO the best would be a decorator function for views that checks if
-        # a view's return value is a redirect that will resolve back to the 
-        # same view, with the same args
-        if case.get_absolute_url() != request.path:
-            return redirect(case)
     return generic_views.object_detail(
         request,
         object_id= case_id,
-        queryset= Case.objects.all(),
+        queryset= case.__class__.objects.all(),
         template_object_name= 'case',
     )
 
@@ -334,19 +323,16 @@ def add_observation(request, case_id):
     return _add_or_edit_observation(request, case_id=case_id)
 
 @login_required
-def edit_case(request, case_id):
+def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):
     case = Case.objects.get(id=case_id).detailed
-    if isinstance(case, Entanglement):
-        return edit_entanglement(request, entanglement=case)
-
     if request.method == 'POST':
-        form = CaseForm(request.POST, instance=case)
+        form = form_class(request.POST, instance=case)
         if form.is_valid():
             form.save()
             return redirect(case)
     else:
-		form = CaseForm(instance=case)
-    return render_to_response('incidents/edit_case.html', {
+		form = form_class(instance=case)
+    return render_to_response(template, {
         'taxon': case.probable_taxon,
         'gender': case.probable_gender,
         'form': form,

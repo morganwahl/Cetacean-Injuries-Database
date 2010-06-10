@@ -1,6 +1,6 @@
 {% spaceless %}
 {% if case.ole_investigation %}<span class="ole-true">{% endif %}
-    <a href="{{ case.get_absolute_url }}">
+    <a href="{{ case.detailed.get_absolute_url }}">
         {% if not case.valid %}<del>{% endif %}
             {{ case }}
         {% if not case.valid %}</del>{% endif %}

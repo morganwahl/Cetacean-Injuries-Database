@@ -1,0 +1,7 @@
+{% extends "incidents/case_detail.html" %}
+{% load contact_extras %}
+
+{% block edit_link %}
+<a href="{% url edit_shipstrike case.id %}">edit this shipstrike</a>
+{% endblock %}
+
