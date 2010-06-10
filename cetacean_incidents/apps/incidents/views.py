@@ -56,6 +56,41 @@ def edit_animal(request, animal_id):
         context_instance= RequestContext(request),
     )
 
+# TODO merge create_case and add_case
+@login_required
+def create_case(request):
+    caseform_args = {}
+    if request.method == 'POST':
+        caseform_args = {'data': request.POST}
+    case_forms = {}
+    for case_type_name, case_form_class in case_form_classes.items():
+        case_forms[case_type_name] = case_form_class(prefix=case_type_name, **caseform_args)
+
+    if request.method == 'POST':
+        type_form = CaseTypeForm(request.POST)
+        if type_form.is_valid():
+            # get the relevant AddCaseForm subclass
+            case_form = case_forms[type_form.cleaned_data['case_type']]
+            if case_form.is_valid():
+                new_case = case_form.save()
+                return redirect(new_case)
+    else:
+        type_form = CaseTypeForm()
+        
+    template_media = Media(
+        js= ('jquery/jquery-1.3.2.min.js',),
+    )
+    
+    return render_to_response(
+        'incidents/add_case.html',
+        {
+            'media': reduce( lambda m, f: m + f.media, [type_form] +  case_forms.values(), template_media),
+            'type_form': type_form,
+            'case_forms': case_forms,
+        },
+        context_instance= RequestContext(request),
+    )
+
 @login_required
 def add_case(request, animal_id):
     animal = Animal.objects.get(id=animal_id)
