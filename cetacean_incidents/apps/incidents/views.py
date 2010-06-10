@@ -104,10 +104,7 @@ def add_case(request, animal_id):
 
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
-        # this instance of CaseForm is just to retrieve the fields from the POST,
-        # incase type_form isn't valid
         if type_form.is_valid():
-            #CaseModel = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
             # get the relevant AddCaseForm subclass
             case_form = addcase_forms[type_form.cleaned_data['case_type']]
             if case_form.is_valid():

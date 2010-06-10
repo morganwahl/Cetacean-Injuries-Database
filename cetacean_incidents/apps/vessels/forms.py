@@ -90,9 +90,9 @@ class VesselInfoForm(VesselAdminForm):
             ('other', 'use an existing contact'),
             ('none', 'no contact info'),
         ),
-        initial= 'other',
+        initial= 'none',
         widget= forms.RadioSelect,
-        help_text= "create a new contact for the vessel's contact?",
+        #help_text= "create a new contact for the vessel's contact?",
     )
     
     class Meta(VesselAdminForm.Meta):
