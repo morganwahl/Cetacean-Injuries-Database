@@ -102,15 +102,21 @@ def add_case(request, animal_id):
 @login_required
 def case_detail(request, case_id):
     case = Case.objects.get(id=case_id).detailed
-    if isinstance(case, Entanglement):
-        return entanglement_detail(request, entanglement=case)
-    else:
-        return generic_views.object_detail(
-            request,
-            object_id= case_id,
-            queryset= Case.objects.all(),
-            template_object_name= 'case',
-        )
+    if not case.__class__ is Case:
+        # avoid redirect loops!
+        # TODO is this the best way to detect that? what if middleware is 
+        # altering the URLs?
+        # TODO the best would be a decorator function for views that checks if
+        # a view's return value is a redirect that will resolve back to the 
+        # same view, with the same args
+        if case.get_absolute_url() != request.path:
+            return redirect(case)
+    return generic_views.object_detail(
+        request,
+        object_id= case_id,
+        queryset= Case.objects.all(),
+        template_object_name= 'case',
+    )
 
 @login_required
 def observation_detail(request, observation_id):
