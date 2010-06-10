@@ -22,7 +22,7 @@ from forms import EntanglementForm, EntanglementObservationForm
 def entanglement_detail(request, entanglement_id):
     entanglement = Entanglement.objects.get(id=entanglement_id)
     return render_to_response(
-        'incidents/entanglement_detail.html',
+        'entanglements/entanglement_detail.html',
         {
             'case': entanglement,
         },
@@ -33,7 +33,7 @@ def entanglement_detail(request, entanglement_id):
 def entanglementobservation_detail(request, entanglementobservation_id):
     entanglementobservation = EntanglementObservation.objects.get(id=entanglementobservation_id)
     return render_to_response(
-        'incidents/entanglement_observation_detail.html',
+        'entanglements/entanglement_observation_detail.html',
         {
             'observation': entanglementobservation,
         },
@@ -50,7 +50,7 @@ def edit_entanglement(request, entanglement_id):
             return redirect(entanglement)
     else:
 		form = EntanglementForm(instance=entanglement)
-    return render_to_response('incidents/edit_entanglement.html', {
+    return render_to_response('entanglements/edit_entanglement.html', {
         'taxon': entanglement.probable_taxon,
         'gender': entanglement.probable_gender,
         'form': form,
@@ -150,7 +150,7 @@ def entanglement_report_form(request):
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
     
     return render_to_response(
-        'incidents/entanglement_report_form.html',
+        'entanglements/entanglement_report_form.html',
         {
             'forms': forms,
             'media': media,

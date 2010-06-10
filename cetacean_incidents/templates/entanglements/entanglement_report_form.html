@@ -11,6 +11,18 @@
 
 {% block content %}
 <form method="POST"><table class="layout">
+    <!---
+    <tr><td colspan="2" style="width:100%;">
+        {% for formname, form in forms.items %}
+        <dl>
+            <dd>{{ formname }}</dd>
+            <dt>
+            {{ form.errors }}
+            </dt>
+        </dl>
+        {% endfor %}
+    </td></tr>
+    -->
     <tr><td style="width:50%; vertical-align:top;">
     <div class="section">
         <h3>report date and time</h3>

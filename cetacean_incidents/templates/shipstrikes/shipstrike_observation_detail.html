@@ -1,5 +1,6 @@
 {% extends "incidents/observation_detail.html" %}
 {% load contact_extras %}
+{% load countries_tags %}
 
 {% block case_type_fields %}
 <h3>Shipstrike</h3>
@@ -10,7 +11,7 @@
     <tr><th>IMO number</th><td>{{ sv.imo_number }}</td></tr>
     {% endif %}
     {% if sv.name or sv.flag %}
-    <tr><th>{% if sv.name %}name{% endif %}{% if sv.name and sv.flag %} and {% endif %}{% if sv.flag %}flag{% endif %}</th><td>{{ sv.flag }}{{ sv.imo_number }}</td></tr>
+    <tr><th>{% if sv.name %}name{% endif %}{% if sv.name and sv.flag %} and {% endif %}{% if sv.flag %}flag{% endif %}</th><td>{{ sv.flag }}{{ sv.flag|iso_flag }}</td></tr>
     {% endif %}
     <tr>
         <th>contact</th>

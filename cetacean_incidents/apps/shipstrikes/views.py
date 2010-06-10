@@ -20,7 +20,7 @@ from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoF
 def shipstrikeobservation_detail(request, shipstrikeobservation_id):
     shipstrikeobservation = ShipstrikeObservation.objects.get(id=shipstrikeobservation_id)
     return render_to_response(
-        'incidents/shipstrike_observation_detail.html',
+        'shipstrikes/shipstrike_observation_detail.html',
         {
             'observation': shipstrikeobservation,
         },
@@ -125,7 +125,7 @@ def shipstrike_report_form(request):
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
     
     return render_to_response(
-        'incidents/shipstrike_report_form.html',
+        'shipstrikes/shipstrike_report_form.html',
         {
             'forms': forms,
             'media': media,
