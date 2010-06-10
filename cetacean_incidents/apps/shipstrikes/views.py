@@ -14,13 +14,15 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
+from models import ShipstrikeObservation
 from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm
 
-def shipstrikeobservation_detail(request, shipstikeobservation):
+def shipstrikeobservation_detail(request, shipstrikeobservation_id):
+    shipstrikeobservation = ShipstrikeObservation.objects.get(id=shipstrikeobservation_id)
     return render_to_response(
         'incidents/shipstrike_observation_detail.html',
         {
-            'observation': shipstikeobservation,
+            'observation': shipstrikeobservation,
         },
         context_instance= RequestContext(request),
     )

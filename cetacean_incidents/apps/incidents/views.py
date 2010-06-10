@@ -152,23 +152,19 @@ def case_detail(request, case_id):
 
 @login_required
 def observation_detail(request, observation_id):
-    observation = Observation.objects.get(id=observation_id)
-    try:
-        # TODO
-        # try accessing the corresponding entanglementobservation and redirect
-        # to entanglement.views.observation_detail
-        return entanglementobservation_detail(request, observation.entanglementobservation)
-    except EntanglementObservation.DoesNotExist:
-        pass
-    try:
-        return shipstrikeobservation_detail(request, observation.shipstrikeobservation)
-    except ShipstrikeObservation.DoesNotExist:
-        pass
-    
-    # fall back on generic templates
+    observation = Observation.objects.get(id=observation_id).detailed
+    if not observation.__class__ is Observation:
+        # avoid redirect loops!
+        # TODO is this the best way to detect that? what if middleware is 
+        # altering the URLs?
+        # TODO the best would be a decorator function for views that checks if
+        # a view's return value is a redirect that will resolve back to the 
+        # same view, with the same args
+        if observation.get_absolute_url() != request.path:
+            return redirect(observation)
     return generic_views.object_detail(
         request,
-        observation_id,
+        object_id= observation_id,
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
     )

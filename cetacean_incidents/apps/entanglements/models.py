@@ -22,6 +22,10 @@ class EntanglementObservation(Observation):
         null= True,
         help_text= "was gear removed from the animal for later analysis?"
     )
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return('entanglementobservation_detail', [str(self.id)])
 
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_observation_post_save, sender=EntanglementObservation)

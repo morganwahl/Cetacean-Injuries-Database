@@ -52,6 +52,10 @@ class ShipstrikeObservation(Observation):
         null= True,
     )
 
+    @models.permalink
+    def get_absolute_url(self):
+        return('shipstrikeobservation_detail', [str(self.id)])
+
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObservation)
 

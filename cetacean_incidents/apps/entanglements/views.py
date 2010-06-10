@@ -15,7 +15,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
 
-from models import Entanglement, GearType
+from models import Entanglement, GearType, EntanglementObservation
 from forms import EntanglementForm, EntanglementObservationForm
 
 @login_required
@@ -30,7 +30,8 @@ def entanglement_detail(request, entanglement_id):
     )
 
 @login_required
-def entanglementobservation_detail(request, entanglementobservation):
+def entanglementobservation_detail(request, entanglementobservation_id):
+    entanglementobservation = EntanglementObservation.objects.get(id=entanglementobservation_id)
     return render_to_response(
         'incidents/entanglement_observation_detail.html',
         {
