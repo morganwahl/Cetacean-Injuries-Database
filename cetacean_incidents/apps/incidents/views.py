@@ -18,7 +18,7 @@ from cetacean_incidents.apps.entanglements.views import entanglement_detail, ent
 from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, AddCaseForm
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_forms
 
 @login_required
 def create_animal(request):
@@ -58,30 +58,43 @@ def edit_animal(request, animal_id):
 
 @login_required
 def add_case(request, animal_id):
+    animal = Animal.objects.get(id=animal_id)
+
+    addcaseform_args = {}
+    if request.method == 'POST':
+        addcaseform_args = {'data': request.POST}
+    addcase_forms = {}
+    for case_type_name, case_form in case_forms.items():
+        addcase_forms[case_type_name] = generate_AddCaseForm(case_forms[case_type_name])(prefix=case_type_name, **addcaseform_args)
+
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
         # this instance of CaseForm is just to retrieve the fields from the POST,
         # incase type_form isn't valid
-        case_form = AddCaseForm(request.POST)
         if type_form.is_valid():
-            # transmogrify the generic Case into a Entanglement, Shipstrike, etc. note that this assumes those more specific cases don't have any required fields.
-            CaseModel = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
+            #CaseModel = CaseTypeForm.type_models[type_form.cleaned_data['case_type']]
+            # get the relevant AddCaseForm subclass
+            case_form = addcase_forms[type_form.cleaned_data['case_type']]
             if case_form.is_valid():
-                data = request.POST.copy()
-                data.update({'animal': animal_id})
-                # re-create the case_form with an instance of subclass of Case
-                case_form = CaseForm(data, instance=CaseModel())
-                new_case = case_form.save()
-                return redirect(new_case.detailed)
+                new_case = case_form.save(commit=False)
+                new_case.animal = animal
+                new_case.save()
+                case_form.save_m2m()
+                return redirect(new_case)
     else:
-        case_form = AddCaseForm()
         type_form = CaseTypeForm()
+        
+    template_media = Media(
+        js= ('jquery/jquery-1.3.2.min.js',),
+    )
+    
     return render_to_response(
         'incidents/add_case.html',
         {
-            'animal': Animal.objects.get(id=animal_id),
+            'animal': animal,
+            'media': reduce( lambda m, f: m + f.media, [type_form] +  addcase_forms.values(), template_media),
             'type_form': type_form,
-            'case_form': case_form,
+            'addcase_forms': addcase_forms,
         },
         context_instance= RequestContext(request),
     )

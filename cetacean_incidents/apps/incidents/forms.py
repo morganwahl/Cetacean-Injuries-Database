@@ -58,13 +58,28 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
-class AddCaseForm(CaseForm):
+# these are generated dynamically so we can use subclasses of CaseForm without
+# even knowing what they are
+def generate_AddCaseForm(case_form_class):
     '''\
-    A CaseForm minus the Animal field, for adding a case to an existing animal.
+    Takes CaseForm (or a subclass) and adds 'animal' to the excluded fields.
     '''
 
-    class Meta(CaseForm.Meta):
-        exclude = ('animal',)
+    class AddCaseForm(case_form_class):
+        '''\
+        A %s minus the Animal field, for adding a case to an existing 
+        animal.
+        ''' % case_form_class.__name__
+
+        class Meta(case_form_class.Meta):
+            # TODO how to test for attributes? dir() might work, but isn't
+            # gauranteed [sic] to.
+            try:
+                exclude = case_form_class.Meta.exclude + ('animal',)
+            except AttributeError:
+                exclude = ('animal',)
+    
+    return AddCaseForm
 
 class MergeCaseForm(forms.ModelForm):
     
