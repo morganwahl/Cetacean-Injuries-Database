@@ -12,7 +12,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselAdminForm
 
-case_forms = {}
+case_form_classes = {}
 observation_forms = {}
 
 class AnimalForm(forms.ModelForm):

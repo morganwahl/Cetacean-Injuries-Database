@@ -18,7 +18,7 @@ from cetacean_incidents.apps.entanglements.views import entanglement_detail, ent
 from cetacean_incidents.apps.shipstrikes.views import shipstrikeobservation_detail
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_forms
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes
 
 @login_required
 def create_animal(request):
@@ -64,8 +64,8 @@ def add_case(request, animal_id):
     if request.method == 'POST':
         addcaseform_args = {'data': request.POST}
     addcase_forms = {}
-    for case_type_name, case_form in case_forms.items():
-        addcase_forms[case_type_name] = generate_AddCaseForm(case_forms[case_type_name])(prefix=case_type_name, **addcaseform_args)
+    for case_type_name, case_form_class in case_form_classes.items():
+        addcase_forms[case_type_name] = generate_AddCaseForm(case_form_class)(prefix=case_type_name, **addcaseform_args)
 
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
@@ -94,7 +94,7 @@ def add_case(request, animal_id):
             'animal': animal,
             'media': reduce( lambda m, f: m + f.media, [type_form] +  addcase_forms.values(), template_media),
             'type_form': type_form,
-            'addcase_forms': addcase_forms,
+            'case_forms': addcase_forms,
         },
         context_instance= RequestContext(request),
     )

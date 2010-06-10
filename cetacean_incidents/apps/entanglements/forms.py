@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselAdminForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_forms, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
 
 from models import Entanglement, EntanglementObservation, GearType
 
@@ -93,7 +93,7 @@ class EntanglementForm(forms.ModelForm):
         model = Entanglement
 
 # TODO better way of tracking this
-case_forms['Entanglement'] = EntanglementForm
+case_form_classes['Entanglement'] = EntanglementForm
 
 class EntanglementObservationForm(ObservationForm):
     

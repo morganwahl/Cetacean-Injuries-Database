@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselAdminForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_forms, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
@@ -36,7 +36,7 @@ class ShipstrikeForm(forms.ModelForm):
         model = Shipstrike
 
 # TODO better way of tracking this
-case_forms['Shipstrike'] = ShipstrikeForm
+case_form_classes['Shipstrike'] = ShipstrikeForm
 
 class ShipstrikeObservationForm(ObservationForm):
 
