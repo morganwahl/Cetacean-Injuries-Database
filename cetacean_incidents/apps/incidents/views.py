@@ -192,6 +192,7 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         observation_datetime = None
         observer_vessel = None
         template = 'incidents/add_observation.html'
+        # TODO make this view generic. don't hard-code class names either.
         if case.__class__.__name__ == 'Entanglement':
             template = 'incidents/add_entanglement_observation.html'
 

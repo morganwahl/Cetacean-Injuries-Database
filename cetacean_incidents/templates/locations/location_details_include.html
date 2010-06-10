@@ -1,4 +1,5 @@
 {# intended to be included in another template, with the Location as l #}
+{% if l.coordinates or l.description %}
 <table class="layout">
     <tr class="layout">
         {% if l.coordinates %}
@@ -45,11 +46,15 @@
             </form>
         </td>
         {% endif %}
+        {% if l.description %}
         <td class="layout" style="vertical-align: middle;">
             <p style="margin: .25em;">
                 {{ l.description }}
             </p>
         </td>
+        {% endif %}
     </tr>
 </table>
-
+{% else %}
+<i>no info</i>
+{% endif %}
