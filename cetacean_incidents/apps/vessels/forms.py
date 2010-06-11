@@ -67,7 +67,7 @@ class FlagField(forms.ModelChoiceField):
             queryset = Country.objects.all()
         return super(FlagField, self).__init__(queryset=queryset, *args, **kwargs)
 
-class VesselAdminForm(forms.ModelForm):
+class VesselInfoForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we sepcify our own
     # field
@@ -82,7 +82,7 @@ class VesselAdminForm(forms.ModelForm):
     class Meta:
         model = VesselInfo
 
-class VesselInfoForm(VesselAdminForm):
+class NiceVesselInfoForm(VesselInfoForm):
     
     new_vesselcontact = forms.ChoiceField(
         choices= (
@@ -95,10 +95,11 @@ class VesselInfoForm(VesselAdminForm):
         #help_text= "create a new contact for the vessel's contact?",
     )
     
-    class Meta(VesselAdminForm.Meta):
-        pass
+    class Meta:
+        model = VesselInfo
+        exclude = ('contact')
 
-class ObserverVesselInfoForm(VesselAdminForm):
+class ObserverVesselInfoForm(NiceVesselInfoForm):
     
     new_vesselcontact = forms.ChoiceField(
         choices= (
@@ -113,6 +114,7 @@ class ObserverVesselInfoForm(VesselAdminForm):
         help_text= "create a new contact for the vessel's contact?",
     )
     
-    class Meta(VesselAdminForm.Meta):
-        pass
+    class Meta:
+        model = VesselInfo
+        exclude = ('contact')
 

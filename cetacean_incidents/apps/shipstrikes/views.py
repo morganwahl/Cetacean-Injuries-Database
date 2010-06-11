@@ -17,7 +17,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalForm
 from cetacean_incidents.apps.incidents.views import edit_case
 
 from models import Shipstrike, ShipstrikeObservation
-from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm
+from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
 
 @login_required
 def edit_shipstrike(request, case_id):

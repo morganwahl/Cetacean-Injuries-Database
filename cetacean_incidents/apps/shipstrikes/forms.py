@@ -8,13 +8,15 @@ from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.vessels.forms import VesselAdminForm
+
+from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
+
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
 from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
-class StrikingVesselInfoForm(VesselAdminForm):
+class StrikingVesselInfoForm(VesselInfoForm):
     
     new_vesselcontact = forms.ChoiceField(
         choices= (
@@ -27,7 +29,7 @@ class StrikingVesselInfoForm(VesselAdminForm):
         #help_text= "create a new contact for the vessel's contact?",
     )
     
-    class Meta(VesselAdminForm.Meta):
+    class Meta:
         model = StrikingVesselInfo
 
 class ShipstrikeForm(forms.ModelForm):

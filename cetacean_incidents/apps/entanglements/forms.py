@@ -8,7 +8,7 @@ from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.vessels.forms import VesselAdminForm
+from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
 from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
 
