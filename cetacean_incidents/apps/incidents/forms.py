@@ -88,7 +88,8 @@ class MergeCaseForm(forms.ModelForm):
 class ObservationForm(forms.ModelForm):
     '''\
     This class merely handles commonalities between the different observation
-    types.
+    types. Should be accopanied by forms for Location, two Datetimes, a 
+    VesselInfo, and two Contacts.
     '''
 
     # ModelForm won't fill in all the handy args for us if we sepcify our own

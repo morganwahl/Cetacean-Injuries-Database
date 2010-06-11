@@ -9,10 +9,11 @@ from django.db import transaction
 
 from reversion import revision
 
+from cetacean_incidents.apps.incidents.models import Case
+
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
-from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
 
 from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
@@ -21,8 +22,13 @@ from models import Entanglement, GearType, EntanglementObservation
 from forms import EntanglementForm, EntanglementObservationForm
 
 @login_required
-def edit_entanglement(request, case_id):
-    return edit_case(request, case_id=case_id, template='entanglements/edit_entanglement.html', form_class=EntanglementForm)
+def edit_entanglement(request, entanglement_id):
+    return edit_case(
+        request,
+        case_id= entanglement_id,
+        template= 'entanglements/edit_entanglement.html', 
+        form_class= EntanglementForm,
+    )
 
 @login_required
 def entanglementobservation_detail(request, entanglementobservation_id):

@@ -6,8 +6,9 @@ from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
-from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
+
+from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
 
