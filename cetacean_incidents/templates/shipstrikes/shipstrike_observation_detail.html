@@ -2,6 +2,8 @@
 {% load contact_extras %}
 {% load vessel_extras %}
 
+{% block edit_url %}{% url edit_shipstrikeobservation observation.id %}{% endblock %}
+
 {% block case_type_fields %}
 <h3>Striking Vessel</h3>
 {% if observation.striking_vessel %}

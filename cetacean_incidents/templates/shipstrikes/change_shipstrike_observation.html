@@ -1,0 +1,39 @@
+{% extends "incidents/change_observation.html" %}
+
+{% block incident_tab %}
+{{ block.super }}
+{% if forms.observation.anchored.errors %}
+<div class="ui-state-error">errors!</div>
+{% endif %}
+{% endblock %}
+
+{% block incident_tab_body %}
+{{ block.super }}
+{% with forms.observation.striking_vessel_info as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $().ready(function(){
+        var checkbox_sel = "[name={{ forms.observation.striking_vessel_info.html_name }}]";
+        $(checkbox_sel).change(function(event){
+            if ( $(checkbox_sel + ":checked").val() ) {
+                $("#striking_vessel_info").show();
+            } else {
+                $("#striking_vessel_info").hide();
+            }
+        });
+        $(checkbox_sel).change();
+    });
+</script>
+<div id="striking_vessel_info">
+    <h4>Striking Vessel</h4>
+    {% with forms.striking_vessel as v_form %}
+    {% with forms.new_striking_vessel_contact as c_form %}
+    {% with forms.new_stirking_vessel_captain as cap_form %}
+    {% include "shipstrikes/edit_striking_vessel_include.html" %}
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endblock %}
+

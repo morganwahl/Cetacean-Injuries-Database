@@ -1,7 +1,15 @@
-{% extends "incidents/case_detail.html" %}
-{% load contact_extras %}
+{% extends "incidents/case_base.html" %}
 
-{% block edit_link %}
-<a href="{% url edit_shipstrike case.id %}">edit this shipstrike</a>
+{% block header %}
+{{ block.super }}
+<div>
+    <a href="{% url edit_shipstrike case.id %}">edit this case</a>
+</div>
 {% endblock %}
 
+{% block observations %}
+{{ block.super }}
+<div>
+    <a href="{% url add_shipstrikeobservation case.id %}">add an observation</a>
+</div>
+{% endblock %}

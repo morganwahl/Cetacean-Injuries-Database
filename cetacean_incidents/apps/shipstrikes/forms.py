@@ -18,19 +18,51 @@ from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
 class StrikingVesselInfoForm(VesselInfoForm):
     
-    new_vesselcontact = forms.ChoiceField(
-        choices= (
-            ('new', 'add a new contact'),
-            ('other', 'use an existing contact'),
-            ('none', 'no contact info'),
-        ),
-        initial= 'none',
-        widget= forms.RadioSelect,
-        #help_text= "create a new contact for the vessel's contact?",
+    class Meta:
+        model= StrikingVesselInfo
+    
+class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
+    '''\
+    To be used with a ContactForm on the same page for adding a new captain Contact.
+    '''
+    
+    contact_choices = (
+        ('new', 'add a new contact'),
+        ('reporter', 'use the same contact as the reporter'),
+        ('observer', 'use the same contact as the observer'),
+        ('other', 'use an existing contact'),
+        ('none', 'no contact info'),
     )
     
+    captain_choices = (
+        ('new', 'add a new contact'),
+        ('reporter', 'use the same contact as the reporter'),
+        ('observer', 'use the same contact as the observer'),
+        ('vessel', 'use the same contact as for the vessel'),
+        ('other', 'use an existing contact'),
+        ('none', 'no contact info'),
+    )
+    
+    captain_choice = forms.ChoiceField(
+        choices= captain_choices,
+        initial= 'none',
+        widget= forms.RadioSelect,
+        #help_text= "create a new contact for the vessel's captain?",
+    )
+    
+    # should be the same as whatever ModelForm would generate for the 'captain'
+    # field, except it's not required.
+    _f = StrikingVesselInfo._meta.get_field('captain')
+    existing_captain = forms.ModelChoiceField(
+        queryset= Contact.objects.all(),
+        required= False,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
     class Meta:
         model = StrikingVesselInfo
+        exclude = ('contact', 'captain')
 
 class ShipstrikeForm(forms.ModelForm):
     

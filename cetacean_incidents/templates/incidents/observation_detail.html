@@ -19,7 +19,7 @@
 <h2>{% case_link observation.case %}</h2>
 <h2 style="margin-left:2em;">{{ observation }}</h2>
 <div>
-    <a href="{% url edit_observation observation.id %}">edit this observation</a>
+    <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}">edit this observation</a>
 </div>
 {% endblock %}
 

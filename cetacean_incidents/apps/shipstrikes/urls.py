@@ -8,7 +8,9 @@ import views
 
 urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_shipstrike, {}, 'edit_shipstrike'),
+    (r'^(\d+)/add_observation$', views.add_shipstrikeobservation, {}, 'add_shipstrikeobservation'),
     (r'^observations/(\d+)/$', views.shipstrikeobservation_detail, {}, 'shipstrikeobservation_detail'),
+    (r'^observations/(\d+)/edit$', views.edit_shipstrikeobservation, {}, 'edit_shipstrikeobservation'),
     (r'^shipstrike_report_form/$', views.shipstrike_report_form, {}, 'shipstrike_report_form'),
 )
 

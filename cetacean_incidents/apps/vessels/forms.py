@@ -6,6 +6,7 @@ from django.utils.safestring import mark_safe
 
 from models import VesselInfo
 from cetacean_incidents.apps.countries.models import Country
+from cetacean_incidents.apps.contacts.models import Contact
 
 class FlagSelect(forms.Select):
     '''\
@@ -83,16 +84,31 @@ class VesselInfoForm(forms.ModelForm):
         model = VesselInfo
 
 class NiceVesselInfoForm(VesselInfoForm):
+    '''\
+    To be used with a ContactForm on the same page for adding a new Contact.
+    '''
     
-    new_vesselcontact = forms.ChoiceField(
-        choices= (
-            ('new', 'add a new contact'),
-            ('other', 'use an existing contact'),
-            ('none', 'no contact info'),
-        ),
+    contact_choices = (
+        ('new', 'add a new contact'),
+        ('other', 'use an existing contact'),
+        ('none', 'no contact info'),
+    )
+
+    contact_choice = forms.ChoiceField(
+        choices= contact_choices,
         initial= 'none',
         widget= forms.RadioSelect,
         #help_text= "create a new contact for the vessel's contact?",
+    )
+    
+    # should be the same as whatever ModelForm would generate for the 'contact'
+    # field, except it's not required.
+    _f = VesselInfo._meta.get_field('contact')
+    existing_contact = forms.ModelChoiceField(
+        queryset= Contact.objects.all(),
+        required= False,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
     )
     
     class Meta:
@@ -100,18 +116,16 @@ class NiceVesselInfoForm(VesselInfoForm):
         exclude = ('contact')
 
 class ObserverVesselInfoForm(NiceVesselInfoForm):
+    '''\
+    To be used with a ContactForm on the same page for adding a new Contact.
+    '''
     
-    new_vesselcontact = forms.ChoiceField(
-        choices= (
-            ('new', 'add a new contact'),
-            ('reporter', 'use the same contact as the reporter'),
-            ('observer', 'use the same contact as the observer'),
-            ('other', 'use an existing contact'),
-            ('none', 'no contact info'),
-        ),
-        initial= 'other',
-        widget= forms.RadioSelect,
-        help_text= "create a new contact for the vessel's contact?",
+    contact_choices = (
+        ('new', 'add a new contact'),
+        ('reporter', 'use the same contact as the reporter'),
+        ('observer', 'use the same contact as the observer'),
+        ('other', 'use an existing contact'),
+        ('none', 'no contact info'),
     )
     
     class Meta:

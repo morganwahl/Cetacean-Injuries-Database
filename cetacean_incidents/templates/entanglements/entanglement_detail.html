@@ -1,4 +1,4 @@
-{% extends "incidents/case_detail.html" %}
+{% extends "incidents/case_base.html" %}
 {% load contact_extras %}
 
 {% block ids-dl %}
@@ -7,8 +7,11 @@
 <dd>{{ case.gear_fieldnumber|default:"<i>none</i>" }}</dd>
 {% endblock %}
 
-{% block edit_link %}
-<a href="{% url edit_entanglement case.id %}">edit this entanglement</a>
+{% block header %}
+{{ block.super }}
+<div>
+    <a href="{% url edit_entanglement case.id %}">edit this entanglement</a>
+</div>
 {% endblock %}
 
 {% block case_fields %}
@@ -46,3 +49,7 @@
 {% endif %}
 {% endblock %}
 
+{% block observations %}
+{{ block.super }}
+<a href="{% url add_entanglementobservation case.id %}">add an observation</a>
+{% endblock %}

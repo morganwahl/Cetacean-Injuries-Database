@@ -6,6 +6,9 @@ from django.shortcuts import render_to_response
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.forms import Media
+from django.db import transaction
+
+from reversion import revision
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
@@ -16,7 +19,7 @@ from cetacean_incidents import generic_views
 
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes, ObservationForm
 
 @login_required
 def create_animal(request):
@@ -157,146 +160,98 @@ def observation_detail(request, observation_id):
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
     )
-        
-def _add_or_edit_observation(request, case_id=None, observation_id=None):
-    if not observation_id is None:
-        observation = Observation.objects.get(id=observation_id)
-        # transmogrify the observation instance into one specific to the case type
-        case = observation.case.detailed
-        observation = case.observation_model.objects.get(observation_ptr=observation)
-        location = observation.location
-        report_datetime = observation.report_datetime
-        observation_datetime = observation.observation_datetime
-        observer_vessel = observation.observer_vessel
-        template = 'incidents/edit_observation.html'
-        # TODO make this view generic. don't hard-code class names either.
-        if case.__class__.__name__ == 'Entanglement':
-            template = 'incidents/edit_entanglement_observation.html'
 
-    elif not case_id is None:
-        case = Case.objects.get(id=case_id).detailed
-        observation = None # None is the default for ModelForm(instance=)
-        location = None
-        report_datetime = None
-        observation_datetime = None
-        observer_vessel = None
-        template = 'incidents/add_observation.html'
-        # TODO make this view generic. don't hard-code class names either.
-        if case.__class__.__name__ == 'Entanglement':
-            template = 'incidents/add_entanglement_observation.html'
-
-    data = None
-    if request.method == 'POST':
-        data = request.POST
-    FormClass = observation_forms[case.detailed_class_name]
-    forms = {
-        'observation': FormClass(
-            data,
-            initial= {'observer_on_vessel': observer_vessel is not None},
-            instance= observation
-        ),
-        'new_reporter': ContactForm(data, prefix='new_reporter'),
-        'new_observer': ContactForm(data, prefix='new_observer'),
-        'location': NiceLocationForm(data, instance=location, prefix='location'),
-        'report_datetime': NiceDateTimeForm(data, prefix='report', instance=report_datetime),
-        'observation_datetime': NiceDateTimeForm(data, prefix='observation', instance=observation_datetime),
-        'observer_vessel': ObserverVesselInfoForm(data, instance=observer_vessel, prefix='vessel'),
-        'new_vesselcontact': ContactForm(data, prefix="new_vesselcontact"),
-    }
-    # _not_ a deep-copy.
-    forms_to_check = forms.copy()
+@login_required
+def add_observation(
+        request,
+        case_id,
+        template='incidents/add_observation.html',
+        observationform_class= ObservationForm,
+        additional_form_classes= {},
+        additional_form_saving= lambda forms, check, observation: None,
+    ):
+    '''\
+    observationform_class, if given, should be a subclass of ObservationForm.
+    '''
+    case = Case.objects.get(id=case_id).detailed
     
+    form_classes = {
+        'observation': observationform_class,
+        'report_datetime': NiceDateTimeForm,
+        'new_reporter': ContactForm,
+        'observation_datetime': NiceDateTimeForm,
+        'location': NiceLocationForm,
+        'new_observer': ContactForm,
+        'observer_vessel': ObserverVesselInfoForm,
+        'new_vesselcontact': ContactForm,
+    }
+    form_classes.update(additional_form_classes)
+    
+    forms = {}
+    for form_name, form_class in form_classes.items():
+        kwargs = {}
+        if request.method == 'POST':
+            kwargs['data'] = request.POST
+        forms[form_name] = form_class(prefix=form_name, **kwargs)
+
     if request.method == 'POST':
-        # this 'loop' is just so we can break out when an invalid form is found
-        for once in (None,):
-            if not forms['observation'].is_valid():
-                break
-            del forms_to_check['observation']
-            
-            # check ObservationForm.new_reporter
-            if forms['observation'].cleaned_data['new_reporter'] == 'new':
-                if not forms['new_reporter'].is_valid():
-                    break
-            # if the contact is new, we just checked the ContactForm's
-            # validity; if it's not new, then we shouldn't check it's
-            # validity. either way, remove it from the list
-            del forms_to_check['new_reporter']
+        class _SomeValidationFailed(Exception):
+            pass
+        def _check(form_name):
+            if not forms[form_name].is_valid():
+                raise _SomeValidationFailed(form_name, forms[form_name])
 
-            # check ObservationForm.new_observer
-            if forms['observation'].cleaned_data['new_observer'] == 'new':
-                if not forms['new_observer'].is_valid():
-                    break
-            del forms_to_check['new_observer']
-            
-            # check ObservationForm.observer_on_vessel
-            observer_vessel_exists = forms['observation'].cleaned_data['observer_on_vessel']
-            if not observer_vessel_exists:
-                # observer_vessel
-                del forms_to_check['observer_vessel']
-                del forms_to_check['new_vesselcontact']
-            else:
-                if not forms['observer_vessel'].is_valid():
-                    break
-                del forms_to_check['observer_vessel']
-                # check ObserverVesselInfoForm.new_vesselcontact
-                if forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'new':
-                    if not forms['new_vesselcontact'].is_valid():
-                        break
-                del forms_to_check['new_vesselcontact']
-            
-            # this bit of functionalness just checks if all the remaining forms are valid
-            valid = reduce(operator.and_, map(lambda f: f.is_valid(), forms_to_check.itervalues()))
-            if not valid:
-                break
-            
-            # at this point all the forms contain valid data, so start storing
-            
-
+        # Revisions should always correspond to transactions!
+        @transaction.commit_on_success
+        @revision.create_on_success
+        def _try_saving():
+            _check('observation')
             observation = forms['observation'].save(commit=False)
             observation.case = case
 
+            _check('report_datetime')
             observation.report_datetime = forms['report_datetime'].save()
 
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
+                _check('new_reporter')
                 observation.reporter = forms['new_reporter'].save()
-            elif forms['observation'].cleaned_data['new_reporter'] == 'none':
-                observation.reporter = None
-                # TODO deleting contacts?
-
-            observation.location = forms['location'].save()
-
+            
+            _check('observation_datetime')
             observation.observation_datetime = forms['observation_datetime'].save()
-
+            
+            _check('location')
+            observation.location = forms['location'].save()
+            
             if forms['observation'].cleaned_data['new_observer'] == 'new':
+                _check('new_observer')
                 observation.observer = forms['new_observer'].save()
             elif forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
-            elif forms['observation'].cleaned_data['new_observer'] == 'none':
-                observation.observer = None
-
-            if observer_vessel_exists:
-                vessel_info = forms['observer_vessel'].save(commit=False)
-                if forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'new':
-                    vessel_info.contact = forms['new_vesselcontact'].save()
-                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'reporter':
-                    vessel_info.contact = observation.reporter
-                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'observer':
-                    vessel_info.contact = observation.observer
-                elif forms['observer_vessel'].cleaned_data['new_vesselcontact'] == 'none':
-                    vessel_info.contact = None
-                vessel_info.save()
-                # TODO any m2m fields on Vesselinfo?
-                observation.observer_vessel = vessel_info
-            else:
-                if not observation.observer_vessel is None:
-                    vessel_info = observation.observer_vessel
-                    observation.observer_vessel = None
-                    vessel_info.delete()
-
+            
+            if forms['observation'].cleaned_data['observer_on_vessel'] == True:
+                _check('observer_vessel')
+                observer_vessel = forms['observer_vessel'].save(commit=False)
+                if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
+                    _check('new_vesselcontact')
+                    observer_vessel.contact = forms['new_vesselcontact'].save()
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
+                    observer_vessel.contact = observation.reporter
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
+                    observer_vessel.contact = observation.observer
+                observer_vessel.save()
+                forms['observer_vessel'].save_m2m()
+                observation.observer_vessel = observer_vessel
+            
+            additional_form_saving(forms, _check, observation)
+            
             observation.save()
-            # TODO any m2m fields on observations?
+            forms['observation'].save_m2m()
+            return observation
 
-            return redirect(observation)
+        try:
+            return redirect(_try_saving())
+        except _SomeValidationFailed as (formname, form):
+            print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
         css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
@@ -307,7 +262,6 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
         template,
         {
             'case': case,
-            'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
@@ -315,12 +269,152 @@ def _add_or_edit_observation(request, case_id=None, observation_id=None):
     )
 
 @login_required
-def edit_observation(request, observation_id):
-    return _add_or_edit_observation(request, observation_id=observation_id)
+def edit_observation(
+        request,
+        observation_id,
+        template='incidents/add_observation.html',
+        observationform_class= ObservationForm,
+        additional_form_classes= {},
+        additional_model_instances = {},
+        additional_form_initials= {},
+        additional_form_saving= lambda forms, instances, check, observation: None,
+    ):
+    '''\
+    observationform_class, if given, should be a subclass of ObservationForm.
+    additioanl_model_instances should have keys that correspond to the ones in
+    additional_form_classes.
+    '''
+    
+    form_classes = {
+        'observation': observationform_class,
+        'report_datetime': NiceDateTimeForm,
+        'new_reporter': ContactForm,
+        'observation_datetime': NiceDateTimeForm,
+        'location': NiceLocationForm,
+        'new_observer': ContactForm,
+        'observer_vessel': ObserverVesselInfoForm,
+        'new_vesselcontact': ContactForm,
+    }
+    form_classes.update(additional_form_classes)
+    
+    observation = Observation.objects.get(id=observation_id).detailed
 
-@login_required
-def add_observation(request, case_id):
-    return _add_or_edit_observation(request, case_id=case_id)
+    model_instances = {
+        'observation': observation,
+        'report_datetime': observation.report_datetime,
+        'observation_datetime': observation.observation_datetime,
+        'location': observation.location,
+        'observer_vessel': observation.observer_vessel,
+    }
+    model_instances.update(additional_model_instances)
+
+    form_initials = {
+        'observation': {},
+        'observer_vessel': {},
+    }
+
+    form_initials['observation']['observer_on_vessel'] = model_instances['observation'].observer_vessel
+    if model_instances['observation'].reporter:
+        form_initials['observation']['new_reporter'] = 'other'
+    if model_instances['observation'].observer:
+        if model_instances['observation'].observer == model_instances['observation'].reporter:
+            form_initials['observation']['new_observer'] = 'reporter'
+        else:
+            form_initials['observation']['new_observer'] = 'observer'
+
+    if model_instances['observer_vessel'] and model_instances['observer_vessel'].contact:
+        if model_instances['observer_vessel'].contact == model_instances['observation'].reporter:
+            form_initials['observer_vessel']['contact_choice'] = 'reporter'
+        if model_instances['observer_vessel'].contact == model_instances['observation'].observer:
+            form_initials['observer_vessel']['contact_choice'] = 'observer'
+        else:
+            form_initials['observer_vessel']['contact_choice'] = 'other'
+            form_initials['observer_vessel']['existing_contact'] = model_instances['observer_vessel'].contact
+
+    forms = {}
+    for form_name, form_class in form_classes.items():
+        kwargs = {}
+        if request.method == 'POST':
+            kwargs['data'] = request.POST
+        if form_name in model_instances:
+            kwargs['instance'] = model_instances[form_name]
+        if form_name in form_initials:
+            kwargs['initial'] = form_initials[form_name]
+        forms[form_name] = form_class(prefix=form_name, **kwargs)
+
+    if request.method == 'POST':
+        class _SomeValidationFailed(Exception):
+            pass
+        def _check(form_name):
+            if not forms[form_name].is_valid():
+                raise _SomeValidationFailed(form_name, forms[form_name])
+
+        # Revisions should always correspond to transactions!
+        @transaction.commit_on_success
+        @revision.create_on_success
+        def _try_saving():
+            _check('observation')
+            observation = forms['observation'].save(commit=False)
+
+            _check('report_datetime')
+            observation.report_datetime = forms['report_datetime'].save()
+
+            if forms['observation'].cleaned_data['new_reporter'] == 'new':
+                _check('new_reporter')
+                observation.reporter = forms['new_reporter'].save()
+            
+            _check('observation_datetime')
+            observation.observation_datetime = forms['observation_datetime'].save()
+            
+            _check('location')
+            observation.location = forms['location'].save()
+            
+            if forms['observation'].cleaned_data['new_observer'] == 'new':
+                _check('new_observer')
+                observation.observer = forms['new_observer'].save()
+            elif forms['observation'].cleaned_data['new_observer'] == 'reporter':
+                observation.observer = observation.reporter
+            
+            if forms['observation'].cleaned_data['observer_on_vessel'] == True:
+                _check('observer_vessel')
+                observer_vessel = forms['observer_vessel'].save(commit=False)
+                if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
+                    _check('new_vesselcontact')
+                    observer_vessel.contact = forms['new_vesselcontact'].save()
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
+                    observer_vessel.contact = observation.reporter
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
+                    observer_vessel.contact = observation.observer
+                observer_vessel.save()
+                forms['observer_vessel'].save_m2m()
+                observation.observer_vessel = observer_vessel
+            
+            additional_form_saving(forms, model_instances, _check, observation)
+            
+            observation.save()
+            forms['observation'].save_m2m()
+            return observation
+
+        try:
+            return redirect(_try_saving())
+        except _SomeValidationFailed as (formname, form):
+            print "error in form %s: %s" % (formname, unicode(form.errors))
+
+    template_media = Media(
+        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js'),
+    )
+    
+    return render_to_response(
+        template,
+        {
+            'case': observation.case.detailed,
+            'observation': observation,
+            'forms': forms,
+            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):

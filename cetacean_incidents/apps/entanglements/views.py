@@ -15,7 +15,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
 
-from cetacean_incidents.apps.incidents.views import edit_case
+from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
 
 from models import Entanglement, GearType, EntanglementObservation
 from forms import EntanglementForm, EntanglementObservationForm
@@ -33,6 +33,24 @@ def entanglementobservation_detail(request, entanglementobservation_id):
             'observation': entanglementobservation,
         },
         context_instance= RequestContext(request),
+    )
+
+@login_required
+def add_entanglementobservation(request, entanglement_id):
+    return add_observation(
+        request,
+        case_id= entanglement_id,
+        template= 'entanglements/add_entanglement_observation.html',
+        observationform_class= EntanglementObservationForm,
+    )
+
+@login_required
+def edit_entanglementobservation(request, entanglementobservation_id):
+    return edit_observation(
+        request,
+        observation_id = entanglementobservation_id,
+        template= 'entanglements/edit_entanglement_observation.html',
+        observationform_class= EntanglementObservationForm,
     )
 
 @login_required

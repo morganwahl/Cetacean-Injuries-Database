@@ -3,9 +3,7 @@
 {% block header %}
 {{ block.super }}
 <div>
-    {% block edit_link %}
     <a href="{% url edit_case case.id %}">edit this case</a>
-    {% endblock %}
 </div>
 {% endblock %}
 
