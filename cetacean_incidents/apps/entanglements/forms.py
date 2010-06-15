@@ -12,7 +12,7 @@ from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
 from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
 
-from models import Entanglement, EntanglementObservation, GearType
+from models import Entanglement, EntanglementObservation, GearType, GearOwner
 
 class GearTypeWidget(forms.widgets.CheckboxSelectMultiple):
     '''\
@@ -91,6 +91,7 @@ class EntanglementForm(forms.ModelForm):
     
     class Meta:
         model = Entanglement
+        exclude = ('gear_owner_info')
 
 # TODO better way of tracking this
 case_form_classes['Entanglement'] = EntanglementForm
@@ -102,4 +103,41 @@ class EntanglementObservationForm(ObservationForm):
 
 # TODO better way of tracking this
 observation_forms['Entanglement'] = EntanglementObservationForm
+
+class GearOwnerForm(forms.ModelForm):
+    
+    contact_choice = forms.ChoiceField(
+        choices= (
+            ('new', 'add a new contact'),
+            ('other', 'choose an existing contact'),
+            ('none', 'no contact info'),
+        ),
+        initial= 'none',
+        widget= forms.RadioSelect,
+    )
+    
+    date_set_known = forms.BooleanField(
+        initial= False,
+        required= False,
+        label= 'date gear was set is known',
+        help_text= "check even if just the year is known"
+    )
+    
+    location_set_known = forms.BooleanField(
+        initial= False,
+        required= False,
+        label= 'location gear was set is known',
+        help_text= "check even if just a vague location is known",
+    )
+    
+    date_lost_known = forms.BooleanField(
+        initial= False,
+        required= False,
+        label= 'date gear went missing is known',
+        help_text= "check even if just the year is known"
+    )
+    
+    class Meta:
+        model = GearOwner
+        exclude = ('case', 'date_gear_set', 'location_gear_set', 'date_gear_missing')
 

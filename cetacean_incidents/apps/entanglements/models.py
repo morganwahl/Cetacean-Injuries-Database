@@ -207,10 +207,11 @@ class GearType(models.Model):
         return self.name    
 
 class GearOwner(models.Model):
-    # this is a separate model to simplify securing it
     '''\
     Everything in this table should be considered confidential!
     '''    
+    
+    # TODO enforce view permissions at the model level!
     
     owner_contact = models.ForeignKey(
         Contact,
@@ -244,3 +245,8 @@ class GearOwner(models.Model):
         help_text= u"the owner's description of what gear they're missing",
     )
     
+    class Meta:
+        permissions = (
+            ("view_gear_owner", "Can view gear owner"),
+        )
+

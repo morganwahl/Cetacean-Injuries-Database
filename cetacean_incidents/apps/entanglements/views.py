@@ -4,8 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms import Media
+from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.db import transaction
+from django.db import models
 
 from reversion import revision
 
@@ -13,13 +15,13 @@ from cetacean_incidents.apps.incidents.models import Case
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
-from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
 
-from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
+from cetacean_incidents.apps.incidents.views import case_detail, edit_case, add_observation, edit_observation
 
 from models import Entanglement, GearType, EntanglementObservation
-from forms import EntanglementForm, EntanglementObservationForm
+from forms import EntanglementForm, EntanglementObservationForm, GearOwnerForm
 
 @login_required
 def edit_entanglement(request, entanglement_id):
@@ -28,6 +30,203 @@ def edit_entanglement(request, entanglement_id):
         case_id= entanglement_id,
         template= 'entanglements/edit_entanglement.html', 
         form_class= EntanglementForm,
+    )
+
+@login_required
+def add_gear_owner(request, entanglement_id):
+    # TODO merge in with edit_gear_owner
+    entanglement = Entanglement.objects.get(id=entanglement_id)
+
+    form_classes = {
+        'gear_owner': GearOwnerForm,
+        'new_contact': ContactForm,
+        'new_affiliations': formset_factory(OrganizationForm, extra=3),
+        'datetime_set': NiceDateTimeForm,
+        'location_set': NiceLocationForm,
+        'datetime_lost': NiceDateTimeForm,
+    }
+    forms = {}
+    for form_name, form_class in form_classes.items():
+        kwargs = {}
+        if request.method == 'POST':
+            kwargs['data'] = request.POST
+        forms[form_name] = form_class(prefix=form_name, **kwargs)
+            
+    if request.method == 'POST':
+        class _SomeValidationFailed(Exception):
+            pass
+        class _NothingToSave(Exception):
+            pass
+        def _check(form_name):
+            if not forms[form_name].is_valid():
+                raise _SomeValidationFailed(form_name, forms[form_name])
+
+        # Revisions should always correspond to transactions!
+        @transaction.commit_on_success
+        @revision.create_on_success
+        def _try_saving():
+            _check('gear_owner')
+            gear_owner = forms['gear_owner'].save()
+            entanglement.gear_owner_info = gear_owner
+            entanglement.save()
+            
+            if forms['gear_owner'].cleaned_data['contact_choice'] == 'new':
+                _check('new_contact')
+                gear_owner.contact = forms['new_contact'].save()
+                
+                _check('new_affiliations')
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    org = org_form.save()
+                    contact.affiliations.add(org)
+            
+            if forms['gear_owner'].cleaned_data['date_set_known']:
+                _check('datetime_set')
+                gear_owner.date_gear_set = forms['datetime_set'].save()
+            if forms['gear_owner'].cleaned_data['date_lost_known']:
+                _check('datetime_lost')
+                gear_onwer.date_gear_missing = forms['datetime_lost'].save()
+            if forms['gear_owner'].cleaned_data['date_lost_known']:
+                _check('datetime_lost')
+                gear_owner.date_gear_missing = forms['datetime_lost'].save()
+            
+            gear_owner.save()
+
+            return entanglement
+
+        try:
+            return redirect(_try_saving())
+        except _SomeValidationFailed as (formname, form):
+            print "error in form %s: %s" % (formname, unicode(form.errors))
+
+    template_media = Media(
+        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+    )
+    
+    return render_to_response(
+        'entanglements/add_gear_owner.html',
+        {
+            'case': entanglement,
+            'forms': forms,
+            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def edit_gear_owner(request, entanglement_id):
+    entanglement = Entanglement.objects.get(id=entanglement_id)
+    gear_owner = entanglement.gear_owner_info
+
+    form_classes = {
+        'gear_owner': GearOwnerForm,
+        'new_contact': ContactForm,
+        'new_affiliations': formset_factory(OrganizationForm, extra=3),
+        'datetime_set': NiceDateTimeForm,
+        'location_set': NiceLocationForm,
+        'datetime_lost': NiceDateTimeForm,
+    }
+
+    form_initials = {
+        'gear_owner': {
+            'contact_choice': 'none',
+            'date_set_known': False,
+            'date_lost_known': False,
+        }
+    }
+    if gear_owner.owner_contact:
+        form_initials['gear_owner']['contact_choice'] = 'other'
+    if gear_owner.date_gear_set:
+        form_initials['gear_owner']['date_set_known'] = True
+    if gear_owner.location_gear_set:
+        form_initials['gear_owner']['location_set_known'] = True
+    if gear_owner.date_gear_missing:
+        form_initials['gear_owner']['date_lost_known'] = True
+
+    model_instances = {
+        'gear_owner': gear_owner,
+        'datetime_set': gear_owner.date_gear_set,
+        'location_set': gear_owner.location_gear_set,
+        'datetime_lost': gear_owner.date_gear_missing,
+    }
+
+    forms = {}
+    for form_name, form_class in form_classes.items():
+        kwargs = {}
+        if request.method == 'POST':
+            kwargs['data'] = request.POST
+        if form_name in model_instances.keys():
+            kwargs['instance'] = model_instances[form_name]
+        if form_name in form_initials.keys():
+            kwargs['initial'] = form_initials[form_name]
+        forms[form_name] = form_class(prefix=form_name, **kwargs)
+            
+    if request.method == 'POST':
+        class _SomeValidationFailed(Exception):
+            pass
+        def _check(form_name):
+            if not forms[form_name].is_valid():
+                raise _SomeValidationFailed(form_name, forms[form_name])
+
+        # Revisions should always correspond to transactions!
+        @transaction.commit_on_success
+        @revision.create_on_success
+        def _try_saving():
+        
+            _check('gear_owner')
+            gear_owner = forms['gear_owner'].save()
+            entanglement.gear_owner_info = gear_owner
+            entanglement.save()
+            
+            if forms['gear_owner'].cleaned_data['contact_choice'] == 'new':
+                _check('new_contact')
+                gear_owner.contact = forms['new_contact'].save()
+                
+                _check('new_affiliations')
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    org = org_form.save()
+                    contact.affiliations.add(org)
+            
+            if forms['gear_owner'].cleaned_data['date_set_known']:
+                _check('datetime_set')
+                gear_owner.date_gear_set = forms['datetime_set'].save()
+            
+            if forms['gear_owner'].cleaned_data['location_set_known']:
+                _check('location_set')
+                gear_owner.location_gear_set = forms['location_set'].save()
+
+            if forms['gear_owner'].cleaned_data['date_lost_known']:
+                _check('datetime_lost')
+                gear_owner.date_gear_missing = forms['datetime_lost'].save()
+            
+            gear_owner.save()
+            
+            return entanglement
+
+        try:
+            return redirect(_try_saving())
+        except _SomeValidationFailed as (formname, form):
+            print "error in form %s: %s" % (formname, unicode(form.errors))
+
+    template_media = Media(
+        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+    )
+    
+    return render_to_response(
+        'entanglements/edit_gear_owner.html',
+        {
+            'case': entanglement,
+            'forms': forms,
+            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
     )
 
 @login_required

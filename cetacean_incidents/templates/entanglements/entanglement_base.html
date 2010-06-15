@@ -1,0 +1,103 @@
+{% extends "incidents/case_base.html" %}
+{% load contact_extras %}
+
+{% block ids-dl %}
+{{ block.super }}
+<dt>gear-analysis field #</dt>
+<dd>{{ case.gear_fieldnumber|default:"<i>none</i>" }}</dd>
+{% endblock %}
+
+{% block case_fields %}
+{{ block.super }}
+<div>
+    <span class="fieldname">was gear recovered?</span> {{ case.gear_recovered|yesno:"yes,no,unknown" }}
+</div>
+<div>
+    <span class="fieldname">was gear analyzed?</span>
+    {{ case.gear_analyzed|yesno:"yes,no,unknown" }}{% if case.analyzed_datetime or case.analyzed_by %},{% endif %}
+    {% if case.gear_analyzed %}
+    {% if case.analyzed_datetime %}
+        on {{ case.analyzed_datetime }}
+    {% endif %}
+    {% if case.analyzed_by %}
+        by {% contact_link case.analyzed_by %}
+    {% endif %}
+    {% endif %}
+</div>
+{% if case.gear_types.count %}
+<span class="fieldname">gear types:</span>
+<ul>
+    {% for geartype in case.gear_types.all %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% if case.implied_gear_types %}
+<i>implied gear types:</i>
+<ul>
+    {% for geartype in case.implied_gear_types %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block extra_case_fields %}
+<div class="section">
+    <h3>gear owner info</h3>
+    {% if perms.entanglements.view_gear_owner %}
+    {% block gear_owner_info %}
+    {% if case.gear_owner_info %}
+    <div class="confidential-warning">confidential!</div>
+    {% with case.gear_owner_info as go %}
+    {% if go.owner_contact %}
+    <div>
+        <span class="fieldname">owner contact</span> {% contact_link go.owner_contact %}
+    </div>
+    {% endif %}
+    {% if go.date_gear_set %}
+    <div>
+        <span class="fieldname">date gear was set</span> {{ go.date_gear_set|default:"<i>unknown</i>" }}
+    </div>
+    {% endif %}
+    {% if go.location_gear_set %}
+    <div>
+        <span class="fieldname">location gear was set</span>
+        {% with go.location_gear_set as f %}
+        {% include "locations/location_details_include.html" %}
+        {% endwith %}
+    </div>
+    {% endif %}
+    {% if go.date_gear_missing %}
+    <div>
+        <span class="fieldname">date gear went missing</span> {{ go.date_gear_missing|default:"<i>unknown</i>" }}
+    </div>
+    {% endif %}
+    {% if go.date_gear_missing %}
+    <div>
+        <span class="fieldname">date gear went missing</span> {{ go.date_gear_missing|default:"<i>unknown</i>" }}
+    </div>
+    {% endif %}
+    {% if go.missing_gear %}
+    <div>
+        <span class="fieldname">missing gear description: </span>
+        {{ go.missing_gear }}
+    </div>
+    {% endif %}
+    {% endwith %}
+    <div>
+        <a href="{% url edit_gear_owner case.id %}">edit gear owner info</a>
+    </div>
+    {% else %}
+    <i>none</i>
+    <div>
+        <a href="{% url add_gear_owner case.id %}">add gear owner info</a>
+    </div>
+    {% endif %}
+    {% endblock %}
+    {% else %}
+    <i>you don't have permission to view gear owner info</i>
+    {% endif %}
+</div>
+{% endblock %}
+

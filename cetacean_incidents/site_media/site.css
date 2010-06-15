@@ -119,6 +119,12 @@ ul.errorlist {
     padding: .25em;
 }
 
+.subform {
+    border: 1px solid #729fcf; /* sky blue 1 */
+    margin: .125em;
+    padding: .125em;
+}
+
 .field_wrapper {
     /* border: thin dashed #555753; */ /* aluminium 5 */
     padding: .125em;
@@ -138,6 +144,13 @@ div.ole-warning {
     background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
     color: #a40000;  /* scarlet red 3 */
     border: thin solid #a40000;  /* scarlet red 3 */
+    text-align: center;
+}
+div.confidential-warning {
+    background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
+    color: #a40000;  /* scarlet red 3 */
+    border: thin solid #a40000;  /* scarlet red 3 */
+
     text-align: center;
 }
 
