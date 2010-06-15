@@ -11,6 +11,11 @@ class EmailInput(forms.TextInput):
     
     input_type = 'email'
 
+class OrganizationForm(forms.ModelForm):
+    
+    class Meta:
+        model = Organization
+
 class ContactForm(forms.ModelForm):
     
     affiliations = forms.ModelMultipleChoiceField(
@@ -44,12 +49,7 @@ class ContactForm(forms.ModelForm):
             js = (reverse('jsi18n'),),
         ) + self.fields['affiliations'].widget.media
     media = property(_media)
-
-    class Meta:
-        model = Contact
-
-class OrganizationForm(forms.ModelForm):
     
     class Meta:
-        model = Organization
+        model = Contact
 

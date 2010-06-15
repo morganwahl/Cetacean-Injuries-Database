@@ -9,12 +9,12 @@ class Location(models.Model):
     description = models.TextField(
         blank= True,
         help_text= '''\
-        a prose description of the location. if no coordinates were known at
-        the time, this is all the location info we have; coordinates (and a
-        large 'roughness') may be assigned later, for some simple mapping. Even
-        if we have coordinates, the method by which they were obtained ought to
-        be noted.
+        a prose description of the location. If no coordinates were known at
+        the time, this is all the location info we have. Even if we have 
+        coordinates, the method by which they were obtained ought to be noted.
         '''
+        # coordinates (and a large 'roughness') may be assigned later, for some 
+        # simple mapping. 
     )
     
     # this one was tough to decide on. Using GeoDjango is overkill; my main

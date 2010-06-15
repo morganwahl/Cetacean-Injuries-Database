@@ -53,6 +53,8 @@ make clear what the vessel-info fields are that are hidden
 administrative page for cleaning up animals with no cases.
 administrative page for cleaning up cases with no observations.
 administrative page for duplicate contacts
+administrative page for cleaning up GearOwner objects with no info.
+administrative page for cleaning up DateTime/Location objects with no info.
 case-list sorts by case (most recent first)
 search/query! (on homepage)
 list of recent stuff (on homepage)

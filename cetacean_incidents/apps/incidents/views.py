@@ -425,7 +425,7 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
             form.save()
             return redirect(case)
     else:
-		form = form_class(instance=case)
+        form = form_class(instance=case)
     return render_to_response(template, {
         'taxon': case.probable_taxon,
         'gender': case.probable_gender,

@@ -10,6 +10,7 @@ var RadioHider = {
                     $('#' + id).hide();
             }
         });
+        $(radio_sel).change();
     }
 }
 
