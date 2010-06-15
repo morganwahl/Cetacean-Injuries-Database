@@ -42,14 +42,32 @@ class Entanglement(Case):
         verbose_name= "Gear Field No.",
         help_text= "the gear-analysis-specific field no.",
     )
-
-    gear_recovered = models.NullBooleanField(
-        default= None,
-        blank= True,
-        null= True,
-        help_text= "was any gear recovered?",
-    )
     
+    @classmethod
+    def _yes_no_unk_reduce(cls, thing1, thing2):
+        '''\
+        Given two items,
+            - if either of them is True, return True
+            - if both of them are False and not None, return False
+            - otherwise, return None (for unknown)
+        '''
+        
+        if bool(thing1) or bool(thing2):
+            return True
+        if thing1 is None or thing2 is None:
+            return None
+        return False
+    
+    @property
+    def gear_retrieved(self):
+        return reduce(
+            self._yes_no_unk_reduce,
+            map(
+                lambda o: o.entanglementobservation.gear_retrieved,
+                self.observation_set.all()
+            )
+        )
+        
     # TODO does gear_analyzed imply gear_recovered?
     gear_analyzed = models.NullBooleanField(
         default= None,

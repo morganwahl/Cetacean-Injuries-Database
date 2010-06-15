@@ -1,6 +1,9 @@
 import unittest
+
+from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.incidents.models import Animal
-from models import Entanglement, GearType, GearTypeRelation
+
+from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
 
 class GearTypeTestCase(unittest.TestCase):
     def setUp(self):
@@ -90,5 +93,42 @@ class EntanglementTestCase(unittest.TestCase):
         self.assertEqual(
             set(e.implied_gear_types),
             set([line]),
+        )
+
+    def test_gear_recovered(self):
+        e = Entanglement.objects.create(animal=Animal.objects.create())
+        true_obv = EntanglementObservation.objects.create(
+            case= e,
+            observation_datetime= DateTime.objects.create(year=2000),
+            report_datetime= DateTime.objects.create(year=2000),
+            gear_retrieved= True,
+        )
+        false_obv = EntanglementObservation.objects.create(
+            case= e,
+            observation_datetime= DateTime.objects.create(year=2000),
+            report_datetime= DateTime.objects.create(year=2000),
+            gear_retrieved= False,
+        )
+        none_obv = EntanglementObservation.objects.create(
+            case= e,
+            observation_datetime= DateTime.objects.create(year=2000),
+            report_datetime= DateTime.objects.create(year=2000),
+            gear_retrieved= None,
+        )
+        self.assertEqual(
+            e.gear_retrieved,
+            True,
+        )
+        true_obv.gear_retrieved = False
+        true_obv.save()
+        self.assertEqual(
+            e.gear_retrieved,
+            None,
+        )
+        none_obv.gear_retrieved = False
+        none_obv.save()
+        self.assertEqual(
+            e.gear_retrieved,
+            False,
         )
 
