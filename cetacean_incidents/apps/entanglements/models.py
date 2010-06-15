@@ -1,6 +1,8 @@
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.datetime.models import DateTime
+from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
 
 class EntanglementObservation(Observation):
@@ -68,6 +70,12 @@ class Entanglement(Case):
     
     gear_types = models.ManyToManyField(
         'GearType',
+        blank= True,
+        null= True,
+    )
+    
+    gear_owner_info = models.OneToOneField(
+        'GearOwner',
         blank= True,
         null= True,
     )
@@ -180,3 +188,41 @@ class GearType(models.Model):
     def __unicode__(self):
         return self.name    
 
+class GearOwner(models.Model):
+    # this is a separate model to simplify securing it
+    '''\
+    Everything in this table should be considered confidential!
+    '''    
+    
+    owner_contact = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+    )
+    
+    date_gear_set = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        related_name= 'gear_set',
+    )
+    
+    location_gear_set = models.OneToOneField(
+        Location,
+        blank= True,
+        null= True,
+        help_text= "please note depth as well"
+    )    
+        
+    date_gear_missing = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        related_name= 'gear_missing',
+    )
+
+    missing_gear = models.TextField(
+        blank= True,
+        help_text= u"the owner's description of what gear they're missing",
+    )
+    
