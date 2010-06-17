@@ -17,7 +17,9 @@ jun/jul? - extension to strandings?
 TODO in order of importance:
 
 Contact-editing should work!
-gear-owner model/pages
+JS on gear-type widgets
+    check/uncheck all boxes for the same type at once
+    grey-out implied geartypes
 shipstrike pages
 make observation editing page more intuitive
 deletion!

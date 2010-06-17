@@ -426,12 +426,15 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
             return redirect(case)
     else:
         form = form_class(instance=case)
-    return render_to_response(template, {
-        'taxon': case.probable_taxon,
-        'gender': case.probable_gender,
-        'form': form,
-        'case': case,
-    })
+    return render_to_response(
+        template, {
+            'taxon': case.probable_taxon,
+            'gender': case.probable_gender,
+            'form': form,
+            'case': case,
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 def merge_case(request, case1_id, case2_id):

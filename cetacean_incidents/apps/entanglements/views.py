@@ -27,7 +27,7 @@ from forms import EntanglementForm, EntanglementObservationForm, GearOwnerForm
 def edit_entanglement(request, entanglement_id):
     return edit_case(
         request,
-        case_id= entanglement_id,
+        case_id= Entanglement.objects.get(id=entanglement_id).case_ptr.id,
         template= 'entanglements/edit_entanglement.html', 
         form_class= EntanglementForm,
     )
