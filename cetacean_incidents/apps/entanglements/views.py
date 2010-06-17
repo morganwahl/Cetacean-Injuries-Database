@@ -27,7 +27,7 @@ from forms import EntanglementForm, EntanglementObservationForm, GearOwnerForm
 def edit_entanglement(request, entanglement_id):
     return edit_case(
         request,
-        case_id= entanglement_id,
+        case_id= Entanglement.objects.get(id=entanglement_id).case_ptr.id,
         template= 'entanglements/edit_entanglement.html', 
         form_class= EntanglementForm,
     )
@@ -86,9 +86,9 @@ def add_gear_owner(request, entanglement_id):
             if forms['gear_owner'].cleaned_data['date_set_known']:
                 _check('datetime_set')
                 gear_owner.date_gear_set = forms['datetime_set'].save()
-            if forms['gear_owner'].cleaned_data['date_lost_known']:
-                _check('datetime_lost')
-                gear_onwer.date_gear_missing = forms['datetime_lost'].save()
+            if forms['gear_owner'].cleaned_data['location_set_known']:
+                _check('location_set')
+                gear_owner.location_gear_set = forms['location_set'].save()
             if forms['gear_owner'].cleaned_data['date_lost_known']:
                 _check('datetime_lost')
                 gear_owner.date_gear_missing = forms['datetime_lost'].save()

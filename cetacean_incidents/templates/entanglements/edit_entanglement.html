@@ -1,4 +1,19 @@
-{% extends "incidents/edit_case.html" %}
+{% extends "entanglements/entanglement_base.html" %}
+{% load observation_extras %}
 
-{% block case_type %}Entanglement{% endblock %}
+{% block title %}{{ block.super }} [editing]{% endblock %}
+
+{% block header %}
+{{ block.super }}
+[editing]
+{% endblock %}
+
+{% block case_fields %}
+<form action="" method="post">
+    {% for f in form %}
+    {% include "labeled_field.html" %}
+    {% endfor %}
+    <button type="submit">save changes</button>
+</form>
+{% endblock %}
 
