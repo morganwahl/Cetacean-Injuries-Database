@@ -21,16 +21,9 @@ JS on gear-type widgets
     check/uncheck all boxes for the same type at once
     grey-out implied geartypes
 shipstrike pages
-make observation editing page more intuitive
-deletion!
-    with warnings
-case merging!
-contacts/animals management.
-    prompt for deletion when they are no longer referred to by cases/observations
-use ITIS numbers in Taxon management
-    import from ITIS
-add icons for actions
-date-picker widget for non-uncertain dates
+search/query! (on homepage)
+list of recent stuff (on homepage)
+undated cases are considered most recent in sorting
 selected taxon should be clear
     in IE!
     make search box disappear
@@ -51,6 +44,22 @@ observer platform field in Observations
     land
     other
     unknown
+IE doesn't show table-sort arrows
+secure contacts table
+    boat name
+    home port
+make observation editing page more intuitive
+file attachements for cases, observations
+deletion!
+    with warnings
+case merging!
+contacts/animals management.
+    prompt for deletion when they are no longer referred to by cases/observations
+serious-injury-determination fields
+use ITIS numbers in Taxon management
+    import from ITIS
+add icons for actions
+date-picker widget for non-uncertain dates
 make clear what the vessel-info fields are that are hidden
 administrative page for cleaning up animals with no cases.
 administrative page for cleaning up cases with no observations.
@@ -58,8 +67,6 @@ administrative page for duplicate contacts
 administrative page for cleaning up GearOwner objects with no info.
 administrative page for cleaning up DateTime/Location objects with no info.
 case-list sorts by case (most recent first)
-search/query! (on homepage)
-list of recent stuff (on homepage)
 make subclass the DateTimeField instead of using the DateTime app
 google-charts venn-diagram for gear-types
 
