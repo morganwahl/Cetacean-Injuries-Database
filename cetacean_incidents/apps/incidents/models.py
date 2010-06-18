@@ -260,7 +260,13 @@ class YearCaseNumber(models.Model):
     year = models.IntegerField()
     case = models.ForeignKey('Case')
     number = models.IntegerField()
-    current = models.BooleanField()
+    
+    def __unicode__(self):
+        return "%s %04d #%03d <%s>" % (
+            self.year,
+            self.number,
+            unicode(self.case),
+        )
     
     class Meta:
         ordering = ('year', 'number')
@@ -333,11 +339,10 @@ class Case(models.Model):
     #)
     @property
     def yearly_number(self):
-        try:
-            number = YearCaseNumber.objects.get(case=self, current=True).number
-        except YearCaseNumber.DoesNotExist:
-            number = None
-        return number
+        if self.current_yearnumber:
+            return self.current_yearnumber.number
+        else:
+            return None
     
     names = models.TextField(
         #max_length= 2048,
@@ -364,6 +369,8 @@ class Case(models.Model):
         s = {}
         s['year'] = unicode(self.date.year)
         s['yearly_number'] = self.yearly_number
+        if self.yearly_number is None:
+            s['yearly_number'] = -1
         s['date'] = unicode(self.date)
         taxon = self.probable_taxon
         if not taxon is None:
@@ -396,6 +403,16 @@ class Case(models.Model):
         # TODO more specific dates should override less specific ones
         return self.first_observation_date
 
+    # this should always be the YearCaseNumber with case matching self.id and
+    # year matching self.date.year . But, it's here so we can order by it in
+    # the database.
+    current_yearnumber = models.ForeignKey(
+        YearCaseNumber,
+        editable=False,
+        null=True,
+        related_name='current',
+    )
+
     def save(self, *args, **kwargs):
         # if we don't have a yearly_number, set one if possible
         if self.date:
@@ -405,38 +422,29 @@ class Case(models.Model):
                     return this_year.order_by('-number')[0].number + 1
                 else:
                     return 1
+            def _new_yearcasenumber():
+                year = self.date.year
+                return YearCaseNumber.objects.create(
+                    case=self,
+                    year=year,
+                    number= _next_number_in_year(year),
+                )
         
             # do we have a newly assigned date and no yearly-number?
-            try:
-                current_year_case_number = YearCaseNumber.objects.get(case=self, current=True)
+            if self.current_yearnumber:
                 # is our current year different from the one in our current
                 # yearly_number assignment
-                if self.date.year != current_year_case_number.year:
-                    current_year_case_number.current = False
-                    current_year_case_number.save()
+                if self.date.year != self.current_yearnumber.year:
                     try:
                         # do we have a previous assignment for our current year?
                         new_year_case_number = YearCaseNumber.objects.get(case=self, year=self.date.year)
-                        new_year_case_number.current = True
                     except YearCaseNumber.DoesNotExist:
                         # add a new entry for this year-case combo
-                        new_year_case_number = YearCaseNumber(
-                            case=self,
-                            year=self.date.year,
-                            number= _next_number_in_year(self.date.year),
-                            current=True,
-                        )
-                    new_year_case_number.save()
-            except YearCaseNumber.DoesNotExist:
+                        new_year_case_number = _new_yearcasenumber()
+            else:
                 # assign a new number
-                # find the highest number assigned in our year so far.
-                new_year_case_number = YearCaseNumber(
-                    case=self,
-                    year=self.date.year,
-                    number= _next_number_in_year(self.date.year),
-                    current=True,
-                )
-                new_year_case_number.save()
+                new_year_case_number = _new_yearcasenumber()
+            self.current_yearnumber = new_year_case_number
 
         # add the current_name to the names set, if necessary
         if not self.current_name is None:
@@ -480,6 +488,9 @@ class Case(models.Model):
     
     objects = CaseManager()
 
+    class Meta:
+        ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
+    
 def _get_observation_dates(contact):
     return DateTime.objects.filter(observation__observer=contact)
 Contact.observation_dates = property(_get_observation_dates)

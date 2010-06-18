@@ -7,7 +7,7 @@ animals_args = {
     'template_object_name': 'animal',
 }
 cases_args = {
-    'queryset': Case.objects.all(),
+    'queryset': Case.objects.all().reverse(),
     'template_object_name': 'case',
 }
 observations_args = {
