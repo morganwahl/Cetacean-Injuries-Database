@@ -139,7 +139,7 @@ class GearTypeRelation(models.Model):
         # check if this new relation would create a cycle in the DAG
         if self.subtype == self.supertype:
             raise self.DAGException(
-                "\"%r\" can't be a supertype of itself!" % unicode(self.subtype),
+                "%s can't be a supertype of itself!" % unicode(self.subtype),
             )
             
         if self.subtype in self.supertype.implied_supertypes:
