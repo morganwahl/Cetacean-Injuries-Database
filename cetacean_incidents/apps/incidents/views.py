@@ -594,16 +594,22 @@ def case_search(request):
 
     if form.is_valid():
         case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
-        cases = Case.objects.all().distinct().order_by(*case_order_args)
+        #cases = Case.objects.all().distinct().order_by(*case_order_args)
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        cases = Case.objects.all().order_by(*case_order_args)
         # TODO shoulde be ordering such that cases with no date come first
     
         if form.cleaned_data['case_type']:
             # TODO go through different case types automatically
             ct = form.cleaned_data['case_type']
             if ct == 'e':
-                cases = Entanglement.objects.all().distinct().order_by(*case_order_args)
+                #cases = Entanglement.objects.all().distinct().order_by(*case_order_args)
+                # TODO Oracle doesn't support distinct() on models with TextFields
+                cases = Entanglement.objects.all().order_by(*case_order_args)
             if ct == 's':
-                cases = Shipstrike.objects.all().distinct().order_by(*case_order_args)
+                #cases = Shipstrike.objects.all().distinct().order_by(*case_order_args)
+                # TODO Oracle doesn't support distinct() on models with TextFields
+                cases = Shipstrike.objects.all().order_by(*case_order_args)
         
         if form.cleaned_data['after_date']:
             date = form.cleaned_data['after_date']
