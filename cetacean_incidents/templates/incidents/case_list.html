@@ -26,7 +26,7 @@
 	</thead>
 	{% for case in case_list %}
 	<tr>
-		<td sorttable_customkey="{{ case.date.year|default:0 }}.{{ case.yearly_number|default:0|stringformat:"010d" }}{{ case.id|stringformat:"010d" }}">{% case_link case %}</td>
+		<td sorttable_customkey="{{ case.date.year|default:10000 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
 		<td>{{ case.case_type }}</td>
 		<td>{% animal_link case.animal %}</td>
 		<td>{{ case.first_observation_date }}</td>

@@ -547,6 +547,7 @@ def merge_case(request, case1_id, case2_id):
             'older_case': older_case,
             'newer_case': newer_case,
         },
+        context_instance= RequestContext(request),
     )
 
 def animal_search(request):

@@ -441,10 +441,10 @@ class Case(models.Model):
                     except YearCaseNumber.DoesNotExist:
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
+                    self.current_yearnumber = new_year_case_number
             else:
                 # assign a new number
-                new_year_case_number = _new_yearcasenumber()
-            self.current_yearnumber = new_year_case_number
+                self.current_yearnumber = _new_yearcasenumber()
 
         # add the current_name to the names set, if necessary
         if not self.current_name is None:
