@@ -2,6 +2,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
+from django.contrib.auth.decorators import login_required
 
 from reversion.models import Revision
 
