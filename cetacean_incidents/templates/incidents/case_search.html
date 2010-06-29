@@ -1,0 +1,23 @@
+{% extends "incidents/case_list.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block header %}<h2>Case search</h2>{% endblock %}
+
+{% block list_caption %}
+<form action="" method="get">
+    <div class="section">
+        {% for f in form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
+        <button type="submit">search again</button>
+    </div>
+</form>
+<div>
+    {{ case_list.count|default:"no" }} matching case{{ case_list.count|pluralize }}
+</div>
+{% endblock %}
+

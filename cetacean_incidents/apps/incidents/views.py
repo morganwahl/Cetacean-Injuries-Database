@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.forms import Media
 from django.db import transaction
+from django.db.models import Q
 
 from reversion import revision
 
@@ -19,7 +20,11 @@ from cetacean_incidents import generic_views
 
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes, ObservationForm
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes, ObservationForm, CaseSearchForm
+
+from cetacean_incidents.apps.entanglements.models import Entanglement
+from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
+from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
 @login_required
 def create_animal(request):
@@ -580,4 +585,84 @@ def animal_search(request):
     # TODO return 304 when not changed?
     
     return HttpResponse(json.dumps(animals))
+
+def case_search(request):
+    form = CaseSearchForm(request.GET)
+    # TODO we make a useless queryset since the template expects a queryset
+    cases = Case.objects.filter(id=None)
+
+    if form.is_valid():
+        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
+        cases = Case.objects.all().distinct().order_by(*case_order_args)
+        # TODO shoulde be ordering such that cases with no date come first
+    
+        if form.cleaned_data['case_type']:
+            # TODO go through different case types automatically
+            ct = form.cleaned_data['case_type']
+            if ct == 'e':
+                cases = Entanglement.objects.all().distinct().order_by(*case_order_args)
+            if ct == 's':
+                cases = Shipstrike.objects.all().distinct().order_by(*case_order_args)
+        
+        if form.cleaned_data['after_date']:
+            date = form.cleaned_data['after_date']
+            o_date = Q(observation__observation_datetime__year__gte=date.year)
+            o_date = o_date & (
+                Q(observation__observation_datetime__month__isnull=True)
+                | Q(observation__observation_datetime__month__gte=date.month)
+            )
+            o_date = o_date & (
+                Q(observation__observation_datetime__day__isnull=True)
+                | Q(observation__observation_datetime__day__gte=date.month)
+            )
+            r_date = Q(observation__report_datetime__year__gte=date.year)
+            r_date = r_date & (
+                Q(observation__report_datetime__month__isnull=True)
+                | Q(observation__report_datetime__month__gte=date.month)
+            )
+            r_date = r_date & (
+                Q(observation__report_datetime__day__isnull=True)
+                | Q(observation__report_datetime__day__gte=date.month)
+            )
+            cases = cases.filter(o_date | r_date)
+
+        if form.cleaned_data['before_date']:
+            date = form.cleaned_data['before_date']
+            o_date = Q(observation__observation_datetime__year__lte=date.year)
+            o_date = o_date & (
+                Q(observation__observation_datetime__month__isnull=True)
+                | Q(observation__observation_datetime__month__lte=date.month)
+            )
+            o_date = o_date & (
+                Q(observation__observation_datetime__day__isnull=True)
+                | Q(observation__observation_datetime__day__lte=date.month)
+            )
+            r_date = Q(observation__report_datetime__year__lte=date.year)
+            r_date = r_date & (
+                Q(observation__report_datetime__month__isnull=True)
+                | Q(observation__report_datetime__month__lte=date.month)
+            )
+            r_date = r_date & (
+                Q(observation__report_datetime__day__isnull=True)
+                | Q(observation__report_datetime__day__lte=date.month)
+            )
+            cases = cases.filter(o_date | r_date)
+        
+        if form.cleaned_data['taxon']:
+            t = form.cleaned_data['taxon']
+            # TODO handle taxon uncertainty!
+            cases = cases.filter(observation__taxon=t)
+
+        if form.cleaned_data['observation_narrative']:
+            on = form.cleaned_data['observation_narrative']
+            cases = cases.filter(observation__narrative__icontains=on)
+
+    return render_to_response(
+        "incidents/case_search.html",
+        {
+            'form': form,
+            'case_list': cases,
+        },
+        context_instance= RequestContext(request),
+    )
 

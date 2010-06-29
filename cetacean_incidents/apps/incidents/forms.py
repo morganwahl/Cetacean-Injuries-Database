@@ -137,3 +137,41 @@ class ObservationForm(forms.ModelForm):
         exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel') 
 observation_forms['Case'] = ObservationForm
 
+class CaseLookupForm(forms.Form):
+    
+    local_id = forms.IntegerField(
+        help_text= u"lookup a particular case by numeric ID"
+    )
+
+class CaseSearchForm(forms.Form):
+    
+    after_date = forms.DateTimeField(
+        required= False,
+        help_text= "enter year-month-day"
+    )
+    before_date = forms.DateTimeField(
+        required= False,
+        help_text= "enter year-month-day"
+    )
+
+    # TODO check that after date is before before_date
+    
+    # TODO get the choices dynamically
+    case_type = forms.ChoiceField(
+        choices= (
+            ('', '<any>'),
+            ('e', 'Entanglement'),
+            ('s', 'Shipstrike'),
+        ),
+        required= False,
+    )
+    
+    taxon = TaxonField(
+        required= False,
+    )
+    
+    observation_narrative = forms.CharField(
+        required= False,
+        help_text= "search for Cases with an observation whose narrative contains this phrase",
+    )
+
