@@ -45,6 +45,12 @@ class StrikingVesselInfo(VesselInfo):
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
     
+class Shipstrike(Case):
+
+    @models.permalink
+    def get_absolute_url(self):
+        return('shipstrike_detail', [str(self.id)])
+
 class ShipstrikeObservation(Observation):
     striking_vessel = models.OneToOneField(
         StrikingVesselInfo,
@@ -56,13 +62,8 @@ class ShipstrikeObservation(Observation):
     def get_absolute_url(self):
         return('shipstrikeobservation_detail', [str(self.id)])
 
+Shipstrike.observation_model = ShipstrikeObservation
+
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObservation)
-
-class Shipstrike(Case):
-    observation_model = ShipstrikeObservation
-
-    @models.permalink
-    def get_absolute_url(self):
-        return('shipstrike_detail', [str(self.id)])
 

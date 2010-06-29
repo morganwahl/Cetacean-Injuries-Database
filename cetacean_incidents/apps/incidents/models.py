@@ -9,8 +9,6 @@ from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from utils import probable_gender
 
-import reversion
-
 GENDERS = (
     ("f", "female"),
     ("m", "male"),
@@ -70,163 +68,6 @@ class Animal(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('animal_detail', [str(self.id)]) 
-
-class Observation(models.Model):
-    '''\
-    An Obsevation is a source of data for an Animal. It has an observer and
-    and date/time and details of how the observations were taken. Note that the
-    observer data may be scanty if this isn't a firsthand report. It's an
-    abstract model for the common fields between different types of Observations.
-    '''
-
-    case = models.ForeignKey('Case')
-    
-    @property
-    def detailed(self):
-        if self.case.detailed.observation_model.__name__ == self.__class__.__name__:
-            return self
-        # TODO this assumes the case's observation model is always a direct
-        # subclass of Observation
-        return self.case.detailed.observation_model.objects.get(observation_ptr=self.id)
-    
-    observer = models.ForeignKey(
-        Contact,
-        blank= True,
-        null= True,
-        related_name= 'observed',
-    )
-    observer_vessel = models.OneToOneField(
-        VesselInfo,
-        blank= True,
-        null= True,
-        related_name= 'observed',
-        help_text= 'the vessel the observer was on, if any',
-    )
-    observation_datetime = models.OneToOneField(
-        DateTime,
-        blank= True,
-        null= True,
-        help_text= 'the start of the observation',
-        related_name= 'observation',
-    )
-    # TODO duration?
-    location = models.OneToOneField(
-        Location,
-        blank= True,
-        null= True,
-        related_name= "observation",
-    )
-
-    def _is_firsthand(self):
-        if self.reporter is None and self.observer is None:
-            return None
-        return self.reporter == self.observer
-    firsthand = property(_is_firsthand)
-    reporter = models.ForeignKey(
-        Contact,
-        blank= True,
-        null= True,
-        related_name= 'reported',
-        help_text= '''\
-        Same as observer if this is a firsthand report. If not, this is who
-        informed us of the incidents.
-        ''',
-    )
-    report_datetime = models.OneToOneField(
-        DateTime,
-        help_text = 'when we first heard about the observation',
-        related_name = 'report',
-    )
-        
-    taxon = models.ForeignKey(
-        Taxon,
-        blank= True,
-        null= True,
-        help_text= 'The most specific taxon (e.g. a species) that can be applied to this animal.',
-    )
-
-    gender = models.CharField(
-        max_length= 1,
-        choices= GENDERS,
-        blank= True,
-        help_text= 'The gender of this animal, if known.'
-    )
-    
-    animal_description = models.TextField(
-        blank= True,
-        help_text= """\
-        Please note anything that would help identify the individual animal or
-        it's species or gender, etc. Even if you've determined those already,
-        please indicate what that was on the basis of.
-        """
-    )
-    
-    documentation = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "were any photos or videos taken?",
-    )
-    
-    biopsy = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "where any biopsy samples taken?",
-    )
-    
-    tagged = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "were any tags put on the animal?",
-    )
-    
-    # TODO is this needed? surely a wound description would suffice...
-    wounded = models.NullBooleanField(
-        blank= True,
-        null= True,
-        default= True,
-        help_text= "were there any wounds? False means none were observered, True means they were, Null means we don't know whether any were observed or not."
-    )
-    wound_description = models.TextField(
-        blank= True,
-        help_text= "describe wounds, noting severity and location on the animal.",
-    )
-    
-    narrative = models.TextField(
-        blank= True,
-        help_text= "complete description of the observation."
-    )
-    
-    import_notes = models.TextField(
-        blank= True,
-        #editable= False, # note that this only means it's not editable in the admin interface
-        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
-    )
-    
-    @models.permalink
-    def get_absolute_url(self):
-        return ('observation_detail', [str(self.id)]) 
-
-    def __unicode__(self):
-        ret = 'observation '
-        if self.observation_datetime:
-            ret += "on %s " % self.observation_datetime
-        if self.observer:
-            ret += "by %s " % self.observer
-        ret += "(%d)" % self.id
-        return ret
-    
-    class Meta:
-        ordering = ['observation_datetime', 'report_datetime', 'id']
-
-# have revisions follow the OneToOne fields
-reversion.register(Observation, 
-    follow= [
-        f.name for f in filter(
-            lambda x: isinstance(x, models.OneToOneField),
-            Observation._meta.fields
-        )
-    ],
-)
 
 class CaseManager(models.Manager):
     def cases_in_year(self, year):
@@ -305,8 +146,6 @@ class Case(models.Model):
         null= True,
         verbose_name= "NMFS case number",
     )
-    
-    observation_model = Observation
     
     animal = models.ForeignKey(
         Animal,
@@ -490,6 +329,165 @@ class Case(models.Model):
 
     class Meta:
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
+    
+class Observation(models.Model):
+    '''\
+    An Obsevation is a source of data for an Animal. It has an observer and
+    and date/time and details of how the observations were taken. Note that the
+    observer data may be scanty if this isn't a firsthand report. It's an
+    abstract model for the common fields between different types of Observations.
+    '''
+
+    @property
+    def relevant_observation(self):
+        return self
+
+    case = models.ForeignKey('Case')
+    @property
+    def relevant_case(self):
+        return self.case
+
+    
+    @property
+    def detailed(self):
+        if self.case.detailed.observation_model.__name__ == self.__class__.__name__:
+            return self
+        # TODO this assumes the case's observation model is always a direct
+        # subclass of Observation
+        return self.case.detailed.observation_model.objects.get(observation_ptr=self.id)
+    
+    observer = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+        related_name= 'observed',
+    )
+    observer_vessel = models.OneToOneField(
+        VesselInfo,
+        blank= True,
+        null= True,
+        related_name= 'observed',
+        help_text= 'the vessel the observer was on, if any',
+    )
+    observation_datetime = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        help_text= 'the start of the observation',
+        related_name= 'observation',
+    )
+    # TODO duration?
+    location = models.OneToOneField(
+        Location,
+        blank= True,
+        null= True,
+        related_name= "observation",
+        help_text= 'the observer\'s location at the time of observation',
+    )
+
+    def _is_firsthand(self):
+        if self.reporter is None and self.observer is None:
+            return None
+        return self.reporter == self.observer
+    firsthand = property(_is_firsthand)
+    reporter = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+        related_name= 'reported',
+        help_text= '''\
+        Same as observer if this is a firsthand report. If not, this is who
+        informed us of the incidents.
+        ''',
+    )
+    report_datetime = models.OneToOneField(
+        DateTime,
+        help_text = 'when we first heard about the observation',
+        related_name = 'report',
+    )
+        
+    taxon = models.ForeignKey(
+        Taxon,
+        blank= True,
+        null= True,
+        help_text= 'The most specific taxon (e.g. a species) that can be applied to this animal.',
+    )
+
+    gender = models.CharField(
+        max_length= 1,
+        choices= GENDERS,
+        blank= True,
+        help_text= 'The gender of this animal, if known.'
+    )
+    
+    animal_description = models.TextField(
+        blank= True,
+        help_text= """\
+        Please note anything that would help identify the individual animal or
+
+        it's species or gender, etc. Even if you've determined those already,
+        please indicate what that was on the basis of.
+        """
+    )
+    
+    documentation = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "were any photos or videos taken?",
+    )
+    
+    biopsy = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "where any biopsy samples taken?",
+    )
+    
+    tagged = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "were any tags put on the animal?",
+    )
+    
+    # TODO is this needed? surely a wound description would suffice...
+    wounded = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= True,
+        help_text= "were there any wounds? False means none were observered, True means they were, Null means we don't know whether any were observed or not."
+    )
+    wound_description = models.TextField(
+        blank= True,
+        help_text= "describe wounds, noting severity and location on the animal.",
+    )
+    
+    narrative = models.TextField(
+        blank= True,
+        help_text= "complete description of the observation."
+    )
+    
+    import_notes = models.TextField(
+        blank= True,
+        #editable= False, # note that this only means it's not editable in the admin interface
+        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
+    )
+    
+    @models.permalink
+    def get_absolute_url(self):
+        return ('observation_detail', [str(self.id)]) 
+
+    def __unicode__(self):
+        ret = 'observation '
+        if self.observation_datetime:
+            ret += "on %s " % self.observation_datetime
+        if self.observer:
+            ret += "by %s " % self.observer
+        ret += "(%d)" % self.id
+        return ret
+    
+    class Meta:
+        ordering = ['observation_datetime', 'report_datetime', 'id']
+
+Case.observation_model = Observation
     
 def _get_observation_dates(contact):
     return DateTime.objects.filter(observation__observer=contact)
