@@ -8,6 +8,7 @@ from reversion.models import Revision
 from cetacean_incidents.apps.incidents.models import Case, Observation
 from cetacean_incidents.apps.incidents.forms import CaseLookupForm, CaseSearchForm
 
+@login_required
 def home(request):
     if request.method == 'GET':
         if 'local_id' in request.GET:
