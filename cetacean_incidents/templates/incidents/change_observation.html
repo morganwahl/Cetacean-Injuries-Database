@@ -27,10 +27,14 @@
             $tabs.tabs('select', '#incident'); // switch to third tab
             return false;
         });
+        $('.link-to-save').click(function() { // bind click event to link
+            $tabs.tabs('select', '#save'); // switch to third tab
+            return false;
+        });
     });
 </script>
 <style type="text/css">
-    [name={{ forms.observation.narrative.name }}] { width: 100%; }
+    [name={{ forms.observation.narrative.html_name }}] { width: 100%; }
 </style>
 {% endblock %}
 
@@ -80,6 +84,16 @@
                         Incident
                         {% if forms.observation.wound_description.errors %}
                         <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                        {% endblock %}
+                    </a>
+                </li>
+                <li>
+                    <a href="#save">
+                        {% block save_tab %}
+                        Narrative & Save
+                        {% if forms.observation.narrative.errors %}
+                        <span class="ui-state-error">errors in this tab!</span>
                         {% endif %}
                         {% endblock %}
                     </a>
@@ -245,17 +259,25 @@
                 <div style="text-align:left; float: left;">
                     <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
                 </div>
+                <div style="text-align: right;">
+                    <a class="link-to-save" href="#save">next tab -&gt;</a>
+                </div>
             </div> <!-- id="incident" -->
-        </div> <!-- id="tabs" -->
-        <div class="section">
-            <h3>Narrative</h3>
-            <div>
-                {% with forms.observation.narrative as f %}
-                {% include "unlabeled_field.html" %}
-                {% endwith %}
+            <div id="save">
+                <h3>Narrative</h3>
+                <div>
+                    {% with forms.observation.narrative as f %}
+                    {% include "unlabeled_field.html" %}
+                    {% endwith %}
+                </div>
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-incident" href="#incident">&lt;- previous tab</a>
+                </div>
+                <div style="text-align:center;">
+                    <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
+                </div>
             </div>
-        </div>
-        <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
+        </div> <!-- id="tabs" -->
     </div>
 </form>
 {% endblock %}
