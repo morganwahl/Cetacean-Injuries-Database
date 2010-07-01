@@ -191,9 +191,12 @@ class NiceLocationForm(LocationForm):
     
     def clean(self):
         cleaned_data = self.cleaned_data
-    
+        
+        # note that cleaned_data may not have keys for everything if there were
+        # validation errors
+        
         # error if longitude was given, but lat wasn't.
-        if bool(self.cleaned_data['coordinates_lat_input']) ^ bool(self.cleaned_data['coordinates_lng_input']):
+        if ('coordinates_lat_input' in cleaned_data and bool(cleaned_data['coordinates_lat_input'])) ^ ('coordinates_lng_input' in cleaned_data and bool(cleaned_data['coordinates_lng_input'])):
             raise forms.ValidationError('either give both latitude and longitude, or neither')
 
         return cleaned_data
