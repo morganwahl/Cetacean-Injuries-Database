@@ -92,7 +92,7 @@ def DAGEdge_factory(node_model):
                     )
                 )
 
-            return super(self.__class__, self).save(*args, **kwargs)
+            return super(DAGEdge, self).save(*args, **kwargs)
         
         def __unicode__(self):
             return "%r -> %r" % (self.subtype, self.supertype)
