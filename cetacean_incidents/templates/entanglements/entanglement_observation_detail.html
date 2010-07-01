@@ -1,5 +1,10 @@
 {% extends "incidents/observation_detail.html" %}
 
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block case_type_fields %}
 <h3>Entanglement</h3>
 <table>

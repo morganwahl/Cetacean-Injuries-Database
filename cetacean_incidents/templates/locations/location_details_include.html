@@ -7,43 +7,24 @@
             <div>
             <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=200x150&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
             </div>
-            <table>
+            <table id="coords_dec">
                 <tr id="{{ l.id }}_lat_dec"><th>lat.</th><td style="text-align:right;">{{ l.coords_pair.0|floatformat:"4" }}</td>
                 <tr id="{{ l.id }}_lng_dec"><th>long.</th><td style="text-align:right;">{{ l.coords_pair.1|floatformat:"4" }}</td>
+            </table>
+            <table id="coords_dms">
                 <tr id="{{ l.id }}_lat_dms"><th>lat.</th><td style="text-align:right;">{{ l.dms_coords_pair.0.1 }}&#x00b0;{{ l.dms_coords_pair.0.2 }}&#x2032;{{ l.dms_coords_pair.0.3|floatformat:"2" }}&#x2033; {% if l.dms_coords_pair.0.0 %}South{% else %}North{% endif %}</td></tr>
                 <tr id="{{ l.id }}_lng_dms"><th>long.</th><td style="text-align:right;">{{ l.dms_coords_pair.1.1 }}&#x00b0;{{ l.dms_coords_pair.1.2 }}&#x2032;{{ l.dms_coords_pair.1.3|floatformat:"2" }}&#x2033; {% if l.dms_coords_pair.1.0 %}West{% else %}East{% endif %}</td></tr>
             </table>
             <form id="{{ l.id }}_coords_format">
                 <input type="radio" name="coords_format" checked="checked" value="dec">decimal
                 <input type="radio" name="coords_format" value="dms">deg. min. sec.
-                <script type="text/javascript">
-                    function update_coords_format(value) {
-                        if (value == 'dec') {
-                            $("#{{ l.id }}_lat_dec").show();
-                            $("#{{ l.id }}_lng_dec").show();
-                            $("#{{ l.id }}_lat_dms").hide();
-                            $("#{{ l.id }}_lng_dms").hide();
-                        }
-                        if (value == 'dms') {
-                            $("#{{ l.id }}_lat_dec").hide();
-                            $("#{{ l.id }}_lng_dec").hide();
-                            $("#{{ l.id }}_lat_dms").show();
-                            $("#{{ l.id }}_lng_dms").show();
-                        }
-                    }
-                    
-                    $().ready(function(){
-                        {# TODO How to properly handle importing jquery? #}
-                        var selector = "form#{{ l.id }}_coords_format input[name=\"coords_format\"]"
-                        $(selector).change(function(event){
-                            update_coords_format($(selector + ':checked').val());
-                            $(this).blur();
-                        });
-                        $("#{{ l.id }}_lat_dms").hide();
-                        $("#{{ l.id }}_lng_dms").hide();
-                    });
-                </script>
             </form>
+            <script type="text/javascript">
+                RadioHider.init('coords_format', {
+                    'dec': 'coords_dec',
+                    'dms': 'coords_dms'
+                });
+            </script>
         </td>
         {% endif %}
         {% if l.description %}

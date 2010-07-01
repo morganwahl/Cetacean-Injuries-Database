@@ -1,9 +1,16 @@
 from django.conf.urls.defaults import *
+from django.forms import Media
 
 import views
 
 urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
-    (r'^(\d+)/$', 'case_detail', {}, 'entanglement_detail'),
+    # entanglements use the location_details include template, which needs 
+    # RadioHider
+    (r'^(\d+)/$', 'case_detail', {
+        'extra_context': {
+            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js',)),
+         },
+    }, 'entanglement_detail'),
 )
 
 urlpatterns += patterns('',

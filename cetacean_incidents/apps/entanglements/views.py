@@ -236,6 +236,7 @@ def entanglementobservation_detail(request, entanglementobservation_id):
         'entanglements/entanglement_observation_detail.html',
         {
             'observation': entanglementobservation,
+            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )

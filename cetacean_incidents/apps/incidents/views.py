@@ -137,13 +137,14 @@ def add_case(request, animal_id):
     )
 
 @login_required
-def case_detail(request, case_id):
+def case_detail(request, case_id, extra_context={}):
     case = Case.objects.get(id=case_id).detailed
     return generic_views.object_detail(
         request,
         object_id= case_id,
         queryset= case.__class__.objects.all(),
         template_object_name= 'case',
+        extra_context= extra_context,
     )
 
 @login_required

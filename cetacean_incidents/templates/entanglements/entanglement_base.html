@@ -1,6 +1,11 @@
 {% extends "incidents/case_base.html" %}
 {% load contact_extras %}
 
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block ids-dl %}
 {{ block.super }}
 <dt>gear-analysis field #</dt>
