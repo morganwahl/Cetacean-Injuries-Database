@@ -90,17 +90,17 @@
                 {% endif %}
             </td>
             <td class="layout" style="width: 50%;">
-                {% if go.date_gear_set %}
-                <div>
-                    <span class="fieldname">date gear was set</span>:  {{ go.date_gear_set|default:"<i>unknown</i>" }}
-                </div>
-                {% endif %}
                 {% if go.location_gear_set %}
                 <div class="subsection">
                     <span class="fieldname">location gear was set</span>
                     {% with go.location_gear_set as l %}
                     {% include "locations/location_details_include.html" %}
                     {% endwith %}
+                </div>
+                {% endif %}
+                {% if go.date_gear_set %}
+                <div>
+                    <span class="fieldname">date gear was set</span>:  {{ go.date_gear_set|default:"<i>unknown</i>" }}
                 </div>
                 {% endif %}
                 {% if go.date_gear_missing %}
