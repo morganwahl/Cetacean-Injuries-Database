@@ -9,7 +9,24 @@
 <!-- template JS -->
 <script type="text/javascript">
     $(function(){
-        $('#tabs').tabs();
+        var $tabs = $('#tabs').tabs();
+        
+        $('.link-to-reporting').click(function() { // bind click event to link
+            $tabs.tabs('select', '#reporting'); // switch to third tab
+            return false;
+        });
+        $('.link-to-observation').click(function() { // bind click event to link
+            $tabs.tabs('select', '#observation'); // switch to third tab
+            return false;
+        });
+        $('.link-to-animal').click(function() { // bind click event to link
+            $tabs.tabs('select', '#animal'); // switch to third tab
+            return false;
+        });
+        $('.link-to-incident').click(function() { // bind click event to link
+            $tabs.tabs('select', '#incident'); // switch to third tab
+            return false;
+        });
     });
 </script>
 <style type="text/css">
@@ -104,6 +121,9 @@
                     {% include "labeled_field.html" %}
                     {% endwith %}
                 </div>
+                <div style="text-align: right;">
+                    <a class="link-to-observation" href="#observation">next tab -&gt;</a>
+                </div>
             </div> <!-- id="reporting" -->
             <div id="observation">
                 <h3>Observation</h3>
@@ -168,6 +188,12 @@
                         {% endwith %}
                     </div>
                 </div> <!-- class="section" -->
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-reporting" href="#reporting">&lt;- previous tab</a>
+                </div>
+                <div style="text-align: right;">
+                    <a class="link-to-animal" href="#animal">next tab -&gt;</a>
+                </div>
             </div> <!-- id="observation" -->
             <div id="animal">
                 <h3>Animal identification</h3>
@@ -202,6 +228,12 @@
                     {% include "labeled_field.html" %}
                     {% endwith %}
                 </div>
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-observation" href="#observation">&lt;- previous tab</a>
+                </div>
+                <div style="text-align: right;">
+                    <a class="link-to-incident" href="#incident">next tab -&gt;</a>
+                </div>
             </div> <!-- id="animal" -->
             <div id="incident">
                 <h3>Incident details</h3>
@@ -210,6 +242,9 @@
                 {% include "bigtext_field.html" %}
                 {% endwith %}
                 {% endblock %}
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
+                </div>
             </div> <!-- id="incident" -->
         </div> <!-- id="tabs" -->
         <div class="section">
