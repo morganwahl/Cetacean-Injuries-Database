@@ -21,6 +21,12 @@ class VesselInfo(models.Model):
     of a vessel.
     '''
 
+    vessel_type = models.ForeignKey(
+        VesselType,
+        blank= True,
+        null= True,
+        help_text= "what kind of vessel is this?",
+    )
     contact = models.ForeignKey(
         Contact,
         related_name= "for_vessels",
@@ -32,7 +38,7 @@ class VesselInfo(models.Model):
         blank= True,
         null= True,
         verbose_name= "IMO number",
-        help_text= "The International Maritime Organization number assigned to the ship. Should be a 7-digit number usually preceded with \"IMO\"."
+        help_text= "The International Maritime Organization number assigned to the boat. Should be a 7-digit number usually preceded with \"IMO\". Leave blank if this isn't a boat."
         # Note that this most certainly _not_ unique, since we're just trying to
         # capture data for _one_ observatioin.
     )
