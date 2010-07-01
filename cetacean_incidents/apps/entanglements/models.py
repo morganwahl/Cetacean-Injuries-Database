@@ -15,7 +15,7 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
         return self.name    
 
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
-    node_model = GearType
+    pass
 
 class GearOwner(models.Model):
     '''\

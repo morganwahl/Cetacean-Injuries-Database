@@ -65,4 +65,3 @@ class VesselInfo(models.Model):
         ret += ')'
         return ret
 
-
