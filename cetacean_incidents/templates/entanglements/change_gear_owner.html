@@ -97,8 +97,12 @@
                     {% endwith %}
                 </td>
             </tr>
+            <tr class="layout">
+                <td class="layout" style="text-align: center;" colspan="2">
+                    <button type="submit">{% block submit_button %}save gear owner info for {{ case }}{% endblock %}</button>
+                </td>
+            </tr>
         </table>
-        <button type="submit">{% block submit_button %}save gear owner info for {{ case }}{% endblock %}</button>
     </div>
 </form>
 {% endblock %}
