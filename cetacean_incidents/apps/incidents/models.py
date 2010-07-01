@@ -262,7 +262,7 @@ class YearCaseNumber(models.Model):
     number = models.IntegerField()
     
     def __unicode__(self):
-        return "%s %04d #%03d <%s>" % (
+        return "%04d #%03d <%s>" % (
             self.year,
             self.number,
             unicode(self.case),
