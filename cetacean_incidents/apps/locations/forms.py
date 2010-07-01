@@ -42,7 +42,7 @@ class NiceLocationForm(LocationForm):
     # TODO surely there's a library to take care of this; perferably with
     # localization...
     _dms_re = re.compile(
-        # don't forget to double-escape, since it's a unicode string
+        # don't forget to double-escape unicode strings
         u'^[^NSEW\\d\\-\u2212\\.]*'
         + r'(?P<pre_dir>[NSEW])?' # match a direction
         + u'[^\\-\u2212\\d]*'

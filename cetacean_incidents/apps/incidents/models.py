@@ -78,7 +78,7 @@ class CaseManager(models.Manager):
         # TODO initially fetch cases with an observation whose report _or_ 
         # observation dates are in the year we're looking for.
         # TODO use YearCaseNumber ?
-        cases = Case.objects.filter(observation__report_datetime__year__exact=year).distinct()
+        cases = self.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
 
 class YearCaseNumber(models.Model):

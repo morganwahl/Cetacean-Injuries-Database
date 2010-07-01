@@ -17,7 +17,6 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 
 from cetacean_incidents import generic_views
 
-
 from models import Case, Animal, Observation
 from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes, ObservationForm, CaseSearchForm
 

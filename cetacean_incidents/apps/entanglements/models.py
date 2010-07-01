@@ -20,7 +20,7 @@ class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
 class GearOwner(AbstractContact):
     '''\
     Everything in this table should be considered confidential!
-    '''    
+    '''
     
     # TODO enforce view permissions at the model level!
     
