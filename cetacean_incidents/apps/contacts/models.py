@@ -12,23 +12,22 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
-class Contact(models.Model):
+# This exists so GearOwner can inherit all the fields from Contact but keep them
+# in a separate table.
+class AbstractContact(models.Model):
     '''\
     A contact is a name of a person _or_ organization, preferably with some way
     of contacting them.
     '''
     name = models.CharField(
         max_length= 1023,
-    )
-    # should default to name. see save() func below
-    sort_name = models.CharField(
-        max_length= 1023,
         blank= True,
-        help_text= "leave blank if same as name",
+        null= True,
     )
     person = models.NullBooleanField(
         blank= True,
         null= True,
+        default= True,
         help_text= "Is this a person? (i.e. not an organization)"
     )
     
@@ -52,6 +51,29 @@ class Contact(models.Model):
         help_text= "mailing address",
     )
     
+    notes = models.TextField(
+        blank= True,
+        help_text= "anything to note about this contact info? e.g. office hours, alternative phone numbers, etc."
+    )
+   
+    def __unicode__(self):
+        if self.name:
+            return self.name
+        else:
+            return "contact #%05d" % self.id
+
+    class Meta:
+        abstract = True
+
+class Contact(AbstractContact):
+
+    # should default to name. see save() func below
+    sort_name = models.CharField(
+        max_length= 1023,
+        blank= True,
+        help_text= "leave blank if same as name",
+    )
+
     affiliations = models.ManyToManyField(
         Organization,
         related_name = 'contacts',
@@ -62,21 +84,10 @@ class Contact(models.Model):
         ''',
     )
     
-    notes = models.TextField(blank= True)
-   
-    def save(self, force_insert=False, force_update=False):
-        if not self.sort_name:
-            self.sort_name = self.name 
-        super(Contact, self).save(force_insert, force_update) # Call the "real" save() method.
-    # TODO make 'sort_name' blank in the interface if it's the same as name
-
-    class Meta:
-        ordering = ('sort_name', 'name', 'id')
-
     @models.permalink
     def get_absolute_url(self):
         return ('contact_detail', [str(self.id)]) 
 
-    def __unicode__(self):
-        return self.name
+    class Meta:
+        ordering = ('sort_name', 'name', 'id')
 

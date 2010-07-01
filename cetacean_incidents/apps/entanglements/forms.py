@@ -106,16 +106,6 @@ observation_forms['Entanglement'] = EntanglementObservationForm
 
 class GearOwnerForm(forms.ModelForm):
     
-    contact_choice = forms.ChoiceField(
-        choices= (
-            ('new', 'add a new contact'),
-            ('other', 'choose an existing contact'),
-            ('none', 'no contact info'),
-        ),
-        initial= 'none',
-        widget= forms.RadioSelect,
-    )
-    
     date_set_known = forms.BooleanField(
         initial= False,
         required= False,

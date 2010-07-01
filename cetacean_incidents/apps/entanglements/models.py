@@ -1,6 +1,6 @@
 from django.db import models
 
-from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
 from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
@@ -17,18 +17,12 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     pass
 
-class GearOwner(models.Model):
+class GearOwner(AbstractContact):
     '''\
     Everything in this table should be considered confidential!
     '''    
     
     # TODO enforce view permissions at the model level!
-    
-    owner_contact = models.ForeignKey(
-        Contact,
-        blank= True,
-        null= True,
-    )
     
     date_gear_set = models.OneToOneField(
         DateTime,

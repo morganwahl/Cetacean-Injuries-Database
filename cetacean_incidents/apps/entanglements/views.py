@@ -39,8 +39,6 @@ def add_gear_owner(request, entanglement_id):
 
     form_classes = {
         'gear_owner': GearOwnerForm,
-        'new_contact': ContactForm,
-        'new_affiliations': formset_factory(OrganizationForm, extra=3),
         'datetime_set': NiceDateTimeForm,
         'location_set': NiceLocationForm,
         'datetime_lost': NiceDateTimeForm,
@@ -69,19 +67,6 @@ def add_gear_owner(request, entanglement_id):
             gear_owner = forms['gear_owner'].save()
             entanglement.gear_owner_info = gear_owner
             entanglement.save()
-            
-            if forms['gear_owner'].cleaned_data['contact_choice'] == 'new':
-                _check('new_contact')
-                gear_owner.contact = forms['new_contact'].save()
-                
-                _check('new_affiliations')
-                # add the affiliations from the new_affs_formset
-                for org_form in forms['new_affiliations'].forms:
-                    # don't save orgs with blank names.
-                    if not 'name' in org_form.cleaned_data:
-                        continue
-                    org = org_form.save()
-                    contact.affiliations.add(org)
             
             if forms['gear_owner'].cleaned_data['date_set_known']:
                 _check('datetime_set')
@@ -123,8 +108,6 @@ def edit_gear_owner(request, entanglement_id):
 
     form_classes = {
         'gear_owner': GearOwnerForm,
-        'new_contact': ContactForm,
-        'new_affiliations': formset_factory(OrganizationForm, extra=3),
         'datetime_set': NiceDateTimeForm,
         'location_set': NiceLocationForm,
         'datetime_lost': NiceDateTimeForm,
@@ -132,13 +115,10 @@ def edit_gear_owner(request, entanglement_id):
 
     form_initials = {
         'gear_owner': {
-            'contact_choice': 'none',
             'date_set_known': False,
             'date_lost_known': False,
         }
     }
-    if gear_owner.owner_contact:
-        form_initials['gear_owner']['contact_choice'] = 'other'
     if gear_owner.date_gear_set:
         form_initials['gear_owner']['date_set_known'] = True
     if gear_owner.location_gear_set:
@@ -180,19 +160,6 @@ def edit_gear_owner(request, entanglement_id):
             gear_owner = forms['gear_owner'].save()
             entanglement.gear_owner_info = gear_owner
             entanglement.save()
-            
-            if forms['gear_owner'].cleaned_data['contact_choice'] == 'new':
-                _check('new_contact')
-                gear_owner.contact = forms['new_contact'].save()
-                
-                _check('new_affiliations')
-                # add the affiliations from the new_affs_formset
-                for org_form in forms['new_affiliations'].forms:
-                    # don't save orgs with blank names.
-                    if not 'name' in org_form.cleaned_data:
-                        continue
-                    org = org_form.save()
-                    contact.affiliations.add(org)
             
             if forms['gear_owner'].cleaned_data['date_set_known']:
                 _check('datetime_set')

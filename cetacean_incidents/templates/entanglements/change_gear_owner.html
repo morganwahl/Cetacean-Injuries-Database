@@ -15,29 +15,28 @@
 {% block gear_owner_info %}
 <form method="post">
     <div>
-        <div class="subform">
-            <script type="text/javascript">
-                $().ready(function(){
-                    RadioHider.init('gear_owner-contact_choice', {
-                        'new': 'gear_owner_new',
-                        'other': 'gear_owner_existing'
-                    });
-                });
-            </script>
-            {{ forms.gear_owner.contact_choice }}
-            <div id="gear_owner_new">
-                {% with forms.new_contact as form %}
-                {% with forms.new_affiliations as new_affiliations %}
-                {% include "contacts/create_contact_include.html" %}
-                {% endwith %}
-                {% endwith %}
-            </div>
-            <div id="gear_owner_existing">
-                {{ forms.gear_owner.owner_contact }}
-            </div>
-        </div>
         <table class="layout">
             <tr class="layout">
+                <td class="layout" width="50%">
+                    {% with forms.gear_owner.name as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    {% with forms.gear_owner.person as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    {% with forms.gear_owner.phone as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    {% with forms.gear_owner.email as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    {% with forms.gear_owner.address as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    {% with forms.gear_owner.notes as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                </td>
                 <td class="layout" width="50%">
                     <div class="subform">
                         <script type="text/javascript">
@@ -75,8 +74,6 @@
                             {% endwith %}
                         </div>
                     </div>
-                </td>
-                <td class="layout" width="50%">
                     <div class="subform">
                         <script type="text/javascript">
                             $().ready(function(){
