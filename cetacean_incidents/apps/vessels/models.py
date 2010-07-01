@@ -2,18 +2,16 @@ from django.db import models
 
 from cetacean_incidents.apps.countries.models import Country
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.dag.models import DAGEdge_factory, DAGNode_factory
 
-class VesselType(DAGNode_factory(edge_model_name='VesselTypeRelation')):
+class VesselTag(models.Model):
     name = models.CharField(
         max_length= 512,
+        unique= True,
     )
     
     def __unicode__(self):
         return self.name
-
-class VesselTypeRelation(DAGEdge_factory(node_model=VesselType)):
-    pass
+        ordering = ('id')
 
 class VesselInfo(models.Model):
     '''\
@@ -21,11 +19,11 @@ class VesselInfo(models.Model):
     of a vessel.
     '''
 
-    vessel_type = models.ForeignKey(
-        VesselType,
+    vessel_tags = models.ManyToManyField(
+        'VesselTag',
         blank= True,
         null= True,
-        help_text= "what kind of vessel is this?",
+        help_text= "What all categories would this vessel fit into?",
     )
     contact = models.ForeignKey(
         Contact,
