@@ -1,0 +1,72 @@
+[
+  {
+    "pk": 1, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "land"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "plane"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "boat"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "research"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "government"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "recreational"
+    }
+  },
+  {
+    "pk": 7, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "commercial"
+    }
+  }, 
+  {
+    "pk": 8, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "fishing"
+    }
+  }, 
+  {
+    "pk": 9, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "shipping"
+    }
+  }, 
+  {
+    "pk": 10, 
+    "model": "vessels.vesseltag", 
+    "fields": {
+      "name": "whale-watching"
+    }
+  } 
+]
