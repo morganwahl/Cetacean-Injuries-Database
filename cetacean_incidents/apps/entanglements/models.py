@@ -5,7 +5,6 @@ from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
 
-
 class GearTypeRelation(models.Model):
     '''\
     Intended to be used as the 'through' model in a ManyToManyField('self') 
