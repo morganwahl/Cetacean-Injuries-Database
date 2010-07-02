@@ -74,7 +74,10 @@ def generate_AddCaseForm(case_form_class):
             # TODO how to test for attributes? dir() might work, but isn't
             # gauranteed [sic] to.
             try:
-                exclude = case_form_class.Meta.exclude + ('animal',)
+                if case_form_class.Meta.exclude is str:
+                    exclude = tuple(set(case_form_class.Meta.exclude, 'animal'))
+                else:
+                    exclude = case_form_class.Meta.exclude + ('animal',)
             except AttributeError:
                 exclude = ('animal',)
     
