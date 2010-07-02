@@ -24,15 +24,19 @@
 		    <th>first report</th>
 		</tr>
 	</thead>
-	{% for case in case_list %}
-	<tr>
-		<td sorttable_customkey="{{ case.date.year|default:10000 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
-		<td>{{ case.case_type }}</td>
-		<td>{% animal_link case.animal %}</td>
-		<td>{{ case.first_observation_date }}</td>
-		<td>{{ case.first_report_date }}</td>
-	</tr>
-	{% endfor %}
+	<tbody>
+	    {% for case in case_list %}
+	    <tr>
+		    <td sorttable_customkey="{{ case.date.year|default:10000 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
+		    <td>{{ case.case_type }}</td>
+		    <td>{% animal_link case.animal %}</td>
+		    <td>{{ case.first_observation_date }}</td>
+		    <td>{{ case.first_report_date }}</td>
+	    </tr>
+	    {% empty %}
+	    <tr><td colspan="5" style="text-align:center;"><i>no cases</i></td></tr>
+	    {% endfor %}
+	</tbody>
 </table>
 <a href="{% url create_case %}">add a new case</a>
 {% endblock %}
