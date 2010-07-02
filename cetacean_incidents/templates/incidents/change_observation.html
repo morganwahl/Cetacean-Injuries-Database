@@ -111,8 +111,8 @@
                     <h4>reporter</h4>
                     <script type="text/javascript">
                         $().ready(function(){
-                            RadioHider.init('new_reporter', {
-                                {# TODO get the values from forms.observation.new_reporter.field #}
+                            RadioHider.init('{{ forms.observation.new_reporter.html_name }}', {
+                                {# TODO? get the keys from forms.observation.new_reporter.field #}
                                 'new': 'reporter_new_contact',
                                 'other': 'reporter_existing_contact'
                             });
@@ -151,7 +151,7 @@
                     <h4>observer</h4>
                     <script type="text/javascript">
                         $().ready(function(){
-                            RadioHider.init('new_observer', {
+                            RadioHider.init('{{ forms.observation.new_observer.html_name }}', {
                                 {# TODO get the values from forms.observation.new_observer.field #}
                                 'new': 'observer_new_contact',
                                 'other': 'observer_existing_contact'
