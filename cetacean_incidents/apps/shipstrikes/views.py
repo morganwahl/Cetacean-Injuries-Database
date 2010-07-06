@@ -121,31 +121,33 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
         if forms['observation']['striking_vessel_info']:
             check('striking_vessel')
             observation.striking_vessel = forms['striking_vessel'].save()
-
-            if forms['striking_vessel'].cleaned_data['contact_choice'] == 'new':
-                check(forms['striking_vessel_contact'])
+            
+            contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
+            if contact_choice == 'new':
+                check('striking_vessel_contact')
                 observation.striking_vessel.contact = forms['striking_vessel_contact'].save()
-            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'reporter':
+            elif contact_choice == 'reporter':
                 observation.striking_vessel.contact = observation.reporter
-            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'observer':
+            elif contact_choice == 'observer':
                 observation.striking_vessel.contact = observation.observer
-            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'other':
+            elif contact_choice == 'other':
                 observation.striking_vessel.contact = forms['striking_vessel'].cleaned_data['existing_contact']
-            else: # forms['striking_vessel'].cleaned_data['contact_choice'] == 'none'
+            else: # contact_choice == 'none'
                 observation.striking_vessel.contact = None
-
-            if forms['striking_vessel'].cleaned_data['captain_choice'] == 'new':
+            
+            captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
+            if captain_choice == 'new':
                 check(forms['striking_vessel_captain'])
                 observation.striking_vessel.captain = forms['striking_vessel_captain'].save()
-            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'reporter':
+            elif captain_choice == 'reporter':
                 observation.striking_vessel.captain = observation.reporter
-            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'observer':
+            elif captain_choice == 'observer':
                 observation.striking_vessel.captain = observation.observer
-            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'vessel':
+            elif captain_choice == 'vessel':
                 observation.striking_vessel.captain = observation.striking_vessel.contact
-            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'other':
+            elif captain_choice == 'other':
                 observation.striking_vessel.captain = forms['striking_vessel'].cleaned_data['existing_captain']
-            else: # forms['striking_vessel'].cleaned_data['captain_choice'] == 'none'
+            else: # captain_choice == 'none'
                 observation.striking_vessel.captain = None
 
             observation.striking_vessel.save()
