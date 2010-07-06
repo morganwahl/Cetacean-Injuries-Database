@@ -48,10 +48,16 @@
                         </td>
                     </tr>
                     <tr><th>observer</th><td>{% contact_link observation.observer %}</td></tr>
+                    {% if observation.observer_vessel %}
                     <tr>
                         <th>vessel info for observer's vessel</th>
-                        <td>{{ observation.observer_vessel }}</td>
+                        <td>
+                            {% with observation.observer_vessel as v %}
+                            {% include "vessels/vessel_details_include.html" %}
+                            {% endwith %}
+                        </td>
                     </tr>
+                    {% endif %}
                 </table>
                 <h3>Reporting</h3>
                 <table>

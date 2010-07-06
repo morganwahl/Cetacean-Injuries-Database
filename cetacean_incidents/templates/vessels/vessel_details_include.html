@@ -1,0 +1,29 @@
+{# assumes vessel is 'v' #}
+{% load contact_extras %}
+{% load vessel_extras %}
+
+<table>
+{% block vessel_rows %}
+    <tr><th>categories</th><td>{{ v.vessel_tags.all|join:" &#x2022; "|default:"<i>none</i>" }}</td></tr>
+    {% if v.imo_number %}
+    <tr><th>IMO number</th><td>{{ v.imo_number }}</td></tr>
+    {% endif %}
+    {% if v.name or v.flag %}
+    <tr><th>{% if v.name %}name{% endif %}{% if v.name and v.flag %} and {% endif %}{% if v.flag %}flag{% endif %}</th><td>{{ v.name|default:"" }}{% if v.flag %}{% flag_icon v.flag %}{% endif %}</td></tr>
+    {% endif %}
+    <tr>
+        <th>contact</th>
+        <td>
+        {% if v.contact %}
+        {% contact_link v.contact %}
+        {% else %}
+        <i>no contact info for this vessel</i>
+        {% endif %}
+        </td>
+    </tr>
+    {% if v.description %}
+    <tr><th>description</th><td>{{ v.description }}</td></tr>
+    {% endif %}
+{% endblock %}
+</table>
+

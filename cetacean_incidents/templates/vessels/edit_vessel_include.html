@@ -1,29 +1,45 @@
 {# intended to be included in another template, with a NiceVesselInfoForm as v_form and a ContactForm as c_form #}
 {# assumes RadioHider is already defined #}
 <div>
-    <script type="text/javascript">
-        $().ready(function(){
+    <div class="subform">
+        <h4>Vessel Contact</h4>
+        <script type="text/javascript">
+            $().ready(function(){
                 RadioHider.init('{{ v_form.contact_choice.html_name }}', {
                     'new': '{{ v_form.prefix }}-vesselcontact_new_contact',
                     'other': '{{ v_form.prefix }}-vesselcontact_existing_contact'
+                });
             });
-        });
-    </script>
-    {% with v_form.new_vesselcontact as f %}
-    {% include "unlabeled_field.html" %}
-    {% endwith %}
-    <table id="vesselcontact_new_contact" style="display:none;">
-        {{ c_form.as_table }}
-    </table>
-    <div id="vesselcontact_existing_contact" style="display:none;">
-        {% with v_form.contact as f %}
-        {% include "labeled_field.html" %}
+        </script>
+        {% with v_form.contact_choice as f %}
+        {% include "unlabeled_field.html" %}
         {% endwith %}
+        <div id="{{ v_form.prefix }}-vesselcontact_new_contact" style="display:none;">
+            <table>
+            {{ c_form.as_table }}
+            </table>
+        </div>
+        <div id="{{ v_form.prefix }}-vesselcontact_existing_contact" style="display:none;">
+            {% with v_form.existing_contact as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+        </div>
     </div>
-    {% for f in v_form %}
-    {% ifnotequal f.label_tag v_form.new_vesselcontact.label_tag %}
+    {% with v_form.vessel_tags as f %}
     {% include "labeled_field.html" %}
-    {% endifnotequal %}
-    {% endfor %}
+    {% endwith %}
+    {% with v_form.imo_number as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with v_form.name as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with v_form.flag as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with v_form.description as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% block extra_fields %}{% endblock %}
 </div>
 

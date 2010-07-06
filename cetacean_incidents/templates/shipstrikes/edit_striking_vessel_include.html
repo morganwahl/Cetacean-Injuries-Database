@@ -1,0 +1,40 @@
+{% extends "vessels/edit_vessel_include.html" %}
+{# intended to be included in another template, with a StrikingVesselInfoForm as v_form and the vessel's ContactForm as c_form and the vessel's captain ContactForm as cap_form #}
+{% block extra_fields %}
+<div class="subform">
+    <h4>Captain Contact</h4>
+    <script type="text/javascript">
+        $().ready(function(){
+            RadioHider.init('{{ v_form.captain_choice.html_name }}', {
+                'new': '{{ v_form.prefix }}-vesselcaptain_new_contact',
+                'other': '{{ v_form.prefix }}-vesselcaptain_existing_contact'
+            });
+        });
+    </script>
+    {% with v_form.captain_choice as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+    <div id="{{ v_form.prefix }}-vesselcaptain_new_contact" style="display:none;">
+        <table>
+        {{ cap_form.as_table }}
+        </table>
+    </div>
+    <div id="{{ v_form.prefix }}-vesselcaptain_existing_contact" style="display:none;">
+        {% with v_form.existing_captain as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </div>
+</div>
+{% with v_form.length as f %}
+{% include "unlabeled_field.html" %}
+{% endwith %}
+{% with v_form.draft as f %}
+{% include "unlabeled_field.html" %}
+{% endwith %}
+{% with v_form.tonnage as f %}
+{% include "unlabeled_field.html" %}
+{% endwith %}
+{% with v_form.speed as f %}
+{% include "unlabeled_field.html" %}
+{% endwith %}
+{% endblock %}
