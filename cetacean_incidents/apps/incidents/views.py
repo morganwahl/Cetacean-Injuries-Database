@@ -285,7 +285,7 @@ def edit_observation(
     ):
     '''\
     observationform_class, if given, should be a subclass of ObservationForm.
-    additioanl_model_instances should have keys that correspond to the ones in
+    additional_model_instances should have keys that correspond to the ones in
     additional_form_classes.
     '''
     
@@ -334,6 +334,12 @@ def edit_observation(
         else:
             form_initials['observer_vessel']['contact_choice'] = 'other'
             form_initials['observer_vessel']['existing_contact'] = model_instances['observer_vessel'].contact
+
+    for (form_name, initials) in additional_form_initials.items():
+        if form_name in form_initials.keys():
+            form_initials[form_name].update(initials)
+        else:
+            form_initials[form_name] = initials
 
     forms = {}
     for form_name, form_class in form_classes.items():

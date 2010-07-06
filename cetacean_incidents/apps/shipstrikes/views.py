@@ -117,6 +117,39 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             form_initials['striking_vessel']['captain_choice'] = 'other'
             form_initials['striking_vessel']['existing_captain'] = captain
     
+    def saving(forms, instances, check, observation):
+        if forms['observation']['striking_vessel_info']:
+            check('striking_vessel')
+            observation.striking_vessel = forms['striking_vessel'].save()
+
+            if forms['striking_vessel'].cleaned_data['contact_choice'] == 'new':
+                check(forms['striking_vessel_contact'])
+                observation.striking_vessel.contact = forms['striking_vessel_contact'].save()
+            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'reporter':
+                observation.striking_vessel.contact = observation.reporter
+            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'observer':
+                observation.striking_vessel.contact = observation.observer
+            elif forms['striking_vessel'].cleaned_data['contact_choice'] == 'other':
+                observation.striking_vessel.contact = forms['striking_vessel'].cleaned_data['existing_contact']
+            else: # forms['striking_vessel'].cleaned_data['contact_choice'] == 'none'
+                observation.striking_vessel.contact = None
+
+            if forms['striking_vessel'].cleaned_data['captain_choice'] == 'new':
+                check(forms['striking_vessel_captain'])
+                observation.striking_vessel.captain = forms['striking_vessel_captain'].save()
+            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'reporter':
+                observation.striking_vessel.captain = observation.reporter
+            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'observer':
+                observation.striking_vessel.captain = observation.observer
+            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'vessel':
+                observation.striking_vessel.captain = observation.striking_vessel.contact
+            elif forms['striking_vessel'].cleaned_data['captain_choice'] == 'other':
+                observation.striking_vessel.captain = forms['striking_vessel'].cleaned_data['existing_captain']
+            else: # forms['striking_vessel'].cleaned_data['captain_choice'] == 'none'
+                observation.striking_vessel.captain = None
+
+            observation.striking_vessel.save()
+    
     return edit_observation(
         request,
         observation_id= shipstrikeobservation_id,
@@ -131,6 +164,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             'striking_vessel': observation.striking_vessel
         },
         additional_form_initials= form_initials,
+        additional_form_saving= saving,
     )
 
 @login_required
