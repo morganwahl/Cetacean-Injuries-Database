@@ -102,7 +102,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             form_initials['striking_vessel']['contact_choice'] = 'observer'
         else:
             form_initials['striking_vessel']['contact_choice'] = 'other'
-            form_initials['striking_vessel']['existing_contact'] = contact
+            form_initials['striking_vessel']['existing_contact'] = contact.id
 
         captain = observation.striking_vessel.captain
         if captain is None:
@@ -115,7 +115,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             form_initials['striking_vessel']['captain_choice'] = 'vessel'
         else:
             form_initials['striking_vessel']['captain_choice'] = 'other'
-            form_initials['striking_vessel']['existing_captain'] = captain
+            form_initials['striking_vessel']['existing_captain'] = captain.id
     
     def saving(forms, instances, check, observation):
         if forms['observation']['striking_vessel_info']:

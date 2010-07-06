@@ -34,7 +34,14 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
         ('other', 'use an existing contact'),
         ('none', 'no contact info'),
     )
-    
+
+    contact_choice = forms.ChoiceField(
+        choices= contact_choices,
+        initial= 'none',
+        widget= forms.RadioSelect,
+        #help_text= "create a new contact for the vessel's contact?",
+    )
+
     captain_choices = (
         ('new', 'add a new contact'),
         ('reporter', 'use the same contact as the reporter'),

@@ -333,7 +333,7 @@ def edit_observation(
             form_initials['observer_vessel']['contact_choice'] = 'observer'
         else:
             form_initials['observer_vessel']['contact_choice'] = 'other'
-            form_initials['observer_vessel']['existing_contact'] = model_instances['observer_vessel'].contact
+            form_initials['observer_vessel']['existing_contact'] = model_instances['observer_vessel'].contact.id
 
     for (form_name, initials) in additional_form_initials.items():
         if form_name in form_initials.keys():

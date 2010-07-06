@@ -5,6 +5,8 @@
 {{ media }}
 {% endblock %}
 
+{% block edit_url %}{% url edit_entanglementobservation observation.id %}{% endblock %}
+
 {% block case_type_fields %}
 <h3>Entanglement</h3>
 <table>
