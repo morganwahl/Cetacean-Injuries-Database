@@ -16,6 +16,8 @@ jun/jul? - extension to strandings?
 
 TODO in order of importance:
 
+CSRF protections
+    http://docs.djangoproject.com/en/1.2/ref/contrib/csrf/#ref-contrib-csrf
 Contact-editing should work!
 JS on gear-type widgets
     check/uncheck all boxes for the same type at once
@@ -30,20 +32,8 @@ selected taxon should be clear
 search for "G. species" in taxon widget
 test "70 10.1N" in lat/lng input
 back to tabbed forms!
-    links at bottom of each tab to proceed to the next one
     narrative on the side?
-    submit button is in last tab
-observer platform field in Observations
-    aerial
-    naval
-        whale-watch
-        commerical marine (incl. fisherman)
-        recreational
-        research
-        gov. (incl. DoD, USGS)
-    land
-    other
-    unknown
+'observer on land' fake field for vessels marked as 'land'
 IE doesn't show table-sort arrows
 secure contacts table
     boat name
