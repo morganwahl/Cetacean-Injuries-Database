@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner
 
@@ -95,6 +95,14 @@ class EntanglementForm(forms.ModelForm):
 
 # TODO better way of tracking this
 case_form_classes['Entanglement'] = EntanglementForm
+
+class AddEntanglementForm(EntanglementForm):
+    
+    class Meta(EntanglementForm.Meta):
+        exclude = ('gear_owner_info', 'animal')
+
+# TODO better way of tracking this
+addcase_form_classes['Entanglement'] = AddEntanglementForm
 
 class EntanglementObservationForm(ObservationForm):
     

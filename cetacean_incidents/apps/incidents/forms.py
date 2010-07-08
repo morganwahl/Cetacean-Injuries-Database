@@ -12,6 +12,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 
 case_form_classes = {}
+addcase_form_classes = {}
 observation_forms = {}
 
 class AnimalForm(forms.ModelForm):
@@ -57,31 +58,7 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
-# these are generated dynamically so we can use subclasses of CaseForm without
-# even knowing what they are
-def generate_AddCaseForm(case_form_class):
-    '''\
-    Takes CaseForm (or a subclass) and adds 'animal' to the excluded fields.
-    '''
-
-    class AddCaseForm(case_form_class):
-        '''\
-        A %s minus the Animal field, for adding a case to an existing 
-        animal.
-        ''' % case_form_class.__name__
-
-        class Meta(case_form_class.Meta):
-            # TODO how to test for attributes? dir() might work, but isn't
-            # gauranteed [sic] to.
-            try:
-                if case_form_class.Meta.exclude is str:
-                    exclude = tuple(set(case_form_class.Meta.exclude, 'animal'))
-                else:
-                    exclude = case_form_class.Meta.exclude + ('animal',)
-            except AttributeError:
-                exclude = ('animal',)
     
-    return AddCaseForm
 
 class MergeCaseForm(forms.ModelForm):
     

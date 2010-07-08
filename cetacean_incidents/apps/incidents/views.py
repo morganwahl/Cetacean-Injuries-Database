@@ -18,7 +18,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, generate_AddCaseForm, case_form_classes, ObservationForm, CaseSearchForm
+from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
@@ -103,8 +103,8 @@ def add_case(request, animal_id):
     if request.method == 'POST':
         addcaseform_args = {'data': request.POST}
     addcase_forms = {}
-    for case_type_name, case_form_class in case_form_classes.items():
-        addcase_forms[case_type_name] = generate_AddCaseForm(case_form_class)(prefix=case_type_name, **addcaseform_args)
+    for case_type_name, addcase_form_class in addcase_form_classes.items():
+        addcase_forms[case_type_name] = addcase_form_class(prefix=case_type_name, **addcaseform_args)
 
     if request.method == 'POST':
         type_form = CaseTypeForm(request.POST)
