@@ -1,5 +1,6 @@
 {% extends "detail.html" %}
 {% load case_extras %}
+{% load generic_field_display %}
 
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
@@ -17,9 +18,9 @@
 <div class="section">
     <h3>Info:</h3>
     <table>
-        <tr><th>name</th><td>{{ animal.name|default:"<i>none</i>" }}</td></tr>
+        {% display_row animal 'name' %}
         <tr>
-            <th>taxon</th>
+            <th style="text-align:right;">taxon</th>
             <td>
                 {% if animal.determined_taxon %}
                 {{ animal.determined_taxon }} ({{ animal.determined_taxon.common_names }})
@@ -29,7 +30,7 @@
             </td>
         </tr>
         <tr>
-            <th>gender</th>
+            <th style="text-align:right;">gender</th>
             <td>
                 {% if animal.determined_gender %}
                 {{ animal.get_determined_gender_display|default:"unknown" }}
@@ -39,14 +40,8 @@
             </td>
         </tr>
         {% if animal.determined_dead_before %}
-        <tr><th>dead before</th><td>{{ animal.determined_dead_before }}</td></tr>
-        <tr>
-            <th>necropsied?</th>
-            <td>
-                {{ animal.necropsy|yesno:"yes,no" }}{% if not animal.necropsied %}<br>
-                <i>note that "no" is the same as "unknown" for this field</i>{% endif %}
-            </td>
-        </tr>
+        {% display_row animal "determined_dead_before" %}
+        {% display_yesunk_row animal 'necropsy' %}
         {% endif %}
     </table>
 </div>

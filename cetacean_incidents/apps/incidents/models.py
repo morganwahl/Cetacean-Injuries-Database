@@ -29,6 +29,7 @@ class Animal(models.Model):
     )
     necropsy = models.BooleanField(
         default= False,
+        verbose_name= "necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
         help_text= "if this animal is dead, has a necropsy been performed on it?",
     )
     
