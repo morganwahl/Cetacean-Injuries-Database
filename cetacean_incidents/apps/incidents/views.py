@@ -33,10 +33,14 @@ def create_animal(request):
             return redirect(new_animal)
     else:
         form = AnimalForm()
+
+    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+
     return render_to_response(
         'incidents/create_animal.html',
         {
             'form': form,
+            'all_media': template_media + form.media
         },
         context_instance= RequestContext(request),
     )
@@ -44,18 +48,30 @@ def create_animal(request):
 @login_required
 def edit_animal(request, animal_id):
     animal = Animal.objects.get(id=animal_id)
+    form_kwargs = {
+        'instance': animal,
+    }
+    if animal.determined_dead_before or animal.necropsy:
+        form_kwargs['initial'] = {
+            'dead': True,
+        }
+    
     if request.method == 'POST':
-        form = AnimalForm(request.POST, instance=animal)
+        form = AnimalForm(request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
             return redirect('animal_detail', animal.id)
     else:
-        form = AnimalForm(instance=animal)
+        form = AnimalForm(**form_kwargs)
+
+    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+
     return render_to_response(
         'incidents/edit_animal.html',
         {
             'animal': animal,
             'form': form,
+            'all_media': template_media + form.media
         },
         context_instance= RequestContext(request),
     )

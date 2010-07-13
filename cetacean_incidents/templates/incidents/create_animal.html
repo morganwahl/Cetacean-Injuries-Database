@@ -2,7 +2,7 @@
 
 {% block head %}
 {{ block.super }}
-{{ form.media }}
+{{ all_media }}
 {% endblock %}
 
 {% block title %}{{ block.super }}: create a new animal{% endblock %}
@@ -14,9 +14,35 @@
 {% block content %}
 <form action="{% url create_animal %}" method="post">
     <div class="section">
-        {% for f in form %}
+        {% with form.name as f %}
         {% include "labeled_field.html" %}
-        {% endfor %}
+        {% endwith %}
+        {% with form.determined_taxon as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        {% with form.determined_gender as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        {% with form.dead as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        <script type="text/javascript">
+            $().ready(function(){
+                CheckboxHider.init(
+                    {# TODO js-string-escaping #}
+                    "{{ form.dead.html_name }}",
+                    "if_dead"
+                );
+            });
+        </script>
+        <div id="if_dead">
+            {% with form.necropsy as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with form.determined_dead_before as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+        </div>
     	<button type="submit">create animal</button>
     </div>
 </form>

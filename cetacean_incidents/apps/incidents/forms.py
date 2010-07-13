@@ -1,3 +1,4 @@
+import datetime
 from itertools import chain
 from django import forms
 from django.forms import fields
@@ -26,6 +27,18 @@ class AnimalForm(forms.ModelForm):
         label= _f.verbose_name.capitalize(),
     )
     
+    dead = forms.BooleanField(
+        label= "dead?",
+        initial= False,
+        help_text= "note that 'no' is the same as 'unknown'",
+    )
+    
+    def clean(self):
+        d = self.cleaned_data
+        if (d['dead'] or d['necropsy']) and not d['determined_dead_before']:
+            d['determined_dead_before'] = datetime.date.today()
+        return d
+
     class Meta:
         model = Animal
 
