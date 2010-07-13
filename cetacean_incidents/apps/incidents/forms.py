@@ -131,6 +131,7 @@ class SubmitDetectingForm(forms.Form):
 class CaseIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",
+        label= "Local ID",
     )
     
     def clean_local_id(self):
@@ -159,7 +160,10 @@ class CaseNMFSIDLookupForm(SubmitDetectingForm):
 
 class CaseYearlyNumberLookupForm(SubmitDetectingForm):
     year = forms.IntegerField(required=True)
-    number = forms.IntegerField(required=True)
+    number = forms.IntegerField(
+        required= True,
+        label= "Number within year",
+    )
     
     def clean(self):
         d = self.cleaned_data

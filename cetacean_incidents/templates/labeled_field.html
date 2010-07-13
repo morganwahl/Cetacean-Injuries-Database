@@ -1,3 +1,6 @@
+{% if f.is_hidden %}
+{{ f }}
+{% else %}
 <div class="field_wrapper">
 	<div>
 		<span class="fieldname">{{ f.label_tag }}</span> {{ f }}
@@ -13,4 +16,4 @@
 	</ul>
 	{% endif %}
 </div>
-
+{% endif %}
