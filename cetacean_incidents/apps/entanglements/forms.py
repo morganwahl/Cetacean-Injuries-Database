@@ -91,7 +91,7 @@ class EntanglementForm(forms.ModelForm):
     
     class Meta:
         model = Entanglement
-        exclude = ('gear_owner_info')
+        exclude = 'gear_owner_info'
 
 # TODO better way of tracking this
 case_form_classes['Entanglement'] = EntanglementForm

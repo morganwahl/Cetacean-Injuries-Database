@@ -29,7 +29,7 @@ def home(request):
     if request.method == 'GET':
         if 'case_lookup_id-submitted' in request.GET:
             if forms['case_lookup_id'].is_valid():
-                case = Case.objects.get(id=forms['case_lookup_id'].cleaned_data['local_id'])
+                case = forms['case_lookup_id'].cleaned_data['local_id']
                 return redirect(case)
         if 'case_lookup_yearlynumber-submitted' in request.GET:
             form = forms['case_lookup_yearlynumber']

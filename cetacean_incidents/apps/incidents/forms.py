@@ -137,10 +137,11 @@ class CaseIDLookupForm(SubmitDetectingForm):
     def clean_local_id(self):
         data = self.cleaned_data['local_id']
         try:
-            Case.objects.get(id=data)
+            case = Case.objects.get(id=data)
         except Case.DoesNotExist:
             raise forms.ValidationError("no case with that ID")
-        return data
+        return case
+
 class CaseNMFSIDLookupForm(SubmitDetectingForm):
     nmfs_id = forms.CharField(
         #help_text= u"lookup a particular case by numeric ID",

@@ -10,13 +10,15 @@
 {% block cases_header %}
 <form action="" method="get">
     <div class="section">
-        {% if form.non_field_errors %}
+        {% with form.non_field_errors as errors %}
+        {% if errors %}
         <ul class="errorlist">
-            {% for e in form.non_field_errors %}
+            {% for e in errors %}
             <li>{{ e }}</li>
             {% endfor %}
         </ul>
         {% endif %}
+        {% endwith %}
         {% for f in form %}
         {% include "labeled_field.html" %}
         {% endfor %}
