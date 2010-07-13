@@ -140,6 +140,22 @@ class CaseIDLookupForm(SubmitDetectingForm):
         except Case.DoesNotExist:
             raise forms.ValidationError("no case with that ID")
         return data
+class CaseNMFSIDLookupForm(SubmitDetectingForm):
+    nmfs_id = forms.CharField(
+        #help_text= u"lookup a particular case by numeric ID",
+        label= "NMFS case ID",
+    )
+    
+    def clean_nmfs_id(self):
+        data = self.cleaned_data['nmfs_id']
+        cases = Case.objects.filter(nmfs_id__iexact=data)
+        # nmfs_id isn't garanteed to be unique
+        if cases.count() < 1:
+            raise forms.ValidationError("no case has been marked as corresponding to that NMFS case")
+        elif cases.count() > 1:
+            case_ids = cases.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple cases correspond to that NMFS case. Their local-IDs are: %s" % ', '.join(map(unicode, case_ids)))
+        return cases[0]
 
 class CaseYearlyNumberLookupForm(SubmitDetectingForm):
     year = forms.IntegerField(required=True)

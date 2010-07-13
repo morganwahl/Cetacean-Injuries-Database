@@ -44,6 +44,21 @@
             {% endfor %}
             <button type="submit">lookup</button>
     </form>
+    <form action="" method="get" class="subform">
+            {% with forms.case_lookup_nmfs.non_field_errors as errors %}
+            {% if errors %}
+            <ul class="errorlist">
+                {% for e in errors %}
+                <li>{{ e }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            {% endwith %}
+            {% for f in forms.case_lookup_nmfs %}
+            {% include "inline_field.html" %}
+            {% endfor %}
+            <button type="submit">lookup</button>
+    </form>
 </div>
 <form action="{% url case_search %}" method="get">
     <div class="section">

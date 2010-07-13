@@ -8,13 +8,14 @@ from django.forms import Media
 from reversion.models import Revision
 
 from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import CaseIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.forms import CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
 
 @login_required
 def home(request):
     form_classes = {
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
+        'case_lookup_nmfs': CaseNMFSIDLookupForm,
         'case_search': CaseSearchForm,
     }
     forms = {}
@@ -36,6 +37,10 @@ def home(request):
                 year = form.cleaned_data['year']
                 num = form.cleaned_data['number']
                 case = YearCaseNumber.objects.get(year=year, number=num).case
+                return redirect(case)
+        if 'case_lookup_nmfs-submitted' in request.GET:
+            if forms['case_lookup_nmfs'].is_valid():
+                case = forms['case_lookup_nmfs'].cleaned_data['nmfs_id']
                 return redirect(case)
 
     revisions = Revision.objects.all().order_by('-date_created')[:20]
