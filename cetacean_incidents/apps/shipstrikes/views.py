@@ -30,6 +30,7 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
         'shipstrikes/shipstrike_observation_detail.html',
         {
             'observation': shipstrikeobservation,
+            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )
