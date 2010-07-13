@@ -15,14 +15,18 @@
 
 <form action="" method="get">
     <div class="section">
-        {{ case_lookup_form.as_p }}
+        {% for f in case_lookup_form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
         <button type="submit">lookup</button>
     </div>
 </form>
 <form action="{% url case_search %}" method="get">
     <div class="section">
         <h3>get a list of cases that fit some criteria</h3>
-        {{ case_search_form.as_p }}
+        {% for f in case_search_form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
         <button type="submit">search</button>
     </div>
 </form>
