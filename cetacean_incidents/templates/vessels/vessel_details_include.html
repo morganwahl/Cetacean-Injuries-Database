@@ -1,15 +1,16 @@
 {# assumes vessel is 'v' #}
 {% load contact_extras %}
 {% load vessel_extras %}
+{% load generic_field_display %}
 
 <table>
 {% block vessel_rows %}
-    <tr><th>categories</th><td>{{ v.vessel_tags.all|join:" &#x2022; "|default:"<i>none</i>" }}</td></tr>
+    {% display_set_row v 'vessel_tags' 'categories' %}
     {% if v.imo_number %}
-    <tr><th>IMO number</th><td>{{ v.imo_number }}</td></tr>
+    {% display_row v 'imo_number' %}
     {% endif %}
     {% if v.name or v.flag %}
-    <tr><th>{% if v.name %}name{% endif %}{% if v.name and v.flag %} and {% endif %}{% if v.flag %}flag{% endif %}</th><td>{{ v.name|default:"" }}{% if v.flag %}{% flag_icon v.flag %}{% endif %}</td></tr>
+    {% display_boatname_row v %}
     {% endif %}
     <tr>
         <th>contact</th>
