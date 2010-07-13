@@ -1,0 +1,7 @@
+{% extends "generic_templates/display_row.html" %}
+
+{% spaceless %}
+{% block value_block %}
+<div style="text-align: right;">{{ coord.1 }}&#x00b0;{{ coord.2 }}&#x2032;{{ coord.3|floatformat:"2" }}&#x2033; {% if coord.0 %}{{ dirs.0 }}{% else %}{{ dirs.1 }}{% endif %}</div>
+{% endblock %}
+{% endspaceless %}

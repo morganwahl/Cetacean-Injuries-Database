@@ -1,0 +1,7 @@
+{% extends "generic_templates/display_row.html" %}
+
+{% spaceless %}
+{% block value_block %}
+<div style="text-align: right;">{{ coord|floatformat:"4" }}</div>
+{% endblock %}
+{% endspaceless %}
