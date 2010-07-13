@@ -155,3 +155,10 @@ class CaseSearchForm(forms.Form):
         help_text= "search for Cases with an observation whose narrative contains this phrase",
     )
 
+    def clean(self):
+        earlier = self.cleaned_data.get('after_date')
+        later = self.cleaned_data.get('before_date')
+        if earlier and later and earlier > later:
+            raise forms.ValidationError("the 'after date' should equal or precede the 'before date'")
+        return super(CaseSearchForm, self).clean()
+        
