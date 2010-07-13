@@ -38,6 +38,7 @@ class AbstractContact(models.Model):
     phone = models.CharField(
         max_length= 255,
         blank= True,
+        verbose_name= "phone number",
     )
     
     email = models.EmailField(
