@@ -130,7 +130,7 @@ class SubmitDetectingForm(forms.Form):
 
 class CaseIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
-        help_text= u"lookup a particular case by numeric ID",
+        #help_text= u"lookup a particular case by numeric ID",
     )
     
     def clean_local_id(self):

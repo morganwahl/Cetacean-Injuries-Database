@@ -1,0 +1,17 @@
+{% spaceless %}
+{% if f.is_hidden %}
+{{ f }}
+{% else %}
+<span class="field_wrapper">
+	<span class="fieldname">{{ f.label_tag }}</span>: {{ f }}
+	{% if f.help_text %}
+	<i>({{ f.help_text }})</i>
+	{% endif %}
+	{% if f.errors %}
+	<span class="errorlist ui-state-error ui-state-error-text">
+	    &#x2190;{{ f.errors|join:", " }}
+	</span>
+	{% endif %}
+</span>
+{% endif %}
+{% endspaceless %}

@@ -14,10 +14,7 @@
 
 <div class="section">
     <h3>look up a particular case</h3>
-    <form action="" method="get">
-            {% for f in forms.case_lookup_id %}
-            {% include "labeled_field.html" %}
-            {% endfor %}
+    <form action="" method="get" class="subform">
             {% with forms.case_lookup_id.non_field_errors as errors %}
             {% if errors %}
             <ul class="errorlist">
@@ -27,12 +24,12 @@
             </ul>
             {% endif %}
             {% endwith %}
+            {% for f in forms.case_lookup_id %}
+            {% include "inline_field.html" %}
+            {% endfor %}
             <button type="submit">lookup</button>
     </form>
-    <form action="" method="get">
-            {% for f in forms.case_lookup_yearlynumber %}
-            {% include "labeled_field.html" %}
-            {% endfor %}
+    <form action="" method="get" class="subform">
             {% with forms.case_lookup_yearlynumber.non_field_errors as errors %}
             {% if errors %}
             <ul class="errorlist">
@@ -42,6 +39,9 @@
             </ul>
             {% endif %}
             {% endwith %}
+            {% for f in forms.case_lookup_yearlynumber %}
+            {% include "inline_field.html" %}
+            {% endfor %}
             <button type="submit">lookup</button>
     </form>
 </div>

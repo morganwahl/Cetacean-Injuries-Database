@@ -107,10 +107,12 @@ span.fieldname {
     color: #555753;
 }
 
-ul.errorlist {
-    list-style-type: none;
+ul.errorlist, span.errorlist {
     background-color: #ef2929; /* scarlet red 1 */
     border: thin dashed #a40000; /* scarlet red 3 */
+}
+ul.errorlist {
+    list-style-type: none;
 }
 
 .section {
