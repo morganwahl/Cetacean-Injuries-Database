@@ -117,11 +117,29 @@ class ObservationForm(forms.ModelForm):
         exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel') 
 observation_forms['Case'] = ObservationForm
 
-class CaseLookupForm(forms.Form):
+class SubmitDetectingForm(forms.Form):
+    '''\
+    A form with a hidden 'submitted' field with value 'yes' if the form was
+    submitted. Handy for detecting submission via GET method.
+    '''
     
-    local_id = forms.IntegerField(
-        help_text= u"lookup a particular case by numeric ID"
+    submitted = forms.CharField(
+        widget= forms.HiddenInput,
+        initial= 'yes',
     )
+
+class CaseIDLookupForm(SubmitDetectingForm):
+    local_id = forms.IntegerField(
+        help_text= u"lookup a particular case by numeric ID",
+    )
+    
+    def clean_local_id(self):
+        data = self.cleaned_data['local_id']
+        try:
+            Case.objects.get(id=data)
+        except Case.DoesNotExist:
+            raise forms.ValidationError("no case with that ID")
+        return data
 
 class CaseSearchForm(forms.Form):
     

@@ -2,8 +2,7 @@
 
 {% block head %}
 {{ block.super }}
-{{ case_lookup_form.media }}
-{{ case_search_form.media }}
+{{ media }}
 {% endblock %}
 
 {% block content %}
@@ -15,7 +14,7 @@
 
 <form action="" method="get">
     <div class="section">
-        {% for f in case_lookup_form %}
+        {% for f in forms.case_lookup_id %}
         {% include "labeled_field.html" %}
         {% endfor %}
         <button type="submit">lookup</button>
@@ -24,7 +23,7 @@
 <form action="{% url case_search %}" method="get">
     <div class="section">
         <h3>get a list of cases that fit some criteria</h3>
-        {% for f in case_search_form %}
+        {% for f in forms.case_search %}
         {% include "labeled_field.html" %}
         {% endfor %}
         <button type="submit">search</button>
