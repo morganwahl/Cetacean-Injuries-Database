@@ -14,7 +14,8 @@
 
 {% block content %}
 {% block cases_header %}{% endblock %}
-<table class="sortable">
+{# sorttable.js doesn't like empty tables #}
+<table{% if case_list %} class="sortable"{% endif %}>
 	<thead>
 	    <tr>
 		    <th class="sorttable_numeric">case</th>
