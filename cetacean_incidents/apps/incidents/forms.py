@@ -6,7 +6,7 @@ from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
-from models import Animal, Case, Observation
+from models import Animal, Case, YearCaseNumber, Observation
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
@@ -140,6 +140,19 @@ class CaseIDLookupForm(SubmitDetectingForm):
         except Case.DoesNotExist:
             raise forms.ValidationError("no case with that ID")
         return data
+
+class CaseYearlyNumberLookupForm(SubmitDetectingForm):
+    year = forms.IntegerField(required=True)
+    number = forms.IntegerField(required=True)
+    
+    def clean(self):
+        d = self.cleaned_data
+        if 'year' in d and 'number' in d:
+            try:
+                YearCaseNumber.objects.get(year=d['year'], number=d['number'])
+            except YearCaseNumber.DoesNotExist:
+                raise forms.ValidationError("no case has been assigned that number for that year yet")
+        return d
 
 class CaseSearchForm(forms.Form):
     
