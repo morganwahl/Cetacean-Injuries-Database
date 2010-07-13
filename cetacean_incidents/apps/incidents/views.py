@@ -275,7 +275,7 @@ def add_observation(
 
     template_media = Media(
         css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js'),
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(
@@ -428,7 +428,7 @@ def edit_observation(
 
     template_media = Media(
         css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js'),
+        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(

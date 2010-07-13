@@ -182,15 +182,10 @@
                     {% endwith %}
                     <script type="text/javascript">
                         $().ready(function(){
-                            var checkbox_sel = "[name={{ forms.observation.observer_on_vessel.html_name }}]";
-                            $(checkbox_sel).change(function(event){
-                                if ( $(checkbox_sel + ":checked").val() ) {
-                                    $("#vessel_info").show();
-                                } else {
-                                    $("#vessel_info").hide();
-                                }
-                            });
-                            $(checkbox_sel).change();
+                            CheckboxHider.init(
+                                "{{ forms.observation.observer_on_vessel.html_name}}",
+                                'vessel_info'
+                            );
                         });
                     </script>
                     <div id="vessel_info">
