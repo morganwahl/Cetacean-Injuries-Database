@@ -53,7 +53,8 @@
     {% if perms.entanglements.view_gear_owner %}
     {% block gear_owner_info %}
     {% if case.gear_owner_info %}
-    <div class="confidential-warning">confidential!</div>
+    <div class="confidential-box">
+        <div class="confidential-warning">confidential!</div>
     {% with case.gear_owner_info as go %}
     <table class="layout" style="width: 100%;">
         <tr class="layout">
@@ -118,6 +119,7 @@
         </tr>
     </table>
     {% endwith %}
+    </div>
     <div>
         <a href="{% url edit_gear_owner case.id %}">edit gear owner info</a>
     </div>

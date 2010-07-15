@@ -73,9 +73,6 @@ li {
     margin-left: 2em;
 }
 
-table {
-    width: inherit;
-}
 table td,th {
     padding: .25em;
 }
@@ -101,9 +98,6 @@ td.layout {
 
 table th, .fieldname {
     font-weight: bold;
-    color: #888a85;
-}
-span.fieldname {
     color: #555753;
 }
 
@@ -148,10 +142,13 @@ div.ole-warning {
     border: thin solid #a40000;  /* scarlet red 3 */
     text-align: center;
 }
-div.confidential-warning {
+.confidential-box {
+    border: thin solid #a40000;  /* scarlet red 3 */
+}
+div.confidential-box div.confidential-warning {
     background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
     color: #a40000;  /* scarlet red 3 */
-    border: thin solid #a40000;  /* scarlet red 3 */
+    border-bottom: thin solid #a40000;  /* scarlet red 3 */
 
     text-align: center;
 }
