@@ -55,7 +55,9 @@
         {% endfor %}
     </ul>
     {% else %}
-    <i>none</i>
+    <div style="text-align: center;">
+        <i>no cases yet</i>
+    </div>
     {% endif %}
     <a href="{% url add_case animal.id %}">add a new case</a>
 </div>

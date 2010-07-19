@@ -79,7 +79,7 @@ table td,th {
 table.bordered {
     border: thin solid #babdb6; /* aluminium 3 */
 }
-table.bordered td,th {
+table.bordered td,table.bordered th {
     border: thin dotted #d3d7cf; /* aluminium 2 */
 }
 table caption {
@@ -96,19 +96,6 @@ td.layout {
     vertical-align: top;
 }
 
-table th, .fieldname {
-    font-weight: bold;
-    color: #555753;
-}
-
-ul.errorlist, span.errorlist {
-    background-color: #ef2929; /* scarlet red 1 */
-    border: thin dashed #a40000; /* scarlet red 3 */
-}
-ul.errorlist {
-    list-style-type: none;
-}
-
 .section {
     border: 2px solid #729fcf; /* sky blue 1 */
     margin: .25em;
@@ -121,11 +108,34 @@ ul.errorlist {
     padding: .125em;
 }
 
-.field_wrapper {
+div.field_wrapper {
     /* border: thin dashed #555753; */ /* aluminium 5 */
     padding: .125em;
     margin: .125em;
     text-align: left;
+}
+
+tr.field th, tr.field td {
+    border-top: thin solid #d3d7cf; /* aluminium 3 */;
+    border-bottom: thin solid #d3d7cf; /* aluminium 3 */;
+}
+tr.field th {
+    border-left: thin dotted #d3d7cf; /* aluminium 2 */
+}
+tr.field td {
+    border-right: thin dotted #d3d7cf; /* aluminium 2 */
+}
+table th, .fieldname {
+    font-weight: bold;
+    color: #555753;
+}
+
+ul.errorlist, span.errorlist {
+    background-color: #ef2929; /* scarlet red 1 */
+    border: thin dashed #a40000; /* scarlet red 3 */
+}
+ul.errorlist {
+    list-style-type: none;
 }
 
 span.ole-true {

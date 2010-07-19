@@ -3,14 +3,33 @@
 {% block head %}
 {{ block.super }}
 {{ media }}
+<style type="text/css">
+ul.navlinks {
+    display: table-row;
+    width: 100%;
+}
+ul.navlinks li {
+    padding: .25em;
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+ul.navlinks li a {
+    text-decoration: none;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-<div><a href="{% url all_contacts %}">view all contacts</a></div>
-<div><a href="{% url all_animals %}">view all animals</a></div>
-<div><a href="{% url all_cases %}">view all cases</a></div>
-<div><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></div>
-<div><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></div>
+<ul class="navlinks">
+    <li><a href="{% url all_contacts %}">view all contacts</a></li>
+    <li><a href="{% url all_animals %}">view all animals</a></li>
+    <li><a href="{% url all_cases %}">view all cases</a></li>
+    <li><a href="{% url all_revisions %}">view all revisions</a></li>
+    <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
+    <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
+</ul>
+
 
 <div class="section">
     <h3>look up a particular case</h3>
