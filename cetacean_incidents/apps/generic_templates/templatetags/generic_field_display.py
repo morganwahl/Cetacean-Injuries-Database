@@ -20,7 +20,10 @@ def display_row(instance, fieldname, label=None, template_name=None, extra_conte
         label = field.verbose_name
     context['label'] = label
     
-    context['value'] = instance.__getattribute__(fieldname)
+    context['value'] = getattr(instance, fieldname)
+    display_func = getattr(instance, 'get_' + fieldname + '_display', None)
+    if display_func:
+        context['value_display'] = display_func()
     
     if template_name is None:
         template_name = 'row'
@@ -51,12 +54,26 @@ def display_yesunk_row(instance, fieldname, label=None):
 def display_yesnounk_row(instance, fieldname, label=None, choices= "yes,no,unknown"):
     return display_row(instance, fieldname, label, 'yesnounk_row', extra_context={'choices': choices})
 
-def display_div(instance, fieldname, label=None, template_name=None):
-    if template_name is None:
-        template_name = 'div'
-    return display_row(instance, fieldname, label, template_name) 
+@register.simple_tag
+def display_chosen_row(instance, fieldname, label=None):
+    return display_row(instance, fieldname, label, 'chosen_row')
 
 @register.simple_tag
-def display_unlabeled_bigtext_div(instance, fieldname, label=None, choices= "yes,no,unknown"):
+def display_div(instance, fieldname, label=None, template_name=None, extra_context={}, colon=True):
+    if template_name is None:
+        template_name = 'div'
+    extra_context.update({'colon': colon})
+    return display_row(instance, fieldname, label, template_name, extra_context) 
+
+@register.simple_tag
+def display_bigtext_div(instance, fieldname, label=None):
+    return display_div(instance, fieldname, label, 'bigtext_div')
+
+@register.simple_tag
+def display_unlabeled_bigtext_div(instance, fieldname, label=None):
     return display_div(instance, fieldname, label, 'unlabeled_bigtext_div')
+
+@register.simple_tag
+def display_yesnounk_div(instance, fieldname, label=None, choices= "yes,no,unknown", colon=False):
+    return display_div(instance, fieldname, label, 'yesnounk_div', extra_context={'choices': choices}, colon=colon)
 

@@ -376,6 +376,7 @@ class Observation(models.Model):
         null= True,
         help_text= 'the start of the observation',
         related_name= 'observation',
+        verbose_name= 'observation date and time',
     )
     # TODO duration?
     location = models.OneToOneField(
@@ -405,6 +406,7 @@ class Observation(models.Model):
         DateTime,
         help_text = 'when we first heard about the observation',
         related_name = 'report',
+        verbose_name = 'report date and time',
     )
         
     taxon = models.ForeignKey(
@@ -418,7 +420,10 @@ class Observation(models.Model):
         max_length= 1,
         choices= GENDERS,
         blank= True,
-        help_text= 'The gender of this animal, if known.'
+        help_text= 'The gender of this animal, if known.',
+        verbose_name = 'sex', # yes, it's not really verbose, but this is easier
+                              # than changing the name of the column in the 
+                              # database for now.
     )
     
     animal_description = models.TextField(
@@ -440,13 +445,15 @@ class Observation(models.Model):
     biopsy = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "where any biopsy samples taken?",
+        help_text= "were any biopsy samples taken?",
+        verbose_name= "biopsy samples taken?",
     )
     
     tagged = models.NullBooleanField(
         blank= True,
         null= True,
         help_text= "were any tags put on the animal?",
+        verbose_name= "was a tag put on the animal?",
     )
     
     # TODO is this needed? surely a wound description would suffice...
@@ -454,7 +461,8 @@ class Observation(models.Model):
         blank= True,
         null= True,
         default= True,
-        help_text= "were there any wounds? False means none were observered, True means they were, Null means we don't know whether any were observed or not."
+        help_text= "were there any wounds? No means none were observered, Yes means they were, Unknown means we don't know whether any were observed or not.",
+        verbose_name= "wounds observed?",
     )
     wound_description = models.TextField(
         blank= True,

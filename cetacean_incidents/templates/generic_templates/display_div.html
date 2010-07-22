@@ -1,4 +1,4 @@
 <div>
-    {% block label_block %}<span class="fieldname">{{ label }}</span>: {% endblock %}{% block value_block %}{{ value }}{% endblock %}
+    {% block label_block %}<span class="fieldname">{{ label }}</span>{% if colon %}:{% endif %} {% endblock %}{% block value_block %}{{ value|default:"<i>none</i>" }}{% endblock %}
 </div>
 

@@ -2,6 +2,7 @@
 {% load observation_extras %}
 {% load animal_extras %}
 {% load contact_extras %}
+{% load generic_field_display %}
 
 {% block head %}
 {{ block.super }}
@@ -46,9 +47,7 @@
         {% include "incidents/case-valid-icon.html" %}
         {{ case.get_valid_display }}
     </div>
-    <div>
-        <span class="fieldname">OLE investigation?</span>  {{ case.ole_investigation|yesno:"yes,no,unknown" }}
-    </div>
+    {% display_yesnounk_div case "ole_investigation" %}
     {% endblock %}
 </div>
 {% block extra_case_fields %}{% endblock %}
