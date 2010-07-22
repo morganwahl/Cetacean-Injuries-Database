@@ -29,6 +29,7 @@ class GearOwner(AbstractContact):
         blank= True,
         null= True,
         related_name= 'gear_set',
+        verbose_name= 'date gear was set',
     )
     
     location_gear_set = models.OneToOneField(
@@ -43,11 +44,13 @@ class GearOwner(AbstractContact):
         blank= True,
         null= True,
         related_name= 'gear_missing',
+        verbose_name= 'date gear went missing',
     )
 
     missing_gear = models.TextField(
         blank= True,
         help_text= u"the owner's description of what gear they're missing",
+        verbose_name= "missing gear description",
     )
     
     class Meta:
@@ -95,7 +98,7 @@ class Entanglement(Case):
         default= None,
         blank= True,
         null= True,
-        help_text= "was the gear analyzed?",
+        verbose_name= "was gear analyzed?",
     )
     analyzed_date = models.DateField(
         blank= True,

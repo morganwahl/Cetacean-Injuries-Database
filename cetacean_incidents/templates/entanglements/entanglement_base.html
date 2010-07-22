@@ -1,5 +1,6 @@
 {% extends "incidents/case_base.html" %}
 {% load contact_extras %}
+{% load generic_field_display %}
 
 {% block head %}
 {{ block.super }}
@@ -55,70 +56,45 @@
     {% if case.gear_owner_info %}
     <div class="confidential-box">
         <div class="confidential-warning">confidential!</div>
-    {% with case.gear_owner_info as go %}
-    <table class="layout" style="width: 100%;">
-        <tr class="layout">
-            <td class="layout" style="width: 50%;">
-                <div>
-                    <span class="fieldname">name</span>: {{ go.name|default:"<i>no name given</i>" }}
-                </div>
-                {% if go.person %}
-                <div>
-                    <span class="fieldname">is a person?</span> {{ go.person }}
-                </div>
-                {% endif %}
-                {% if go.phone %}
-                <div>
-                    <span class="fieldname">phone</span>: {{ go.phone }}
-                </div>
-                {% endif %}
-                {% if go.email %}
-                <div>
-                    <span class="fieldname">email</span>: {{ go.email }}
-                </div>
-                {% endif %}
-                {% if go.address %}
-                <div>
-                    <span class="fieldname">address</span>:
-                    <pre>{{ go.address }}</pre>
-                </div>
-                {% endif %}
-                {% if go.notes %}
-                <div>
-                    <span class="fieldname">notes</span>:
-                    <pre>{{ go.notes }}</pre>
-                </div>
-                {% endif %}
-            </td>
-            <td class="layout" style="width: 50%;">
-                {% if go.location_gear_set %}
-                <div class="subsection">
-                    <span class="fieldname">location gear was set</span>
-                    {% with go.location_gear_set as l %}
-                    {% include "locations/location_details_include.html" %}
-                    {% endwith %}
-                </div>
-                {% endif %}
-                {% if go.date_gear_set %}
-                <div>
-                    <span class="fieldname">date gear was set</span>:  {{ go.date_gear_set|default:"<i>unknown</i>" }}
-                </div>
-                {% endif %}
-                {% if go.date_gear_missing %}
-                <div>
-                    <span class="fieldname">date gear went missing</span>:  {{ go.date_gear_missing|default:"<i>unknown</i>" }}
-                </div>
-                {% endif %}
-                {% if go.missing_gear %}
-                <div>
-                    <span class="fieldname">missing gear description</span>:
-                    <pre>{{ go.missing_gear }}</pre>
-                </div>
-                {% endif %}
-            </td>
-        </tr>
-    </table>
-    {% endwith %}
+        {% with case.gear_owner_info as go %}
+        <table class="layout" style="width: 100%;">
+            <tr class="layout" style="width: 100%;">
+                <td class="layout" style="width: 50%;">
+                    <table>
+                        {% display_row go "name" %}
+                        {% display_yesnounk_row go "person" "person or org?" "person,organization,unknown" %}
+                        {% if go.phone %}
+                        {% display_row go "phone" %}
+                        {% endif %}
+                        {% if go.email %}
+                        {% display_row go "email" %}
+                        {% endif %}
+                        {% if go.address %}
+                        {% display_bigtext_row go "address" %}
+                        {% endif %}
+                        {% if go.notes %}
+                        {% display_bigtext_row go "notes" %}
+                        {% endif %}
+                    </table>
+                </td>
+                <td class="layout" style="width: 50%;">
+                    {% if go.location_gear_set %}
+                    <div class="subsection">
+                        <span class="fieldname">location gear was set</span>
+                        {% with go.location_gear_set as l %}
+                        {% include "locations/location_details_include.html" %}
+                        {% endwith %}
+                    </div>
+                    {% endif %}
+                    <table>
+                        {% display_row go "date_gear_set" %}
+                        {% display_row go "date_gear_missing" %}
+                        {% display_bigtext_row go "missing_gear" %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+        {% endwith %}
     </div>
     <div>
         <a href="{% url edit_gear_owner case.id %}">edit gear owner info</a>
