@@ -236,6 +236,9 @@
                     {% with forms.observation.biopsy as f %}
                     {% include "labeled_field.html" %}
                     {% endwith %}
+                    {% with forms.observation.tagged as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
                 </div>
                 <div style="text-align:left; float: left;">
                     <a class="link-to-observation" href="#observation">&lt;- previous tab</a>
