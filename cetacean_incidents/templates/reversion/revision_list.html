@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-all revisions
+last {{ rev_list.count }} revision{{ rev_list.count|pluralize }}
 <table>
     <thead>
         <tr>

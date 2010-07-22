@@ -25,12 +25,17 @@ urlpatterns = patterns('',
 )
 
 from reversion.models import Revision
-revisions_args = {
+all_revisions_args = {
     'queryset': Revision.objects.all().order_by('-date_created'),
     'template_object_name': 'rev',
 }
+recent_revisions_args = {
+    'queryset': Revision.objects.all().order_by('-date_created')[:20],
+    'template_object_name': 'rev',
+}
 urlpatterns += patterns('cetacean_incidents.generic_views',
-    (r'^revisions/$', 'object_list', revisions_args, 'all_revisions'),
+    (r'^revisions/$', 'object_list', all_revisions_args, 'all_revisions'),
+    (r'^revisions/recent$', 'object_list', recent_revisions_args, 'recent_revisions'),
 )
 urlpatterns += patterns('',
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
