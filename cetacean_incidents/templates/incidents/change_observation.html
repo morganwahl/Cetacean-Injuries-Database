@@ -246,10 +246,24 @@
             </div> <!-- id="animal" -->
             <div id="incident">
                 <h3>Incident details</h3>
+                <script type="text/javascript">
+                    $().ready(function(){
+                        SelectHider.init('{{ forms.observation.wounded.html_name }}', {
+                            {# TODO? get the keys from forms.observation.wounded.field #}
+                            '1': 'observation_wounded',
+                            '2': 'observation_wounded'
+                        });
+                    });
+                </script>
                 {% block incident_tab_body %}
-                {% with forms.observation.wound_description as f %}
-                {% include "bigtext_field.html" %}
+                {% with forms.observation.wounded as f %}
+                {% include "labeled_field.html" %}
                 {% endwith %}
+                <div id="observation_wounded">
+                    {% with forms.observation.wound_description as f %}
+                    {% include "bigtext_field.html" %}
+                    {% endwith %}
+                </div>
                 {% endblock %}
                 <div style="text-align:left; float: left;">
                     <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
