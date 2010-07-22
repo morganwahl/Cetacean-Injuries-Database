@@ -87,14 +87,14 @@ table caption {
 }
 
 del {
-    background: #ef2929;
-    border: thin dashed #cc0000;
-    color: #cc0000;
+    background: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
+    border: thin dashed #cc0000; /* scarlet red 2 */
+    color: #a40000; /* scarlet red 3 */
 }
 ins {
-    background: #8ae234;
-    border: thin dashed #4e9a06;
-    color: #4e9a06;
+    background: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
+    border: thin dashed #73d216; /* chameleon 2 */
+    color: #274c03; /* chameleon 3 at half value (30% absolute val.) */
 }
 
 /* for using tables for layout */
@@ -149,6 +149,9 @@ ul.errorlist {
     list-style-type: none;
 }
 
+span.invalid {
+    text-decoration: line-through;
+}
 span.ole-true {
     background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */
     border: thin solid #ef2929; /* scarlet red 1 */
