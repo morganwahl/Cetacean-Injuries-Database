@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from generic_views import direct_to_template
-from views import home
+from views import home, revision_detail
 from django.contrib import admin
 
 admin.autodiscover()
@@ -22,6 +22,18 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
     
     (r'^$', home, {}, "home")
+)
+
+from reversion.models import Revision
+revisions_args = {
+    'queryset': Revision.objects.all().order_by('-date_created'),
+    'template_object_name': 'rev',
+}
+urlpatterns += patterns('cetacean_incidents.generic_views',
+    (r'^revisions/$', 'object_list', revisions_args, 'all_revisions'),
+)
+urlpatterns += patterns('',
+    (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if

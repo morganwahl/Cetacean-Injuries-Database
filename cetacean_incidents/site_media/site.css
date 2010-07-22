@@ -86,6 +86,17 @@ table caption {
     background: transparent;
 }
 
+del {
+    background: #ef2929;
+    border: thin dashed #cc0000;
+    color: #cc0000;
+}
+ins {
+    background: #8ae234;
+    border: thin dashed #4e9a06;
+    color: #4e9a06;
+}
+
 /* for using tables for layout */
 .layout {
     margin: 0;

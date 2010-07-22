@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+all revisions
+<table>
+    <thead>
+        <tr>
+            <th>date created</th>
+            <th>revision</th>
+            <th>user</th>
+            <th>comments</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for rev in rev_list %}
+        <tr>
+            <td>{{ rev.date_created }}</td>
+            <td>
+                <a href="{% url revision_detail rev.id %}">{{ rev }}</a>
+            </td>
+            <td>{{ rev.user }}</td>
+            <td>{{ rev.comment }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

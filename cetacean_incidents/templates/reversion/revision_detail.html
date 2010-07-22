@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div style="text-align:center;" width="100%">
+    <div style="display: float; float:left;">
+        {% if rev.get_previous_by_date_created %}
+        <a href="{% url revision_detail rev.get_previous_by_date_created.id %}">
+            &#x2190; previous revision
+        </a>
+        {% else %}
+        <i>no previous revisions</i>
+        {% endif %}
+    </div>
+    revision #{{ rev.id }} created {{ rev.date_created }} by {{ rev.user }}
+    <div style="display: float; float:right;">
+        {% if rev.get_next_by_date_created %}
+        <a href="{% url revision_detail rev.get_next_by_date_created.id %}">
+            next revision &#x2192;
+        </a>
+        {% else %}
+        <i>no subsequent revisions</i>
+        {% endif %}
+    </div>
+</div>
+<table class="bordered" width="100%">
+    <tr>
+        <th>old revision</th>
+        <th>content_type</th>
+        <th>diff</th>
+        <th>next revision</th>
+    </tr>
+    {% for ver in annotated_versions %}
+    <tr>
+        <td>
+            {% if ver.old_version %}
+            <a href="{% url revision_detail ver.old_version.revision.id %}">{{ ver.old_version.revision.id }}</a>
+            {% else %}
+            <i>new</i>
+            {% endif %}
+        </td>
+        <td>
+            {{ ver.content_type }}
+        </td>
+        <td>
+            {% if ver.differs %}
+            <table class="bordered">
+                <tr>
+                    <th>field</th>
+                    {% if ver.old_version %}
+                    <th>old</th>
+                    <th>diff</th>
+                    {% endif %}
+                    <th>new</th>
+                </tr>
+                {% for field, vals in ver.fields.items %}
+                <tr>
+                    <td>{{ field }}</td>
+                    {% if ver.old_version %}
+                    {% if vals.differ %}
+                    <td>{{ vals.old }}</td>
+                    <td>{{ vals.diff }}</td>
+                    {% else %}
+                    <td><i>same</i></td>
+                    <td></td>
+                    {% endif %}
+                    {% endif %}
+                    <td>{{ vals.new }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% else %}
+            <i>no change</i>
+            {% endif %}
+        </td>
+        <td>
+            {% if ver.new_version %}
+            <a href="{% url revision_detail ver.new_version.revision.id %}">{{ ver.new_version.revision.id }}</a>
+            {% else %}
+            <i>none</i>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
