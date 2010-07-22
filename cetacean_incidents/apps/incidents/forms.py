@@ -215,6 +215,11 @@ class CaseSearchForm(forms.Form):
         required= False,
     )
     
+    case_name = forms.CharField(
+        required= False,
+        help_text= "search for Cases whose current or past names contain this"
+    )
+    
     observation_narrative = forms.CharField(
         required= False,
         help_text= "search for Cases with an observation whose narrative contains this phrase",
