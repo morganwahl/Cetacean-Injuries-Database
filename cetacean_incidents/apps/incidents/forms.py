@@ -31,6 +31,7 @@ class AnimalForm(forms.ModelForm):
         label= "dead?",
         initial= False,
         help_text= "note that 'no' is the same as 'unknown'",
+        required= False,
     )
     
     def clean(self):
