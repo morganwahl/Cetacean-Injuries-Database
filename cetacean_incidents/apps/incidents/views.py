@@ -609,7 +609,8 @@ def animal_search(request):
     return HttpResponse(json.dumps(animals))
 
 def case_search(request):
-    form = CaseSearchForm(request.GET)
+    # prefix should be the same as the homepage
+    form = CaseSearchForm(request.GET, prefix='case_search')
     # TODO we make a useless queryset since the template expects a queryset
     cases = Case.objects.filter(id=None)
 
@@ -680,6 +681,10 @@ def case_search(request):
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!
             cases = cases.filter(observation__taxon=t)
+
+        if form.cleaned_data['case_name']:
+            name = form.cleaned_data['case_name']
+            cases = cases.filter(names__icontains=name)
 
         if form.cleaned_data['observation_narrative']:
             on = form.cleaned_data['observation_narrative']
