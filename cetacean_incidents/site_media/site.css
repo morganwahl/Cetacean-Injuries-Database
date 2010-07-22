@@ -86,15 +86,26 @@ table caption {
     background: transparent;
 }
 
-del {
+.changed table, .added table, .removed, table {
+    /* reset colors to what they would've been */
+    /* TODO: better way to do this? */
+    background-color: #eeeeec; /* aluminium 1 */
+    color: #2e3436; /* aluminium 6 */
+}
+del, .removed {
     background: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
     border: thin dashed #cc0000; /* scarlet red 2 */
     color: #a40000; /* scarlet red 3 */
 }
-ins {
+ins, .added {
     background: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
     border: thin dashed #73d216; /* chameleon 2 */
     color: #274c03; /* chameleon 3 at half value (30% absolute val.) */
+}
+.changed {
+    background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
+    border: thin dashed #edd400; /* butter 2 */
+    color: #614f00;  /* butter 3 at half value (38% absolute val.) */
 }
 
 /* for using tables for layout */

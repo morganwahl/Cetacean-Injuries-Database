@@ -69,10 +69,10 @@ def html_diff(old, new):
         return '<i>same</i>'
     
     if old is None:
-        return "<i>defined</i>"
+        return "<span class=\"added\"><i>defined</i><span>"
     
     if new is None:
-        return "<i>undefined</i>"
+        return "<span class=\"removed\"><i>undefined</i></span>"
     
     if isinstance(old, numbers.Real) and isinstance(new, numbers.Real):
         diff = new - old
@@ -124,7 +124,7 @@ def html_diff(old, new):
         return diffstring
     
     if old.__class__ == new.__class__:
-        return "<i>different %s</i>" % unicode(old.__class__.__name__)
+        return "<span class=\"changed\"><i>different %s</i></span>" % unicode(old.__class__.__name__)
     else:
         return "<i>%s -> %s</i>" % map(unicode, (old.__class__, new.__class__))
 
@@ -176,5 +176,6 @@ def revision_detail(request, rev_id):
     return render_to_response('reversion/revision_detail.html', {
         'rev': rev,
         'annotated_versions': annotated_versions,
+        'media': Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js')),
     }, RequestContext(request))
     

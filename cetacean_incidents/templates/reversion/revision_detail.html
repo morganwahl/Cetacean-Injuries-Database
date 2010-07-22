@@ -1,5 +1,10 @@
 {% extends "base.html" %}
 
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block content %}
 <div style="text-align:center;" width="100%">
     <div style="display: float; float:left;">
@@ -35,15 +40,33 @@
             {% if ver.old_version %}
             <a href="{% url revision_detail ver.old_version.revision.id %}">{{ ver.old_version.revision.id }}</a>
             {% else %}
-            <i>new</i>
+            <i>none</i>
             {% endif %}
         </td>
         <td>
             {{ ver.content_type }}
         </td>
-        <td>
+        <td width="75%"{% if ver.differs %}{% if not ver.old_version %} class="added"{% else %} class="changed"{% endif %}{% endif %}>
             {% if ver.differs %}
-            <table class="bordered">
+            {% if not ver.old_version %}
+            <i>new</i>
+            {% else %}
+            <i>change</i>
+            {% endif %}
+            {% else %}
+            <i>no change</i>
+            {% endif %}
+            <script type="text/javascript">
+                $().ready(function(){
+                    CheckboxHider.init(
+                        "view_{{ ver.id }}",
+                        "{{ ver.id }}_changes"
+                    );
+                });
+            </script>
+            <form><div><input {% if ver.differs %}checked="checked"{% endif %}
+type="checkbox" name="view_{{ ver.id }}"><label for="view_{{ ver.id }}">show fields</label></div></form>
+            <table class="bordered" id="{{ ver.id }}_changes">
                 <tr>
                     <th>field</th>
                     {% if ver.old_version %}
@@ -54,7 +77,7 @@
                 </tr>
                 {% for field, vals in ver.fields.items %}
                 <tr>
-                    <td>{{ field }}</td>
+                    <td{% if vals.differ %}{% if not ver.old_version %} class="added"{% else %} class="changed"{% endif %}{% endif %}>{{ field }}</td>
                     {% if ver.old_version %}
                     {% if vals.differ %}
                     <td>{{ vals.old }}</td>
@@ -68,9 +91,6 @@
                 </tr>
                 {% endfor %}
             </table>
-            {% else %}
-            <i>no change</i>
-            {% endif %}
         </td>
         <td>
             {% if ver.new_version %}
