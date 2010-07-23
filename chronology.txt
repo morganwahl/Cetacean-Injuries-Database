@@ -27,7 +27,6 @@ undated cases are considered most recent in sorting
 selected taxon should be clear
     in IE!
     make search box disappear
-search for "G. species" in taxon widget
 'observer on land' fake field for vessels marked as 'land'
 IE doesn't show table-sort arrows
 secure contacts table

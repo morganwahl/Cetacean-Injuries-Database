@@ -1,7 +1,10 @@
+import re
+
 try:
     import simplejson as json# for 2.5 compat.
 except ImportError:
     import json
+
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from models import Taxon
@@ -20,7 +23,17 @@ def taxon_search(request):
     words = query.split()
     if words:
         firstword = words[0]
-        results = Taxon.objects.filter(Q(name__istartswith=firstword) | Q(common_names__icontains=query)).order_by('-rank', 'name')
+        query = Q(name__istartswith=firstword)
+        query |= Q(common_names__icontains=query)
+        abbr_match = re.search(r'^(?u)\s*(\w+)\.', firstword)
+        if abbr_match:
+            genuses = Taxon.objects.filter(rank=0, name__istartswith=abbr_match.group(1)).values_list('id', flat=True)
+            if genuses:
+                # add all their descendants to the results
+                # TODO fetch more than 2 deep)
+                query |= Q(supertaxon__id__in=genuses)
+                query |= Q(supertaxon__supertaxon__id__in=genuses)
+        results = Taxon.objects.filter(query).order_by('-rank', 'name')
     else:
         results = tuple()
     
