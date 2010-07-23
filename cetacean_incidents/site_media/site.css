@@ -86,7 +86,7 @@ table caption {
     background: transparent;
 }
 
-.changed table, .added table, .removed, table {
+.changed table, .added table, .removed table {
     /* reset colors to what they would've been */
     /* TODO: better way to do this? */
     background-color: #eeeeec; /* aluminium 1 */
