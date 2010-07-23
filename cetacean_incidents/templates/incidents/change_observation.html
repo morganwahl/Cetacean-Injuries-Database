@@ -41,7 +41,6 @@
 {% block title %}{{ block.super }}: {{ case }}: {% block observation_title %}NO TITLE!{% endblock %}{% endblock %}
 
 {% block header %}
-{{ block.super }}
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}

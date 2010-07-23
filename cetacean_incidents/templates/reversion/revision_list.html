@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 
+{% block header %}
+<h3>last {{ rev_list.count }} revision{{ rev_list.count|pluralize }}</h3>
+{% endblock %}
+
 {% block content %}
-last {{ rev_list.count }} revision{{ rev_list.count|pluralize }}
 <table>
     <thead>
         <tr>

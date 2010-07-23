@@ -13,7 +13,6 @@
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
 {% block header %}
-{{ block.super }}
 {% if observation.case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}

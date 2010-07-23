@@ -5,8 +5,8 @@
 {{ media }}
 {% endblock %}
 
-{% block content %}
-<div style="text-align:center;" width="100%">
+{% block header %}
+<h2 style="text-align:center;">
     <div style="display: float; float:left;">
         {% if rev.get_previous_by_date_created %}
         <a href="{% url revision_detail rev.get_previous_by_date_created.id %}">
@@ -26,7 +26,10 @@
         <i>no subsequent revisions</i>
         {% endif %}
     </div>
-</div>
+</h2>
+{% endblock %}
+
+{% block content %}
 <table class="bordered" width="100%">
     <tr>
         <th>old revision</th>
