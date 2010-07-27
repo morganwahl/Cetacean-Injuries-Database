@@ -13,11 +13,12 @@ from django.utils.safestring import mark_safe
 from reversion.models import Revision, Version
 
 from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
 
 @login_required
 def home(request):
     form_classes = {
+        'animal_lookup_id': AnimalIDLookupForm,
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
         'case_lookup_nmfs': CaseNMFSIDLookupForm,
@@ -32,6 +33,10 @@ def home(request):
         forms[form_name] = form_class(prefix=form_name, **kwargs)
     
     if request.method == 'GET':
+        if 'animal_lookup_id-submitted' in request.GET:
+            if forms['animal_lookup_id'].is_valid():
+                animal = forms['animal_lookup_id'].cleaned_data['local_id']
+                return redirect(animal)
         if 'case_lookup_id-submitted' in request.GET:
             if forms['case_lookup_id'].is_valid():
                 case = forms['case_lookup_id'].cleaned_data['local_id']

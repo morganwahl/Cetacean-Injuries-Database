@@ -142,6 +142,20 @@ class SubmitDetectingForm(forms.Form):
         initial= 'yes',
     )
 
+class AnimalIDLookupForm(SubmitDetectingForm):
+    local_id = forms.IntegerField(
+        #help_text= u"lookup a particular case by numeric ID",
+        label= "Local ID",
+    )
+    
+    def clean_local_id(self):
+        data = self.cleaned_data['local_id']
+        try:
+            animal = Animal.objects.get(id=data)
+        except Animal.DoesNotExist:
+            raise forms.ValidationError("no animal with that ID")
+        return animal
+
 class CaseIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",
