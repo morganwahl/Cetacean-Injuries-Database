@@ -33,10 +33,28 @@ class Animal(models.Model):
         help_text= "if this animal is dead, has a necropsy been performed on it?",
     )
     
-    def _get_observation_set(self):
+    @property
+    def observation_set(self):
         return Observation.objects.filter(case__animal=self)
-    observation_set = property(_get_observation_set)
     
+    @property
+    def first_observation(self):
+        if not self.observation_set.count():
+            return None
+        return self.observation_set.order_by(
+            'observation_datetime',
+            'report_datetime',
+        )[0]
+    
+    @property
+    def last_observation(self):
+        if not self.observation_set.count():
+            return None
+        return self.observation_set.order_by(
+            '-observation_datetime',
+            '-report_datetime',
+        )[0]
+
     def _get_probable_gender(self):
         return probable_gender(self.observation_set)
     probable_gender = property(_get_probable_gender)
