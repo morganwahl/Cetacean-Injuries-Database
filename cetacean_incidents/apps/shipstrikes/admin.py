@@ -1,15 +1,15 @@
 from django.contrib import admin
+from reversion.admin import VersionAdmin
 
 from cetacean_incidents.apps.vessels.admin import VesselAdmin
-from cetacean_incidents.apps.incidents.admin import CaseAdmin, ObservationAdmin
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
-class ShipstrikeAdmin(CaseAdmin):
+class ShipstrikeAdmin(VersionAdmin):
     pass
 admin.site.register(Shipstrike, ShipstrikeAdmin)
 
-class ShipstrikeObservationAdmin(ObservationAdmin):
+class ShipstrikeObservationAdmin(VersionAdmin):
     pass
 admin.site.register(ShipstrikeObservation, ShipstrikeObservationAdmin)
 

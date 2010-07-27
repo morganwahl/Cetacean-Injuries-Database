@@ -3,13 +3,11 @@ from reversion.admin import VersionAdmin
 
 from models import Entanglement, EntanglementObservation, GearType, GearTypeRelation, GearOwner
 
-from cetacean_incidents.apps.incidents.admin import CaseAdmin, ObservationAdmin
-
-class EntanglementAdmin(CaseAdmin):
+class EntanglementAdmin(VersionAdmin):
     pass
 admin.site.register(Entanglement, EntanglementAdmin)
 
-class EntanglementObservationAdmin(ObservationAdmin):
+class EntanglementObservationAdmin(VersionAdmin):
     pass
 admin.site.register(EntanglementObservation, EntanglementObservationAdmin)
 
