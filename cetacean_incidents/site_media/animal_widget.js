@@ -46,7 +46,7 @@ function update_results(query) {
     $.getJSON(
         // TODO error-handling!
         // TODO get URL from django?
-        "/incidents/animal_search",
+        "/incidents/animal_search_json",
         { q: query},
         function(animals){
             // TODO this func is called asynchronously. make

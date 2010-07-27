@@ -18,7 +18,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation
-from forms import CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
+from forms import AnimalSearchForm, CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
@@ -72,6 +72,36 @@ def edit_animal(request, animal_id):
             'animal': animal,
             'form': form,
             'all_media': template_media + form.media
+        },
+        context_instance= RequestContext(request),
+    )
+@login_required
+def animal_search(request):
+    # prefix should be the same as the homepage
+    form = AnimalSearchForm(request.GET, prefix='animal_search')
+    # TODO we make a useless queryset since the template expects a queryset
+    animals = Animal.objects.filter(id=None)
+
+    if form.is_valid():
+        animal_order_args = ('id',)
+        #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        animals = Animal.objects.all().order_by(*animal_order_args)
+        
+        if form.cleaned_data['taxon']:
+            t = form.cleaned_data['taxon']
+            # TODO handle taxon uncertainty!
+            animals = animals.filter(Q(determined_taxon=t) | Q(case__observation__taxon=t))
+
+        if 'name' in form.cleaned_data:
+            name = form.cleaned_data['name']
+            animals = animals.filter(name__icontains=name)
+
+    return render_to_response(
+        "incidents/animal_search.html",
+        {
+            'form': form,
+            'animal_list': animals,
         },
         context_instance= RequestContext(request),
     )
@@ -571,7 +601,7 @@ def merge_case(request, case1_id, case2_id):
         context_instance= RequestContext(request),
     )
 
-def animal_search(request):
+def animal_search_json(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 
     JSON list of Animals.

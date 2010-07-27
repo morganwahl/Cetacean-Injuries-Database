@@ -203,6 +203,17 @@ class CaseYearlyNumberLookupForm(SubmitDetectingForm):
                 raise forms.ValidationError("no case has been assigned that number for that year yet")
         return d
 
+class AnimalSearchForm(forms.Form):
+
+    taxon = TaxonField(
+        required= False,
+    )
+
+    name = forms.CharField(
+        required= False,
+        help_text= "search for Animals whose name contains this",
+    )
+
 class CaseSearchForm(forms.Form):
     
     after_date = forms.DateTimeField(

@@ -102,6 +102,15 @@ ul.navlinks li a {
     </tr>
     <tr class="layout">
         <td class="section layout">
+            <form action="{% url animal_search %}" method="get">
+                <div>
+                    <h3>get a list of animals that fit some criteria</h3>
+                    {% for f in forms.animal_search %}
+                    {% include "labeled_field.html" %}
+                    {% endfor %}
+                    <button type="submit">search</button>
+                </div>
+            </form>
         </td>
         <td class="section layout">
             <form action="{% url case_search %}" method="get">

@@ -9,6 +9,7 @@ from django.db import models
 from django.contrib.auth.decorators import login_required
 from django.forms import Media
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import NoReverseMatch
 
 from reversion.models import Revision, Version
 
@@ -22,6 +23,7 @@ def home(request):
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
         'case_lookup_nmfs': CaseNMFSIDLookupForm,
+        'animal_search': AnimalSearchForm,
         'case_search': CaseSearchForm,
     }
     forms = {}

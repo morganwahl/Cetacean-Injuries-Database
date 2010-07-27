@@ -25,6 +25,8 @@ urlpatterns += patterns('',
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
     (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
     (r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
+    (r'^animals/search$', views.animal_search, {}, 'animal_search'),
+    url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),
     (r'^cases/(\d+)/$', views.case_detail, {}, 'case_detail'),
     (r'^cases/create$', views.create_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'),
@@ -33,7 +35,6 @@ urlpatterns += patterns('',
     (r'^cases/search$', views.case_search, {}, 'case_search'),
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
-    url(r'^animal_search$', views.animal_search, name='animal_search'),
 )
 
 # for backwards compatibility on old /incidents/ URLs

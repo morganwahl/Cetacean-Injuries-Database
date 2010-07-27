@@ -1,0 +1,34 @@
+{% extends "incidents/animal_list.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ form.media }}
+{% endblock %}
+
+{% block header %}<h2>Animal search</h2>{% endblock %}
+
+{% block animals_header %}
+<form action="" method="get">
+    <div class="section">
+        {% with form.non_field_errors as errors %}
+        {% if errors %}
+        <ul class="errorlist">
+            {% for e in errors %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% for f in form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
+        <button type="submit">search again</button>
+    </div>
+</form>
+{% if animal_list.count %}
+<div style="text-align: center;">
+    ({{ animal_list.count }} matching animal{{ animal_list.count|pluralize }})
+</div>
+{% endif %}
+{% endblock %}
+
