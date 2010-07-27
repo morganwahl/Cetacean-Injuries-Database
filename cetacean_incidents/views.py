@@ -157,6 +157,16 @@ def revision_detail(request, rev_id):
         ).order_by('revision__date_created')
         if new_versions.count():
             ver.new_version = new_versions[0]
+        else:
+            # this is either the current version or was deleted
+            # if it's current we don't need to worry about intervening schemata
+            # changes and can safely vivify it to get the URL of it's page
+            instance = ver.object_version.object
+            if hasattr(instance, 'get_absolute_url'):
+                try:
+                    ver.url = instance.get_absolute_url()
+                except NoReverseMatch:
+                    pass
 
         fields = {}
         for name, value in ver.get_field_dict().items():

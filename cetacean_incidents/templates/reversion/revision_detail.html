@@ -99,7 +99,10 @@ type="checkbox" name="view_{{ ver.id }}"><label for="view_{{ ver.id }}">show fie
             {% if ver.new_version %}
             <a href="{% url revision_detail ver.new_version.revision.id %}">{{ ver.new_version.revision.id }}</a>
             {% else %}
-            <i>none</i>
+            <i>this is the current version</i>
+            {% if ver.url %}
+            <a href="{{ ver.url }}">see it's page</a>
+            {% endif %}
             {% endif %}
         </td>
     </tr>
