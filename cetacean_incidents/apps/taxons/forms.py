@@ -20,16 +20,21 @@ class TaxonWidget(forms.widgets.Widget):
         implementations should program defensively.
         """
         
+        none_display_name = 'none chosen'
+        
         if value in EMPTY_VALUES:
             value = ''
             taxon_value = None
+            initial_display_name = none_display_name
         else:
             try:
                 taxon_value = Taxon.objects.get(id=value)
                 value = unicode(taxon_value.id)
+                initial_display_name = unicode(taxon_value)
             except Taxon.DoesNotExist:
                 value = ''
                 taxon_value = None
+                initial_display_name = none_display_name
                 print "No good value: %s" % repr(value)
         
         final_attrs = self.build_attrs(attrs, type=self.input_type, name=name, value=value)
@@ -37,7 +42,8 @@ class TaxonWidget(forms.widgets.Widget):
         # assumes the the django.template.loaders.app_directories.load_template_source 
         # is being used, which is the default.
         return render_to_string('taxon_widget.html', {
-            'initial_display_name': unicode(taxon_value),
+            'none_display_name': none_display_name,
+            'initial_display_name': initial_display_name,
             'final_attrs': forms.util.flatatt(final_attrs),
             'name': name,
         })

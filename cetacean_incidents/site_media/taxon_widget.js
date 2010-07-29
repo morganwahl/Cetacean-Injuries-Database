@@ -16,7 +16,7 @@
 // query->no_query (2->1)
 
 TaxonWidget = {
-    init: function (field_name, filter_id, results_id, chosen_id, clear_id, query_url, throbber_url) {
+    init: function (field_name, search_box_id, filter_id, results_id, chosen_id, clear_id, query_url, throbber_url, none_display_name) {
         var clear_results = function () {
             $("#" + results_id).hide();
             return;
@@ -107,7 +107,7 @@ TaxonWidget = {
 
         var clear_taxon = function () {
             $("[name=" + field_name + "]").val('');
-            $("#" + chosen_id).html("<i>none chosen</i>");
+            $("#" + chosen_id).text(none_display_name);
             $("#" + clear_id).hide();
             $("#" + filter_id).removeAttr('disabled');
             check_filter()

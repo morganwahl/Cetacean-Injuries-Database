@@ -5,23 +5,25 @@
         // TODO don't execute until taxon_widget.js has been loaded
         TaxonWidget.init(
             '{{ name }}',
+            '{{ name }}_search_box',
             '{{ name }}_taxon_filter',
             '{{ name }}_results_box',
             '{{ name }}_taxon_chosen',
             '{{ name }}_clear_taxon',
             '{% url taxon_search %}',
             '{% url site-media path="Loader3.gif" %}'
+            '{{ none_display_name }}'
         );
     </script>
-    <div class="taxon_widget_search_box">
+    <div id="{{ name }}_search_box" class="taxon_widget_search_box">
         search taxons for:
         <input id="{{ name }}_taxon_filter" class="taxon_widget_filter" type="text" autocomplete="off">
         <div id="{{ name }}_results_box" class="taxon_widget_searchlist" style="display: none;">
             <i>no query</i>
         </div>
     </div>
-    <span id="{{ name }}_taxon_chosen">{{ initial_display_name }}</span>
-    <button type="button" id="{{ name }}_clear_taxon">clear taxon</button>
+    <i><span id="{{ name }}_taxon_chosen">{{ initial_display_name }}</span></i>
+    <button type="button" id="{{ name }}_clear_taxon"{% ifequal initial_display_name none_display_name %} style="display: none;"{% endifequal %}>clear taxon</button>
     <input {{ final_attrs|safe }}>
 </div>
 
