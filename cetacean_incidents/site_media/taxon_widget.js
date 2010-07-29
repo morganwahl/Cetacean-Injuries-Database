@@ -115,7 +115,6 @@ TaxonWidget = {
             check_filter()
         }
 
-
         $(document).ready(function() {
             $("#" + filter_id).keyup(check_filter);
             //check_filter();
