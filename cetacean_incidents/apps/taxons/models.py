@@ -1,5 +1,22 @@
 from django.db import models
 
+class TaxonManager(models.Manager):
+
+    def descendants(self, taxon):
+        'Return a tuple of all taxons that descend from the given taxon (not including the given taxon)'
+
+        children = taxon.subtaxons.all().order_by('-rank', 'name')
+        result = tuple(children)
+        for child in children:
+            result += self.descendants(child)
+
+        return tuple(result)
+
+    def with_descendants(self, taxon):
+        'Return a tuple of all taxons that descend from the given taxon (including the given taxon)'
+
+        return (taxon,) + self.descendants(taxon)
+
 class Taxon(models.Model):
     '''\
     A taxon is a generic term for a grouping of organisms made by a taxonimist.
@@ -70,6 +87,8 @@ class Taxon(models.Model):
             t = t.supertaxon
         if t.rank <= 0:
             return True
+
+    objects = TaxonManager()
 
     class Meta:
         ordering = ['name']

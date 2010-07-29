@@ -20,6 +20,7 @@ from cetacean_incidents import generic_views
 from models import Case, Animal, Observation
 from forms import AnimalSearchForm, CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
 
+from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
@@ -91,7 +92,8 @@ def animal_search(request):
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!
-            animals = animals.filter(Q(determined_taxon=t) | Q(case__observation__taxon=t))
+            descendants = Taxon.objects.with_descendants(t)
+            animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
 
         if 'name' in form.cleaned_data:
             name = form.cleaned_data['name']
@@ -710,7 +712,7 @@ def case_search(request):
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!
-            cases = cases.filter(observation__taxon=t)
+            cases = cases.filter(observation__taxon__in=Taxon.objects.with_descendants(t))
 
         if form.cleaned_data['case_name']:
             name = form.cleaned_data['case_name']
