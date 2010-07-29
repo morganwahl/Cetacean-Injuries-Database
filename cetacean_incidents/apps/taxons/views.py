@@ -16,24 +16,36 @@ def taxon_search(request):
     JSON list of Taxons.
     '''
     
-    query = u''
+    get_query = u''
     if 'q' in request.GET:
-        query = request.GET['q']
+        get_query = request.GET['q']
     
-    words = query.split()
+    words = get_query.split()
     if words:
-        firstword = words[0]
-        query = Q(name__istartswith=firstword)
-        query |= Q(common_names__icontains=query)
-        abbr_match = re.search(r'^(?u)\s*(\w+)\.', firstword)
+        common_query = Q(common_names__icontains=get_query)
+        
+        genus_query = Q()
+        abbr_match = re.search(r'^(?u)\s*(\w+)\.', words[0])
         if abbr_match:
+            # the first word is a genus abbr, so remove it from the list of 
+            # words
+            words = words[1:]
+            if len(words) == 0:
+                # put in a dummy first word since latin_query assumes there will
+                # be one
+                words = ['']
+            
             genuses = Taxon.objects.filter(rank=0, name__istartswith=abbr_match.group(1)).values_list('id', flat=True)
             if genuses:
                 # add all their descendants to the results
                 # TODO fetch more than 2 deep)
-                query |= Q(supertaxon__id__in=genuses)
-                query |= Q(supertaxon__supertaxon__id__in=genuses)
-        results = Taxon.objects.filter(query).order_by('-rank', 'name')
+                genus_query |= Q(supertaxon__id__in=genuses)
+                genus_query |= Q(supertaxon__supertaxon__id__in=genuses)
+        
+        latin_query = Q(name__istartswith=words[0])
+        
+        db_query = (common_query | latin_query) & genus_query
+        results = Taxon.objects.filter(db_query).order_by('-rank', 'name')
     else:
         results = tuple()
     
