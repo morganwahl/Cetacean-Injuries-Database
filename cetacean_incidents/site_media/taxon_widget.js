@@ -42,6 +42,7 @@ TaxonWidget = {
             // hide the search results and disable the filter
             $("#" + results_id).hide();
             $("#" + filter_id).attr('disabled', 'disabled');
+            $("#" + search_box_id).hide();
         }
 
         var update_results = function(query) {
@@ -110,6 +111,7 @@ TaxonWidget = {
             $("#" + chosen_id).text(none_display_name);
             $("#" + clear_id).hide();
             $("#" + filter_id).removeAttr('disabled');
+            $("#" + search_box_id).show();
             check_filter()
         }
 
