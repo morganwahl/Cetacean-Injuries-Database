@@ -34,9 +34,13 @@
 	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
 	    <td>
 	        {% if animal.determined_taxon %}
-	        {{ animal.determined_taxon|default:"<i>none</i>" }}
+	        {{ animal.determined_taxon }}
 	        {% else %}
-	        {{ animal.probable_taxon }}
+	        {% if animal.probable_taxon %}
+	        {{ animal.probable_taxon }}, <i>probably</i>
+	        {% else %}
+	        <i>none</i>
+	        {% endif %}
 	        {% endif %}
 	    </td>
 	    <td>{{ animal.case_set.count }}</td>
