@@ -9,27 +9,37 @@
 
 {% block title %}{{ block.super }}: Contacts{% endblock %}
 
-{% block header %}<h2>All Contacts</h2>{% endblock %}
+{% block header %}<h2>Contacts</h2>{% endblock %}
 
 {% block content %}
-{% if contact_list %}
-<table class="sortable">
-    <thead>
-        <tr>
-            <th>contact</th>
-        </tr>
-    </thead>
-    {% for contact in contact_list %}
+<table class="layout">
     <tr>
-        <td sorttable_customkey="{{ contact.sort_name }}">{% contact_link contact %}</td>
+        <td class="section">
+            {% if contact_list %}
+            <table class="sortable bordered">
+                <thead style="vertical-align: top;">
+                    <tr>
+                        <th scope="col">contact</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in contact_list %}
+                    <tr>
+                        <td scope="row"{% if contact.sort_name %} sorttable_customkey="{{ contact.sort_name }}"{% endif %}>
+                            {% contact_link contact %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <i>No contacts yet!</i>
+            {% endif %}
+            <div>
+                <a href="{% url create_contact %}">new contact</a>
+            </div>
+        </td>
     </tr>
-    {% endfor %}
 </table>
-{% else %}
-<i>No contacts yet!</i>
-{% endif %}
-<div>
-    <a href="{% url create_contact%}">new contact</a>
-</div>
 {% endblock %}
 
