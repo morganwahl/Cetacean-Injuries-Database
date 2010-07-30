@@ -24,9 +24,6 @@ JS on gear-type widgets
     grey-out implied geartypes
 list of recent stuff (on homepage)
 undated cases are considered most recent in sorting
-selected taxon should be clear
-    in IE!
-    make search box disappear
 'observer on land' fake field for vessels marked as 'land'
 IE doesn't show table-sort arrows
 secure contacts table
