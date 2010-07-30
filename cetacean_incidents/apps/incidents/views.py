@@ -21,6 +21,7 @@ from cetacean_incidents import generic_views
 from models import Case, Animal, Observation
 from forms import AnimalSearchForm, CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
 
+from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
