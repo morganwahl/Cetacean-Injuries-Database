@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.forms import Media
+from django.forms.formsets import formset_factory
 from django.db import transaction
 from django.db.models import Q
 
@@ -13,7 +14,7 @@ from reversion import revision
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
-from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 
 from cetacean_incidents import generic_views
 
@@ -231,11 +232,14 @@ def add_observation(
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
+        'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
         'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
+        'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
         'observer_vessel': ObserverVesselInfoForm,
         'new_vesselcontact': ContactForm,
+        'new_vesselcontact_affiliations': formset_factory(OrganizationForm, extra=2),
     }
     form_classes.update(additional_form_classes)
     
@@ -266,7 +270,15 @@ def add_observation(
 
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
+                _check('new_reporter_affiliations')
                 observation.reporter = forms['new_reporter'].save()
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_reporter_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    org = org_form.save()
+                    observation.reporter.affiliations.add(org)
             
             _check('observation_datetime')
             observation.observation_datetime = forms['observation_datetime'].save()
@@ -276,7 +288,23 @@ def add_observation(
             
             if forms['observation'].cleaned_data['new_observer'] == 'new':
                 _check('new_observer')
+                _check('new_observer_affiliations')
                 observation.observer = forms['new_observer'].save()
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_observer_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    # check if maybe the new org was mentioned in a previously
+                    # processed new_aff_formset
+                    org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
+                    if org_query.count():
+                        org = org_query[0] # orgs shouldn't really have 
+                                           # identical names anyway, so just use
+                                           # the first one.
+                    else:
+                        org = org_form.save()
+                    observation.observer.affiliations.add(org)
             elif forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
             
@@ -285,7 +313,23 @@ def add_observation(
                 observer_vessel = forms['observer_vessel'].save(commit=False)
                 if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
                     _check('new_vesselcontact')
+                    _check('new_vesselcontact_affiliations')
                     observer_vessel.contact = forms['new_vesselcontact'].save()
+                    # add the affiliations from the new_affs_formset
+                    for org_form in forms['new_vesselcontact_affiliations'].forms:
+                        # don't save orgs with blank names.
+                        if not 'name' in org_form.cleaned_data:
+                            continue
+                        # check if maybe the new org was mentioned in a 
+                        # previously processed new_aff_formset
+                        org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
+                        if org_query.count():
+                            org = org_query[0] # orgs shouldn't really have 
+                                               # identical names anyway, so just 
+                                               # use the first one.
+                        else:
+                            org = org_form.save()
+                        observer_vessel.contact.affiliations.add(org)
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
                     observer_vessel.contact = observation.reporter
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
@@ -341,11 +385,14 @@ def edit_observation(
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
+        'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
         'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
+        'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
         'observer_vessel': ObserverVesselInfoForm,
         'new_vesselcontact': ContactForm,
+        'new_vesselcontact_affiliations': formset_factory(OrganizationForm, extra=2),
     }
     form_classes.update(additional_form_classes)
     
@@ -419,7 +466,15 @@ def edit_observation(
 
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
+                _check('new_reporter_affiliations')
                 observation.reporter = forms['new_reporter'].save()
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_reporter_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    org = org_form.save()
+                    observation.reporter.affiliations.add(org)
             
             _check('observation_datetime')
             observation.observation_datetime = forms['observation_datetime'].save()
@@ -429,7 +484,23 @@ def edit_observation(
             
             if forms['observation'].cleaned_data['new_observer'] == 'new':
                 _check('new_observer')
+                _check('new_observer_affiliations')
                 observation.observer = forms['new_observer'].save()
+                # add the affiliations from the new_affs_formset
+                for org_form in forms['new_observer_affiliations'].forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    # check if maybe the new org was mentioned in a previously
+                    # processed new_aff_formset
+                    org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
+                    if org_query.count():
+                        org = org_query[0] # orgs shouldn't really have 
+                                           # identical names anyway, so just use
+                                           # the first one.
+                    else:
+                        org = org_form.save()
+                    observation.observer.affiliations.add(org)
             elif forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
             
@@ -438,7 +509,23 @@ def edit_observation(
                 observer_vessel = forms['observer_vessel'].save(commit=False)
                 if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
                     _check('new_vesselcontact')
+                    _check('new_vesselcontact_affiliations')
                     observer_vessel.contact = forms['new_vesselcontact'].save()
+                    # add the affiliations from the new_affs_formset
+                    for org_form in forms['new_vesselcontact_affiliations'].forms:
+                        # don't save orgs with blank names.
+                        if not 'name' in org_form.cleaned_data:
+                            continue
+                        # check if maybe the new org was mentioned in a 
+                        # previously processed new_aff_formset
+                        org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
+                        if org_query.count():
+                            org = org_query[0] # orgs shouldn't really have 
+                                               # identical names anyway, so just 
+                                               # use the first one.
+                        else:
+                            org = org_form.save()
+                        observer_vessel.contact.affiliations.add(org)
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
                     observer_vessel.contact = observation.reporter
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':

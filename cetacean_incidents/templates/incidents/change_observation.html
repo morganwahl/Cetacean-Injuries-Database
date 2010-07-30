@@ -120,9 +120,13 @@
                     {% with forms.observation.new_reporter as f %}
                     {% include "unlabeled_field.html" %}
                     {% endwith %}
-                    <table id="reporter_new_contact" style="display:none;">
-                        {{ forms.new_reporter.as_table }}
-                    </table>
+                    <div id="reporter_new_contact" style="display:none;">
+                        {% with forms.new_reporter as form %}
+                        {% with forms.new_reporter_affiliations as  new_affiliations %}
+                        {% include "contacts/change_contact_include.html" %}
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
                     <div id="reporter_existing_contact" style="display:none;">
                         {% with forms.observation.reporter as f %}
                         {% include "unlabeled_field.html" %}
@@ -160,9 +164,13 @@
                     {% with forms.observation.new_observer as f %}
                     {% include "unlabeled_field.html" %}
                     {% endwith %}
-                    <table id="observer_new_contact" style="display:none;">
-                        {{ forms.new_observer.as_table }}
-                    </table>
+                    <div id="observer_new_contact" style="display:none;">
+                        {% with forms.new_observer as form %}
+                        {% with forms.new_observer_affiliations as  new_affiliations %}
+                        {% include "contacts/change_contact_include.html" %}
+                        {% endwith %}
+                        {% endwith %}
+                    </div>
                     <div id="observer_existing_contact" style="display:none;">
                         {% with forms.observation.observer as f %}
                         {% include "unlabeled_field.html" %}
@@ -191,7 +199,9 @@
                         <h4>vessel info for observer's vessel</h4>
                         {% with forms.observer_vessel as v_form %}
                         {% with forms.new_vesselcontact as c_form %}
+                        {% with forms.new_vesselcontact_affiliations as c_aff_form %}
                         {% include "vessels/edit_vessel_include.html" %}
+                        {% endwith %}
                         {% endwith %}
                         {% endwith %}
                     </div>
