@@ -214,6 +214,7 @@ def observation_detail(request, observation_id):
         template_object_name= 'observation',
     )
 
+# TODO merge add_observation and change_observation
 @login_required
 def add_observation(
         request,
