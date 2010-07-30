@@ -85,6 +85,12 @@ class Contact(AbstractContact):
         ''',
     )
     
+    def save(self, force_insert=False, force_update=False):
+        if not self.sort_name:
+            self.sort_name = self.name 
+        super(Contact, self).save(force_insert, force_update) # Call the "real" save() method.
+    # TODO make 'sort_name' blank in the interface if it's the same as name
+
     @models.permalink
     def get_absolute_url(self):
         return ('contact_detail', [str(self.id)]) 
