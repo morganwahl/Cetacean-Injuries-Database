@@ -336,6 +336,8 @@ def add_observation(
                     observer_vessel.contact = observation.reporter
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
                     observer_vessel.contact = observation.observer
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'other':
+                    observer_vessel.contact = forms['observer_vessel'].cleaned_data['existing_contact']
                 observer_vessel.save()
                 forms['observer_vessel'].save_m2m()
                 observation.observer_vessel = observer_vessel
@@ -532,6 +534,8 @@ def edit_observation(
                     observer_vessel.contact = observation.reporter
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
                     observer_vessel.contact = observation.observer
+                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'other':
+                    observer_vessel.contact = forms['observer_vessel'].cleaned_data['existing_contact']
                 observer_vessel.save()
                 forms['observer_vessel'].save_m2m()
                 observation.observer_vessel = observer_vessel
