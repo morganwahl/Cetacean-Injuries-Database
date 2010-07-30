@@ -37,6 +37,7 @@
                 {% if contact.address %}
                 {% display_bigtext_row contact "address" %}
                 {% endif %}
+                {% display_bigtext_row contact "notes" %}
             </table>
         </td>
         <td class="layout" style="width:50%;">
@@ -51,10 +52,6 @@
                 {% else %}
                 <i>none</i>
                 {% endif %}
-            </div>
-            <div class="section">
-                <h3>Notes</h3>
-                {% display_unlabeled_bigtext_div contact "notes" %}
             </div>
         </td>
     </tr>
