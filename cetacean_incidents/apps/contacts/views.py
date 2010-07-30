@@ -41,7 +41,7 @@ def _create_or_edit_contact(request, contact_id=None):
         {
             'contact': contact,
             'form': form,
-            'new_affiliations_formset': new_affiliations_formset,
+            'new_affiliations': new_affiliations_formset,
         },
         context_instance= RequestContext(request),
     )
