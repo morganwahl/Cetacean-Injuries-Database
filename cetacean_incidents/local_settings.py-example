@@ -44,6 +44,9 @@ elif True:
     DATABASE_PASSWORD = 'resu_ic'
     DATABASE_HOST = ''
     DATABASE_PORT = ''
+    # oracle checks the enviornment for lang settings
+    import os
+    os.environ['NLS_SORT'] = 'LATIN' # do a sensible english sort
 elif False:
     # for Jython and Oracle
     # xzJDBC doesn't seem to support using a tnsnames.ora ...
