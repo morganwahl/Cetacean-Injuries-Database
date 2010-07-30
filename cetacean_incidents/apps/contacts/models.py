@@ -75,6 +75,22 @@ class Contact(AbstractContact):
         help_text= "leave blank if same as name",
     )
 
+    @property
+    def observed_ordered(self):
+        return self.observed.order_by(
+            'observation_datetime',
+            'report_datetime',
+            'id',
+        )
+
+    @property
+    def reported_ordered(self):
+        return self.reported.order_by(
+            'report_datetime',
+            'observation_datetime',
+            'id',
+        )
+
     affiliations = models.ManyToManyField(
         Organization,
         related_name = 'contacts',

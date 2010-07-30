@@ -17,9 +17,20 @@
         <td class="section">
             {% if contact_list %}
             <table class="sortable bordered">
+                <colgroup span="1"></colgroup>
+                <colgroup span="3"></colgroup>
+                <colgroup span="3"></colgroup>
+                <colgroup span="1"></colgroup>
                 <thead style="vertical-align: top;">
                     <tr>
                         <th scope="col">contact</th>
+                        <th scope="col"><abbr title="observations">obs.</abbr><br>count</th>
+                        <th scope="col"><abbr title="observations">obs.</abbr><br>earliest</th>
+                        <th scope="col"><abbr title="observations">obs.</abbr><br>latest</th>
+                        <th scope="col">reports<br>count</th>
+                        <th scope="col">reports<br>earliest</th>
+                        <th scope="col">reports<br>latest</th>
+                        <th scope="col">vessel<br>count</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -28,6 +39,55 @@
                         <td scope="row"{% if contact.sort_name %} sorttable_customkey="{{ contact.sort_name }}"{% endif %}>
                             {% contact_link contact %}
                         </td>
+                        
+                        <td>
+                            {{ contact.observed.count }}
+                        </td>
+                        {% if contact.observed.count %}
+                        <td>
+                            {% with contact.observed_ordered|first as first_o %}
+                            <a href="{{ first_o.get_absolute_url }}">
+                                {{ first_o.observation_datetime }}
+                            </a>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% with contact.observed_ordered.reverse|first as last_o %}
+                            <a href="{{ last_o.get_absolute_url }}">
+                                {{ last_o.observation_datetime }}
+                            </a>
+                            {% endwith %}
+                        </td>
+                        {% else %}
+                        <td>-</td>
+                        <td>-</td>
+                        {% endif %}
+
+                        <td>
+                            {{ contact.reported.count }}
+                        </td>
+                        {% if contact.reported.count %}
+                        <td>
+                            {% with contact.reported_ordered|first as first_o %}
+                            <a href="{{ first_o.get_absolute_url }}">
+                                {{ first_o.observation_datetime }}
+                            </a>
+                            {% endwith %}
+                        </td>
+                        <td>
+                            {% with contact.reported_ordered.reverse|first as last_o %}
+                            <a href="{{ last_o.get_absolute_url }}">
+                                {{ last_o.observation_datetime }}
+                            </a>
+                            {% endwith %}
+                        </td>
+                        {% else %}
+                        <td>-</td>
+                        <td>-</td>
+                        {% endif %}
+                        
+                        <td>{{ contact.for_vessels.count }}</td>
+
                     </tr>
                     {% endfor %}
                 </tbody>
