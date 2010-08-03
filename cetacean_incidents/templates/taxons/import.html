@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+<script type="text/javascript">
+$().ready(function(){
+    $('#search_form').submit(function(event){
+        $.get(
+            '{% url itis %}',
+            {srchKey: $('[name=q]').val()},
+            function(data, textStatus) {
+                $('#results_list').html(data);
+                $("#waiting").hide();
+            }
+        );
+        $("#waiting").show();
+        $('#results').show();
+        return false;
+    });
+});
+</script>
+{% endblock %}
+
+{% block header %}<h2>import a species from ITIS</h2>{% endblock %}
+
+{% block content %}
+This will import a species and all it's super- (and sub-) taxa into the database.
+
+<form id="search_form">
+    <p>
+        <label for="q">search species scientific or common names, or ITIS numbers</label><input name="q" type="search">
+        <button type="submit">search</button>
+    </p>
+</form>
+
+<div id="results" style="display:none;">
+    <h3>results</h3>
+    <p id="waiting" style="display:none;">
+        <img src="{% url site-media "Loader3.gif" %}"> searching ...
+    </p>
+    <p id="results_list">
+    </p>
+</div>
+
+{% endblock %}

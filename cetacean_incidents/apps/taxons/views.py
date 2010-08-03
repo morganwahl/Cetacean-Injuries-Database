@@ -5,10 +5,15 @@ try:
 except ImportError:
     import json
 
+import urllib
+import urllib2
+
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from models import Taxon
 from django.shortcuts import render_to_response
+from django.forms import Media
+from django.template import RequestContext
 
 def taxon_search(request):
     '''\
@@ -64,3 +69,18 @@ def taxon_search(request):
     
     return HttpResponse(json.dumps(taxons))
 
+def itis_search(request):
+    get_string = urllib.urlencode(request.GET)
+    url = 'http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?' + get_string
+    print "trying %s" % url
+    return HttpResponse(urllib2.urlopen(url).read())
+
+def taxon_import(request):
+
+    template_media = Media(js= ('jquery/jquery-1.3.2.min.js',))
+
+    return render_to_response(
+        'taxons/import.html',
+        {'media': template_media},
+        context_instance=RequestContext(request),
+    )
