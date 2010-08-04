@@ -6,10 +6,10 @@ except ImportError:
     import json
 
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from models import Taxon
 from django.shortcuts import render_to_response
 
+from models import Taxon
+ 
 def taxon_search(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 
