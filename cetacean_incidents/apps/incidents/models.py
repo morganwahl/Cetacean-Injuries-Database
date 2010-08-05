@@ -248,12 +248,12 @@ class Case(models.Model):
     fate_cause = models.CharField(
         max_length= 1,
         choices = (
-            ('ye', 'yes'),
-            ('ma', 'can\'t be ruled out'),
-            ('no', 'no'),
-            ('na', 'not applicable'),
+            ('y', 'yes'),
+            ('m', 'can\'t be ruled out'),
+            ('n', 'no'),
+            ('-', 'not applicable'),
         ),
-        default= 'na',
+        default= '-',
         blank= True,
         help_text= "Did the injury this case is concerned with lead to the animal's fate above? If the fate was 'no injury' or 'unknown' this should be 'not applicable'",
     )
