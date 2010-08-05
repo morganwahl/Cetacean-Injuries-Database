@@ -21,6 +21,8 @@
 
 .selector-available h2, .selector-chosen h2 {
     border: 1px solid #ccc;
+    margin: 0;
+    font-size: 110%;
 }
 
 .selector .selector-available h2 {
