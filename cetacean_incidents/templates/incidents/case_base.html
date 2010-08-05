@@ -47,6 +47,39 @@
         {{ case.get_valid_display }}
     </div>
     {% display_yesnounk_div case "ole_investigation" %}
+    {% if case.si_n_m_info %}
+    <div class="subsection">
+        <h3>Serious Injury and Mortality determination</h3>
+        {% display_div case "case_confirm_criteria" %}
+        {% display_div case "animal_fate" %}
+        {% display_div case "fate_cause" %}
+        {% display_div case "fate_cause_indications" %}
+        {% display_div case "si_prevented" %}
+        {% display_div case "included_in_sar" %}
+        <table class="layout" width="100%">
+            <tr>
+                <th>1<sup>st</sup> reviewer</th>
+                <th>2<sup>nd</sup> reviewer</tH>
+            </tr>
+            <tr>
+                <td>
+                    {% display_div case "review_1_date" "date" %}
+                    {% display_div case "review_1_inits" "initials" %}
+                    {% display_bigtext_div case "review_1_notes" "notes" %}
+                </td>
+                <td>
+                    {% display_div case "review_2_date" "date" %}
+                    {% display_div case "review_2_inits" "initials" %}
+                    {% display_bigtext_div case "review_2_notes" "notes" %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% else %}
+    <p>
+        <i>no Serious Injury and Mortality info yet</i>
+    </p>
+    {% endif %}
     {% endblock %}
 </div>
 {% block extra_case_fields %}{% endblock %}

@@ -189,6 +189,116 @@ class Case(models.Model):
         help_text= "Is there a corresponding Office of Law Enforcement investigation?",
     )
     
+    ## serious injury and mortality determination ##
+    si_n_m_fieldnames = []
+
+    review_1_date = models.DateField(
+        blank= True,
+        null= True,
+        verbose_name = "1st reviewer date",
+    )
+    si_n_m_fieldnames.append('review_1_date')
+
+    review_1_inits = models.CharField(
+        max_length= 5,
+        blank= True,
+        null= True,
+        verbose_name = "1st reviewer initials",
+    )
+    si_n_m_fieldnames.append('review_1_inits')
+
+    review_2_date = models.DateField(
+        blank= True,
+        null= True,
+        verbose_name = "2nd reviewer date",
+    )
+    si_n_m_fieldnames.append('review_2_date')
+
+    review_2_inits = models.CharField(
+        max_length= 5,
+        blank= True,
+
+        null= True,
+        verbose_name = "2nd reviewer initials",
+    )
+    si_n_m_fieldnames.append('review_2_inits')
+
+    case_confirm_criteria = models.IntegerField(
+        blank= True,
+        null= True,
+        verbose_name = "criteria for case confirmation",
+        help_text= "a number in one of the ranges 11-14, 21-24, or 31-34",
+    )
+    si_n_m_fieldnames.append('case_confirm_criteria')
+
+    animal_fate = models.CharField(
+        max_length= 2,
+        choices = (
+            ('mt', 'mortality'),
+            ('si', 'serious injury'),
+            ('ns', 'non-serious injury'),
+            ('no', 'no injury from human interaction'),
+            ('un', 'unknown'),
+        ),
+        default= 'un',
+        blank= True,
+    )
+    si_n_m_fieldnames.append('animal_fate')
+    
+    fate_cause = models.CharField(
+        max_length= 1,
+        choices = (
+            ('ye', 'yes'),
+            ('ma', 'can\'t be ruled out'),
+            ('no', 'no'),
+            ('na', 'not applicable'),
+        ),
+        default= 'na',
+        blank= True,
+        help_text= "Did the injury this case is concerned with lead to the animal's fate above? If the fate was 'no injury' or 'unknown' this should be 'not applicable'",
+    )
+    si_n_m_fieldnames.append('fate_cause')
+    
+    fate_cause_indications = models.IntegerField(
+        blank= True,
+        null= True,
+        verbose_name= "indications of fate cause",
+        help_text= "a number in one of the ranges 41-44, 51-54, or 61-66",
+    )
+    si_n_m_fieldnames.append('fate_cause_indications')
+
+    si_prevented = models.NullBooleanField(
+        blank= True,
+        null= True,
+        verbose_name = "serious injury warranted if no intervention?",
+    )
+    si_n_m_fieldnames.append('si_prevented')
+
+    included_in_sar = models.NullBooleanField(
+        blank= True,
+        null= True,
+        verbose_name = "included in SAR?"
+    )
+    si_n_m_fieldnames.append('included_in_sar')
+
+    review_1_notes = models.TextField(
+        blank= True,
+        null= True,
+        verbose_name = "1st reviewer notes",
+    )
+    si_n_m_fieldnames.append('review_1_notes')
+
+    review_2_notes = models.TextField(
+        blank= True,
+        null= True,
+        verbose_name = "2st reviewer notes",
+    )
+    si_n_m_fieldnames.append('review_2_notes')
+
+    @property
+    def si_n_m_info(self):
+        return reduce(lambda so_far, fieldname: so_far or getattr(self, fieldname), self.si_n_m_fieldnames, False)
+
     #yearly_number = models.IntegerField(
     #    blank= True,
     #    null= True,
