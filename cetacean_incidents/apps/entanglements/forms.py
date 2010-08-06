@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms, CaseForm, DateWidget
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner
 
@@ -78,7 +78,7 @@ class GearTypeWidget(forms.widgets.CheckboxSelectMultiple):
             
         return mark_safe(make_checkbox_list(GearType.roots.all()))
     
-class EntanglementForm(forms.ModelForm):
+class EntanglementForm(CaseForm):
     
     _f = Entanglement._meta.get_field('gear_types')
     gear_types = forms.ModelMultipleChoiceField(
@@ -87,6 +87,14 @@ class EntanglementForm(forms.ModelForm):
         help_text= 'selecting a type implies the ones above it in the hierarchy',
         label= _f.verbose_name.capitalize(),
         widget= GearTypeWidget
+    )
+    
+    _f = Entanglement._meta.get_field('analyzed_date')
+    analyzed_date = forms.DateField(
+        widget=DateWidget,
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
     )
     
     class Meta:

@@ -13,7 +13,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms, CaseForm
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
@@ -72,7 +72,7 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
         model = StrikingVesselInfo
         exclude = ('contact', 'captain')
 
-class ShipstrikeForm(forms.ModelForm):
+class ShipstrikeForm(CaseForm):
     
     class Meta:
         model = Shipstrike

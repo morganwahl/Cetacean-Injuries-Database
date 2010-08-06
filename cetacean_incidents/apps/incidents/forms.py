@@ -7,6 +7,9 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
+
+from django.contrib.admin.widgets import AdminDateWidget
 
 from models import Animal, Case, YearCaseNumber, Observation
 
@@ -68,7 +71,32 @@ class CaseTypeForm(forms.Form):
     # this form is almost entirely dynamically created
     __metaclass__ = CaseTypeFormMeta
 
+class DateWidget(AdminDateWidget):
+
+    @property
+    def media(self):
+        return forms.Media(
+            css= {'all': ('admin/css/widgets.css',)},
+            js= (reverse('jsi18n'), 'admin/js/core.js'),
+        ) + super(DateWidget, self).media
+
 class CaseForm(forms.ModelForm):
+    
+    # custom widgets for the SI & M date fields
+    _f = Case._meta.get_field('review_1_date')
+    review_1_date = forms.DateField(
+        widget=DateWidget,
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+    _f = Case._meta.get_field('review_2_date')
+    review_2_date = forms.DateField(
+        widget=DateWidget,
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
     
     class Meta:
         model = Case

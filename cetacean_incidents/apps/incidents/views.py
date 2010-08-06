@@ -582,6 +582,7 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
             'taxon': case.probable_taxon,
             'gender': case.probable_gender,
             'form': form,
+            'media': form.media,
             'case': case,
         },
         context_instance= RequestContext(request),
