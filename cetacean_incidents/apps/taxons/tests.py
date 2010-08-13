@@ -1,8 +1,8 @@
-import unittest
+from django.test import TestCase
 
 from models import Taxon
 
-class TaxonManagerTestCase(unittest.TestCase):
+class TaxonManagerTestCase(TestCase):
     def setUp(self):
         # even though there's a fixture for cetacean taxa, it's better to have
         # taxa with known properties for testing.

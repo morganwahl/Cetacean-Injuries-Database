@@ -1,8 +1,8 @@
-import unittest
+from django.test import TestCase
 
 from forms import DateWidget
 
-class FormsTestCase(unittest.TestCase):
+class FormsTestCase(TestCase):
     def setUp(self):
         pass
 
