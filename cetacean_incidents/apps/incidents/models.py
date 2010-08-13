@@ -440,6 +440,12 @@ class Case(models.Model):
         if not self.observation_set.count():
             return None
         return self.latest_datetime - self.earliest_datetime
+    
+    @property
+    def associated_cases(self):
+        result = Case.objects.associated_cases(self)
+        result.discard(self)
+        return result
 
     # this should always be the YearCaseNumber with case matching self.id and
     # year matching self.date.year . But, it's here so we can order by it in
