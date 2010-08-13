@@ -118,7 +118,7 @@ class CaseManager(models.Manager):
         # within our fudge-factor (see below)
         min_year = case.earliest_datetime.year - 1
         max_year = case.latest_datetime.year + 1
-        same_year = self.filter(observation__observation_datetime__year__gte=min_year).filter(observation__observation_datetime__year__lte=max_year).distinct()
+        same_year = self.filter(observation__observation_datetime__year__gte=min_year).filter(observation__observation_datetime__year__lte=max_year)
         result = set()
         for c in same_year:
             # find overlapping observations. 
