@@ -41,7 +41,10 @@
 <i>other cases for this animal around this time:</i>
 <ul>
     {% for c in case.associated_cases %}
+    {# TODO fix this kludge. associated_cases shouldn't be returning this case to begin with #}
+    {% ifnotequal c.id case.id %}
     <li>{% case_link c %}</li>
+    {% endifnotequal %}
     {% endfor %}
 </ul>
 {% endif %}
