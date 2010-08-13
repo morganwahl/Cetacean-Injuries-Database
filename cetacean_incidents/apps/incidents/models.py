@@ -1,5 +1,8 @@
 # -*- encoding: utf-8 -*-
 
+import datetime
+import pytz
+
 from django.db import models
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.datetime.models import DateTime
@@ -99,6 +102,53 @@ class CaseManager(models.Manager):
         # TODO use YearCaseNumber ?
         cases = self.filter(observation__report_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
+    
+    def same_timeframe(self, case):
+        '''\
+        Returns cases that _may_ have been happening at the same time as the one
+        given. Takes into account the potential vagueness of observation dates.
+        '''
+        
+        # Observation.observation__datetime only stores the _start_ of the
+        # observation, so use a 2-day fudge-factor for assumed observation
+        # length
+        assumed_max_obs_length = datetime.timedelta(days=2)
+
+        # cut down our query by year. the +-1 bits are to catch cases that fall
+        # within our fudge-factor (see below)
+        min_year = case.earliest_datetime.year - 1
+        max_year = case.latest_datetime.year + 1
+        same_year = self.filter(observation__observation_datetime__year__gte=min_year).filter(observation__observation_datetime__year__lte=max_year).distinct()
+        result = set()
+        for c in same_year:
+            # find overlapping observations. 
+            if not ( c.latest_datetime + assumed_max_obs_length < case.earliest_datetime 
+                   or c.earliest_datetime > case.latest_datetime + assumed_max_obs_length ):
+                result.add(c)
+        
+        # remove the given case
+        result.discard(case)
+
+        return result
+    
+    def associated_cases(self, case):
+        '''\
+        Given a case, return a list of _other_ cases that may be relevant to it.
+        This includes cases in the same timeframe that are either for the same
+        animal or have nearby coordinates.
+        '''
+        
+        result = set()
+        
+        same_timeframe = self.same_timeframe(case)
+        same_timeframe_ids = map(lambda c: c.id, same_timeframe)
+        same_animal = self.filter(animal=case.animal, id__in=same_timeframe_ids)
+        
+        result |= set(same_animal)
+        
+        # TODO nearby coords
+        
+        return result
 
 class YearCaseNumber(models.Model):
     '''\
@@ -370,6 +420,26 @@ class Case(models.Model):
             return None
         # TODO more specific dates should override less specific ones
         return self.first_observation_date
+    @property
+    def earliest_datetime(self):
+        if not self.observation_set.count():
+            return None
+        return min([o.earliest_datetime for o in self.observation_set.all()])
+
+    @property
+    def latest_datetime(self):
+        '''\
+        The latest that one of this case's observations _may_ have _started.
+        '''
+        if not self.observation_set.count():
+            return None
+        return max([o.latest_datetime for o in self.observation_set.all()])
+    
+    @property
+    def breadth(self):
+        if not self.observation_set.count():
+            return None
+        return self.latest_datetime - self.earliest_datetime
 
     # this should always be the YearCaseNumber with case matching self.id and
     # year matching self.date.year . But, it's here so we can order by it in
@@ -537,6 +607,41 @@ class Observation(models.Model):
         verbose_name = 'report date and time',
     )
         
+    @property
+    def earliest_datetime(self):
+        '''\
+        The earliest that the observation _may_ have started.
+        '''
+        o = self.observation_datetime
+        r = self.report_datetime
+        # if reportdatetime is before observation datetime (which doesn't make
+        # sense, but don't count on it not happening) assume the actual
+        # observation datetime is the same as the report datetime
+        
+        # 'wrong' case
+        if r.latest < o.earliest:
+            return r.earliest
+        
+        return o.earliest
+    
+    @property
+    def latest_datetime(self):
+        '''\
+        The latest that the observation _may_ have started.
+        '''
+        
+        # don't return datetimes in the future
+        now = datetime.datetime.now(pytz.utc)
+        return min(self.observation_datetime.latest, self.report_datetime.latest, now)
+    
+    @property
+    def observation_breadth(self):
+        '''\
+        The length of time the observation _may_ have started in.
+        '''
+        
+        return self.latest_datetime - self.earliest_datetime
+
     taxon = models.ForeignKey(
         Taxon,
         blank= True,
