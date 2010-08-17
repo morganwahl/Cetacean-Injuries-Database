@@ -418,8 +418,9 @@ class Case(models.Model):
     def date(self):
         if not self.observation_set.count():
             return None
-        # TODO more specific dates should override less specific ones
+        # TODO more specific dates should override less specific ones?
         return self.first_observation_date
+    
     @property
     def earliest_datetime(self):
         if not self.observation_set.count():
@@ -552,7 +553,6 @@ class Observation(models.Model):
     def relevant_case(self):
         return self.case
 
-    
     @property
     def detailed(self):
         if self.case.detailed.observation_model.__name__ == self.__class__.__name__:

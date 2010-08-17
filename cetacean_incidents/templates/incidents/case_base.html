@@ -38,7 +38,7 @@
 
 {% block content %}
 {% if case.associated_cases %}
-<i>other cases for this animal around this time:</i>
+<i>cases for this animal around the time of this one:</i>
 <ul>
     {% for c in case.associated_cases %}
     <li>{% case_link c %}</li>
@@ -86,7 +86,7 @@
     </div>
     {% else %}
     <p>
-        <i>no Serious Injury and Mortality info yet</i>
+        <i>no Serious Injury and Mortality info</i>
     </p>
     {% endif %}
     {% endblock %}
