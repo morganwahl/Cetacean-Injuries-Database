@@ -21,8 +21,8 @@
     <tr><th>Gross Tonnage</th><td>{{ v.tonnage|floatformat }}</td></tr>
     {% endif %}
     {# compare to None since it may be 0 #}
-    {% ifnotequal v.speed None%}
+    {% if v.speed != None%}
     <tr><th>speed at time of strike</th><td>{{ v.speed|floatformat:-2 }} knot{{ v.speed|pluralize }} over ground</td></tr>
-    {% endifnotequal %}
+    {% endif %}
 {% endblock %}
 
