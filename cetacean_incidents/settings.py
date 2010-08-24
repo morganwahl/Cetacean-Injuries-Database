@@ -1,18 +1,25 @@
-import os
 from os import path
 try:
     from cetacean_incidents.local_settings import *
 except ImportError:
     from local_settings import *
 
+# Language code for this installation. All choices can be found here:
+# http://www.i18nguy.com/unicode/language-identifiers.html
+LANGUAGE_CODE = 'en_US'
+
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+
+# make absolute paths relative to this file
+PROJECT_PATH = path.dirname(__file__)
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = URL_PREFIX + 'site_media/'
+
 # only needed when serving static media with django itself
 MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 

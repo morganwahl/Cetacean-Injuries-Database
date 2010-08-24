@@ -1,12 +1,10 @@
 # all the settings that will need to be edited for each installation
 
+import os
 from os import path
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
-
-# make absolute paths relative to this file
-PROJECT_PATH = path.dirname(__file__)
 
 # certain libraries don't call Django's URL-resolving system and so must be
 # told about the prefix we're running under.
@@ -45,7 +43,6 @@ elif True:
     DATABASE_HOST = ''
     DATABASE_PORT = ''
     # oracle checks the enviornment for lang settings
-    import os
     os.environ['NLS_SORT'] = 'LATIN' # do a sensible english sort
 elif False:
     # for Jython and Oracle
@@ -64,9 +61,7 @@ elif False:
 # system time zone.
 TIME_ZONE = 'America/New_York'
 
-# Language code for this installation. All choices can be found here:
-# http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en_US'
+SITE_ID = 1
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'daiufh9283eigfha0w9dj bp9awehrnhb8jwardg'
