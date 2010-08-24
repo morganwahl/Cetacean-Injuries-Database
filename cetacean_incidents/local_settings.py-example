@@ -1,6 +1,5 @@
 # all the settings that will need to be edited for each installation
 
-import os
 from os import path
 
 DEBUG = True
@@ -16,43 +15,20 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-if False:
-    # for CPython and sqlite
-    DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = path.join(PROJECT_PATH, 'database/cetacean_incidents.sqlite')             # Or path to database file if using sqlite3.
-    TEST_DATABASE_NAME = path.join(PROJECT_PATH, 'database/cetacean_incidents_test.sqlite')
-    DATABASE_USER = ''             # Not used with sqlite3.
-    DATABASE_PASSWORD = ''         # Not used with sqlite3.
-    DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-elif False:
-    # for Jython and MySQL
-    DATABASE_ENGINE = 'doj.backends.zxjdbc.mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-    DATABASE_NAME = 'ci'
-    TEST_DATABASE_NAME = 'ci_test'
-    DATABASE_USER = 'ci'             # Not used with sqlite3.
-    DATABASE_PASSWORD = 'whale'         # Not used with sqlite3.
-    DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-    DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-elif True:
-    # for CPython and Oracle
-    DATABASE_ENGINE = 'oracle'
-    DATABASE_NAME = 'SOME.SID'
-    DATABASE_USER = 'ci_user'
-    DATABASE_PASSWORD = 'resu_ic'
-    DATABASE_HOST = ''
-    DATABASE_PORT = ''
-    # oracle checks the enviornment for lang settings
-    os.environ['NLS_SORT'] = 'LATIN' # do a sensible english sort
-elif False:
-    # for Jython and Oracle
-    # xzJDBC doesn't seem to support using a tnsnames.ora ...
-    DATABASE_ENGINE = 'doj.backends.zxjdbc.oracle'
-    DATABASE_NAME = 'SOME.SID'
-    DATABASE_USER = 'ci_user'
-    DATABASE_PASSWORD = 'resu_ic'
-    DATABASE_HOST = ''
-    DATABASE_PORT = ''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+# oracle checks the enviornment for lang settings, so uncomment this if using
+# a oracle database
+#import os
+#os.environ['NLS_SORT'] = 'LATIN' # do a sensible english sort
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

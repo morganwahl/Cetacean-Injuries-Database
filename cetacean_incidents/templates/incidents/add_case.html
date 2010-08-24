@@ -13,6 +13,7 @@
 
 {% block content %}
 <form action="" method="post">
+    {% csrf_token %}
     <div>
         <script type="text/javascript">
             $().ready(function(){

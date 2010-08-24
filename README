@@ -16,9 +16,13 @@ The OLE icon is derived from one of these.
 
 uses the sorttable.js script by Stuart Langridge (x11 license)
 
+# only needed when serving static media with django itself
+MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
+
 Dependancies:
 
 Python 2.4
-Django 1.1.1
-
+Django 1.2.1
+django-extensions 0.5
+django-reversion 1.3.1
 

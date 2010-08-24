@@ -10,6 +10,7 @@
 
 {% block case_fields %}
 <form action="" method="post">
+    {% csrf_token %}
     {% for f in form %}
     {% include "labeled_field.html" %}
     {% endfor %}
