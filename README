@@ -26,3 +26,22 @@ Django 1.2.1
 django-extensions 0.5
 django-reversion 1.3.1
 
+if using the Oracle backend you need:
+
+cx_Oracle 5.0.4
+    which requires:
+    
+    Oracle instantclient-basic 11.2.0.1
+    Oracle instantclient-sdk 11.2.0.1
+
+I recommend using virtualenv and adding the following to it's bin/activate
+before building and installing cx_Oracle
+
+# my additions for cx_Oracle
+export ORACLE_HOME=${VIRTUAL_ENV}/lib/instantclient_11_2
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+
+unzip the instantclient packages to that lib directory before building
+cx_Oracle. To use a tnsnames.ora file you can then copy it to 
+${ORACLE_HOME}/NETWORK/ADMIN/TNSNAMES.ORA
+
