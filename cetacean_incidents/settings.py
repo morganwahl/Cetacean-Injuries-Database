@@ -16,16 +16,10 @@ USE_I18N = True
 # calendars according to the current locale
 USE_L10N = True
 
-# make absolute paths relative to this file
-PROJECT_PATH = path.dirname(__file__)
-
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = URL_PREFIX + 'site_media/'
-
-# only needed when serving static media with django itself
-MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
@@ -37,10 +31,6 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
 #     'django.template.loaders.eggs.load_template_source',
-)
-
-TEMPLATE_DIRS = (
-    path.join(PROJECT_PATH, 'templates/'),
 )
 
 MIDDLEWARE_CLASSES = (

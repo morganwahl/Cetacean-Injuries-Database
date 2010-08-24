@@ -15,6 +15,9 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+# make absolute paths relative to this file
+PROJECT_PATH = path.dirname(__file__)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -41,4 +44,11 @@ SITE_ID = 1
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'daiufh9283eigfha0w9dj bp9awehrnhb8jwardg'
+
+# only needed when serving static media with django itself
+MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
+
+TEMPLATE_DIRS = (
+    path.join(PROJECT_PATH, 'templates/'),
+)
 
