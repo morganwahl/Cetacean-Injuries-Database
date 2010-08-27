@@ -26,7 +26,7 @@ class NiceLocationFormTestCase(TestCase):
             form.cleaned_data['coordinates_lng_input'],
             (True, float(71.5), 0.0, 0.0)
         )
-        form = NiceLocationForm({'coordinates_lat_input': '32 19 24.04', 'coordinates_lng_input': '-71.5 adfadbawrgha'})
+        form = NiceLocationForm({'coordinates_lat_input': '32 19 24.04', 'coordinates_lng_input': '-71.5 adfadbargha'})
         self.assertEquals(form.is_valid(), True)
         self.assertEquals(
             form.cleaned_data['coordinates_lat_input'],
