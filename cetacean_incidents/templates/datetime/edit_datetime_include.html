@@ -10,19 +10,33 @@
             {% endfor %}
         </ul>
         {% endif %}
+        {% for f in d_form %}
+        {% if f.is_hidden and f.errors %}
+        <ul class="errorlist ui-state-error">
+	        {% for e in f.errors %}
+	        <li class="ui-state-error-text">{{ f.html_name }}: {{ e }}</li>
+	        {% endfor %}
+        </ul>
+        {% endif %}
+        {% endfor %}
     </caption>
     <tr>
         {% for f in d_form %}
+        {% if not f.is_hidden %}
         <th>{{ f.label_tag }}</th>
+        {% endif %}
         {% endfor %}
     </tr>
     <tr>
         {% for f in d_form %}
+        {% if not f.is_hidden %}
         <td>{{ f }}</td>
+        {% endif %}
         {% endfor %}
     </tr>
     <tr>
         {% for f in d_form %}
+        {% if not f.is_hidden %}
         <td>
 	        {% if f.errors %}
 	        <ul class="errorlist ui-state-error">
@@ -32,6 +46,7 @@
 	        </ul>
 	        {% endif %}
         </td>
+        {% endif %}
         {% endfor %}
     </tr>
 </table>

@@ -5,6 +5,7 @@ import datetime
 import pytz
 
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class DateTime(models.Model):
     year = models.IntegerField(
@@ -41,6 +42,30 @@ class DateTime(models.Model):
         editable= False, # note that this only means it's not editable in the admin interface or ModelForm-generated forms
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
+    
+    def clean(self):
+        # TODO is individual field validation OK here?
+        # hour
+        if not self.hour is None:
+            if self.hour < 0:
+                raise ValidationError('no negative hours')
+            if self.hour > 23:
+                raise ValidationError('hours should be less than 24')
+        # minute
+        if not self.minute is None:
+            if self.minute < 0:
+                raise ValidationError('no negative minutes')
+            if self.minute > 59:
+                raise ValidationError('minutes should be less than 60')
+        # second
+        if not self.second is None:
+            if self.second < 0:
+                raise ValidationError('no negative seconds')
+            # FYI python datetime doesn't like leap-seconds
+            if self.second == 60:
+                raise ValidationError('no leap-seconds')
+            if self.second > 60:
+                raise ValidationError('seconds should be less than 60')
     
     @property
     def earliest(self):

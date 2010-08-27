@@ -23,35 +23,7 @@ class DateTimeForm(forms.ModelForm):
         label= _f.verbose_name.capitalize(),
         widget= forms.TextInput(attrs={'size':'2'}),
     )
-
-    def clean_hour(self):
-        hour = self.cleaned_data['hour']
-        if not hour in EMPTY_VALUES:
-            if hour < 0:
-                raise forms.ValidationError('gave negative hours!')
-            if hour > 23:
-                raise forms.ValidationError('gave too many hours!')
-        return hour
-        
-    def clean_minute(self):
-        minute = self.cleaned_data['minute']
-        if not minute in EMPTY_VALUES:
-            if minute < 0:
-                raise forms.ValidationError('gave negative minutes!')
-            if minute > 59:
-                raise forms.ValidationError('gave too many minutes!')
-        return minute
             
-    def clean_second(self):
-        second = self.cleaned_data['second']
-        if not second in EMPTY_VALUES:
-            if second < 0:
-                raise forms.ValidationError('gave negative seconds!')
-            # FYI python datetime doesn't like leap-seconds
-            if second > 59:
-                raise forms.ValidationError('gave too many seconds!')
-        return second
-
     def clean(self):
         # note that if a clean_field func raised an exception, data may not 
         # have the corresponding key
@@ -112,26 +84,22 @@ class NiceDateTimeForm(DateTimeForm):
         parts = timestring.split(':') + [None, None]
         (hour, minute, second) = parts[0:3]
 
+        # note that DateTime's clean() will handle most validation
+
         if not hour in EMPTY_VALUES:
             hour = int(hour)
         else:
             hour = None
-        self.cleaned_data['hour'] = hour
-        self.cleaned_data['hour'] = self.clean_hour()
 
         if not minute in EMPTY_VALUES:
             minute = int(minute)
         else:
             minute = None
-        self.cleaned_data['minute'] = minute
-        self.cleaned_data['minute'] = self.clean_minute()
 
         if not second in EMPTY_VALUES:
             second = float(second)
         else:
             second = None
-        self.cleaned_data['second'] = second
-        self.cleaned_data['second'] = self.clean_second()
 
         return {
             'hour': hour,
@@ -139,16 +107,17 @@ class NiceDateTimeForm(DateTimeForm):
             'second': second,
         }
     
-    def save(self, commit=True):
-        instance = super(NiceDateTimeForm, self).save(commit)
-        # because they were excluded we need to save these manually
-        instance.hour = self.cleaned_data['time']['hour']
-        instance.minute = self.cleaned_data['time']['minute']
-        instance.second = self.cleaned_data['time']['second']
-        if commit:
-            instance.save()
-        return instance
+    def clean(self):
+        # act like these fields weren't hidden, then call super's clean
+        self.cleaned_data['hour'] = self.cleaned_data['time']['hour']
+        self.cleaned_data['minute'] = self.cleaned_data['time']['minute']
+        self.cleaned_data['second'] = self.cleaned_data['time']['second']
+        return super(NiceDateTimeForm, self).clean()
     
     class Meta(DateTimeForm.Meta):
-        exclude = ('hour', 'minute', 'second')
+        widgets = {
+            'hour': forms.HiddenInput,
+            'minute': forms.HiddenInput,
+            'second': forms.HiddenInput,
+        }
 
