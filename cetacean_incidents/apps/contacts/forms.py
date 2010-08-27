@@ -39,7 +39,8 @@ class ContactForm(forms.ModelForm):
         widget=EmailInput,
     )
     
-    def _media(self):
+    @property
+    def media(self):
         # the FilteredSelectMultiple assumes jsi18n catalog and admin-specific
         # css have been loaded. The CSS rules that it needs have been placed in    
         # our own site-media file 'selectfilter.css'. The jsi18n catalog is
@@ -48,7 +49,6 @@ class ContactForm(forms.ModelForm):
             css = {'all': ('selectfilter.css',)},
             js = (reverse('jsi18n'),),
         ) + self.fields['affiliations'].widget.media
-    media = property(_media)
     
     class Meta:
         model = Contact

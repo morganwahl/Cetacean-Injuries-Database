@@ -19,7 +19,8 @@ uses the sorttable.js script by Stuart Langridge (x11 license)
 # only needed when serving static media with django itself
 MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 
-Dependancies:
+Dependancies (earlier versions may work; these are the ones that have been
+tested):
 
 Python 2.4
 Django 1.2.1
@@ -34,7 +35,7 @@ cx_Oracle 5.0.4
     Oracle instantclient-basic 11.2.0.1
     Oracle instantclient-sdk 11.2.0.1
 
-I recommend using virtualenv and adding the following to it's bin/activate
+I recommend using virtualenv and adding the following to its bin/activate
 before building and installing cx_Oracle
 
 # my additions for cx_Oracle

@@ -1,9 +1,9 @@
 import re
 
 try:
-    import simplejson as json# for 2.5 compat.
-except ImportError:
     import json
+except ImportError:
+    import simplejson as json # for python 2.5 compat.
 
 from django.db.models import Q
 from django.http import HttpResponse

@@ -101,8 +101,6 @@ class CaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
-    
-
 class MergeCaseForm(forms.ModelForm):
     
     class Meta:
