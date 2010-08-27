@@ -1,3 +1,4 @@
+import re
 from django.db import models
 from utils import dec_to_dms, dms_to_dec
 
@@ -63,7 +64,30 @@ class Location(models.Model):
         self.coords_pair = map(dms_to_dec, pair)
     dms_coords_pair = property(_get_dms_coords_pair, _set_dms_coords_pair)
     
-    # TODO form validation will be essential for this field!
+    def clean(self):
+        # clean_coordinates
+        if not self.coordinates:
+            self.coordinates = ''
+        else:
+            (lat, lng) = re.search("(-?[\d\.]+)\s*,\s*(-?[\d\.]+)", self.coordinates).group(1, 2)
+
+            # TODO Decimal not Float!
+            
+            lat = float(lat)
+            lat = max(lat, -90)
+            lat = min(lat, 90)
+            
+            lng = float(lng)
+            # add 180 so that 179 E is now 359 E and 180 W is zero
+            lng += 180
+            # take it mod 360
+            lng %= 360
+            # and subtract the 180 back off
+            lng -= 180
+            
+            self.coordinates = "%.16f,%.16f" % (lat,lng)
+    
+    # TODO validation will be essential for this field!
     roughness = models.FloatField(
         blank= True,
         null= True,
