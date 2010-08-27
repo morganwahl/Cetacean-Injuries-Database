@@ -104,7 +104,7 @@ class CaseManager(models.Manager):
         # TODO initially fetch cases with an observation whose report _or_ 
         # observation dates are in the year we're looking for.
         # TODO use YearCaseNumber ?
-        cases = self.filter(observation__report_datetime__year__exact=year).distinct()
+        cases = self.filter(observation__observation_datetime__year__exact=year).distinct()
         return filter(lambda c: c.date.year == year, cases)
     
     def same_timeframe(self, case):
