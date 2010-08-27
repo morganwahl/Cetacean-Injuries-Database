@@ -40,7 +40,9 @@ class AnimalForm(forms.ModelForm):
     
     def clean(self):
         d = self.cleaned_data
-        if (d['dead'] or d['necropsy']) and not d['determined_dead_before']:
+        # note that the model's clean func handles the case where necropsy is
+        # true bute there's no determined_dead_before
+        if d['dead'] and not d['determined_dead_before']:
             d['determined_dead_before'] = datetime.date.today()
         return d
 

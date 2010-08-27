@@ -82,6 +82,10 @@ class Animal(models.Model):
         help_text= 'as determined from the taxa indicated in specific observations',
     )
     
+    def clean(self):
+        if self.necropsy and not self.determined_dead_before:
+            self.determined_dead_before = datetime.date.today()
+
     def __unicode__(self):
         if self.name:
             return "%06d %s" % (self.id, self.name)
@@ -457,8 +461,8 @@ class Case(models.Model):
         null=True,
         related_name='current',
     )
-
-    def save(self, *args, **kwargs):
+    
+    def clean(self):
         # if we don't have a yearly_number, set one if possible
         if self.date:
             def _next_number_in_year(year):
@@ -495,8 +499,6 @@ class Case(models.Model):
         if not self.current_name is None:
             if not self.current_name in self.names_set:
                 self.names_set |= frozenset([self.current_name])
-
-        return super(Case, self).save(*args, **kwargs)
 
     @property
     def detailed(self):
@@ -749,6 +751,7 @@ Contact.report_dates = property(_get_report_dates)
 # saves
 def _observation_post_save(sender, **kwargs):
     observation = kwargs['instance']
+    observation.case.clean()
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
