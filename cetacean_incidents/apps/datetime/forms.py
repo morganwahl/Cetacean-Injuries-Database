@@ -3,26 +3,6 @@ from django.forms.fields import EMPTY_VALUES
 from models import DateTime
 
 class DateTimeForm(forms.ModelForm):
-    
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
-    # field
-    _f = DateTime._meta.get_field('year')
-    year = forms.IntegerField(
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        label= _f.verbose_name.capitalize(),
-        widget= forms.TextInput(attrs={'size':'4'}),
-    )
-
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
-    # field
-    _f = DateTime._meta.get_field('day')
-    day = forms.IntegerField(
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        label= _f.verbose_name.capitalize(),
-        widget= forms.TextInput(attrs={'size':'2'}),
-    )
             
     def clean(self):
         # note that if a clean_field func raised an exception, data may not 
@@ -53,6 +33,10 @@ class DateTimeForm(forms.ModelForm):
     
     class Meta:
         model = DateTime
+        widgets = {
+            'year': forms.TextInput(attrs={'size':'4'}),
+            'day': forms.TextInput(attrs={'size':'2'}),
+        }
 
 class NiceDateTimeForm(DateTimeForm):
 
@@ -115,9 +99,10 @@ class NiceDateTimeForm(DateTimeForm):
         return super(NiceDateTimeForm, self).clean()
     
     class Meta(DateTimeForm.Meta):
-        widgets = {
+        widgets = DateTimeForm.Meta.widgets
+        widgets.update({
             'hour': forms.HiddenInput,
             'minute': forms.HiddenInput,
             'second': forms.HiddenInput,
-        }
+        })
 

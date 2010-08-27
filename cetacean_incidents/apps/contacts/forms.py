@@ -28,17 +28,6 @@ class ContactForm(forms.ModelForm):
         help_text = Contact.affiliations.field.help_text,
     )
     
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
-    # field
-    _f = Contact._meta.get_field('email')
-    email = forms.EmailField(
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        max_length= _f.max_length,
-        label= _f.verbose_name.capitalize(),
-        widget=EmailInput,
-    )
-    
     @property
     def media(self):
         # the FilteredSelectMultiple assumes jsi18n catalog and admin-specific
@@ -52,4 +41,7 @@ class ContactForm(forms.ModelForm):
     
     class Meta:
         model = Contact
+        widgets = {
+            'email': EmailInput,
+        }
 

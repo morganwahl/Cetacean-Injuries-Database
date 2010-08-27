@@ -80,6 +80,9 @@ class GearTypeWidget(forms.widgets.CheckboxSelectMultiple):
     
 class EntanglementForm(CaseForm):
     
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_types')
     gear_types = forms.ModelMultipleChoiceField(
         queryset= GearType.objects.all(),
@@ -89,17 +92,12 @@ class EntanglementForm(CaseForm):
         widget= GearTypeWidget
     )
     
-    _f = Entanglement._meta.get_field('analyzed_date')
-    analyzed_date = forms.DateField(
-        widget=DateWidget,
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        label= _f.verbose_name.capitalize(),
-    )
-    
     class Meta:
         model = Entanglement
         exclude = 'gear_owner_info'
+        widgets = {
+            'analyzed_date': DateWidget,
+        }
 
 # TODO better way of tracking this
 case_form_classes['Entanglement'] = EntanglementForm

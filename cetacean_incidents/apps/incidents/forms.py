@@ -84,24 +84,13 @@ class DateWidget(AdminDateWidget):
 
 class CaseForm(forms.ModelForm):
     
-    # custom widgets for the SI & M date fields
-    _f = Case._meta.get_field('review_1_date')
-    review_1_date = forms.DateField(
-        widget=DateWidget,
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        label= _f.verbose_name.capitalize(),
-    )
-    _f = Case._meta.get_field('review_2_date')
-    review_2_date = forms.DateField(
-        widget=DateWidget,
-        required= _f.blank != True,
-        help_text= _f.help_text,
-        label= _f.verbose_name.capitalize(),
-    )
-    
     class Meta:
         model = Case
+        # custom widgets for the SI & M date fields
+        widgets = {
+            'review_1_date': DateWidget,
+            'review_2_date': DateWidget,
+        }
 
 class MergeCaseForm(forms.ModelForm):
     
