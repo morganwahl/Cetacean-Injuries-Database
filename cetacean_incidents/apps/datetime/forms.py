@@ -1,5 +1,5 @@
 from django import forms
-from django.forms.fields import EMPTY_VALUES
+from django.core.validators import EMPTY_VALUES
 from models import DateTime
 
 class DateTimeForm(forms.ModelForm):
