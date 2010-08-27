@@ -100,12 +100,12 @@ class Contact(AbstractContact):
             The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (I.e. 'Coast Guard'). The idea is to track indivdual people or orgs (whichever makes more sense as a contact for a particular observation), but still group them into sets. I.e. a contact might be for the Boston Coast Guard office, but it would have an affiliation to simple 'Coast Guard', so that one could easily answer questions like "How many reports did we get from the Coast Guard last year?"
         ''',
     )
-    
-    def save(self, force_insert=False, force_update=False):
+
+    def clean(self):
+        # TODO using validation method to fill in default
+        # TODO make 'sort_name' blank in the interface if it's the same as name
         if not self.sort_name:
-            self.sort_name = self.name 
-        super(Contact, self).save(force_insert, force_update) # Call the "real" save() method.
-    # TODO make 'sort_name' blank in the interface if it's the same as name
+            self.sort_name = self.name
 
     @models.permalink
     def get_absolute_url(self):
