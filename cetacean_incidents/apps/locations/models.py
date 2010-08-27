@@ -1,5 +1,7 @@
 import re
+
 from django.db import models
+
 from utils import dec_to_dms, dms_to_dec
 
 class Location(models.Model):

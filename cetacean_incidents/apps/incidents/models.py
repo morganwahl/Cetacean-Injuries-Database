@@ -205,7 +205,7 @@ class CaseMeta(models.Model.__metaclass__):
             self.case_class._subclasses.add(the_class)
             self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
         return the_class
-        
+
 class Case(models.Model):
     '''\
     A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
@@ -508,9 +508,11 @@ class Case(models.Model):
             if subcases.count():
                 return subcases.all()[0]
         return self
-    def _get_detailed_class_name(self):
+
+    @property
+    def detailed_class_name(self):
         return self.detailed.__class__.__name__
-    detailed_class_name = property(_get_detailed_class_name) 
+
     case_type = detailed_class_name
     
     @property
@@ -593,11 +595,12 @@ class Observation(models.Model):
         help_text= 'the observer\'s location at the time of observation',
     )
 
-    def _is_firsthand(self):
+    @property
+    def firsthand(self):
         if self.reporter is None and self.observer is None:
             return None
         return self.reporter == self.observer
-    firsthand = property(_is_firsthand)
+
     reporter = models.ForeignKey(
         Contact,
         blank= True,

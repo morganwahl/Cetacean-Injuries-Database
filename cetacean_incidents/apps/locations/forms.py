@@ -136,39 +136,6 @@ class NiceLocationForm(LocationForm):
             return None
         return self._clean_coordinate(value, is_lat=False)
     
-    # TODO This make sense when creating a new Location, but not when editing
-    # an existing one
-    #
-    #_roughness_field = Location._meta.get_field('roughness')
-    #_roughnesses = (
-    #        ('', '<unknown>'),
-    #        ('10', "good GPS fix"),
-    #        ('50', "not so good GPS fix"),
-    #        (unicode(15 * MILE_IN_METERS), "general area (e.g. Mass Bay)"), # Cap Cod Bay is roughly 30mi across
-    #        (unicode(325 * MILE_IN_METERS), "region (e.g. the Northeast)"), # 650mi from the Chesapeake to Nova Scotia
-    #)
-    #_initial_roughness = ''
-    #if _roughness_field.default:
-    #    _initial_roughness = _roughness_field.default
-    #    if not _roughness_field.blank:
-    #        _roughnesses = _roughnesses[1:]
-    #    
-    #roughness = forms.ChoiceField(
-    #    choices= _roughnesses,
-    #    initial= _initial_roughness,
-    #    # TODO onion distance?
-    #    required= _roughness_field.blank != True,
-    #    label= _roughness_field.verbose_name.capitalize(),
-    #    help_text= u'''\
-    #        A guess as to the distance these coordinates are off by, at most.
-    #    ''',
-    #)
-    #
-    #def clean_roughness(self):
-    #    if self.cleaned_data['roughness'] == '':
-    #        return None
-    #    return float(self.cleaned_data['roughness'])
-    
     def clean(self):
         cleaned_data = self.cleaned_data
         

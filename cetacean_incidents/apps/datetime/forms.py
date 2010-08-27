@@ -43,7 +43,7 @@ class NiceDateTimeForm(DateTimeForm):
     def __init__(self, *args, **kwargs):
         super(NiceDateTimeForm, self).__init__(*args, **kwargs)
         # if an initial value wasn't given for 'time', get one from the
-        # instance. note that a new instance was already create if one wasn't
+        # instance. note that a new instance was already created if one wasn't
         # passed in
         if not 'time' in self.initial:
             time_data = forms.models.model_to_dict(self.instance, ('hour', 'minute', 'second'))

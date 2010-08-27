@@ -60,6 +60,8 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     
     # should be the same as whatever ModelForm would generate for the 'captain'
     # field, except it's not required.
+    # TODO why not just have it generate field for captain? (which wouldn't
+    # be required anyway)
     _f = StrikingVesselInfo._meta.get_field('captain')
     existing_captain = forms.ModelChoiceField(
         queryset= Contact.objects.all(),

@@ -89,6 +89,8 @@ class Taxon(models.Model):
         if t.rank <= 0:
             return True
 
+    # TODO cycle detection!
+
     objects = TaxonManager()
 
     class Meta:
