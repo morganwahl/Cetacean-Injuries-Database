@@ -130,8 +130,9 @@ class CaseManager(models.Manager):
                    or c.earliest_datetime > case.latest_datetime + assumed_max_obs_length ):
                 result.add(c)
         
-        # remove the given case
-        result.discard(case)
+        # be careful here since an Entanglement isn't considered equal to it's
+        # corresponding Case
+        result = set(filter(lambda c: c.id != case.id, result))
 
         return result
     
@@ -448,9 +449,7 @@ class Case(models.Model):
     
     @property
     def associated_cases(self):
-        result = Case.objects.associated_cases(self)
-        result.discard(self)
-        return result
+        return Case.objects.associated_cases(self)
 
     # this should always be the YearCaseNumber with case matching self.id and
     # year matching self.date.year . But, it's here so we can order by it in

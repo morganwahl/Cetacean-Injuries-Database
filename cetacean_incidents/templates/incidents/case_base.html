@@ -36,7 +36,7 @@
 
 {% block content %}
 {% if case.associated_cases %}
-<i>cases for this animal around the time of this one:</i>
+<i>other cases for this animal around the time of this one:</i>
 <ul>
     {% for c in case.associated_cases %}
     <li>{% case_link c %}</li>
