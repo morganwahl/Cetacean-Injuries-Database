@@ -14,17 +14,15 @@
 {% block title %}{{ block.super }}: {{ case }}{% endblock %}
 
 {% block ids-dl %}
-<dt>local ID</dt><dd>{{ case.id }}</dd>
-<dt>current name</dt><dd>{{ case.current_name|default:"<i>none</i>" }}</dd>
-{% if case.past_names_set %}
-<dt>past names</dt>
-<dd>
-    {% for past_name in case.past_names_set %}
-    {{ past_name }}<br>
-    {% endfor %}
-</dd>
-{% endif %}
-<dt>NMFS case number</dt><dd>{{ case.nmfs_id|default:"<i>none</i>" }}</dd>
+{% with case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
 {% endblock %}
 
 {% block header %}

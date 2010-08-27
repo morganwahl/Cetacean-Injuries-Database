@@ -10,7 +10,9 @@
 {% endblock %}
 
 {% block ids-dl %}
-<dt>local ID</dt><dd>{{ animal.id }}</dd>
+{% with animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}

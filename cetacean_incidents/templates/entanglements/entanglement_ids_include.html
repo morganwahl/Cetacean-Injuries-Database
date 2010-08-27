@@ -1,0 +1,6 @@
+{% extends "incidents/case_ids_include.html" %}
+{% block other_ids %}
+<dt><b>case</b> gear-analysis field #</dt>
+<dd>{{ c.gear_fieldnumber|default:"<i>none</i>" }}</dd>
+{% endblock %}
+

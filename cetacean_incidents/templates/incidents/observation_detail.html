@@ -24,8 +24,19 @@
 {% endblock %}
 
 {% block ids-dl %}
-<dt>case name</dt><dd>{{ observation.case.current_name }}</dd>
-<dt>observation local ID</dt><dd>{{ observation.id }}</dd>
+{% with observation.case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+<hr>
+{% with observation as o %}
+{% include "incidents/observation_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}

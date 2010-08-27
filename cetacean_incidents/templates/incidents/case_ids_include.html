@@ -1,0 +1,14 @@
+{# assumes a case has is 'c' and outputs a series of <dt><dd> pairs #}
+<dt><b>case</b> local ID</dt><dd>{{ c.id }}</dd>
+<dt><b>case</b> current name</dt><dd>{{ c.current_name|default:"<i>none</i>" }}</dd>
+{% if c.past_names_set %}
+<dt><b>case</b> past names</dt>
+<dd>
+    {% for past_name in c.past_names_set %}
+    {{ past_name }}<br>
+    {% endfor %}
+</dd>
+{% endif %}
+<dt><b>case</b> NMFS number</dt><dd>{{ c.nmfs_id|default:"<i>none</i>" }}</dd>
+{% block other_ids %}{% endblock %}
+
