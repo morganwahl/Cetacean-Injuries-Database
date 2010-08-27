@@ -1,5 +1,8 @@
 {# intended to be included in another template, with a NiceLocationForm as l_form #}
 <div>
+    {% if l_form.non_field_errors %}
+    {{ l_form.non_field_errors }}
+    {% endif %}
     {% for f in l_form %}
     {% include "labeled_field.html" %}
     {% endfor %}
