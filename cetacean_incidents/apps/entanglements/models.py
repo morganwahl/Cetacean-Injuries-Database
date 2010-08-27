@@ -95,7 +95,7 @@ class Entanglement(Case):
         
     # TODO does gear_analyzed imply gear_recovered?
     gear_analyzed = models.NullBooleanField(
-        default= None,
+        default= False,
         blank= True,
         null= True,
         verbose_name= "was gear analyzed?",
