@@ -25,6 +25,21 @@ pre {
     font-family: Terminus, "Monospace", monospace;
     font-size: 10pt;
 }
+#sidebar {
+	float: right;
+	border-left: solid thin #888a85; /* aluminium 4 */
+	border-bottom: solid thin #888a85; /* aluminium 4 */
+	background-color: inherit;
+}
+#sidebar div {
+	border: thin solid #888a85; /* aluminium 4 */
+	background-color: inherit;
+	padding: .25em;
+	margin: .25em;
+}
+#logo {
+    margin: .25em;
+}
 div#masthead {
     padding: .5em;
     background-color: #ffffff;
