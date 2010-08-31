@@ -25,6 +25,34 @@ pre {
     font-family: Terminus, "Monospace", monospace;
     font-size: 10pt;
 }
+#sidebar {
+	float: right;
+	border-left: solid thin #888a85; /* aluminium 4 */
+	border-bottom: solid thin #888a85; /* aluminium 4 */
+	/* IE thinks inherit == transparent */
+	/*
+	background-color: inherit;
+	*/
+    background-color: #eeeeec; /* aluminium 1 */
+}
+#sidebar div {
+	border: thin solid #888a85; /* aluminium 4 */
+	/* IE thinks inherit == transparent */
+	/*
+	background-color: inherit;
+	*/
+    background-color: #eeeeec; /* aluminium 1 */
+	padding: .25em;
+	margin: .25em;
+}
+#sidebar hr {
+    /* ideally we wouldn't specify this at all, but IE likes to make <HR> widths
+    relative to the page, instead of the containing div. */
+    width: 15em;
+}
+#logo {
+    margin: .25em;
+}
 div#masthead {
     padding: .5em;
     background-color: #ffffff;
