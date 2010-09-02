@@ -69,7 +69,9 @@ ul.navlinks {
 }
 table.navlinks,
 ul.navlinks {
+    /* plays havoc with #sidebar
     width: 100%;
+    */
 }
 ul.navlinks li {
     display: table-cell;

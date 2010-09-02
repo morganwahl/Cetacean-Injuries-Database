@@ -20,11 +20,11 @@
             return false;
         });
         $('.link-to-reporting').click(function() { // bind click event to link
-            $tabs.tabs('select', '#reporting'); // switch to third tab
+            $tabs.tabs('select', '#reporting'); // switch to reporting tab
             return false;
         });
         $('.link-to-observation').click(function() { // bind click event to link
-            $tabs.tabs('select', '#observation'); // switch to third tab
+            $tabs.tabs('select', '#observation'); // switch to observation tab
             return false;
         });
         $('.link-to-animal-identification').click(function() { // bind click event to link
@@ -32,11 +32,11 @@
             return false;
         });
         $('.link-to-incident').click(function() { // bind click event to link
-            $tabs.tabs('select', '#incident'); // switch to third tab
+            $tabs.tabs('select', '#incident'); // switch to incident tab
             return false;
         });
         $('.link-to-save').click(function() { // bind click event to link
-            $tabs.tabs('select', '#save'); // switch to third tab
+            $tabs.tabs('select', '#save'); // switch to save tab
             return false;
         });
     });
@@ -125,6 +125,7 @@
             </ul>
             <div id="animal">
                 <h3>Animal</h3>
+                {# TODO this arithmatic isn't correct for adding new observations #}
                 {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
                 <div class="edit-warning">
                     <img
