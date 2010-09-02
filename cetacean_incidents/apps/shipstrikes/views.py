@@ -74,6 +74,7 @@ def add_shipstrikeobservation(request, shipstrike_id):
         request,
         case_id= shipstrike_id,
         template= 'shipstrikes/add_shipstrike_observation.html',
+        caseform_class= ShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
             'striking_vessel': NiceStrikingVesselInfoForm,
@@ -157,6 +158,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
         request,
         observation_id= shipstrikeobservation_id,
         template= 'shipstrikes/edit_shipstrike_observation.html',
+        caseform_class= ShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
             'striking_vessel': NiceStrikingVesselInfoForm,
