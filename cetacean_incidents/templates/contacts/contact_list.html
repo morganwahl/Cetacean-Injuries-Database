@@ -68,16 +68,16 @@
                         </td>
                         {% if contact.reported.count %}
                         <td>
-                            {% with contact.reported_ordered|first as first_o %}
-                            <a href="{{ first_o.get_absolute_url }}">
-                                {{ first_o.observation_datetime }}
+                            {% with contact.reported_ordered|first as first_r %}
+                            <a href="{{ first_r.get_absolute_url }}">
+                                {{ first_r.report_datetime }}
                             </a>
                             {% endwith %}
                         </td>
                         <td>
-                            {% with contact.reported_ordered.reverse|first as last_o %}
-                            <a href="{{ last_o.get_absolute_url }}">
-                                {{ last_o.observation_datetime }}
+                            {% with contact.reported_ordered.reverse|first as last_r %}
+                            <a href="{{ last_r.get_absolute_url }}">
+                                {{ last_r.report_datetime }}
                             </a>
                             {% endwith %}
                         </td>
