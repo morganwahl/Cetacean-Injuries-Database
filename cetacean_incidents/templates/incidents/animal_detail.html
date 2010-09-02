@@ -5,7 +5,7 @@
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>{{ animal }}</h2>
+<h2>Animal {{ animal }}</h2>
 <div><a href="{% url edit_animal animal.id %}">edit</a></div>
 {% endblock %}
 

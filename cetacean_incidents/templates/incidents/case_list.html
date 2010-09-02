@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load animal_extras %}
 {% load case_extras %}
+{% load datetime_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -30,11 +31,11 @@
 	    {% for case in case_list %}
 	    <tr>
 	        <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
-		    <td sorttable_customkey="{{ case.date.year|default:10000 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
+		    <td sorttable_customkey="{{ case.date.year|default:9999 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
 		    <td>{{ case.case_type }}</td>
 		    <td>{% animal_link case.animal %}</td>
-		    <td>{{ case.first_observation_date }}</td>
-		    <td>{{ case.first_report_date }}</td>
+		    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date.earliest %}">{{ case.first_observation_date }}</td>
+		    <td sorttable_customkey="{% datetime_sort_key case.first_report_date.earliest %}">{{ case.first_report_date }}</td>
 	    </tr>
 	    {% empty %}
 	    <tr><td colspan="5" style="text-align:center;"><i>no cases</i></td></tr>

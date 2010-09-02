@@ -2,11 +2,12 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
-make associated cases obvious (i.e. "this animal has another case")
+divide case editing page into case, SI&M, gear
+add animal tab to case editing page
+add case, animal tabs to observation editing page
+make list of fields for using in paper-form version of database.
+add navlist to every page
 add timezone to date-times
-CSRF protections
-    http://docs.djangoproject.com/en/1.2/ref/contrib/csrf/#ref-contrib-csrf
-serious-injury-determination fields
 JS on gear-type widgets
     check/uncheck all boxes for the same type at once
     grey-out implied geartypes
