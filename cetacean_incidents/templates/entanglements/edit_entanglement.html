@@ -1,6 +1,13 @@
 {% extends "entanglements/entanglement_base.html" %}
 {% load observation_extras %}
 
+{# TODO this is the same as incidents/edit_case.html, but with a different base #}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block title %}{{ block.super }} [editing]{% endblock %}
 
 {% block header %}
@@ -11,9 +18,27 @@
 {% block case_fields %}
 <form action="" method="post">
     {% csrf_token %}
-    {% for f in form %}
-    {% include "labeled_field.html" %}
-    {% endfor %}
+    <div class="subsection">
+        <h3>Animal</h3>
+        {% if animal.case_set.count > 1 or animal.observation_set.count > 0 %}
+        <div class="edit-warning">
+            <img
+                src="{% url site-media path="icons/warning.png"%}"
+            >
+            Note that this is the animal data for {% if animal.case_set.count > 1 %}{{ animal.case_set.count|add:"-1" }} other case{{ animal.case_set.count|add:"-1"|pluralize }} and {% endif %} {{ animal.observation_set.count }} observation{{ animal.observation_set.count|pluralize }}.
+            <img
+                src="{% url site-media path="icons/warning.png"%}"
+            >
+        </div>
+        {% endif %}
+        {{ animal_form.as_p }}
+    </div>
+    <div class="subsection">
+        <h3>Case</h3>
+        {% for f in form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
+    </div>
     <button type="submit">save changes</button>
 </form>
 {% endblock %}
