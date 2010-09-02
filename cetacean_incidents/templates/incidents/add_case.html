@@ -14,10 +14,27 @@
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
+    {% if animal %}
+    <div class="section">
+        <h3>Animal</h3>
+        {% if animal.case_set.count > 0 or animal.observation_set.count > 0 %}
+        <div class="edit-warning">
+            <img
+                src="{% url site-media path="icons/warning.png"%}"
+            >
+            Note that this is the animal data for {% if animal.case_set.count > 0 %}{{ animal.case_set.count }} other case{{ animal.case_set.count|pluralize }} and {% endif %} {{ animal.observation_set.count }} observation{{ animal.observation_set.count|pluralize }}.
+            <img
+                src="{% url site-media path="icons/warning.png"%}"
+            >
+        </div>
+        {% endif %}
+        {{ animal_form.as_p }}
+    </div>
+    {% endif %}
     <div>
         <script type="text/javascript">
             $().ready(function(){
-                selector = $("select[name={{ type_form.case_type.name }}]")
+                selector = $("select[name={{ type_form.case_type.html_name }}]")
                 selector.change(function(event){
                     $("div.case_form").hide();
                     if ($(this).val() != '') {

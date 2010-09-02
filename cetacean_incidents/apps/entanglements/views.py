@@ -236,6 +236,7 @@ def add_entanglementobservation(request, entanglement_id):
         case_id= entanglement_id,
         template= 'entanglements/add_entanglement_observation.html',
         observationform_class= EntanglementObservationForm,
+        caseform_class= EntanglementForm,
     )
 
 @login_required
@@ -245,6 +246,7 @@ def edit_entanglementobservation(request, entanglementobservation_id):
         observation_id = entanglementobservation_id,
         template= 'entanglements/edit_entanglement_observation.html',
         observationform_class= EntanglementObservationForm,
+        caseform_class= EntanglementForm,
     )
 
 @login_required

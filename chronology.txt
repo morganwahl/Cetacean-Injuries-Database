@@ -2,11 +2,12 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+stop hard-coding jquery versions
+fix jqueryui font sizes (too big in widgets in IE)
 divide case editing page into case, SI&M, gear
 add animal tab to case editing page
-add case, animal tabs to observation editing page
 make list of fields for using in paper-form version of database.
-add navlist to every page
+determined_taxon should override probable taxon in case names
 add timezone to date-times
 JS on gear-type widgets
     check/uncheck all boxes for the same type at once

@@ -3,51 +3,9 @@
 {% block head %}
 {{ block.super }}
 {{ media }}
-<style type="text/css">
-    ul.navlinks {
-        display: table;
-    }
-    table.navlinks,
-    ul.navlinks {
-        width: 100%;
-    }
-    ul.navlinks li {
-        display: table-cell;
-    }
-    table.navlinks td,
-    ul.navlinks li {
-        padding: .75em;
-        text-align: center;
-        vertical-align: middle;
-    }
-    table.navlinks td a,
-    ul.navlinks li a {
-        text-decoration: none;
-    }
-</style>
 {% endblock %}
 
 {% block header %}
-<!-- these should just be a styled list... but IE can't handle display:table styles
-<ul class="navlinks">
-    <li><a href="{% url all_contacts %}">view all contacts</a></li>
-    <li><a href="{% url all_animals %}">view all animals</a></li>
-    <li><a href="{% url all_cases %}">view all cases</a></li>
-    <li><a href="{% url recent_revisions %}">recent revisions</a></li>
-    <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
-    <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
-</ul>
--->
-<table class="navlinks layout">
-    <tr>
-        <td><a href="{% url all_contacts %}">view all contacts</a></td>
-        <td><a href="{% url all_animals %}">view all animals</a></td>
-        <td><a href="{% url all_cases %}">view all cases</a></td>
-        <td><a href="{% url recent_revisions %}">recent revisions</a></td>
-        <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
-        <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>
-    </tr>
-</table>
 {% endblock %}
 
 {% block content %}
@@ -124,7 +82,7 @@
         <td class="section layout">
             <form action="{% url animal_search %}" method="get">
                 <div>
-                    <h3>get a list of animals that fit some criteria</h3>
+                    <h3>search animals</h3>
                     {% for f in forms.animal_search %}
                     {% include "labeled_field.html" %}
                     {% endfor %}
@@ -135,7 +93,7 @@
         <td class="section layout">
             <form action="{% url case_search %}" method="get">
                 <div>
-                    <h3>get a list of cases that fit some criteria</h3>
+                    <h3>search cases</h3>
                     {% for f in forms.case_search %}
                     {% include "labeled_field.html" %}
                     {% endfor %}
