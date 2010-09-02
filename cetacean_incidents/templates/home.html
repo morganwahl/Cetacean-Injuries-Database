@@ -82,7 +82,7 @@
         <td class="section layout">
             <form action="{% url animal_search %}" method="get">
                 <div>
-                    <h3>get a list of animals that fit some criteria</h3>
+                    <h3>search animals</h3>
                     {% for f in forms.animal_search %}
                     {% include "labeled_field.html" %}
                     {% endfor %}
@@ -93,7 +93,7 @@
         <td class="section layout">
             <form action="{% url case_search %}" method="get">
                 <div>
-                    <h3>get a list of cases that fit some criteria</h3>
+                    <h3>search cases</h3>
                     {% for f in forms.case_search %}
                     {% include "labeled_field.html" %}
                     {% endfor %}

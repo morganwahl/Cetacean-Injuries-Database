@@ -7,6 +7,7 @@ fix jqueryui font sizes (too big in widgets in IE)
 divide case editing page into case, SI&M, gear
 add animal tab to case editing page
 make list of fields for using in paper-form version of database.
+determined_taxon should override probable taxon in case names
 add timezone to date-times
 JS on gear-type widgets
     check/uncheck all boxes for the same type at once
