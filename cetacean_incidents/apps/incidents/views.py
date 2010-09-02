@@ -157,18 +157,21 @@ def add_case(request, animal_id):
         addcase_forms[case_type_name] = addcase_form_class(prefix=case_type_name, **addcaseform_args)
 
     if request.method == 'POST':
-        type_form = CaseTypeForm(request.POST)
-        if type_form.is_valid():
-            # get the relevant AddCaseForm subclass
-            case_form = addcase_forms[type_form.cleaned_data['case_type']]
-            if case_form.is_valid():
-                new_case = case_form.save(commit=False)
-                new_case.animal = animal
-                new_case.save()
-                case_form.save_m2m()
-                return redirect(new_case)
+        animal_form = AnimalForm(request.POST, prefix='animal', instance=animal)
+        type_form = CaseTypeForm(request.POST, prefix='type')
+        if animal_form.is_valid() and type_form.is_valid():
+                # get the relevant AddCaseForm subclass
+                case_form = addcase_forms[type_form.cleaned_data['case_type']]
+                if case_form.is_valid():
+                    animal_form.save()
+                    new_case = case_form.save(commit=False)
+                    new_case.animal = animal
+                    new_case.save()
+                    case_form.save_m2m()
+                    return redirect(new_case)
     else:
-        type_form = CaseTypeForm()
+        animal_form = AnimalForm(prefix='animal', instance=animal)
+        type_form = CaseTypeForm(prefix='type')
         
     template_media = Media(
         js= ('jquery/jquery-1.3.2.min.js',),
@@ -178,7 +181,8 @@ def add_case(request, animal_id):
         'incidents/add_case.html',
         {
             'animal': animal,
-            'media': reduce( lambda m, f: m + f.media, [type_form] +  addcase_forms.values(), template_media),
+            'media': reduce( lambda m, f: m + f.media, [type_form, animal_form] +  addcase_forms.values(), template_media),
+            'animal_form': animal_form,
             'type_form': type_form,
             'case_forms': addcase_forms,
         },
@@ -596,18 +600,23 @@ def edit_observation(
 def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):
     case = Case.objects.get(id=case_id).detailed
     if request.method == 'POST':
-        form = form_class(request.POST, instance=case)
-        if form.is_valid():
+        animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
+        form = form_class(request.POST, prefix='case', instance=case)
+        if animal_form.is_valid() and form.is_valid():
+            animal_form.save()
             form.save()
             return redirect(case)
     else:
-        form = form_class(instance=case)
+        animal_form = AnimalForm(prefix='animal', instance=case.animal)
+        form = form_class(prefix='case', instance=case)
     return render_to_response(
         template, {
             'taxon': case.probable_taxon,
             'gender': case.probable_gender,
+            'animal_form': animal_form,
             'form': form,
-            'media': form.media,
+            'media': form.media + animal_form.media,
+            'animal': case.animal,
             'case': case,
         },
         context_instance= RequestContext(request),
