@@ -46,8 +46,10 @@
                 <li><a href="{% url all_animals %}">view all animals</a></li>
                 <li><a href="{% url all_cases %}">view all cases</a></li>
                 <li><a href="{% url recent_revisions %}">recent revisions</a></li>
+                {% comment %}
                 <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
                 <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
+                {% endcomment %}
             </ul>
             -->
             <table class="navlinks layout">
@@ -56,8 +58,10 @@
                     <td><a href="{% url all_animals %}">view all animals</a></td>
                     <td><a href="{% url all_cases %}">view all cases</a></td>
                     <td><a href="{% url recent_revisions %}">recent revisions</a></td>
+                    {% comment %}
                     <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
                     <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>
+                    {% endcomment %}
                 </tr>
             </table>
         </div>
