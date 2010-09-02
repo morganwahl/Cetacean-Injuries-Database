@@ -11,6 +11,14 @@
     $(function(){
         var $tabs = $('#tabs').tabs();
         
+        $('.link-to-animal').click(function() { // bind click event to link
+            $tabs.tabs('select', '#animal'); // switch to animal tab
+            return false;
+        });
+        $('.link-to-case').click(function() { // bind click event to link
+            $tabs.tabs('select', '#case'); // switch to case tab
+            return false;
+        });
         $('.link-to-reporting').click(function() { // bind click event to link
             $tabs.tabs('select', '#reporting'); // switch to third tab
             return false;
@@ -19,8 +27,8 @@
             $tabs.tabs('select', '#observation'); // switch to third tab
             return false;
         });
-        $('.link-to-animal').click(function() { // bind click event to link
-            $tabs.tabs('select', '#animal'); // switch to third tab
+        $('.link-to-animal-identification').click(function() { // bind click event to link
+            $tabs.tabs('select', '#animal-identification'); // switch to animal tab
             return false;
         });
         $('.link-to-incident').click(function() { // bind click event to link
@@ -55,6 +63,22 @@
         <div id="tabs">
             <ul>
                 <li>
+                    <a href="#animal">
+                        Animal
+                        {% if forms.animal.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
+                    <a href="#case">
+                        Case
+                        {% if forms.case.errors %}
+                        <div class="ui-state-error">errors!</div>
+                        {% endif %}
+                    </a>
+                </li>
+                <li>
                     <a href="#reporting">
                         Reporting
                         {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
@@ -71,8 +95,8 @@
                     </a>
                 </li>
                 <li>
-                    <a href="#animal">
-                        Animal
+                    <a href="#animal-identification">
+                        Animal Identification
                         {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -99,6 +123,45 @@
                     </a>
                 </li>
             </ul>
+            <div id="animal">
+                <h3>Animal</h3>
+                {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
+                <div class="edit-warning">
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                    Note that this is the animal data for {% if case.animal.case_set.count > 1 %}{{ case.animal.case_set.count|add:"-1" }} other case{{ case.animal.case_set.count|add:"-1"|pluralize }} and {% endif %} {{ case.animal.observation_set.count|add:"-1" }} other observation{{ case.animal.observation_set.count|add:"-1"|pluralize }}.
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                </div>
+                {% endif %}
+                {{ forms.animal.as_p }}
+                <div style="text-align: right;">
+                    <a class="link-to-case" href="#case">next tab -&gt;</a>
+                </div>
+            </div> <!-- id="animal" -->
+            <div id="case">
+                <h3>Case</h3>
+                {% if case.observation_set.count > 1 %}
+                <div class="edit-warning">
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                    Note that this is the case data for {{ case.observation_set.count|add:"-1" }} other observation{{ case.observation_set.count|add:"-1"|pluralize }}.
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                </div>
+                {% endif %}
+                {{ forms.case.as_p }}
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
+                </div>
+                <div style="text-align: right;">
+                    <a class="link-to-reporting" href="#reporting">next tab -&gt;</a>
+                </div>
+            </div> <!-- id="case" -->
             <div id="reporting">
                 <h3>Reporting</h3>
                 <div class="section">
@@ -138,6 +201,9 @@
                     {% with forms.observation.documentation as f %}
                     {% include "labeled_field.html" %}
                     {% endwith %}
+                </div>
+                <div style="text-align:left; float: left;">
+                    <a class="link-to-case" href="#case">&lt;- previous tab</a>
                 </div>
                 <div style="text-align: right;">
                     <a class="link-to-observation" href="#observation">next tab -&gt;</a>
@@ -211,10 +277,10 @@
                     <a class="link-to-reporting" href="#reporting">&lt;- previous tab</a>
                 </div>
                 <div style="text-align: right;">
-                    <a class="link-to-animal" href="#animal">next tab -&gt;</a>
+                    <a class="link-to-animal-identification" href="#animal-identification">next tab -&gt;</a>
                 </div>
             </div> <!-- id="observation" -->
-            <div id="animal">
+            <div id="animal-identification">
                 <h3>Animal identification</h3>
                 <table>
                     <tr>
@@ -256,7 +322,7 @@
                 <div style="text-align: right;">
                     <a class="link-to-incident" href="#incident">next tab -&gt;</a>
                 </div>
-            </div> <!-- id="animal" -->
+            </div> <!-- id="animal-identification" -->
             <div id="incident">
                 <h3>Incident details</h3>
                 <script type="text/javascript">
@@ -279,7 +345,7 @@
                 </div>
                 {% endblock %}
                 <div style="text-align:left; float: left;">
-                    <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
+                    <a class="link-to-animal-identification" href="#animal-identification">&lt;- previous tab</a>
                 </div>
                 <div style="text-align: right;">
                     <a class="link-to-save" href="#save">next tab -&gt;</a>

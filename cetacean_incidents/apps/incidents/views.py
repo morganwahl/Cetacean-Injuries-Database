@@ -221,6 +221,7 @@ def add_observation(
         request,
         case_id,
         template='incidents/add_observation.html',
+        caseform_class=CaseForm,
         observationform_class= ObservationForm,
         additional_form_classes= {},
         additional_form_saving= lambda forms, check, observation: None,
@@ -231,6 +232,8 @@ def add_observation(
     case = Case.objects.get(id=case_id).detailed
     
     form_classes = {
+        'animal': AnimalForm,
+        'case': caseform_class,
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
@@ -245,9 +248,14 @@ def add_observation(
     }
     form_classes.update(additional_form_classes)
     
+    form_kwargs = {
+        'animal': {'instance': case.animal},
+        'case': {'instance': case},
+    }
+    
     forms = {}
     for form_name, form_class in form_classes.items():
-        kwargs = {}
+        kwargs = form_kwargs.get(form_name, {})
         if request.method == 'POST':
             kwargs['data'] = request.POST
         forms[form_name] = form_class(prefix=form_name, **kwargs)
@@ -263,6 +271,12 @@ def add_observation(
         @transaction.commit_on_success
         @revision.create_on_success
         def _try_saving():
+            _check('animal')
+            forms['animal'].save()
+            
+            _check('case')
+            forms['case'].save()
+            
             _check('observation')
             observation = forms['observation'].save(commit=False)
             observation.case = case
@@ -373,6 +387,7 @@ def edit_observation(
         request,
         observation_id,
         template='incidents/add_observation.html',
+        caseform_class= CaseForm,
         observationform_class= ObservationForm,
         additional_form_classes= {},
         additional_model_instances = {},
@@ -386,6 +401,8 @@ def edit_observation(
     '''
     
     form_classes = {
+        'animal': AnimalForm,
+        'case': caseform_class,
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
@@ -403,6 +420,8 @@ def edit_observation(
     observation = Observation.objects.get(id=observation_id).detailed
 
     model_instances = {
+        'animal': observation.case.animal,
+        'case': observation.case,
         'observation': observation,
         'report_datetime': observation.report_datetime,
         'observation_datetime': observation.observation_datetime,
@@ -462,6 +481,12 @@ def edit_observation(
         @transaction.commit_on_success
         @revision.create_on_success
         def _try_saving():
+            _check('animal')
+            forms['animal'].save()
+            
+            _check('case')
+            forms['case'].save()
+            
             _check('observation')
             observation = forms['observation'].save(commit=False)
 
