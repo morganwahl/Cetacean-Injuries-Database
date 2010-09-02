@@ -345,7 +345,10 @@ if (document.addEventListener) {
 /* for Internet Explorer */
 /*@cc_on @*/
 /*@if (@_win32)
-    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    // HTTPS bugfix. see http://kryogenix.org/bugs/sorttable/https-secure-content.html
+    //document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    var dummy = (location.protocol == "https:") ? "//:" : "javascript:void(0)";
+    document.write("<script id=__ie_onload defer src='" + dummy + "'><\/script>");
     var script = document.getElementById("__ie_onload");
     script.onreadystatechange = function() {
         if (this.readyState == "complete") {
