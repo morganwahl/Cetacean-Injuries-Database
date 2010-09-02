@@ -1,9 +1,6 @@
 Please edit local_settings.py-example and save it as local_settings.py before
 trying to run anything.
 
-The templates expect the Blueprint CSS library to be present in 
-<SITE_MEDIA>/blueprint.
-
 The a jQuery-ui library with the overcast theme and the tabs component should be
 present in:
 
