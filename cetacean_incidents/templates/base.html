@@ -9,7 +9,8 @@
 		    href="{% url site-media path="site.css" %}"
 		    type="text/css"
 		    >
-		
+        <style type="text/css">
+        </style>
 		<title>
 		    {% block title %}Marine Mammal Injury Database{% endblock %}
 		</title>
@@ -37,6 +38,28 @@
                     Marine Mammal Injury Database
                 </a>
             </h1>
+        </div>
+        <div id="navigation-links">
+            <!-- these should just be a styled list... but IE can't handle display:table styles
+            <ul class="navlinks">
+                <li><a href="{% url all_contacts %}">view all contacts</a></li>
+                <li><a href="{% url all_animals %}">view all animals</a></li>
+                <li><a href="{% url all_cases %}">view all cases</a></li>
+                <li><a href="{% url recent_revisions %}">recent revisions</a></li>
+                <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
+                <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
+            </ul>
+            -->
+            <table class="navlinks layout">
+                <tr>
+                    <td><a href="{% url all_contacts %}">view all contacts</a></td>
+                    <td><a href="{% url all_animals %}">view all animals</a></td>
+                    <td><a href="{% url all_cases %}">view all cases</a></td>
+                    <td><a href="{% url recent_revisions %}">recent revisions</a></td>
+                    <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
+                    <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>
+                </tr>
+            </table>
         </div>
         <div id="header">
             {% block header %}

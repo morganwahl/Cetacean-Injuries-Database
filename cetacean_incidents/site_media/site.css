@@ -60,9 +60,33 @@ div#masthead {
 div#masthead a {
     text-decoration: none;
 }
+div#navigation-links {
+    padding: .25em;
+    background-color: #fcfcfa; /* aluminium 1 plus 6% */
+}
+ul.navlinks {
+    display: table;
+}
+table.navlinks,
+ul.navlinks {
+    width: 100%;
+}
+ul.navlinks li {
+    display: table-cell;
+}
+table.navlinks td,
+ul.navlinks li {
+    padding: .75em;
+    text-align: center;
+    vertical-align: middle;
+}
+table.navlinks td a,
+ul.navlinks li a {
+    text-decoration: none;
+}
 div#header {
     padding: .5em;
-    background-color: #fafaf8; /* aluminium 1 plus 5% */
+    background-color: #f5f5f3; /* aluminium 1 plus 3% */
 }
 div#content {
     padding: .5em;
