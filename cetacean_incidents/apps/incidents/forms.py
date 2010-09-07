@@ -9,12 +9,11 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
 
-from django.contrib.admin.widgets import AdminDateWidget
-
 from models import Animal, Case, YearCaseNumber, Observation
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 case_form_classes = {}
 addcase_form_classes = {}
@@ -73,23 +72,14 @@ class CaseTypeForm(forms.Form):
     # this form is almost entirely dynamically created
     __metaclass__ = CaseTypeFormMeta
 
-class DateWidget(AdminDateWidget):
-
-    @property
-    def media(self):
-        return forms.Media(
-            css= {'all': ('admin/css/widgets.css',)},
-            js= (reverse('jsi18n'), 'admin/js/core.js'),
-        ) + super(DateWidget, self).media
-
 class CaseForm(forms.ModelForm):
     
     class Meta:
         model = Case
         # custom widgets for the SI & M date fields
         widgets = {
-            'review_1_date': DateWidget,
-            'review_2_date': DateWidget,
+            'review_1_date': Datepicker,
+            'review_2_date': Datepicker,
         }
 
 class MergeCaseForm(forms.ModelForm):
@@ -236,11 +226,13 @@ class CaseSearchForm(forms.Form):
     
     after_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day"
+        help_text= "enter year-month-day",
+        widget= Datepicker,
     )
     before_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day"
+        help_text= "enter year-month-day",
+        widget= Datepicker,
     )
 
     # TODO check that after date is before before_date

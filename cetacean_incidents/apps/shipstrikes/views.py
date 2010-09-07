@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms import Media
 from django.db import transaction
+from django.conf import settings
 
 from reversion import revision
 
@@ -30,7 +31,7 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
         'shipstrikes/shipstrike_observation_detail.html',
         {
             'observation': shipstrikeobservation,
-            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
+            'media': Media(js=(settings.JQUERY_FILE , 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )
@@ -265,7 +266,7 @@ def shipstrike_report_form(request):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
     )
 
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)
