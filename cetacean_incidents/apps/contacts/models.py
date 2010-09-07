@@ -83,7 +83,7 @@ class Contact(AbstractContact):
             'report_datetime',
             'id',
         )
-
+    
     # TODO properties probably shouldn't do queries
     @property
     def reported_ordered(self):

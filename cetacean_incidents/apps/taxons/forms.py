@@ -1,8 +1,9 @@
 from django import forms
 from django.template.loader import render_to_string
-from models import Taxon
 from django.core.validators import EMPTY_VALUES
 from django.conf import settings
+
+from models import Taxon
 
 class TaxonWidget(forms.widgets.Widget):
     '''\
