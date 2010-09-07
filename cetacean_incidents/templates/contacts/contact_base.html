@@ -60,57 +60,34 @@
 {% endblock %}
 <div class="section">
     <div>
-        <h3>Observations</h3>
-        {% if contact.observed.count %}
+        <h3>Observations reported or observed</h3>
+        {% if contact.observed.count or contact.reported.count %}
         <table class="sortable">
             <thead>
                 <tr>
-                    <td></td>
-                    <th>date observed</th>
-                    <th>date reported</th>
-                    <th>reporter</th>
-                    <th class="sorttable_nosort">start of narrative...</th>
-                <tr>
-            </thead>
-            {% for o in contact.observed.all %}
-            <tr>
-                <td>{% observation_link o %}</td>
-                <td sorttable="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
-                <td sorttable="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
-                <td>{% if o.reporter %}{% contact_link o.reporter %}{% else %}<i>none</i>{% endif %}</td>
-                <td>{{ o.narrative|truncatewords:9 }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <i>no observations</i>
-        {% endif %}
-    </div>
-    <div>
-        <h3>Reports</h3>
-        {% if contact.reported.count %}
-        <table class="sortable">
-            <thead>
-                <tr>
-                    <td></td>
+                    <th class="sorttable_nosort">&nbsp;</th>
                     <th>observer</th>
                     <th>date observed</th>
+                    <th>reporter</th>
                     <th>date reported</th>
                     <th class="sorttable_nosort">start of narrative...</th>
                 </tr>
             </thead>
-            {% for o in contact.reported.all %}
-            <tr>
-                <td>{% observation_link o %}</td>
-                <td>{% if o.observer %}{% contact_link o.observer %}{% else %}<i>none</i>{% endif %}</td>
-                <td sorttable="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
-                <td sorttable="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
-                <td>{{ o.narrative|truncatewords:9 }}</td>
-            </tr>
-            {% endfor %}
+            <tbody>
+                {% for o in contact.observed_or_reported_ordered.reverse.all %}
+                <tr>
+                    <td>{% observation_link o %}</td>
+                    <td>{% if o.observer %}{% contact_link o.observer %}{% else %}<i>none</i>{% endif %}</td>
+                    <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
+                    <td>{% if o.reporter %}{% contact_link o.reporter %}{% else %}<i>none</i>{% endif %}</td>
+                    <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
+                    <td>{{ o.narrative|truncatewords:9 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
         {% else %}
-        <i>no reports</i>
+        <i>none</i>
         {% endif %}
     </div>
 </div>

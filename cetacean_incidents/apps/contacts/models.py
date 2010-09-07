@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 
 class Organization(models.Model):
     
@@ -83,11 +84,23 @@ class Contact(AbstractContact):
             'id',
         )
 
+    # TODO properties probably shouldn't do queries
     @property
     def reported_ordered(self):
         return self.reported.order_by(
             'report_datetime',
             'observation_datetime',
+            'id',
+        )
+    
+    def observed_or_reported_ordered(self):
+        observed = Q(observer= self)
+        reported = Q(reporter= self)
+        # doing this here avoids circular imports
+        from cetacean_incidents.apps.incidents.models import Observation
+        return Observation.objects.filter(observed | reported).order_by(
+            'observation_datetime',
+            'report_datetime',
             'id',
         )
 
