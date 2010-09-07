@@ -1,0 +1,10 @@
+<!-- TODO noscript -->
+<script type="text/javascript">
+$(function() {
+	$("#{{ input_id }}").datepicker({
+	        dateFormat: 'yy-mm-dd' // ISO 8601
+	});
+});
+</script>
+<input {{ final_attrs|safe }}>
+
