@@ -2,6 +2,7 @@ from django import forms
 from django.template.loader import render_to_string
 from models import Taxon
 from django.core.validators import EMPTY_VALUES
+from django.conf import settings
 
 class TaxonWidget(forms.widgets.Widget):
     '''\
@@ -49,7 +50,7 @@ class TaxonWidget(forms.widgets.Widget):
     
     class Media:
         css = {'all': ('taxon_widget.css',)}
-        js = ('jquery/jquery-1.3.2.min.js', 'taxon_widget.js')
+        js = (settings.JQUERY_FILE, 'taxon_widget.js')
 
 class TaxonField(forms.Field):
     # based on ModelChoiceField, except you can't choose queryset, and there

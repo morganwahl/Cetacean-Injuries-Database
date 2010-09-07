@@ -21,6 +21,21 @@ USE_L10N = True
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = URL_PREFIX + 'site_media/'
 
+# The jQuery library should be present in
+#<MEDIA_URL>/<JQUERY_FILE>
+JQUERY_FILE = 'jquery/jquery-1.4.2.js'
+
+# The a jQuery-ui library with the overcast theme and the tabs component should 
+# be present in:
+#<MEDIA_URL>/<JQUERYUI_CSS_FILE>
+#<MEDIA_URL>/<JQUERYUI_JS_FILE>
+JQUERYUI_CSS_FILE = 'jqueryui/jquery-ui-1.8.4.custom/css/overcast/jquery-ui-1.8.4.custom.css'
+JQUERYUI_JS_FILE = 'jqueryui/jquery-ui-1.8.4.custom/js/jquery-ui-1.8.4.custom.min.js'
+
+# careful of circular imports here. if you import django.contrib.admin, it tries
+# to read django settings from this file
+#import django.contrib
+#ADMIN_MEDIA_ROOT = path.join(path.dirname(django.contrib.__file__), 'admin', 'media')
 ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 
 LOGIN_URL = URL_PREFIX + 'login/' 

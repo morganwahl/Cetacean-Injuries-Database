@@ -1,5 +1,6 @@
 from django.conf.urls.defaults import *
 from django.forms import Media
+from django.conf import settings
 
 import views
 
@@ -8,7 +9,7 @@ urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
     # RadioHider
     (r'^(\d+)/$', 'case_detail', {
         'extra_context': {
-            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js',)),
+            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js',)),
          },
     }, 'entanglement_detail'),
 )

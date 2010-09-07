@@ -8,6 +8,7 @@ from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.db import transaction
 from django.db import models
+from django.conf import settings
 
 from reversion import revision
 
@@ -88,7 +89,7 @@ def add_gear_owner(request, entanglement_id):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(
@@ -204,7 +205,7 @@ def edit_gear_owner(request, entanglement_id):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(
@@ -224,7 +225,7 @@ def entanglementobservation_detail(request, entanglementobservation_id):
         'entanglements/entanglement_observation_detail.html',
         {
             'observation': entanglementobservation,
-            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
+            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )
@@ -336,7 +337,7 @@ def entanglement_report_form(request):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
     )
 
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)

@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
+from django.conf import settings
 
 from reversion.models import Revision, Version
 
@@ -193,6 +194,6 @@ def revision_detail(request, rev_id):
     return render_to_response('reversion/revision_detail.html', {
         'rev': rev,
         'annotated_versions': annotated_versions,
-        'media': Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js')),
+        'media': Media(js=(settings.JQUERY_FILE, 'checkboxhider.js')),
     }, RequestContext(request))
     

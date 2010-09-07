@@ -8,6 +8,7 @@ from django.forms import Media
 from django.forms.formsets import formset_factory
 from django.db import transaction
 from django.db.models import Q
+from django.conf import settings
 
 from reversion import revision
 
@@ -37,7 +38,7 @@ def create_animal(request):
     else:
         form = AnimalForm()
 
-    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
 
     return render_to_response(
         'incidents/create_animal.html',
@@ -67,7 +68,7 @@ def edit_animal(request, animal_id):
     else:
         form = AnimalForm(**form_kwargs)
 
-    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
 
     return render_to_response(
         'incidents/edit_animal.html',
@@ -132,7 +133,7 @@ def create_case(request):
         type_form = CaseTypeForm()
         
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js',),
+        js= (settings.JQUERY_FILE,),
     )
     
     return render_to_response(
@@ -174,7 +175,7 @@ def add_case(request, animal_id):
         type_form = CaseTypeForm(prefix='type')
         
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js',),
+        js= (settings.JQUERY_FILE,),
     )
     
     return render_to_response(
@@ -372,8 +373,8 @@ def add_observation(
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
     return render_to_response(
@@ -581,8 +582,8 @@ def edit_observation(
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
     return render_to_response(

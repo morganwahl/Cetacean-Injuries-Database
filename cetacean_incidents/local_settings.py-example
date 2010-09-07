@@ -45,7 +45,6 @@ SITE_ID = 1
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'daiufh9283eigfha0w9dj bp9awehrnhb8jwardg'
 
-# only needed when serving static media with django itself
 MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
 
 TEMPLATE_DIRS = (
