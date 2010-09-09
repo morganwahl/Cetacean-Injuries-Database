@@ -26,7 +26,7 @@ class Datepicker(forms.widgets.DateInput):
         # assumes the the 
         # django.template.loaders.app_directories.load_template_source is being 
         # used, which is the default.
-        return render_to_string('date_widget.html', {
+        return render_to_string('datepicker.html', {
             'input_id': final_attrs['id'],
             'final_attrs': forms.util.flatatt(final_attrs),
         })
