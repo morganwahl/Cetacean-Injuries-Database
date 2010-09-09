@@ -85,7 +85,7 @@ class TaxonField(forms.Field):
     # are no choices, since we're using an AJAX-y TaxonWidget
     
     # a Field's widget defaults to self.widget
-    widget = TaxonWidget
+    widget = TaxonAutocomplete
     
     def clean(self, value):
         '''Value is a taxon ID as (as a string), returns a Taxon instance.'''
