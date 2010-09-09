@@ -2,6 +2,8 @@
 <script type="text/javascript">
     {# TODO no HTML escaping in js #}
 
+    {{ extra_js|safe }}
+
     {% if not func_options.custom_focus %}
     var {{ func_options.focus_name }} = function (event, ui) {
 		$('#{{ autocomplete_attrs.id }}').val(ui.item.label);

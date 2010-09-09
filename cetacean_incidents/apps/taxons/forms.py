@@ -2,6 +2,7 @@ from django import forms
 from django.template.loader import render_to_string
 from django.core.validators import EMPTY_VALUES
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
 
@@ -68,12 +69,16 @@ class TaxonAutocomplete(ModelAutocomplete):
             },
         )
     
-    def render(self, name, value, attrs=None, custom_html= None):
+    def render(self, name, value, attrs=None):
         return super(TaxonAutocomplete, self).render(
             name=name,
             value=value,
             attrs=attrs,
             custom_html= 'taxon_autocomplete_entry',
+            # TODO better was to pass this URL
+            extra_js= '''\
+            taxon_autocomplete_source_url = "%s";
+            ''' % reverse('taxon_search'),
         )
     
     class Media:
