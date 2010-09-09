@@ -3,6 +3,8 @@ from django.template.loader import render_to_string
 from django.core.validators import EMPTY_VALUES
 from django.conf import settings
 
+from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
+
 from models import Taxon
 
 class TaxonWidget(forms.widgets.Widget):
@@ -52,6 +54,31 @@ class TaxonWidget(forms.widgets.Widget):
     class Media:
         css = {'all': ('taxon_widget.css',)}
         js = (settings.JQUERY_FILE, 'taxon_widget.js')
+
+class TaxonAutocomplete(ModelAutocomplete):
+    
+    model = Taxon
+    
+    def __init__(self, attrs=None):
+        super(TaxonAutocomplete, self).__init__(
+            attrs=attrs,
+            source= 'taxon_autocomplete_source',
+            options= {
+                'minLength': 2,
+            },
+        )
+    
+    def render(self, name, value, attrs=None, custom_html= None):
+        return super(TaxonAutocomplete, self).render(
+            name=name,
+            value=value,
+            attrs=attrs,
+            custom_html= 'taxon_autocomplete_entry',
+        )
+    
+    class Media:
+        css = {'all': (settings.JQUERYUI_CSS_FILE, 'taxon_autocomplete.css')}
+        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'taxon_autocomplete.js')
 
 class TaxonField(forms.Field):
     # based on ModelChoiceField, except you can't choose queryset, and there

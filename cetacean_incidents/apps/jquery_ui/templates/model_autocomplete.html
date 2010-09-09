@@ -1,0 +1,40 @@
+<!-- TODO noscript -->
+<script type="text/javascript">
+    {# TODO no HTML escaping in js #}
+
+    {% if not func_options.custom_focus %}
+    var {{ func_options.focus_name }} = function (event, ui) {
+		$('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+		
+		return false;
+    }
+    {% endif %}
+
+    {% if not func_options.custom_select %}
+    var {{ func_options.select_name }} = function (event, ui) {
+	    $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+	    $('#{{ value_attrs.id }}').val(ui.item.value);
+	
+	    return false;
+    }
+    {% endif %}
+
+    $(function() {
+        $("#{{ autocomplete_attrs.id }}").autocomplete({
+            {% for arg, value in options.items %}{{ arg }}: {{ value }},
+            {% endfor %}
+            source: {{ source }}
+        })
+        {% if custom_html %}
+        .data("autocomplete")._renderItem = function( ul, item ) {
+            return $( "<li></li>" )
+            .data( "item.autocomplete", item )
+            .append( "<a>" + {{ custom_html }}(item) + "</a>" )
+            .appendTo( ul );
+        };
+        {% endif %}
+    });
+</script>
+<input {{ flat_autocomplete_attrs|safe }}>
+<input {{ flat_value_attrs|safe }}>
+
