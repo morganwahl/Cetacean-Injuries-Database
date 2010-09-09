@@ -73,8 +73,9 @@ TaxonWidget = {
                         item += '<div class="taxon_name">' + taxon.display_name + '</div>';
                         item += '<div class="taxon_id">' + taxon.id + '</div>';
                         if (taxon.common_names) {
-                            item += '<div class="common_names">' + taxon.common_names + '</div></td></tr>'
+                            item += '<div class="common_names">' + taxon.common_names + '</div>'
                         }
+                        item += '</td></tr>'
                         $("#" + table_id).append(item);
                         var tr = $("#" + tr_id);
                         tr.mouseleave(function (event){

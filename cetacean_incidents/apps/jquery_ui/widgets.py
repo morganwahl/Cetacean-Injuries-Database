@@ -1,9 +1,10 @@
 from django import forms
+from django.forms import widgets
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 
-class Datepicker(forms.widgets.DateInput):
+class Datepicker(widgets.DateInput):
     '''\
     The Django DateInput widget plus the jQuery-UI Datepicker.
     '''
