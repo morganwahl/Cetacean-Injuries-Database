@@ -73,7 +73,7 @@ class ModelAutocomplete(Autocomplete):
     def id_to_display(self, id):
         return self.model.objects.get(id=id).__unicode__()
     
-    def render(self, name, value, attrs=None, custom_html= None):
+    def render(self, name, value, attrs=None, custom_html= None, extra_js= None):
         attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         
         # split the attributes into ones for the visible autocomplete-field
@@ -120,5 +120,6 @@ class ModelAutocomplete(Autocomplete):
             'options': options,
             'func_options': func_options,
             'custom_html': custom_html,
+            'extra_js': extra_js,
         })
     

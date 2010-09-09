@@ -1,12 +1,13 @@
+// note that this needs to be set before the source is used
+var taxon_autocomplete_source_url = undefined;
+
 var taxon_autocomplete_source = function (request, response) {
     // request.term has the search term
     // response is a function that takes the results as it's only arg
     
-    // TODO no hardcoded URLs
-    var query_url = '/taxons/search'
     $.getJSON(
         // TODO error-handling!
-        query_url,
+        taxon_autocomplete_source_url,
         { q: request.term},
         function(taxons) {
             var suggests  = []
