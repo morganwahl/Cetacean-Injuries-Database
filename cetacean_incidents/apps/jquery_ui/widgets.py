@@ -36,3 +36,31 @@ class Datepicker(widgets.DateInput):
         css = {'all': (settings.JQUERYUI_CSS_FILE,)}
         js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE)
 
+class Autocomplete(widgets.Input):
+    
+    input_type = 'text'
+    
+    def __init__(self, attrs=None, source=None, options={}):
+        super(Autocomplete, self).__init__(attrs)
+        # TODO source is required
+        self.source = source
+        self.options = options
+    
+    def render(self, name, value, attrs=None):
+        if value is None: value = ''
+        input_attrs = self.build_attrs(attrs, type=self.input_type, name=name)
+        if value != '':
+            # Only add the 'value' attribute if a value is non-empty.
+            input_attrs['value'] = force_unicode(value)
+        
+        return render_to_string('autocomplete.html', {
+            'input_attrs': input_attrs,
+            'flat_input_attrs': forms.util.flatatt(input_attrs),
+            'source': self.source,
+            'options': self.options,
+        })
+    
+    class Media:
+        css = {'all': (settings.JQUERYUI_CSS_FILE,)}
+        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE)
+
