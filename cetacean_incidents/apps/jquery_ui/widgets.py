@@ -92,6 +92,8 @@ class ModelAutocomplete(Autocomplete):
             value_attrs['value'] = force_unicode(value)
         except ValueError:
             pass
+        except TypeError:
+            pass
 
         options = self.options.copy()
 
