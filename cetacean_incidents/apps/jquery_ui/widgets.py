@@ -89,6 +89,7 @@ class ModelAutocomplete(Autocomplete):
         try:
             value = int(value)
             autocomplete_attrs['value'] = self.id_to_display(value)
+            autocomplete_attrs['style'] = 'display: none;'
             value_attrs['value'] = force_unicode(value)
         except ValueError:
             pass
