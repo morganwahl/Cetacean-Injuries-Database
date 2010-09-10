@@ -99,7 +99,8 @@ def animal_search(request):
             descendants = Taxon.objects.with_descendants(t)
             animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
 
-        if 'name' in form.cleaned_data:
+        # empty string for name is same as None
+        if form.cleaned_data['name']:
             name = form.cleaned_data['name']
             animals = animals.filter(name__icontains=name)
 
