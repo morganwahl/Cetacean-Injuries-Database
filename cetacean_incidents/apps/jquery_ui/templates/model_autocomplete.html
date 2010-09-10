@@ -16,8 +16,12 @@
     var {{ func_options.select_name }} = function (event, ui) {
 	    $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
 	    $('#{{ value_attrs.id }}').val(ui.item.value);
-	
-	    return false;
+        $('#{{ value_attrs.id }}-current_val').text(ui.item.label);
+        $('#{{ value_attrs.id }}-none').hide();
+        $('#{{ value_attrs.id }}-display').show();
+        $('#{{ autocomplete_attrs.id }}').hide();
+
+        return false;
     }
     {% endif %}
 
@@ -35,8 +39,17 @@
             .appendTo( ul );
         };
         {% endif %}
+
+        // hook up the 'clear' button
+        $("#{{ value_attrs.id }}-clear").click(function(event) {
+            $('#{{ value_attrs.id }}').val('');
+            $('#{{ autocomplete_attrs.id }}').show();
+            $('#{{ value_attrs.id }}-none').show();
+            $('#{{ value_attrs.id }}-display').hide();
+            $('#{{ value_attrs.id }}-current_val').text('');
+        });
     });
 </script>
-<input {{ flat_autocomplete_attrs|safe }}>
+<input {{ flat_autocomplete_attrs|safe }}><span id="{{ value_attrs.id }}-none"{% if value_attrs.value %} style="display: none;"{% endif %}><i>none selected</i></span><span id="{{ value_attrs.id }}-display"{% if not value_attrs.value %} style="display: none;"{% endif %}><span id="{{ value_attrs.id }}-current_val">{{ autocomplete_attrs.value }}</span><button type="button" id="{{ value_attrs.id }}-clear">clear</button></span>
 <input {{ flat_value_attrs|safe }}>
 
