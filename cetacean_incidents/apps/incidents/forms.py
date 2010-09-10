@@ -69,8 +69,28 @@ class CaseTypeForm(forms.Form):
     A form with the case-type field needed when creating new cases.
     '''
     
-    # this form is almost entirely dynamically created
-    __metaclass__ = CaseTypeFormMeta
+    # TODO get this working
+    ## this form is almost entirely dynamically created
+    #__metaclass__ = CaseTypeFormMeta
+    
+    from cetacean_incidents.apps.entanglements.models import Entanglement
+    from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+    
+    # where <class> is a subclass of Case:
+    
+    # a tuple of doubles: <class>.__name__, <class>._meta.verbose_name
+    type_names = (('Entanglement', 'Entanglement'), ('Shipstrike', 'Shipstrike'))
+    # keys are <class>.__name__, values are <class>
+    type_models = {
+        'Entanglement': Entanglement,
+        'Shipstrike': Shipstrike,
+    }
+
+    case_type = forms.ChoiceField(
+        choices=(
+            ('', '<select a case type>'),
+        ) + type_names,
+    )
 
 class CaseForm(forms.ModelForm):
     
