@@ -168,16 +168,6 @@ class ObservationForm(forms.ModelForm):
         # the case for a new observation is set by the view. The one-to-one 
         # relations shouldn't be shown.
         exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel')
-    
-    # TODO similiar problem to CaseTypeForm; we need a list of ObservationForm
-    # subclasses
-    from cetacean_incidents.apps.entanglements.forms import EntanglementObservationForm
-    from cetacean_incidents.apps.entanglements.forms import ShipstrikeObservationForm
-    observation_forms = {
-        'Case': ObservationForm,
-        'Entanglement': EntanglementObservationForm,
-        'Shipstrike': ShipstrikeObservationForm,
-    }
 
 class SubmitDetectingForm(forms.Form):
     '''\
