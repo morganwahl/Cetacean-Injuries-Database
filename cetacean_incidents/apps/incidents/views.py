@@ -16,11 +16,12 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
+from cetacean_incidents.forms import CaseTypeForm
 
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation
-from forms import AnimalSearchForm, CaseTypeForm, CaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
+from forms import AnimalSearchForm, CaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
