@@ -15,10 +15,6 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
-case_form_classes = {}
-addcase_form_classes = {}
-observation_forms = {}
-
 class AnimalForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we sepcify our own
@@ -92,6 +88,21 @@ class CaseTypeForm(forms.Form):
         ) + type_names,
     )
 
+    # TODO is this the place for this?
+    # basically the same problem as above; we need a list of subclass of CaseForm
+    from cetacean_incidents.apps.entanglements.forms import EntanglementForm
+    from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeForm
+    case_form_classes = {
+        'Case': CaseForm,
+        'Entanglement': EntanglementForm,
+        'Shipstrike': ShipstrikeForm,
+    }
+    addcase_form_classes = {
+        'Case': AddCaseForm,
+        'Entanglement': AddEntanglementForm,
+        'Shipstrike': AddShipstrikeForm
+    }
+
 class CaseForm(forms.ModelForm):
     
     class Meta:
@@ -156,8 +167,17 @@ class ObservationForm(forms.ModelForm):
         model = Observation
         # the case for a new observation is set by the view. The one-to-one 
         # relations shouldn't be shown.
-        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel') 
-observation_forms['Case'] = ObservationForm
+        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel')
+    
+    # TODO similiar problem to CaseTypeForm; we need a list of ObservationForm
+    # subclasses
+    from cetacean_incidents.apps.entanglements.forms import EntanglementObservationForm
+    from cetacean_incidents.apps.entanglements.forms import ShipstrikeObservationForm
+    observation_forms = {
+        'Case': ObservationForm,
+        'Entanglement': EntanglementObservationForm,
+        'Shipstrike': ShipstrikeObservationForm,
+    }
 
 class SubmitDetectingForm(forms.Form):
     '''\

@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms, CaseForm 
+from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner
@@ -102,24 +102,15 @@ class EntanglementForm(CaseForm):
             'analyzed_date': Datepicker,
         }
 
-# TODO better way of tracking this
-case_form_classes['Entanglement'] = EntanglementForm
-
 class AddEntanglementForm(EntanglementForm):
     
     class Meta(EntanglementForm.Meta):
         exclude = ('gear_owner_info', 'animal')
 
-# TODO better way of tracking this
-addcase_form_classes['Entanglement'] = AddEntanglementForm
-
 class EntanglementObservationForm(ObservationForm):
     
     class Meta(ObservationForm.Meta):
         model = EntanglementObservation
-
-# TODO better way of tracking this
-observation_forms['Entanglement'] = EntanglementObservationForm
 
 class GearOwnerForm(forms.ModelForm):
     
