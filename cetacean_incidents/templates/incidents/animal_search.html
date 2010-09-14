@@ -31,14 +31,12 @@
         <button type="submit">search</button>
     </div>
 </form>
-{# animal_list will be None if nothing was seached for #}
 {% if form.is_bound %}
-{% if animal_list.count %}
 <div style="text-align: center;">
-    ({{ animal_list.count }} matching animal{{ animal_list.count|pluralize }})
+({{ animal_list.count|default:"no" }} matching animal{{ animal_list.count|pluralize }})
 </div>
-{% endif %}
 {# sorttable.js doesn't like empty tables #}
+{% if animal_list.count > 0 %}
 <table class="bordered{% if animal_list %} sortable{% endif %}">
     <thead>
         <tr>
@@ -93,10 +91,10 @@
     <tr><td colspan="5" style="text-align:center;"><i>no animals</i></td></tr>
 	{% endfor %}
 </table>
+{% endif %}
 {% else %}
 <p>
     click 'search' to see a list of animals
 </p>
 {% endif %}
-<a href="{% url create_animal %}">add a new animal</a>
 {% endblock %}

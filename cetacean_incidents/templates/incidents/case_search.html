@@ -29,16 +29,15 @@
         {% for f in form %}
         {% include "labeled_field.html" %}
         {% endfor %}
-        <button type="submit">search again</button>
+        <button type="submit">search</button>
     </div>
 </form>
-{% if case_list.count %}
+{% if form.is_bound %}
 <div style="text-align: center;">
-    ({{ case_list.count }} matching case{{ case_list.count|pluralize }})
-</div>
-{% endif %}
-{# sorttable.js doesn't like empty tables #}
-<table{% if case_list %} class="sortable"{% endif %}>
+({{ case_list.count|default:"no" }} matching case{{ case_list.count|pluralize }})
+</div>{# sorttable.js doesn't like empty tables #}
+{% if case_list.count > 0 %}
+<table{% if case_list %} class="bordered sortable"{% endif %}>
 	<thead>
 	    <tr>
 	        <th>NMFS ID</th>
@@ -64,5 +63,11 @@
 	    {% endfor %}
 	</tbody>
 </table>
+{% endif %}
+{% else %}
+<p>
+    click 'search' to see a list of cases
+</p>
+{% endif %}
 <a href="{% url create_case %}">add a new case</a>
 {% endblock %}
