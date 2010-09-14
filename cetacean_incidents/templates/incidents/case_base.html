@@ -33,6 +33,11 @@
     {% endif %}
     <h2>{{ case }}</h2>
 </div>
+<div>
+    {% block edit_case_link %}
+    <a href="{% url edit_case case.id %}">edit this case</a>
+    {% endblock %}
+</div>
 {% endblock %}
 
 {% block content %}
@@ -120,6 +125,11 @@
     {% else %}
     <i>no observations yet!</i>
     {% endif %}
+    <div>
+        {% block add_observation_link %}
+        <a href="{% url add_observation case.id %}">add an observation</a>
+        {% endblock %}
+    </div>
     {% endblock %}
 </div>
 {% endblock %}
