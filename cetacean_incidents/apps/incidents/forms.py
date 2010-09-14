@@ -120,7 +120,7 @@ class SubmitDetectingForm(forms.Form):
         widget= forms.HiddenInput,
         initial= 'yes',
     )
-
+    
 class AnimalIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",

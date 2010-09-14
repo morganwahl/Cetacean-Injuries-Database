@@ -1,19 +1,34 @@
-{% extends "incidents/case_base.html" %}
-{% load observation_extras %}
+{% extends "detail.html" %}
 
 {% block head %}
 {{ block.super }}
 {{ media }}
 {% endblock %}
 
-{% block title %}{{ block.super }} [editing]{% endblock %}
+{% block title %}{{ block.super }}: {{ case }} [editing]{% endblock %}
 
-{% block header %}
-{{ block.super }}
-[editing]
+{% block ids-dl %}
+{% with case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
 {% endblock %}
 
-{% block case_fields %}
+{% block header %}
+<div>
+    {% if case.ole_investigation %}
+    {% include "incidents/ole-warning.html" %}
+    {% endif %}
+    <h2>{{ case }} [editing]</h2>
+</div>
+{% endblock %}
+
+{% block content %}
 <form action="" method="post">
     {% csrf_token %}
     <div class="subsection">
@@ -40,4 +55,3 @@
     <button type="submit">save changes</button>
 </form>
 {% endblock %}
-

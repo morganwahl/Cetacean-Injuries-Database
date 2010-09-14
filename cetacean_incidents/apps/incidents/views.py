@@ -82,7 +82,7 @@ def edit_animal(request, animal_id):
     )
 @login_required
 def animal_search(request):
-    # prefix should be the same as the homepage
+    # prefix should be the same as the on used on the homepage
     prefix = 'animal_search'
     form_kwargs = {
         'prefix': 'animal_search',
@@ -94,7 +94,6 @@ def animal_search(request):
     animals = None
     
     if form.is_valid():
-        animals = Animal.objects.all()
         animal_order_args = ('id',)
         #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
         # TODO Oracle doesn't support distinct() on models with TextFields
