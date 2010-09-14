@@ -16,7 +16,9 @@ observations_args = {
 }
 
 urlpatterns = patterns('cetacean_incidents.generic_views',
-    (r'^animals/$', 'object_list', animals_args, 'all_animals'),
+    # TODO should be use reverse() or are hard-coded URLs OK when they're
+    # defined in this very file?
+    (r'^animals/$', 'redirect_to', {'url': 'search'}, 'all_animals'),
     (r'^animals/(?P<object_id>\d+)/$', 'object_detail', animals_args, 'animal_detail'),
     (r'^cases/$', 'object_list', cases_args, 'all_cases'),
     (r'^observations/$', 'object_list', observations_args, 'all_observations'),

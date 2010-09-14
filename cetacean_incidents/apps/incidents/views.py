@@ -83,11 +83,18 @@ def edit_animal(request, animal_id):
 @login_required
 def animal_search(request):
     # prefix should be the same as the homepage
-    form = AnimalSearchForm(request.GET, prefix='animal_search')
-    # TODO we make a useless queryset since the template expects a queryset
-    animals = Animal.objects.filter(id=None)
+    prefix = 'animal_search'
+    form_kwargs = {
+        'prefix': 'animal_search',
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    form = AnimalSearchForm(**form_kwargs)
+    
+    animals = None
     
     if form.is_valid():
+        animals = Animal.objects.all()
         animal_order_args = ('id',)
         #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
         # TODO Oracle doesn't support distinct() on models with TextFields
