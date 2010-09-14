@@ -20,7 +20,7 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
     # defined in this very file?
     (r'^animals/$', 'redirect_to', {'url': 'search'}, 'all_animals'),
     (r'^animals/(?P<object_id>\d+)/$', 'object_detail', animals_args, 'animal_detail'),
-    (r'^cases/$', 'object_list', cases_args, 'all_cases'),
+    (r'^cases/$', 'redirect_to', {'url': 'search'}, 'all_cases'),
     (r'^observations/$', 'object_list', observations_args, 'all_observations'),
 )
 urlpatterns += patterns('',

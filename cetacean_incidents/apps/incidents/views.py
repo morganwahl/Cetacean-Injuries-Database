@@ -779,9 +779,14 @@ def animal_search_json(request):
 
 def case_search(request):
     # prefix should be the same as the homepage
-    form = CaseSearchForm(request.GET, prefix='case_search')
-    # TODO we make a useless queryset since the template expects a queryset
-    cases = Case.objects.filter(id=None)
+    form_kwargs = {
+        'prefix': 'case_search',
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    form = CaseSearchForm(**form_kwargs)
+    
+    cases = None
 
     if form.is_valid():
         case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
