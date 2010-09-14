@@ -54,9 +54,29 @@
             -->
             <table class="navlinks layout">
                 <tr>
-                    <td><a href="{% url all_contacts %}">all contacts</a></td>
-                    <td><a href="{% url all_animals %}">all animals</a></td>
-                    <td><a href="{% url all_cases %}">all cases</a></td>
+                    <td><a href="{% url all_contacts %}">contacts</a></td>
+                    <td>
+                        <div class="category">
+                            animals
+                        </div>
+                        <a class="action" href="{% url animal_search %}">
+                            search
+                        </a>
+                        <a class="action" href="{% url create_animal %}">
+                            add
+                        </a>
+                    </td>
+                    <td>
+                        <div style="text-align:center;">
+                            cases
+                        </div>
+                        <a class="action" href="{% url case_search %}">
+                            search
+                        </a>
+                        <a class="action" href="{% url create_case %}">
+                            add
+                        </a>
+                    </td>
                     <td><a href="{% url recent_revisions %}">recent revisions</a></td>
                     {% comment %}
                     <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
