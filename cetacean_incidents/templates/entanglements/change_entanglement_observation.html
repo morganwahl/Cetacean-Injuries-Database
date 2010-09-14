@@ -1,5 +1,11 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "entanglements/entanglement_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
 {% block incident_tab %}
 {{ block.super }}
 {% if forms.observation.anchored.errors %}

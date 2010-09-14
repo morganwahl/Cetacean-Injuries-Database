@@ -6,7 +6,10 @@
 
 {% block ids-dl %}
 {{ block.super }}
-<dt>local ID</dt><dd>{{ observation.id }}</dd>
+<hr>
+{% with observation as o %}
+{% include "incidents/observation_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block submit_button %}save changes{% endblock %}

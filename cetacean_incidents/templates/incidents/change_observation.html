@@ -48,6 +48,18 @@
 
 {% block title %}{{ block.super }}: {{ case }}: {% block observation_title %}NO TITLE!{% endblock %}{% endblock %}
 
+{% block ids-dl %}
+{% with observation.case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+{% endblock %}
+
 {% block header %}
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
