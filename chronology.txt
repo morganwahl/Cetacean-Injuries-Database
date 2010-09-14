@@ -2,10 +2,17 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+case.fate_cause shoulde use get_FOO_display in template
+combine search/list pages
+make navlinks:
+    contacts: search/view, add
+    animals: ", "
+    cases: ", "
+    shortcut for new animal, new case, new obs
 stop hard-coding jquery versions
 fix jqueryui font sizes (too big in widgets in IE)
+    vessel type in particular
 divide case editing page into case, SI&M, gear
-add animal tab to case editing page
 make list of fields for using in paper-form version of database.
 determined_taxon should override probable taxon in case names
 add timezone to date-times
