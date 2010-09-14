@@ -20,7 +20,9 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
     # defined in this very file?
     (r'^animals/$', 'redirect_to', {'url': 'search'}, 'all_animals'),
     (r'^animals/(?P<object_id>\d+)/$', 'object_detail', animals_args, 'animal_detail'),
+
     (r'^cases/$', 'redirect_to', {'url': 'search'}, 'all_cases'),
+
     (r'^observations/$', 'object_list', observations_args, 'all_observations'),
 )
 urlpatterns += patterns('',
@@ -29,12 +31,14 @@ urlpatterns += patterns('',
     (r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
     (r'^animals/search$', views.animal_search, {}, 'animal_search'),
     url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),
+
     (r'^cases/(\d+)/$', views.case_detail, {}, 'case_detail'),
     (r'^cases/create$', views.create_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'),
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
     (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
     (r'^cases/search$', views.case_search, {}, 'case_search'),
+
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
 )
