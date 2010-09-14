@@ -25,5 +25,11 @@
         <th>entanglement description</th>
         <td>{{ observation.entanglement_details|default:"<i>none</i>" }}</td>
      </tr>
+     {% if observation.disentanglement_outcome %}
+     <tr>
+        <th>disentanglement outcome</th>
+        <td>{{ observation.get_disentanglement_outcome_display }}</td>
+     </tr>
+     {% endif %}
 </table>
 {% endblock %}
