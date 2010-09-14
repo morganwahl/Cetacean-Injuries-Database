@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 
 {% block head %}
 {{ block.super }}
@@ -6,6 +6,20 @@
 {% endblock %}
 
 {% block title %}{{ block.super }}: add a new case{% if animal %} for {{ animal }}{% endif %}{% endblock %}
+
+{% block ids %}
+{% if animal %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
+
+{% if animal %}
+{% block ids-dl %}
+{% with animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+{% endif %}
 
 {% block header %}
 <h2>new case{% if animal %} for {{ animal }}{% endif %}</h2>
