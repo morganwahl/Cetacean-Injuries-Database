@@ -12,7 +12,17 @@
         #888a85 #555753 #2e3436
 */
 
+/*
+ MMID colors:
+ alumium for basic background / text / borders
+ sky blue for links, page section borders
+ 
+ butter for warnings, changes in diffs
+ red for errors, 'invalid', deletions in diffs
+ chameleon for 'verified', additions in diffs
+ */
 
+/***** generic HTML styling *****/
 body {
     background-color: #eeeeec; /* aluminium 1 */
     color: #2e3436; /* aluminium 6 */
@@ -25,6 +35,100 @@ pre {
     font-family: Terminus, "Monospace", monospace;
     font-size: 10pt;
 }
+a {
+    color: #204a87; /* sky blue 3 */
+}
+a img {
+    border-style: none;
+}
+p {
+    margin-top: .5em;
+    margin-bottom: .5em;
+}
+h1 {
+    font-size: 200%;
+    font-weight: bold;
+    vertical-align: middle;
+}
+h1 * {
+    vertical-align: middle;
+}
+h2 {
+    font-weight: bold;
+    font-size: 150%;
+}
+h3 {
+    font-size: 125%;
+}
+
+ul {
+    padding: 0;
+    margin: .25em;
+}
+li {
+    margin-left: 2em;
+}
+
+table td,th {
+    padding: .25em;
+}
+table caption {
+    background: transparent;
+}
+
+/* for using tables for layout */
+.layout {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+td.layout {
+    vertical-align: top;
+}
+
+table.bordered {
+    border: thin solid #babdb6; /* aluminium 3 */
+}
+table.bordered td,table.bordered th {
+    border: thin dotted #d3d7cf; /* aluminium 2 */
+}
+
+.section {
+    border: 2px solid #729fcf; /* sky blue 1 */
+    margin: .25em;
+    padding: .25em;
+}
+
+.subsection, .subform {
+    border: 1px solid #729fcf; /* sky blue 1 */
+    margin: .125em;
+    padding: .125em;
+}
+
+.changed table, .added table, .removed table {
+    /* reset colors to what they would've been */
+    /* TODO: better way to do this? */
+    background-color: #eeeeec; /* aluminium 1 */
+    color: #2e3436; /* aluminium 6 */
+}
+del, .removed {
+    background: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
+    border: thin dashed #cc0000; /* scarlet red 2 */
+    color: #a40000; /* scarlet red 3 */
+}
+ins, .added {
+    background: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
+    border: thin dashed #73d216; /* chameleon 2 */
+    color: #274c03; /* chameleon 3 at half value (30% absolute val.) */
+}
+.changed {
+    background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
+    border: thin dashed #edd400; /* butter 2 */
+    color: #614f00;  /* butter 3 at half value (38% absolute val.) */
+}
+
+/****** base page sections ******/
+
 #sidebar {
 	float: right;
 	border-left: solid thin #888a85; /* aluminium 4 */
@@ -93,96 +197,8 @@ div#header {
 div#content {
     padding: .5em;
 }
-a {
-    color: #204a87; /* sky blue 3 */
-}
-a img {
-    border-style: none;
-}
-p {
-    margin-top: .5em;
-    margin-bottom: .5em;
-}
-h1 {
-    font-size: 200%;
-    font-weight: bold;
-    vertical-align: middle;
-}
-h1 * {
-    vertical-align: middle;
-}
-h2 {
-    font-weight: bold;
-    font-size: 150%;
-}
-h3 {
-    font-size: 125%;
-}
 
-ul {
-    padding: 0;
-    margin: .25em;
-}
-li {
-    margin-left: 2em;
-}
-
-table td,th {
-    padding: .25em;
-}
-table.bordered {
-    border: thin solid #babdb6; /* aluminium 3 */
-}
-table.bordered td,table.bordered th {
-    border: thin dotted #d3d7cf; /* aluminium 2 */
-}
-table caption {
-    background: transparent;
-}
-
-.changed table, .added table, .removed table {
-    /* reset colors to what they would've been */
-    /* TODO: better way to do this? */
-    background-color: #eeeeec; /* aluminium 1 */
-    color: #2e3436; /* aluminium 6 */
-}
-del, .removed {
-    background: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
-    border: thin dashed #cc0000; /* scarlet red 2 */
-    color: #a40000; /* scarlet red 3 */
-}
-ins, .added {
-    background: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
-    border: thin dashed #73d216; /* chameleon 2 */
-    color: #274c03; /* chameleon 3 at half value (30% absolute val.) */
-}
-.changed {
-    background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
-    border: thin dashed #edd400; /* butter 2 */
-    color: #614f00;  /* butter 3 at half value (38% absolute val.) */
-}
-
-/* for using tables for layout */
-.layout {
-    margin: 0;
-    padding: 0;
-    border: none;
-}
-td.layout {
-    vertical-align: top;
-}
-
-.section {
-    border: 2px solid #729fcf; /* sky blue 1 */
-    margin: .25em;
-    padding: .25em;
-}
-
-.subsection, .subform {
-    border: 1px solid #729fcf; /* sky blue 1 */
-    margin: .125em;
-    padding: .125em;
-}
+/******* forms ******/
 
 div.field_wrapper {
     /* border: thin dashed #555753; */ /* aluminium 5 */
