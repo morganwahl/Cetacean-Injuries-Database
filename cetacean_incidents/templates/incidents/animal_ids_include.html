@@ -1,6 +1,7 @@
 {# Assumes animal was passed in as 'a' and outputs a series of <dt><dd> pairs. #}
-<dt><b>animal</b> local ID</dt><dd>{{ a.id }}</dd>
 {% if a.name %}
 <dt><b>animal</b> name</dt><dd>{{ a.name }}</dd>
+{% else %}
+<dt><b>animal</b> local ID</dt><dd>{{ a.id }}</dd>
 {% endif %}
 
