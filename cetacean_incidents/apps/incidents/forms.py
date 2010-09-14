@@ -17,7 +17,7 @@ from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 class AnimalForm(forms.ModelForm):
     
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # ModelForm won't fill in all the handy args for us if we specify our own
     # field
     _f = Animal.determined_taxon.field
     determined_taxon = TaxonField(

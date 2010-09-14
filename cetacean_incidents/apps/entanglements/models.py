@@ -155,6 +155,18 @@ class EntanglementObservation(Observation):
         null= True,
         help_text= "was gear removed from the animal for later analysis?"
     )
+    # None, Gear shed, Partial, Complete, Monitor 
+    disentanglement_outcome = models.CharField(
+        max_length= 4,
+        choices= (
+            ('shed', 'gear shed'),
+            ('part', 'partial'),
+            ('cmpl', 'complete'),
+            ('mntr', 'monitor'),
+        ),
+        blank= True,
+        help_text= "If there was a disentanglement attempted, what was the outcome?"
+    )
     
     @models.permalink
     def get_absolute_url(self):

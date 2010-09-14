@@ -48,6 +48,18 @@
 
 {% block title %}{{ block.super }}: {{ case }}: {% block observation_title %}NO TITLE!{% endblock %}{% endblock %}
 
+{% block ids-dl %}
+{% with observation.case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+{% endblock %}
+
 {% block header %}
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
@@ -64,7 +76,8 @@
             <ul>
                 <li>
                     <a href="#animal">
-                        Animal
+                        <em>Animal</em>
+                        <br>&nbsp;
                         {% if forms.animal.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -72,7 +85,8 @@
                 </li>
                 <li>
                     <a href="#case">
-                        Case
+                        <em>Case</em>
+                        <br>&nbsp;
                         {% if forms.case.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -80,7 +94,8 @@
                 </li>
                 <li>
                     <a href="#reporting">
-                        Reporting
+                        <em>Observation</em>
+                        <br>Reporter
                         {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -88,7 +103,8 @@
                 </li>
                 <li>
                     <a href="#observation">
-                        Observation
+                        <em>Observation</em>
+                        <br>Observer
                         {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -96,7 +112,8 @@
                 </li>
                 <li>
                     <a href="#animal-identification">
-                        Animal Identification
+                        <em>Observation</em>
+                        <br>Animal Identification
                         {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -105,7 +122,8 @@
                 <li>
                     <a href="#incident">
                         {% block incident_tab %}
-                        Incident
+                        <em>Observation</em>
+                        <br>Incident
                         {% if forms.observation.wound_description.errors %}
                         <div class="ui-state-error">errors!</div>
                         {% endif %}
@@ -115,7 +133,8 @@
                 <li>
                     <a href="#save">
                         {% block save_tab %}
-                        Narrative & Save
+                        <em>Observation</em>
+                        <br>Narrative & Save
                         {% if forms.observation.narrative.errors %}
                         <span class="ui-state-error">errors in this tab!</span>
                         {% endif %}

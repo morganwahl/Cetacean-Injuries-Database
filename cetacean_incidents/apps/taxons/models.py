@@ -4,10 +4,13 @@ class TaxonManager(models.Manager):
 
     def descendants(self, taxon):
         'Return a tuple of all taxons that descend from the given taxon (not including the given taxon)'
-
-        children = taxon.subtaxons.all().order_by('-rank', 'name')
-        result = tuple(children)
+        
+        # how much does order matter ? This is a depth-first traversal right
+        # now.
+        children = taxon.subtaxons.all().order_by('name')
+        result = []
         for child in children:
+            result.append(child)
             result += self.descendants(child)
 
         return tuple(result)
