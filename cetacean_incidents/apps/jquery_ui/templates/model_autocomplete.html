@@ -6,16 +6,16 @@
 
     {% if not func_options.custom_focus %}
     var {{ func_options.focus_name }} = function (event, ui) {
-		$('#{{ autocomplete_attrs.id }}').val(ui.item.label);
-		
-		return false;
+        $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+
+        return false;
     }
     {% endif %}
 
     {% if not func_options.custom_select %}
     var {{ func_options.select_name }} = function (event, ui) {
-	    $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
-	    $('#{{ value_attrs.id }}').val(ui.item.value);
+        $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+        $('#{{ value_attrs.id }}').val(ui.item.value);
         $('#{{ value_attrs.id }}-current_val').text(ui.item.label);
         $('#{{ value_attrs.id }}-none').hide();
         $('#{{ value_attrs.id }}-display').show();

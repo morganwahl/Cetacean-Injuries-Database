@@ -86,7 +86,7 @@ def animal_search(request):
     form = AnimalSearchForm(request.GET, prefix='animal_search')
     # TODO we make a useless queryset since the template expects a queryset
     animals = Animal.objects.filter(id=None)
-
+    
     if form.is_valid():
         animal_order_args = ('id',)
         #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
@@ -95,10 +95,9 @@ def animal_search(request):
         
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
-            # TODO handle taxon uncertainty!
             descendants = Taxon.objects.with_descendants(t)
             animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
-
+        
         # empty string for name is same as None
         if form.cleaned_data['name']:
             name = form.cleaned_data['name']
