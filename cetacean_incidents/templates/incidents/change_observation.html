@@ -143,7 +143,6 @@
                 </li>
             </ul>
             <div id="animal">
-                <h3>Animal</h3>
                 {# TODO this arithmatic isn't correct for adding new observations #}
                 {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
                 <div class="edit-warning">
@@ -162,7 +161,6 @@
                 </div>
             </div> <!-- id="animal" -->
             <div id="case">
-                <h3>Case</h3>
                 {% if case.observation_set.count > 1 %}
                 <div class="edit-warning">
                     <img
@@ -183,7 +181,6 @@
                 </div>
             </div> <!-- id="case" -->
             <div id="reporting">
-                <h3>Reporting</h3>
                 <div class="section">
                     <h4>report date and time</h4>
                     {% with forms.report_datetime as d_form %}
@@ -230,7 +227,6 @@
                 </div>
             </div> <!-- id="reporting" -->
             <div id="observation">
-                <h3>Observation</h3>
                 <div class="section">
                     <h4>observation date and time</h4>
                     {% with forms.observation_datetime as d_form %}
@@ -301,7 +297,6 @@
                 </div>
             </div> <!-- id="observation" -->
             <div id="animal-identification">
-                <h3>Animal identification</h3>
                 <table>
                     <tr>
                         <th>taxon</th>
@@ -344,7 +339,6 @@
                 </div>
             </div> <!-- id="animal-identification" -->
             <div id="incident">
-                <h3>Incident details</h3>
                 <script type="text/javascript">
                     $().ready(function(){
                         SelectHider.init('{{ forms.observation.wounded.html_name }}', {
