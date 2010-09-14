@@ -2,6 +2,8 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+determined taxon should override all observation taxons, and provide the default for new observations/cases
+add case list column (using NMFS IDs) to animal list page
 case.fate_cause shoulde use get_FOO_display in template
 combine search/list pages
 make navlinks:
