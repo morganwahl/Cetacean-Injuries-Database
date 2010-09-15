@@ -776,13 +776,30 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
-def case_search(request):
+def cases_by_year(request, year):
+    year = int(year)
+    return case_search(
+        request,
+        after_date= '%04d-01-01' % year,
+        before_date= '%04d-01-01' % (year + 1),
+    )
+
+def case_search(request, after_date=None, before_date=None):
     # prefix should be the same as the homepage
+    prefix = 'case_search'
     form_kwargs = {
-        'prefix': 'case_search',
+        'prefix': prefix,
     }
     if request.GET:
         form_kwargs['data'] = request.GET
+    else:
+        data = {}
+        if not after_date is None:
+            data[prefix + '-after_date'] = after_date
+        if not before_date is None:
+            data[prefix + '-before_date'] = before_date
+        if data:
+            form_kwargs['data'] = data
     form = CaseSearchForm(**form_kwargs)
     
     cases = None
