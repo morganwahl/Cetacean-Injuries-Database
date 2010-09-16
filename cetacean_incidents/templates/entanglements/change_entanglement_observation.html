@@ -1,10 +1,14 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block case_title %}{{ case|default:"new entanglement case" }}{% endblock %}
+
 {% block case_ids %}
-{% with observation.case as c %}
+{% with case as c %}
 {% include "entanglements/entanglement_ids_include.html" %}
 {% endwith %}
 {% endblock %}
+
+{% block case_header %}{{ case|default:"<i>new entanglement case</i>" }}{% endblock %}
 
 {% block incident_tab %}
 {{ block.super }}

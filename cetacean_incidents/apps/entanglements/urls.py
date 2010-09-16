@@ -16,7 +16,7 @@ urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
 
 urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_entanglement, {}, 'edit_entanglement'),
-    (r'^(\d+)/add_observation$', views.add_entanglementobservation, {}, 'add_entanglementobservation'),
+    (r'^(?P<entanglement_id>\d+)/add_observation$', views.add_entanglementobservation, {}, 'add_entanglementobservation'),
     (r'^(\d+)/add_gear_owner$', views.add_gear_owner, {}, 'add_gear_owner'),
     (r'^(\d+)/edit_gear_owner$', views.edit_gear_owner, {}, 'edit_gear_owner'),
     (r'^observations/(\d+)/$', views.entanglementobservation_detail, {}, 'entanglementobservation_detail'),

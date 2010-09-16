@@ -14,8 +14,13 @@ from django.conf import settings
 
 from reversion.models import Revision, Version
 
+from forms import AnimalChoiceForm, CaseTypeForm
+
 from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
 from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.views import add_observation
+from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
+from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
 
 @login_required
 def home(request):
@@ -197,3 +202,72 @@ def revision_detail(request, rev_id):
         'media': Media(js=(settings.JQUERY_FILE, 'checkboxhider.js')),
     }, RequestContext(request))
     
+
+@login_required
+def new_case(request):
+    '''\
+    Presents a page to choose either an existing animal or the option to create
+    a new one, and the type to case to create for that animal. No actual changes
+    are made to the database (i.e. no cases or animals are created). Instead,
+    when the form from this page is submitted, the response is a redirect to
+    the correct add_<case_type>observation view, with the apropriate animal_id
+    and case_id args filled in.
+    '''
+    
+    form_classes = {
+        'animal_choice': AnimalChoiceForm,
+        'case_type': CaseTypeForm,
+    }
+
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+        if request.GET:
+            form_kwargs[name]['data'] = request.GET
+
+    forms = {}
+    for name, f_class in form_classes.items():
+        forms[name] = f_class(**form_kwargs[name])
+    
+    if reduce(lambda so_far, f: so_far and f.is_valid(), forms.values(), True):
+        animal = forms['animal_choice'].cleaned_data['animal']
+        animal_id = None
+        if not animal is None:
+            animal_id = animal.id
+        
+        case_type = forms['case_type'].cleaned_data['case_type']
+        
+        # TODO don't hard-code case-types
+        if case_type == 'Entanglement':
+            return add_entanglementobservation(
+                request,
+                animal_id= animal_id,
+                entanglement_id= None,
+            )
+
+        if case_type == 'Shipstrike':
+            return add_shipstrikeobservation(
+                request,
+                animal_id= animal_id,
+                shipstrike_id= None,
+            )
+        
+        return add_observation(
+            request,
+            animal_id= animal_id,
+            case_id= None,
+        )
+        
+    template_media = Media()
+    
+    return render_to_response(
+        'incidents/new_case.html',
+        {
+            'forms': forms,
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
+

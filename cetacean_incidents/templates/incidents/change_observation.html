@@ -46,26 +46,35 @@
 </style>
 {% endblock %}
 
-{% block title %}{{ block.super }}: {{ case }}: {% block observation_title %}NO TITLE!{% endblock %}{% endblock %}
+{% block title %}{{ block.super }}: {% block case_title %}{{ case|default:"new case" }}{% endblock %}: {{ observation|default:"new observation" }}{% endblock %}
+
+{% block ids %}
+{% if animal %}
+{{ block.super }}
+{% endif %}
+{% endblock %}
 
 {% block ids-dl %}
-{% with observation.case.animal as a %}
+{% with animal as a %}
 {% include "incidents/animal_ids_include.html" %}
 {% endwith %}
+{% if case %}
 <hr>
 {% block case_ids %}
-{% with observation.case as c %}
+{% with case as c %}
 {% include "incidents/case_ids_include.html" %}
 {% endwith %}
-{% endblock %}
-{% endblock %}
+{% endblock case_ids %}
+{% endif %}
+{% endblock ids-dl %}
 
 {% block header %}
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}
-<h2>{{ case }}</h2>
-<h2 style="margin-left:2em;">{% block observation_header %}NO HEADER!{% endblock %}</h2>
+<h2>{{ animal|default:"<i>new animal</i>" }}</h2>
+<h2 style="margin-left:1em;">{% block case_header %}{{ case|default:"<i>new case</i>" }}{% endblock %}</h2>
+<h2 style="margin-left:2em;">{{ observation|default:"<i>new observation</i>" }}</h2>
 {% endblock %}
 
 {% block content %}
@@ -376,7 +385,20 @@
                     <a class="link-to-incident" href="#incident">&lt;- previous tab</a>
                 </div>
                 <div style="text-align:center;">
-                    <button type="submit">{% block submit_button %}NO BUTTON!{% endblock %}</button>
+                    <button type="submit">
+                        {% block submit_button %}
+                        {% if observation %}
+                        save changes to this observation and {{ case }} and {{ animal }}
+                        {% else %}{% if case %}
+                        add a new observation to {{ case }} and save changes to it  and {{ animal }}
+                        {% else %}{% if animal %}
+                        add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
+                        {% else %}
+                        add a new animal and its first case and that case's initial observation
+
+                        {% endif %}{% endif %}{% endif %}
+                        {% endblock %}
+                    </button>
                 </div>
             </div>
         </div> <!-- id="tabs" -->

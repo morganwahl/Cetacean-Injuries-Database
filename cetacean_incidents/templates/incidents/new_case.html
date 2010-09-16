@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block title %}
+{{ block.super }}: new case
+{% endblock %}
+
+{% block header %}
+<h2>new case</h2>
+{% endblock %}
+
+{% block content %}
+<form action="" method="get">
+    <div>
+        {{ forms.animal_choice.as_p }}
+        {{ forms.case_type.as_p }}
+        <button type="submit">submit</button>
+    </div>
+</form>
+{% endblock %}
+

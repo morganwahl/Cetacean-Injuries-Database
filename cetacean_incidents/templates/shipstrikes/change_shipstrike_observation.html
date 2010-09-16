@@ -1,5 +1,9 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block case_title %}{{ case|default:"new shipstrike case" }}{% endblock %}
+
+{% block case_header %}{{ case|default:"<i>new shipstrike case</i>" }}{% endblock %}
+
 {% block incident_tab %}
 {{ block.super }}
 {% if forms.observation.anchored.errors %}
