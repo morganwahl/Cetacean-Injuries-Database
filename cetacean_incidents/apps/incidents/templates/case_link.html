@@ -5,6 +5,9 @@
             {{ case }}
         {% if not case.valid %}</span>{% endif %}
     </a>
+    {% if case.nmfs_id %}
+    ({{ case.nmfs_id }})
+    {% endif %}
     {% if case.ole_investigation %}
     <img
         src="{% url site-media path="icons/OLE.png"%}"
