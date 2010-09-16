@@ -19,7 +19,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalForm
 from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
 
 from models import Shipstrike, ShipstrikeObservation
-from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
+from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
 
 @login_required
 def edit_shipstrike(request, case_id):
@@ -37,7 +37,7 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
     )
 
 @login_required
-def add_shipstrikeobservation(request, shipstrike_id):
+def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     def _try_saving(forms, check, observation):
         if forms['observation'].cleaned_data['striking_vessel_info'] == True:
             check('striking_vessel')
@@ -73,9 +73,11 @@ def add_shipstrikeobservation(request, shipstrike_id):
 
     return add_observation(
         request,
+        animal_id= animal_id,
         case_id= shipstrike_id,
         template= 'shipstrikes/add_shipstrike_observation.html',
         caseform_class= ShipstrikeForm,
+        addcaseform_class= AddShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
             'striking_vessel': NiceStrikingVesselInfoForm,

@@ -16,12 +16,12 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
-from cetacean_incidents.forms import CaseTypeForm
+from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
 
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation
-from forms import AnimalSearchForm, CaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
+from forms import AnimalSearchForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -226,22 +226,41 @@ def observation_detail(request, observation_id):
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
     )
-
+    
 # TODO merge add_observation and change_observation
+# TODO rename, since it also can add animals and cases
 @login_required
 def add_observation(
         request,
-        case_id,
+        animal_id=None,
+        case_id=None,
         template='incidents/add_observation.html',
         caseform_class=CaseForm,
+        addcaseform_class=AddCaseForm,
         observationform_class= ObservationForm,
         additional_form_classes= {},
         additional_form_saving= lambda forms, check, observation: None,
     ):
     '''\
+    The doomsday form-view. If case_id is not None, animal_id is ignored (the case's animal is used instead). If case_id is None, a new Case is created for the animal given in animal_id. If animal_id is None, a new Animal is added as well.
+    
     observationform_class, if given, should be a subclass of ObservationForm.
+    addcaseform_class should be the same as caseform_class, but without an
+    animal field.
     '''
-    case = Case.objects.get(id=case_id).detailed
+    
+    case = None
+    if not case_id is None:
+        case = Case.objects.get(id=case_id).detailed
+        animal_id = case.animal.id
+    animal = None
+    if not animal_id is None:
+        animal = Animal.objects.get(id=animal_id)
+    
+    # if we're adding a new case, there's no point in having an animal field
+    # for it. that would also makes the page non-functional if we're adding a new animal.
+    if case_id is None:
+        caseform_class = addcaseform_class
     
     form_classes = {
         'animal': AnimalForm,
@@ -260,11 +279,13 @@ def add_observation(
     }
     form_classes.update(additional_form_classes)
     
-    form_kwargs = {
-        'animal': {'instance': case.animal},
-        'case': {'instance': case},
-    }
-    
+    form_kwargs = {}
+
+    if not case is None:
+        form_kwargs['case'] = {'instance': case}
+    if not animal is None:
+        form_kwargs['animal'] = {'instance': animal}
+
     forms = {}
     for form_name, form_class in form_classes.items():
         kwargs = form_kwargs.get(form_name, {})
@@ -284,10 +305,13 @@ def add_observation(
         @revision.create_on_success
         def _try_saving():
             _check('animal')
-            forms['animal'].save()
+            animal = forms['animal'].save()
             
             _check('case')
-            forms['case'].save()
+            case = forms['case'].save(commit=False)
+            case.animal = animal
+            case.save()
+            forms['case'].save_m2m()
             
             _check('observation')
             observation = forms['observation'].save(commit=False)
@@ -387,6 +411,7 @@ def add_observation(
     return render_to_response(
         template,
         {
+            'animal': animal,
             'case': case,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
@@ -430,6 +455,8 @@ def edit_observation(
     form_classes.update(additional_form_classes)
     
     observation = Observation.objects.get(id=observation_id).detailed
+    case = observation.case.detailed
+    animal = case.animal
 
     model_instances = {
         'animal': observation.case.animal,
@@ -596,7 +623,8 @@ def edit_observation(
     return render_to_response(
         template,
         {
-            'case': observation.case.detailed,
+            'animal': animal,
+            'case': case,
             'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
@@ -776,13 +804,30 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
-def case_search(request):
+def cases_by_year(request, year):
+    year = int(year)
+    return case_search(
+        request,
+        after_date= '%04d-01-01' % year,
+        before_date= '%04d-01-01' % (year + 1),
+    )
+
+def case_search(request, after_date=None, before_date=None):
     # prefix should be the same as the homepage
+    prefix = 'case_search'
     form_kwargs = {
-        'prefix': 'case_search',
+        'prefix': prefix,
     }
     if request.GET:
         form_kwargs['data'] = request.GET
+    else:
+        data = {}
+        if not after_date is None:
+            data[prefix + '-after_date'] = after_date
+        if not before_date is None:
+            data[prefix + '-before_date'] = before_date
+        if data:
+            form_kwargs['data'] = data
     form = CaseSearchForm(**form_kwargs)
     
     cases = None

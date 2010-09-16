@@ -15,7 +15,7 @@
 {% block header %}<h2>Cases</h2>{% endblock %}
 
 {% block content %}
-<form action="" method="get">
+<form action="{% url case_search %}" method="get">
     <div class="section">
         {% with form.non_field_errors as errors %}
         {% if errors %}

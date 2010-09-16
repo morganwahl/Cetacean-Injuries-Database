@@ -54,6 +54,11 @@ class CaseForm(forms.ModelForm):
             'review_2_date': Datepicker,
         }
 
+class AddCaseForm(CaseForm):
+    
+    class Meta(CaseForm.Meta):
+        exclude = ('animal',)
+
 class MergeCaseForm(forms.ModelForm):
     
     class Meta:

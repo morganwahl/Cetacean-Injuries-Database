@@ -10,7 +10,7 @@ descendants: entanglements and shipstrikes.
 
 from django import forms
 
-from cetacean_incidents.apps.incidents.models import Case
+from cetacean_incidents.apps.incidents.models import Case, Animal
 from cetacean_incidents.apps.incidents.forms import CaseForm
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.entanglements.forms import EntanglementForm, AddEntanglementForm
@@ -69,4 +69,13 @@ class CaseTypeForm(forms.Form):
         'Shipstrike': AddShipstrikeForm
     }
 
+
+class AnimalChoiceForm(forms.Form):
+    
+    animal = forms.ModelChoiceField(
+        queryset= Animal.objects.all(),
+        empty_label= '<new animal>',
+        required=False,
+        help_text= "choose an existing animal in the database, or to add a new one",
+    )
 

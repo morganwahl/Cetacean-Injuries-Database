@@ -6,6 +6,7 @@ determined taxon should override all observation taxons, and provide the default
 add case list column (using NMFS IDs) to animal list page
 case.fate_cause shoulde use get_FOO_display in template
 combine search/list pages
+use JS to update things like IDs and OLE warnings while editing a case
 make navlinks:
     contacts: search/view, add
     animals: ", "

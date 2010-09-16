@@ -17,7 +17,7 @@ are set in settings.py.
 Uses the flag 'silk' iconsets from famfamfam.com (Mark James) (CC3.0-AT license)
 The OLE icon is derived from one of these.
 
-uses the sorttable.js script by Stuart Langridge (x11 license)
+uses the sorttable.js script (with some very small modifications) by Stuart Langridge (x11 license)
 
 # only needed when serving static media with django itself
 MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
