@@ -24,14 +24,12 @@
 <table class="bordered">
     <tr>
         <th>#</th>
-        <th>current?</th>
         <th>case</th>
         <th>notes</th>
     </tr>
     {% for ycn in yearcasenumbers %}
     <tr>
         <td>{{ ycn.year }}#{{ ycn.number }}</td>
-        <td>{% if ycn.id == ycn.case.current_yearnumber.id %}<img src="{% url site-media "icons/current.png" %}" title="this is currently the year this case is assigned to">{% endif %}</td>
         <td>{% case_link ycn.case %}</td>
         <td>
             {% if ycn.case.yearcasenumber_set.count > 1 %}
