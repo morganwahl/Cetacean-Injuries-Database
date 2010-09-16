@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load case_extras %}
+
+{% block title %}Cases for {{ year }}{% endblock %}
+
+{% block header %}
+<h2 style="text-align:center;">
+    <div style="display: float; float:left;">
+        <a href="{% url cases_by_year year|add:"-1" %}">
+            &#x2190; year before
+        </a>
+    </div>
+    cases for {{ year }}
+    <div style="display: float; float:right;">
+        <a href="{% url cases_by_year year|add:"1" %}">
+            year after &#x2192;
+        </a>
+    </div>
+</h2>
+{% endblock %}
+
+{% block content %}
+{% if yearcasenumbers %}
+<table class="bordered">
+    <tr>
+        <th>#</th>
+        <th>current?</th>
+        <th>case</th>
+        <th>notes</th>
+    </tr>
+    {% for ycn in yearcasenumbers %}
+    <tr>
+        <td>{{ ycn.year }}#{{ ycn.number }}</td>
+        <td>{% if ycn.id == ycn.case.current_yearnumber.id %}<img src="{% url site-media "icons/current.png" %}" title="this is currently the year this case is assigned to">{% endif %}</td>
+        <td>{% case_link ycn.case %}</td>
+        <td>
+            {% if ycn.case.yearcasenumber_set.count > 1 %}
+            also known as:
+            <ul>
+                {% for old_ycn in ycn.case.yearcasenumber_set.all %}
+                {% if old_ycn.id != ycn.id %}
+                <li><a href="{% url cases_by_year old_ycn.year %}">{{ old_ycn.year }}</a>#{{ old_ycn.number }}{% if old_ycn.id == ycn.case.current_yearnumber.id %}<img src="{% url site-media "icons/current.png" %}" title="this is currently the year this case is assigned to">{% endif %}</li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<i>no cases have ever been assigned to {{ year }}</i>
+{% endif %}
+{% endblock %}

@@ -20,7 +20,7 @@ from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
 
 from cetacean_incidents import generic_views
 
-from models import Case, Animal, Observation
+from models import Case, Animal, Observation, YearCaseNumber
 from forms import AnimalSearchForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
@@ -804,12 +804,19 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
-def cases_by_year(request, year):
+def cases_by_year(request, year=None):
+    if year is None:
+        from datetime import datetime
+        year = datetime.now().year
     year = int(year)
-    return case_search(
-        request,
-        after_date= '%04d-01-01' % year,
-        before_date= '%04d-01-01' % (year + 1),
+    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year)
+    return render_to_response(
+        "incidents/cases_by_year.html",
+        {
+            'year': year,
+            'yearcasenumbers': yearcasenumbers,
+        },
+        context_instance= RequestContext(request),
     )
 
 def case_search(request, after_date=None, before_date=None):
