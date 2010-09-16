@@ -159,6 +159,7 @@ class EntanglementObservation(Observation):
     disentanglement_outcome = models.CharField(
         max_length= 4,
         choices= (
+            ('entg', 'entangled'),
             ('shed', 'gear shed'),
             ('part', 'partial'),
             ('cmpl', 'complete'),
