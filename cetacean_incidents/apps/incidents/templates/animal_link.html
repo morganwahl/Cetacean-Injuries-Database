@@ -1,1 +1,1 @@
-<a href="{{ animal.get_absolute_url }}">{{ animal }}</a>
+<a href="{{ animal.get_absolute_url }}">{{ animal }}</a>{% if nmfs_ids %} ({{ nmfs_ids|join:", " }}){% endif %}
