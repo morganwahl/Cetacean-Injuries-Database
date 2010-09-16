@@ -394,14 +394,26 @@ class Case(models.Model):
         s['yearly_number'] = self.yearly_number
         if self.yearly_number is None:
             s['yearly_number'] = -1
-        s['date'] = unicode(self.date)
+        # trim off anything beyond a day
+        s['date'] = "%04d" % self.date.year
+        if self.date.month:
+            s['date'] += '-%02d' % self.date.month
+            if self.date.day:
+                s['date'] += '-%02d' % self.date.day
         taxon = self.probable_taxon
         if not taxon is None:
             s['taxon'] = unicode(taxon)
         else:
             s['taxon'] = u'Unknown taxon'
         s['type'] = self.case_type
-        return u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
+        name = u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
+
+        # add the current_name to the names set, if necessary
+        if not name in self.names_set:
+            self.names_set |= frozenset([name])
+            self.save()
+        
+        return name
     
     @property
     def past_names_set(self):
@@ -493,11 +505,6 @@ class Case(models.Model):
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-
-        # add the current_name to the names set, if necessary
-        if not self.current_name is None:
-            if not self.current_name in self.names_set:
-                self.names_set |= frozenset([self.current_name])
 
     @property
     def detailed(self):
