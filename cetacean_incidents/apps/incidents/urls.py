@@ -38,6 +38,7 @@ urlpatterns += patterns('',
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
     (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
     (r'^cases/search$', views.case_search, {}, 'case_search'),
+    (r'^cases/by_year/now$', views.cases_by_year, {}, 'cases_this_year'),
     (r'^cases/by_year/(\d+)/$', views.cases_by_year, {}, 'cases_by_year'),
 
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),

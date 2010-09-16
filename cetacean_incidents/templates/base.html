@@ -62,20 +62,24 @@
                         <a class="action" href="{% url animal_search %}">
                             search
                         </a>
+                        &#x2022;
                         <a class="action" href="{% url create_animal %}">
                             add
                         </a>
                     </td>
                     <td>
-                        <div style="text-align:center;">
+                        <div class="category">
                             cases
                         </div>
                         <a class="action" href="{% url case_search %}">
                             search
                         </a>
+                        &#x2022;
                         <a class="action" href="{% url new_case %}">
                             add
                         </a>
+                        &#x2022;
+                        <a href="{% url cases_this_year %}">this year</a>
                     </td>
                     <td><a href="{% url recent_revisions %}">recent revisions</a></td>
                     {% comment %}

@@ -804,7 +804,10 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
-def cases_by_year(request, year):
+def cases_by_year(request, year=None):
+    if year is None:
+        from datetime import datetime
+        year = datetime.now().year
     year = int(year)
     yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year)
     return render_to_response(
