@@ -204,7 +204,7 @@ def revision_detail(request, rev_id):
     
 
 @login_required
-def new_case(request):
+def new_case(request, initial_animal_id=None):
     '''\
     Presents a page to choose either an existing animal or the option to create
     a new one, and the type to case to create for that animal. No actual changes
@@ -226,6 +226,8 @@ def new_case(request):
         }
         if request.GET:
             form_kwargs[name]['data'] = request.GET
+    if not initial_animal_id is None:
+        form_kwargs['animal_choice']['initial'] = {'animal': initial_animal_id}
 
     forms = {}
     for name, f_class in form_classes.items():

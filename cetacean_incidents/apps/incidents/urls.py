@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import *
 from models import Case, Observation, Animal
+
+from cetacean_incidents.views import new_case
+
 import views
 
 animals_args = {
@@ -28,7 +31,7 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
 urlpatterns += patterns('',
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
     (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
-    (r'^animals/(\d+)/add_case$', views.add_case, {}, 'add_case'),
+    (r'^animals/(\d+)/add_case$', new_case, {}, 'add_case'),
     (r'^animals/search$', views.animal_search, {}, 'animal_search'),
     url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),
 
