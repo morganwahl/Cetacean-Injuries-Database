@@ -184,7 +184,7 @@ table.navlinks td,
 ul.navlinks li {
     padding: .75em;
     text-align: center;
-    vertical-align: middle;
+    vertical-align: top;
 }
 table.navlinks td a,
 ul.navlinks li a {
