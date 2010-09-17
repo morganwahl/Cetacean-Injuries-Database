@@ -352,7 +352,25 @@ class Case(models.Model):
 
     @property
     def si_n_m_info(self):
-        return reduce(lambda so_far, fieldname: so_far or getattr(self, fieldname), self.si_n_m_fieldnames, False)
+        def is_default(fieldname):
+            value = getattr(self, fieldname)
+            # first check if there's a default value
+            default = self._meta.get_field(fieldname).default
+            if default != models.fields.NOT_PROVIDED:
+                if value == default:
+                    return True
+                return False
+            
+            # just consider None or the empty string to be the default otherwise
+            if value is None:
+                return True
+            
+            if value == '':
+                return True
+            
+            return False
+                
+        return reduce(lambda so_far, fieldname: so_far or not is_default(fieldname), self.si_n_m_fieldnames, False)
 
     #yearly_number = models.IntegerField(
     #    blank= True,

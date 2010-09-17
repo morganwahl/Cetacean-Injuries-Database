@@ -118,85 +118,6 @@ def animal_search(request):
         context_instance= RequestContext(request),
     )
 
-# TODO merge create_case and add_case
-@login_required
-def create_case(request):
-    caseform_args = {}
-    if request.method == 'POST':
-        caseform_args = {'data': request.POST}
-    case_forms = {}
-    for case_type_name, case_form_class in CaseTypeForm.case_form_classes.items():
-        case_forms[case_type_name] = case_form_class(prefix=case_type_name, **caseform_args)
-
-    if request.method == 'POST':
-        type_form = CaseTypeForm(request.POST)
-        if type_form.is_valid():
-            # get the relevant AddCaseForm subclass
-            case_form = case_forms[type_form.cleaned_data['case_type']]
-            if case_form.is_valid():
-                new_case = case_form.save()
-                return redirect(new_case)
-    else:
-        type_form = CaseTypeForm()
-        
-    template_media = Media(
-        js= (settings.JQUERY_FILE,),
-    )
-    
-    return render_to_response(
-        'incidents/add_case.html',
-        {
-            'media': reduce( lambda m, f: m + f.media, [type_form] +  case_forms.values(), template_media),
-            'type_form': type_form,
-            'case_forms': case_forms,
-        },
-        context_instance= RequestContext(request),
-    )
-
-@login_required
-def add_case(request, animal_id):
-    animal = Animal.objects.get(id=animal_id)
-
-    addcaseform_args = {}
-    if request.method == 'POST':
-        addcaseform_args = {'data': request.POST}
-    addcase_forms = {}
-    for case_type_name, addcase_form_class in CaseTypeForm.addcase_form_classes.items():
-        addcase_forms[case_type_name] = addcase_form_class(prefix=case_type_name, **addcaseform_args)
-
-    if request.method == 'POST':
-        animal_form = AnimalForm(request.POST, prefix='animal', instance=animal)
-        type_form = CaseTypeForm(request.POST, prefix='type')
-        if animal_form.is_valid() and type_form.is_valid():
-                # get the relevant AddCaseForm subclass
-                case_form = addcase_forms[type_form.cleaned_data['case_type']]
-                if case_form.is_valid():
-                    animal_form.save()
-                    new_case = case_form.save(commit=False)
-                    new_case.animal = animal
-                    new_case.save()
-                    case_form.save_m2m()
-                    return redirect(new_case)
-    else:
-        animal_form = AnimalForm(prefix='animal', instance=animal)
-        type_form = CaseTypeForm(prefix='type')
-        
-    template_media = Media(
-        js= (settings.JQUERY_FILE,),
-    )
-    
-    return render_to_response(
-        'incidents/add_case.html',
-        {
-            'animal': animal,
-            'media': reduce( lambda m, f: m + f.media, [type_form, animal_form] +  addcase_forms.values(), template_media),
-            'animal_form': animal_form,
-            'type_form': type_form,
-            'case_forms': addcase_forms,
-        },
-        context_instance= RequestContext(request),
-    )
-
 @login_required
 def case_detail(request, case_id, extra_context={}):
     case = Case.objects.get(id=case_id).detailed
@@ -645,15 +566,21 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
     else:
         animal_form = AnimalForm(prefix='animal', instance=case.animal)
         form = form_class(prefix='case', instance=case)
+    
+    template_media = Media(
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
+    )
+    
     return render_to_response(
         template, {
-            'taxon': case.probable_taxon,
-            'gender': case.probable_gender,
-            'animal_form': animal_form,
-            'form': form,
-            'media': form.media + animal_form.media,
             'animal': case.animal,
             'case': case,
+            'forms': {
+                'animal': animal_form,
+                'case': form,
+            },
+            'media': form.media + animal_form.media + template_media,
         },
         context_instance= RequestContext(request),
     )

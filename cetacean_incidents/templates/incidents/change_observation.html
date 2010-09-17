@@ -19,6 +19,10 @@
             $tabs.tabs('select', '#case'); // switch to case tab
             return false;
         });
+        $('.link-to-case-sinmd').click(function() { // bind click event to link
+            $tabs.tabs('select', '#case-sinmd'); // switch to case tab
+            return false;
+        });
         $('.link-to-reporting').click(function() { // bind click event to link
             $tabs.tabs('select', '#reporting'); // switch to reporting tab
             return false;
@@ -80,329 +84,406 @@
 {% block content %}
 <form action="" method="post">
     {% csrf_token %}
-    <div>
-        <div id="tabs">
-            <ul>
-                <li>
-                    <a href="#animal">
-                        <em>Animal</em>
-                        <br>&nbsp;
-                        {% if forms.animal.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#case">
-                        <em>Case</em>
-                        <br>&nbsp;
-                        {% if forms.case.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#reporting">
-                        <em>Observation</em>
-                        <br>Reporter
-                        {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#observation">
-                        <em>Observation</em>
-                        <br>Observer
-                        {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#animal-identification">
-                        <em>Observation</em>
-                        <br>Animal Identification
-                        {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#incident">
-                        {% block incident_tab %}
-                        <em>Observation</em>
-                        <br>Incident
-                        {% if forms.observation.wound_description.errors %}
-                        <div class="ui-state-error">errors!</div>
-                        {% endif %}
-                        {% endblock %}
-                    </a>
-                </li>
-                <li>
-                    <a href="#save">
-                        {% block save_tab %}
-                        <em>Observation</em>
-                        <br>Narrative & Save
-                        {% if forms.observation.narrative.errors %}
-                        <span class="ui-state-error">errors in this tab!</span>
-                        {% endif %}
-                        {% endblock %}
-                    </a>
-                </li>
-            </ul>
-            <div id="animal">
-                {# TODO this arithmatic isn't correct for adding new observations #}
-                {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
-                <div class="edit-warning">
-                    <img
-                        src="{% url site-media path="icons/warning.png"%}"
-                    >
-                    Note that this is the animal data for {% if case.animal.case_set.count > 1 %}{{ case.animal.case_set.count|add:"-1" }} other case{{ case.animal.case_set.count|add:"-1"|pluralize }} and {% endif %} {{ case.animal.observation_set.count|add:"-1" }} other observation{{ case.animal.observation_set.count|add:"-1"|pluralize }}.
-                    <img
-                        src="{% url site-media path="icons/warning.png"%}"
-                    >
-                </div>
-                {% endif %}
-                {{ forms.animal.as_p }}
-                <div style="text-align: right;">
-                    <a class="link-to-case" href="#case">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="animal" -->
-            <div id="case">
-                {% if case.observation_set.count > 1 %}
-                <div class="edit-warning">
-                    <img
-                        src="{% url site-media path="icons/warning.png"%}"
-                    >
-                    Note that this is the case data for {{ case.observation_set.count|add:"-1" }} other observation{{ case.observation_set.count|add:"-1"|pluralize }}.
-                    <img
-                        src="{% url site-media path="icons/warning.png"%}"
-                    >
-                </div>
-                {% endif %}
-                {{ forms.case.as_p }}
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-animal" href="#animal">&lt;- previous tab</a>
-                </div>
-                <div style="text-align: right;">
-                    <a class="link-to-reporting" href="#reporting">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="case" -->
-            <div id="reporting">
-                <div class="section">
-                    <h4>report date and time</h4>
-                    {% with forms.report_datetime as d_form %}
-                    {% include "datetime/edit_datetime_include.html" %}
-                    {% endwith %}
-                </div>
-                <div class="section">
-                    <h4>reporter</h4>
-                    <script type="text/javascript">
-                        $().ready(function(){
-                            RadioHider.init('{{ forms.observation.new_reporter.html_name }}', {
-                                {# TODO? get the keys from forms.observation.new_reporter.field #}
-                                'new': 'reporter_new_contact',
-                                'other': 'reporter_existing_contact'
-                            });
-                        });
-                    </script>
-                    {% with forms.observation.new_reporter as f %}
-                    {% include "unlabeled_field.html" %}
-                    {% endwith %}
-                    <div id="reporter_new_contact" style="display:none;">
-                        {% with forms.new_reporter as form %}
-                        {% with forms.new_reporter_affiliations as  new_affiliations %}
-                        {% include "contacts/change_contact_include.html" %}
-                        {% endwith %}
-                        {% endwith %}
-                    </div>
-                    <div id="reporter_existing_contact" style="display:none;">
-                        {% with forms.observation.reporter as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                    </div>
-                </div>
-                <div class="section">
-                    {% with forms.observation.documentation as f %}
-                    {% include "labeled_field.html" %}
-                    {% endwith %}
-                </div>
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-case" href="#case">&lt;- previous tab</a>
-                </div>
-                <div style="text-align: right;">
-                    <a class="link-to-observation" href="#observation">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="reporting" -->
-            <div id="observation">
-                <div class="section">
-                    <h4>observation date and time</h4>
-                    {% with forms.observation_datetime as d_form %}
-                    {% include "datetime/edit_datetime_include.html" %}
-                    {% endwith %}
-                </div>
-                <div class="section">
-                    <h4>observer</h4>
-                    <script type="text/javascript">
-                        $().ready(function(){
-                            RadioHider.init('{{ forms.observation.new_observer.html_name }}', {
-                                {# TODO get the values from forms.observation.new_observer.field #}
-                                'new': 'observer_new_contact',
-                                'other': 'observer_existing_contact'
-                            });
-                        });
-                    </script>
-                    {% with forms.observation.new_observer as f %}
-                    {% include "unlabeled_field.html" %}
-                    {% endwith %}
-                    <div id="observer_new_contact" style="display:none;">
-                        {% with forms.new_observer as form %}
-                        {% with forms.new_observer_affiliations as  new_affiliations %}
-                        {% include "contacts/change_contact_include.html" %}
-                        {% endwith %}
-                        {% endwith %}
-                    </div>
-                    <div id="observer_existing_contact" style="display:none;">
-                        {% with forms.observation.observer as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                    </div>
-                </div> <!-- class="section" -->
-                <div class="section">
-                    <h4>observation location</h4>
-                    {% with forms.location as l_form %}
-                    {% include "locations/edit_location_include.html" %}
-                    {% endwith %}
-                </div>
-                <div class="section">
-                    {% with forms.observation.observer_on_vessel as f %}
-                    {% include "labeled_field.html" %}
-                    {% endwith %}
-                    <script type="text/javascript">
-                        $().ready(function(){
-                            CheckboxHider.init(
-                                "{{ forms.observation.observer_on_vessel.html_name}}",
-                                'vessel_info'
-                            );
-                        });
-                    </script>
-                    <div id="vessel_info">
-                        <h4>vessel info for observer's vessel</h4>
-                        {% with forms.observer_vessel as v_form %}
-                        {% with forms.new_vesselcontact as c_form %}
-                        {% with forms.new_vesselcontact_affiliations as c_aff_form %}
-                        {% include "vessels/edit_vessel_include.html" %}
-                        {% endwith %}
-                        {% endwith %}
-                        {% endwith %}
-                    </div>
-                </div> <!-- class="section" -->
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-reporting" href="#reporting">&lt;- previous tab</a>
-                </div>
-                <div style="text-align: right;">
-                    <a class="link-to-animal-identification" href="#animal-identification">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="observation" -->
-            <div id="animal-identification">
-                <table>
-                    <tr>
-                        <th>taxon</th>
-                        <td>
-                            {% with forms.observation.taxon as f %}
-                            {% include "unlabeled_field.html" %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>sex</th>
-                        <td>
-                            {% with forms.observation.gender as f %}
-                            {% include "unlabeled_field.html" %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>description</th>
-                        <td>
-                            {% with forms.observation.animal_description as f %}
-                            {% include "bigtext_field.html" %}
-                            {% endwith %}
-                        </td>
-                    </tr>
-                </table>
-                <div>
-                    {% with forms.observation.biopsy as f %}
-                    {% include "labeled_field.html" %}
-                    {% endwith %}
-                    {% with forms.observation.tagged as f %}
-                    {% include "labeled_field.html" %}
-                    {% endwith %}
-                </div>
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-observation" href="#observation">&lt;- previous tab</a>
-                </div>
-                <div style="text-align: right;">
-                    <a class="link-to-incident" href="#incident">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="animal-identification" -->
-            <div id="incident">
+    <div id="tabs">
+        <ul>
+            <li>
+                <a href="#animal">
+                    <em>Animal</em>
+                    <br>&nbsp;
+                    {% if forms.animal.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="#case">
+                    {% block case_tab %}
+                    <em>Case</em>
+                    <br>&nbsp;
+                    {% if forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.valid.errors or forms.case.ole_investigation.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                    {% endblock %}
+                </a>
+            </li>
+            <li>
+                <a href="#case-sinmd">
+                    <em>Case</em>
+                    <br><abbr title="Serious Injury and Mortality Determination">SI&MD</abbr>
+                    {% if forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="#reporting">
+                    <em>Observation</em>
+                    <br>Reporter
+                    {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="#observation">
+                    <em>Observation</em>
+                    <br>Observer
+                    {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="#animal-identification">
+                    <em>Observation</em>
+                    <br>Animal Identification
+                    {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                </a>
+            </li>
+            <li>
+                <a href="#incident">
+                    {% block incident_tab %}
+                    <em>Observation</em>
+                    <br>Incident
+                    {% if forms.observation.wound_description.errors %}
+                    <div class="ui-state-error">errors!</div>
+                    {% endif %}
+                    {% endblock %}
+                </a>
+            </li>
+            <li>
+                <a href="#save">
+                    {% block save_tab %}
+                    <em>Observation</em>
+                    <br>Narrative & Save
+                    {% if forms.observation.narrative.errors %}
+                    <span class="ui-state-error">errors in this tab!</span>
+                    {% endif %}
+                    {% endblock %}
+                </a>
+            </li>
+        </ul>
+        <div id="animal">
+            {# TODO this arithmatic isn't correct for adding new observations #}
+            {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
+            <div class="edit-warning">
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+                Note that this is the animal data for {% if case.animal.case_set.count > 1 %}{{ case.animal.case_set.count|add:"-1" }} other case{{ case.animal.case_set.count|add:"-1"|pluralize }} and {% endif %} {{ case.animal.observation_set.count|add:"-1" }} other observation{{ case.animal.observation_set.count|add:"-1"|pluralize }}.
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+            </div>
+            {% endif %}
+            {{ forms.animal.as_p }}
+            <div style="text-align: right;">
+                <a class="link-to-case" href="#case">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="animal" -->
+        <div id="case">
+            {% if case.observation_set.count > 1 %}
+            <div class="edit-warning">
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+                Note that this is the case data for {{ case.observation_set.count|add:"-1" }} other observation{{ case.observation_set.count|add:"-1"|pluralize }}.
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+            </div>
+            {% endif %}
+            {% block case_tab_body %}
+            {% with forms.case.nmfs_id as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.animal as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.valid as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.ole_investigation as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% endblock %}
+            <div style="text-align:left; float: left;">
+                <a class="link-to-animal" href="#animal">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="case" -->
+        <div id="case-sinmd">
+            {% if case.observation_set.count > 1 %}
+            <div class="edit-warning">
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+                Note that this is the case data for {{ case.observation_set.count|add:"-1" }} other observation{{ case.observation_set.count|add:"-1"|pluralize }}.
+                <img
+                    src="{% url site-media path="icons/warning.png"%}"
+                >
+            </div>
+            {% endif %}
+            {% with forms.case.review_1_date as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.review_1_inits as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.review_2_date as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.review_2_inits as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.case_confirm_criteria as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.animal_fate as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.fate_cause as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.fate_cause_indications as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.si_prevented as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.included_in_sar as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.review_1_notes as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.case.review_2_notes as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            <div style="text-align:left; float: left;">
+                <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-reporting" href="#reporting">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="case-sinmd" -->
+        <div id="reporting">
+            <div class="section">
+                <h4>report date and time</h4>
+                {% with forms.report_datetime as d_form %}
+                {% include "datetime/edit_datetime_include.html" %}
+                {% endwith %}
+            </div>
+            <div class="section">
+                <h4>reporter</h4>
                 <script type="text/javascript">
                     $().ready(function(){
-                        SelectHider.init('{{ forms.observation.wounded.html_name }}', {
-                            {# TODO? get the keys from forms.observation.wounded.field #}
-                            '1': 'observation_wounded',
-                            '2': 'observation_wounded'
+                        RadioHider.init('{{ forms.observation.new_reporter.html_name }}', {
+                            {# TODO? get the keys from forms.observation.new_reporter.field #}
+                            'new': 'reporter_new_contact',
+                            'other': 'reporter_existing_contact'
                         });
                     });
                 </script>
-                {% block incident_tab_body %}
-                {% with forms.observation.wounded as f %}
-                {% include "labeled_field.html" %}
+                {% with forms.observation.new_reporter as f %}
+                {% include "unlabeled_field.html" %}
                 {% endwith %}
-                <div id="observation_wounded">
-                    {% with forms.observation.wound_description as f %}
-                    {% include "bigtext_field.html" %}
+                <div id="reporter_new_contact" style="display:none;">
+                    {% with forms.new_reporter as form %}
+                    {% with forms.new_reporter_affiliations as  new_affiliations %}
+                    {% include "contacts/change_contact_include.html" %}
+                    {% endwith %}
                     {% endwith %}
                 </div>
-                {% endblock %}
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-animal-identification" href="#animal-identification">&lt;- previous tab</a>
-                </div>
-                <div style="text-align: right;">
-                    <a class="link-to-save" href="#save">next tab -&gt;</a>
-                </div>
-            </div> <!-- id="incident" -->
-            <div id="save">
-                <h3>Narrative</h3>
-                <div>
-                    {% with forms.observation.narrative as f %}
+                <div id="reporter_existing_contact" style="display:none;">
+                    {% with forms.observation.reporter as f %}
                     {% include "unlabeled_field.html" %}
                     {% endwith %}
                 </div>
-                <div style="text-align:left; float: left;">
-                    <a class="link-to-incident" href="#incident">&lt;- previous tab</a>
-                </div>
-                <div style="text-align:center;">
-                    <button type="submit">
-                        {% block submit_button %}
-                        {% if observation %}
-                        save changes to this observation and {{ case }} and {{ animal }}
-                        {% else %}{% if case %}
-                        add a new observation to {{ case }} and save changes to it  and {{ animal }}
-                        {% else %}{% if animal %}
-                        add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
-                        {% else %}
-                        add a new animal and its first case and that case's initial observation
-
-                        {% endif %}{% endif %}{% endif %}
-                        {% endblock %}
-                    </button>
-                </div>
             </div>
-        </div> <!-- id="tabs" -->
-    </div>
+            <div class="section">
+                {% with forms.observation.documentation as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </div>
+            <div style="text-align:left; float: left;">
+                <a class="link-to-case-sinmd" href="#case-sinmd">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-observation" href="#observation">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="reporting" -->
+        <div id="observation">
+            <div class="section">
+                <h4>observation date and time</h4>
+                {% with forms.observation_datetime as d_form %}
+                {% include "datetime/edit_datetime_include.html" %}
+                {% endwith %}
+            </div>
+            <div class="section">
+                <h4>observer</h4>
+                <script type="text/javascript">
+                    $().ready(function(){
+                        RadioHider.init('{{ forms.observation.new_observer.html_name }}', {
+                            {# TODO get the values from forms.observation.new_observer.field #}
+                            'new': 'observer_new_contact',
+                            'other': 'observer_existing_contact'
+                        });
+                    });
+                </script>
+                {% with forms.observation.new_observer as f %}
+                {% include "unlabeled_field.html" %}
+                {% endwith %}
+                <div id="observer_new_contact" style="display:none;">
+                    {% with forms.new_observer as form %}
+                    {% with forms.new_observer_affiliations as  new_affiliations %}
+                    {% include "contacts/change_contact_include.html" %}
+                    {% endwith %}
+                    {% endwith %}
+                </div>
+                <div id="observer_existing_contact" style="display:none;">
+                    {% with forms.observation.observer as f %}
+                    {% include "unlabeled_field.html" %}
+                    {% endwith %}
+                </div>
+            </div> <!-- class="section" -->
+            <div class="section">
+                <h4>observation location</h4>
+                {% with forms.location as l_form %}
+                {% include "locations/edit_location_include.html" %}
+                {% endwith %}
+            </div>
+            <div class="section">
+                {% with forms.observation.observer_on_vessel as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                <script type="text/javascript">
+                    $().ready(function(){
+                        CheckboxHider.init(
+                            "{{ forms.observation.observer_on_vessel.html_name}}",
+                            'vessel_info'
+                        );
+                    });
+                </script>
+                <div id="vessel_info">
+                    <h4>vessel info for observer's vessel</h4>
+                    {% with forms.observer_vessel as v_form %}
+                    {% with forms.new_vesselcontact as c_form %}
+                    {% with forms.new_vesselcontact_affiliations as c_aff_form %}
+                    {% include "vessels/edit_vessel_include.html" %}
+                    {% endwith %}
+                    {% endwith %}
+                    {% endwith %}
+                </div>
+            </div> <!-- class="section" -->
+            <div style="text-align:left; float: left;">
+                <a class="link-to-reporting" href="#reporting">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-animal-identification" href="#animal-identification">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="observation" -->
+        <div id="animal-identification">
+            <table>
+                <tr>
+                    <th>taxon</th>
+                    <td>
+                        {% with forms.observation.taxon as f %}
+                        {% include "unlabeled_field.html" %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>sex</th>
+                    <td>
+                        {% with forms.observation.gender as f %}
+                        {% include "unlabeled_field.html" %}
+                        {% endwith %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>description</th>
+                    <td>
+                        {% with forms.observation.animal_description as f %}
+                        {% include "bigtext_field.html" %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            </table>
+            <div>
+                {% with forms.observation.biopsy as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.observation.tagged as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </div>
+            <div style="text-align:left; float: left;">
+                <a class="link-to-observation" href="#observation">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-incident" href="#incident">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="animal-identification" -->
+        <div id="incident">
+            {% block incident_tab_body %}
+            <script type="text/javascript">
+                $().ready(function(){
+                    SelectHider.init('{{ forms.observation.wounded.html_name }}', {
+                        {# TODO? get the keys from forms.observation.wounded.field #}
+                        '1': 'observation_wounded',
+                        '2': 'observation_wounded'
+                    });
+                });
+            </script>
+            {% with forms.observation.wounded as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            <div id="observation_wounded">
+                {% with forms.observation.wound_description as f %}
+                {% include "bigtext_field.html" %}
+                {% endwith %}
+            </div>
+            {% endblock %}
+            <div style="text-align:left; float: left;">
+                <a class="link-to-animal-identification" href="#animal-identification">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align: right;">
+                <a class="link-to-save" href="#save">next tab &#x2192;</a>
+            </div>
+        </div> <!-- id="incident" -->
+        <div id="save">
+            <h3>Narrative</h3>
+            <div>
+                {% with forms.observation.narrative as f %}
+                {% include "unlabeled_field.html" %}
+                {% endwith %}
+            </div>
+            <div style="text-align:left; float: left;">
+                <a class="link-to-incident" href="#incident">&#x2190; previous tab</a>
+            </div>
+            <div style="text-align:center;">
+                <button type="submit">
+                    {% block submit_button %}
+                    {% if observation %}
+                    save changes to this observation and {{ case }} and {{ animal }}
+                    {% else %}{% if case %}
+                    add a new observation to {{ case }} and save changes to it  and {{ animal }}
+                    {% else %}{% if animal %}
+                    add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
+                    {% else %}
+                    add a new animal and its first case and that case's initial observation
+
+                    {% endif %}{% endif %}{% endif %}
+                    {% endblock %}
+                </button>
+            </div>
+        </div>
+    </div> <!-- id="tabs" -->
 </form>
 {% endblock %}
 
