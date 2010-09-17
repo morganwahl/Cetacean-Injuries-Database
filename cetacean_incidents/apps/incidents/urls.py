@@ -36,7 +36,8 @@ urlpatterns += patterns('',
     url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),
 
     (r'^cases/(\d+)/$', views.case_detail, {}, 'case_detail'),
-    (r'^cases/create$', views.create_case, {}, 'create_case'),
+    # TODO redirect to new_case? how do we get it's URL from within a URL conf?
+    (r'^cases/create$', new_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'),
     (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
     (r'^cases/(\d+)/merge_with/(\d+)$', views.merge_case, {}, 'merge_case'),
