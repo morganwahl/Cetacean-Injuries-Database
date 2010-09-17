@@ -431,6 +431,7 @@
                 </div>
             </div> <!-- id="animal-identification" -->
             <div id="incident">
+                {% block incident_tab_body %}
                 <script type="text/javascript">
                     $().ready(function(){
                         SelectHider.init('{{ forms.observation.wounded.html_name }}', {
@@ -440,7 +441,6 @@
                         });
                     });
                 </script>
-                {% block incident_tab_body %}
                 {% with forms.observation.wounded as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
