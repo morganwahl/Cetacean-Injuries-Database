@@ -2,6 +2,11 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+fontographically set-off NMFS ID numbers
+edit observation doesn't default to chosen contacts
+'view on site' not working on deployed site
+changing the animal of a case while adding an observation doesn't work
+if a tab has an error on observation editing, it should be redirected to
 determined taxon should override all observation taxons, and provide the default for new observations/cases
 add case list column (using NMFS IDs) to animal list page
 case.fate_cause shoulde use get_FOO_display in template
