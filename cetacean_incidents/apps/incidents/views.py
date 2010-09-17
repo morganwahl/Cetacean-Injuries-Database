@@ -566,15 +566,21 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
     else:
         animal_form = AnimalForm(prefix='animal', instance=case.animal)
         form = form_class(prefix='case', instance=case)
+    
+    template_media = Media(
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
+    )
+    
     return render_to_response(
         template, {
-            'taxon': case.probable_taxon,
-            'gender': case.probable_gender,
-            'animal_form': animal_form,
-            'form': form,
-            'media': form.media + animal_form.media,
             'animal': case.animal,
             'case': case,
+            'forms': {
+                'animal': animal_form,
+                'case': form,
+            },
+            'media': form.media + animal_form.media + template_media,
         },
         context_instance= RequestContext(request),
     )
