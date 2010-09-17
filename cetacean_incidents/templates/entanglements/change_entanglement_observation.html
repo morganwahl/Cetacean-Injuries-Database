@@ -41,7 +41,7 @@
 
 {% block incident_tab %}
 {{ block.super }}
-{% if forms.observation.anchored.errors %}
+{% if forms.observation.anchored.errors or forms.observation.gear_description.errors or forms.observation.gear_retrieved.errors or forms.observation.entanglement_details.errors or forms.observation.disentanglement_outcome.errors %}
 <div class="ui-state-error">errors!</div>
 {% endif %}
 {% endblock %}
