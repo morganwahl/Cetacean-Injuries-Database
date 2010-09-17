@@ -10,6 +10,35 @@
 
 {% block case_header %}{{ case|default:"<i>new entanglement case</i>" }}{% endblock %}
 
+{% block case_tab %}
+{{ block.super }}
+{% if forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %}
+<div class="ui-state-error">errors!</div>
+{% endif %}
+{% endblock %}
+
+{% block case_tab_body %}
+{{ block.super }}
+{% with forms.case.gear_fieldnumber as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_analyzed as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.analyzed_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.analyzed_by as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_types as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% endblock %}
+
 {% block incident_tab %}
 {{ block.super }}
 {% if forms.observation.anchored.errors %}
