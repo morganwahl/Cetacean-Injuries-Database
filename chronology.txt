@@ -4,19 +4,14 @@ TODO in order of importance:
 
 automate the generation of the tabbed pages
 fontographically set-off NMFS ID numbers
-edit observation doesn't default to chosen contacts
 'view on site' not working on deployed site
 changing the animal of a case while adding an observation doesn't work
 if a tab has an error on observation editing, it should be redirected to
 determined taxon should override all observation taxons, and provide the default for new observations/cases
 add case list column (using NMFS IDs) to animal list page
-combine search/list pages
 use JS to update things like IDs and OLE warnings while editing a case
 make navlinks:
     contacts: search/view, add
-    animals: ", "
-    cases: ", "
-    shortcut for new animal, new case, new obs
 stop hard-coding jquery versions
 fix jqueryui font sizes (too big in widgets in IE)
     vessel type in particular
