@@ -80,6 +80,7 @@ def edit_animal(request, animal_id):
         },
         context_instance= RequestContext(request),
     )
+
 @login_required
 def animal_search(request):
     # prefix should be the same as the on used on the homepage
