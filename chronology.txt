@@ -10,7 +10,6 @@ changing the animal of a case while adding an observation doesn't work
 if a tab has an error on observation editing, it should be redirected to
 determined taxon should override all observation taxons, and provide the default for new observations/cases
 add case list column (using NMFS IDs) to animal list page
-case.fate_cause shoulde use get_FOO_display in template
 combine search/list pages
 use JS to update things like IDs and OLE warnings while editing a case
 make navlinks:
