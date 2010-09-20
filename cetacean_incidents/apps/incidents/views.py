@@ -814,7 +814,7 @@ def case_search(request, after_date=None, before_date=None):
             form_kwargs['data'] = data
     form = CaseSearchForm(**form_kwargs)
     
-    cases = None
+    case_list = tuple()
 
     if form.is_valid():
 
