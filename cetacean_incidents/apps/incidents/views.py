@@ -805,80 +805,122 @@ def case_search(request, after_date=None, before_date=None):
     cases = None
 
     if form.is_valid():
-        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
-        #cases = Case.objects.all().distinct().order_by(*case_order_args)
-        # TODO Oracle doesn't support distinct() on models with TextFields
-        cases = Case.objects.all().order_by(*case_order_args)
-        # TODO shoulde be ordering such that cases with no date come first
-    
+
+        manager = Case.objects
         if form.cleaned_data['case_type']:
             # TODO go through different case types automatically
             ct = form.cleaned_data['case_type']
             if ct == 'e':
-                #cases = Entanglement.objects.all().distinct().order_by(*case_order_args)
-                # TODO Oracle doesn't support distinct() on models with TextFields
-                cases = Entanglement.objects.all().order_by(*case_order_args)
+                manager = Entanglement.objects
             if ct == 's':
-                #cases = Shipstrike.objects.all().distinct().order_by(*case_order_args)
-                # TODO Oracle doesn't support distinct() on models with TextFields
-                cases = Shipstrike.objects.all().order_by(*case_order_args)
+                manager = Shipstrike.objects
         
+        query = Q()
+    
         if form.cleaned_data['after_date']:
+            # 'before_date' and 'after_date' really search the
+            # observation_datetime and report_datetime of observations
+            
+            # possible matches are:
+            #  <year>-null-null
+            #  <year>-<month>-null
+            #  <year>-<month>-day
+            #
+            # in other words, where o is observation_date and q is query_date:
+            #  (o.year >= q.year & o.month is null)
+            #  | (o.year >= q.year & o.month >= q.month & o.day is null)
+            #  | (o.year >= q.year & o.month >= q.month & o.day >= q.day)
+            #
+            # which equals:
+            #  o.year >= q.year 
+            #  & (o.month is null
+            #    | (o.month >= q.month & o.day is null)
+            #    | (o.month >= q.month & o.day >= q.day))
+            #
+            #  o.year >= q.year 
+            #  & (o.month is null
+            #    | (o.month >= q.month 
+            #      & (o.day is null
+            #        | o.day >= q.day)))
+            
             date = form.cleaned_data['after_date']
-            o_date = Q(observation__observation_datetime__year__gte=date.year)
-            o_date = o_date & (
-                Q(observation__observation_datetime__month__isnull=True)
-                | Q(observation__observation_datetime__month__gte=date.month)
-            )
-            o_date = o_date & (
-                Q(observation__observation_datetime__day__isnull=True)
-                | Q(observation__observation_datetime__day__gte=date.month)
-            )
-            r_date = Q(observation__report_datetime__year__gte=date.year)
-            r_date = r_date & (
-                Q(observation__report_datetime__month__isnull=True)
-                | Q(observation__report_datetime__month__gte=date.month)
-            )
-            r_date = r_date & (
-                Q(observation__report_datetime__day__isnull=True)
-                | Q(observation__report_datetime__day__gte=date.month)
-            )
-            cases = cases.filter(o_date | r_date)
+            
+            year_match = Q(observation__observation_datetime__year__gte=date.year)
+            month_null = Q(observation__observation_datetime__month__isnull=True)
+            month_match = Q(observation__observation_datetime__month__gte=date.month)
+            day_null = Q(observation__observation_datetime__day__isnull=True)
+            day_match = Q(observation__observation_datetime__day__gte=date.day)
+            
+            observation_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            year_match = Q(observation__report_datetime__year__gte=date.year)
+            month_null = Q(observation__report_datetime__month__isnull=True)
+            month_match = Q(observation__report_datetime__month__gte=date.month)
+            day_null = Q(observation__report_datetime__day__isnull=True)
+            day_match = Q(observation__report_datetime__day__gte=date.day)
+            
+            report_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            query &= (observation_date_match | report_date_match)
 
         if form.cleaned_data['before_date']:
+            # same as above, but with 'lte' instead of 'gte'
+
             date = form.cleaned_data['before_date']
-            o_date = Q(observation__observation_datetime__year__lte=date.year)
-            o_date = o_date & (
-                Q(observation__observation_datetime__month__isnull=True)
-                | Q(observation__observation_datetime__month__lte=date.month)
-            )
-            o_date = o_date & (
-                Q(observation__observation_datetime__day__isnull=True)
-                | Q(observation__observation_datetime__day__lte=date.month)
-            )
-            r_date = Q(observation__report_datetime__year__lte=date.year)
-            r_date = r_date & (
-                Q(observation__report_datetime__month__isnull=True)
-                | Q(observation__report_datetime__month__lte=date.month)
-            )
-            r_date = r_date & (
-                Q(observation__report_datetime__day__isnull=True)
-                | Q(observation__report_datetime__day__lte=date.month)
-            )
-            cases = cases.filter(o_date | r_date)
+
+            year_match = Q(observation__observation_datetime__year__lte=date.year)
+            month_null = Q(observation__observation_datetime__month__isnull=True)
+            month_match = Q(observation__observation_datetime__month__lte=date.month)
+            day_null = Q(observation__observation_datetime__day__isnull=True)
+            day_match = Q(observation__observation_datetime__day__lte=date.day)
+            
+            observation_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            year_match = Q(observation__report_datetime__year__lte=date.year)
+            month_null = Q(observation__report_datetime__month__isnull=True)
+            month_match = Q(observation__report_datetime__month__lte=date.month)
+            day_null = Q(observation__report_datetime__day__isnull=True)
+            day_match = Q(observation__report_datetime__day__lte=date.day)
+            
+            report_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            query &= (observation_date_match | report_date_match)
         
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!
-            cases = cases.filter(observation__taxon__in=Taxon.objects.with_descendants(t))
+            query &= Q(observation__taxon__in=Taxon.objects.with_descendants(t))
 
         if form.cleaned_data['case_name']:
             name = form.cleaned_data['case_name']
-            cases = cases.filter(names__icontains=name)
+            query &= Q(names__icontains=name)
 
         if form.cleaned_data['observation_narrative']:
             on = form.cleaned_data['observation_narrative']
-            cases = cases.filter(observation__narrative__icontains=on)
+            query &= Q(observation__narrative__icontains=on)
+
+        # TODO shoulde be ordering such that cases with no date come first
+        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
+
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        #cases = manager.filter(query).distinct().order_by(*case_order_args)
+        cases = manager.filter(query).order_by(*case_order_args)
 
     return render_to_response(
         "incidents/case_search.html",
