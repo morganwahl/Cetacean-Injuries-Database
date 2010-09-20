@@ -91,7 +91,7 @@ def animal_search(request):
         form_kwargs['data'] = request.GET
     form = AnimalSearchForm(**form_kwargs)
     
-    animals = None
+    animal_list = tuple()
     
     if form.is_valid():
         animal_order_args = ('id',)
@@ -109,11 +109,23 @@ def animal_search(request):
             name = form.cleaned_data['name']
             animals = animals.filter(name__icontains=name)
 
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        animal_list = list()
+        for a in animals:
+            if not a in seen:
+                seen.add(a)
+                animal_list.append(a)
+
     return render_to_response(
         "incidents/animal_search.html",
         {
             'form': form,
-            'animal_list': animals,
+            'animal_list': animal_list,
+            'animal_count': len(animal_list),
         },
         context_instance= RequestContext(request),
     )
