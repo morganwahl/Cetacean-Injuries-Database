@@ -921,12 +921,24 @@ def case_search(request, after_date=None, before_date=None):
         # TODO Oracle doesn't support distinct() on models with TextFields
         #cases = manager.filter(query).distinct().order_by(*case_order_args)
         cases = manager.filter(query).order_by(*case_order_args)
+        
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        case_list = list()
+        for c in cases:
+            if not c in seen:
+                seen.add(c)
+                case_list.append(c)
 
     return render_to_response(
         "incidents/case_search.html",
         {
             'form': form,
-            'case_list': cases,
+            'case_list': case_list,
+            'case_count': len(case_list),
         },
         context_instance= RequestContext(request),
     )
