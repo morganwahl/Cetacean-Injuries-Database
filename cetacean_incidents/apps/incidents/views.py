@@ -415,7 +415,7 @@ def edit_observation(
         if model_instances['observation'].observer == model_instances['observation'].reporter:
             form_initials['observation']['new_observer'] = 'reporter'
         else:
-            form_initials['observation']['new_observer'] = 'observer'
+            form_initials['observation']['new_observer'] = 'other'
 
     if model_instances['observer_vessel'] and model_instances['observer_vessel'].contact:
         if model_instances['observer_vessel'].contact == model_instances['observation'].reporter:
