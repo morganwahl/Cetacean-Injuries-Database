@@ -73,6 +73,14 @@ class Animal(models.Model):
         return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
     
     def _get_probable_taxon(self):
+    @property
+    def gender(self):
+        if self.determined_gender:
+            return self.determined_gender
+        if self.probable_gender:
+            return self.probable_gender
+        return None
+
         return probable_taxon(self.observation_set)
     probable_taxon = property(_get_probable_taxon)
     determined_taxon = models.ForeignKey(
@@ -81,6 +89,14 @@ class Animal(models.Model):
         null= True,
         help_text= 'as determined from the taxa indicated in specific observations',
     )
+    
+    @property
+    def taxon(self):
+        if self.determined_taxon:
+            return self.determined_taxon
+        if self.probable_taxon:
+            return self.probable_taxon
+        return None
     
     def clean(self):
         if self.necropsy and not self.determined_dead_before:
