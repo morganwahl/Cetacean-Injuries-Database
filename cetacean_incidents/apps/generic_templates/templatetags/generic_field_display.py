@@ -77,3 +77,7 @@ def display_unlabeled_bigtext_div(instance, fieldname, label=None):
 def display_yesnounk_div(instance, fieldname, label=None, choices= "yes,no,unknown", colon=False):
     return display_div(instance, fieldname, label, 'yesnounk_div', extra_context={'choices': choices}, colon=colon)
 
+@register.simple_tag
+def display_chosen_div(instance, fieldname, label=None):
+    return display_div(instance, fieldname, label, 'chosen_div')
+

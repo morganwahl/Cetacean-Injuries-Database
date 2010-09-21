@@ -43,6 +43,9 @@ class AnimalForm(forms.ModelForm):
 
     class Meta:
         model = Animal
+        widgets = {
+            'determined_dead_before': Datepicker,
+        }
 
 class CaseForm(forms.ModelForm):
     

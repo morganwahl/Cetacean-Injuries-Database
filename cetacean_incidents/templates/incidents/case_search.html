@@ -34,9 +34,9 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-({{ case_list.count|default:"no" }} matching case{{ case_list.count|pluralize }})
+({{ case_count|default:"no" }} matching case{{ case_count|pluralize }})
 </div>{# sorttable.js doesn't like empty tables #}
-{% if case_list.count > 0 %}
+{% if case_count > 0 %}
 <table{% if case_list %} class="bordered sortable"{% endif %}>
 	<thead>
 	    <tr>
