@@ -1,5 +1,14 @@
 {% extends "base.html" %}
 {% load case_extras %}
+{% load animal_extras %}
+{% load datetime_extras %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{{ form.media }}
+{% endblock %}
 
 {% block title %}Cases for {{ year }}{% endblock %}
 
@@ -21,16 +30,27 @@
 
 {% block content %}
 {% if yearcasenumbers %}
-<table class="bordered">
+<table class="bordered sortable">
     <tr>
-        <th>#</th>
+        {# TODO this is the same table as in case_search, just with two extra columns #}
+        <th class="sorttable_numeric">#</th>
         <th>case</th>
-        <th>notes</th>
+        <th>NMFS ID</th>
+        <th class="sorttable_nosort">animal</th>
+        <th>first observation</th>
+        <th>first report</th>
+        <th class="sorttable_nosort">notes</th>
     </tr>
     {% for ycn in yearcasenumbers %}
     <tr>
-        <td>{{ ycn.year }}#{{ ycn.number }}</td>
-        <td>{% case_link ycn.case %}</td>
+        <td sorttable_customkey="{{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{{ ycn.year }}#{{ ycn.number }}</td>
+        {% with ycn.case as case %}
+	    <td>{% case_link case %}</td>
+        <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
+	    <td>{% animal_link case.animal %}</td>
+	    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
+	    <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
+	    {% endwith %}
         <td>
             {% if ycn.case.yearcasenumber_set.count > 1 %}
             also known as:

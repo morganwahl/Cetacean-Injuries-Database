@@ -58,29 +58,45 @@ class Animal(models.Model):
             '-report_datetime',
         )[0]
 
-    def _get_probable_gender(self):
+    @property
+    def probable_gender(self):
         return probable_gender(self.observation_set)
-    probable_gender = property(_get_probable_gender)
+    def get_probable_gender_display(self):
+        if self.probable_gender is None:
+            return None
+        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
     determined_gender = models.CharField(
         max_length= 1,
         blank= True,
         choices= GENDERS,
         help_text= 'as determined from the genders indicated in specific observations',
     )
-    def get_probable_gender_display(self):
-        if self.probable_gender is None:
-            return None
-        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
-    
-    def _get_probable_taxon(self):
+
+    @property
+    def gender(self):
+        if self.determined_gender:
+            return self.determined_gender
+        if self.probable_gender:
+            return self.probable_gender
+        return None
+
+    @property
+    def probable_taxon(self):
         return probable_taxon(self.observation_set)
-    probable_taxon = property(_get_probable_taxon)
     determined_taxon = models.ForeignKey(
         Taxon,
         blank= True,
         null= True,
         help_text= 'as determined from the taxa indicated in specific observations',
     )
+    
+    @property
+    def taxon(self):
+        if self.determined_taxon:
+            return self.determined_taxon
+        if self.probable_taxon:
+            return self.probable_taxon
+        return None
     
     def clean(self):
         if self.necropsy and not self.determined_dead_before:
