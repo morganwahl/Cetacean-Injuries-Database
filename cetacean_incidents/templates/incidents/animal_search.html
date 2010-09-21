@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load taxon_extras %}
 {% load animal_extras %}
 {% load datetime_extras %}
 
@@ -55,7 +56,7 @@
 	    <td>{{ animal.id }}</td>
 	    <td>{% animal_link animal %}</td>
 	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
-	    <td>
+	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
 	        {% if animal.determined_taxon %}
 	        {{ animal.determined_taxon }}
 	        {% else %}
