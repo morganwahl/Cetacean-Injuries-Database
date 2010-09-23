@@ -26,13 +26,6 @@ class AnimalForm(forms.ModelForm):
         label= _f.verbose_name.capitalize(),
     )
     
-    dead = forms.BooleanField(
-        label= "dead?",
-        initial= False,
-        help_text= "note that 'no' is the same as 'unknown'",
-        required= False,
-    )
-    
     def clean(self):
         d = self.cleaned_data
         # note that the model's clean func handles the case where necropsy is
