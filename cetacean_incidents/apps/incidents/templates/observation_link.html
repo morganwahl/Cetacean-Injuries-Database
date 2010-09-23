@@ -1,1 +1,17 @@
-<a href="{{ observation.get_absolute_url }}">{{ observation }}</a>{% if observation.case.animal.determined_dead_before <= observation.latest_datetime %} &#x2620;{% endif %}
+<a href="{{ observation.get_absolute_url }}">{{ observation }}</a>
+{% with observation.case.animal.determined_dead_before as dead %}
+{% with observation.earliest_datetime.date as start %}
+{% with observation.latest_datetime.date as end %}
+
+{% if dead < start %}
+<span style="color:black;" title="the animal was determined dead before this observation">&#x2620;</span>
+{% endif %}
+
+{% if dead >= start and dead <= end %}
+<span style="color:red;" title="the animal was determined dead during this observation">&#x2620;</span>
+{% endif %}
+
+{% endwith %}
+{% endwith %}
+{% endwith %}
+

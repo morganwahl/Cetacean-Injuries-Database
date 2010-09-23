@@ -789,7 +789,10 @@ class Observation(models.Model):
     def __unicode__(self):
         ret = 'observation '
         if self.observation_datetime:
-            ret += "on %s " % self.observation_datetime
+            if self.observation_datetime.day:
+                ret += "on %s " % self.observation_datetime
+            else:
+                ret += "in %s " % self.observation_datetime
         if self.observer:
             ret += "by %s " % self.observer
         ret += "(%d)" % self.id
