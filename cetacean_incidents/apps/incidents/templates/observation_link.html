@@ -1,1 +1,1 @@
-<a href="{{ observation.get_absolute_url }}">{{ observation }}</a>
+<a href="{{ observation.get_absolute_url }}">{{ observation }}</a>{% if observation.case.animal.determined_dead_before <= observation.latest_datetime %} &#x2620;{% endif %}
