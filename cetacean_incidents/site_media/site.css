@@ -26,7 +26,8 @@
 body {
     background-color: #eeeeec; /* aluminium 1 */
     color: #2e3436; /* aluminium 6 */
-    font-family: Helvetica, "Sans", "Trebuchet MS", Arial, sans-serif;
+    /* TODO some pages use characters only available in Arial Unicode MS */
+    font-family: Helvetica, "Sans", "Trebuchet MS", "Arial Unicode MS", Arial, sans-serif;
     font-size: 12pt;
     text-align: left;
     margin: 0;

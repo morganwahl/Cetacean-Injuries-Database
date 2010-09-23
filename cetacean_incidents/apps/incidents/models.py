@@ -28,8 +28,17 @@ class Animal(models.Model):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking; e.g. if an animal is marked as not dead in an observation after this date, a warning will be displayed."
+        verbose_name= "determined dead on", # no, not really verbose, but it's
+                                            # easier to change this than to
+                                            # alter the fieldname in the schema
+        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly <i>after</i> it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
     )
+    
+    # TODO timezone?
+    @property
+    def dead(self):
+        return (not self.determined_dead_before is None) and self.determined_dead_before <= datetime.date.today()
+    
     necropsy = models.BooleanField(
         default= False,
         verbose_name= "necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
