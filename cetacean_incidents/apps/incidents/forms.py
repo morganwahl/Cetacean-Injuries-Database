@@ -25,14 +25,6 @@ class AnimalForm(forms.ModelForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
-    
-    def clean(self):
-        d = self.cleaned_data
-        # note that the model's clean func handles the case where necropsy is
-        # true bute there's no determined_dead_before
-        if d['dead'] and not d['determined_dead_before']:
-            d['determined_dead_before'] = datetime.date.today()
-        return d
 
     class Meta:
         model = Animal
