@@ -34,39 +34,33 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-({{ case_list.count|default:"no" }} matching case{{ case_list.count|pluralize }})
+    ({{ case_count|default:"no" }} matching case{{ case_count|pluralize }})
 </div>{# sorttable.js doesn't like empty tables #}
-{% if case_list.count > 0 %}
+{% if case_count > 0 %}
 <table{% if case_list %} class="bordered sortable"{% endif %}>
-	<thead>
-	    <tr>
-	        <th>NMFS ID</th>
-		    <th class="sorttable_numeric">case</th>
-		    <th>type</th>
-		    <th>animal</th>
-		    <th>first observation</th>
-		    <th>first report</th>
-		</tr>
-	</thead>
-	<tbody>
-	    {% for case in case_list %}
-	    <tr>
-	        <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
-		    <td sorttable_customkey="{{ case.date.year|default:9999 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
-		    <td>{{ case.case_type }}</td>
-		    <td>{% animal_link case.animal %}</td>
-		    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
-		    <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
-	    </tr>
-	    {% empty %}
-	    <tr><td colspan="5" style="text-align:center;"><i>no cases</i></td></tr>
-	    {% endfor %}
-	</tbody>
+    <thead>
+        <tr>
+            <th class="sorttable_numeric">case</th>
+            <th>NMFS ID</th>
+            <th class="sorttable_nosort">animal</th>
+            <th>first observed</th>
+            <th>first reported</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for case in case_list %}
+        <tr>
+            <td sorttable_customkey="{{ case.date.year|default:9999 }}{{ case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
+            <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
+            <td>{% animal_link case.animal %}</td>
+            <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
+            <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
-{% endif %}
-{% else %}
-<p>
-    click 'search' to see a list of cases
-</p>
-{% endif %}
+{% endif %} {# case_count > 0 #}
+{% else %} {# form.is_bound #}
+<p>click 'search' to see a list of cases</p>
+{% endif %} {# form.is_bound #}
 {% endblock %}

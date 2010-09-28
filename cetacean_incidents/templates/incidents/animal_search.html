@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load taxon_extras %}
 {% load animal_extras %}
 {% load datetime_extras %}
 
@@ -33,15 +34,15 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-({{ animal_list.count|default:"no" }} matching animal{{ animal_list.count|pluralize }})
+({{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }})
 </div>
 {# sorttable.js doesn't like empty tables #}
-{% if animal_list.count > 0 %}
+{% if animal_count > 0 %}
 <table class="bordered{% if animal_list %} sortable{% endif %}">
     <thead>
         <tr>
             <th>local ID</th>
-            <th>link</th>
+            <th class="sorttable_nosort">link</th>
             <th>name</th>
             <th>taxon</th>
             <th>cases</th>
@@ -55,7 +56,7 @@
 	    <td>{{ animal.id }}</td>
 	    <td>{% animal_link animal %}</td>
 	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
-	    <td>
+	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
 	        {% if animal.determined_taxon %}
 	        {{ animal.determined_taxon }}
 	        {% else %}

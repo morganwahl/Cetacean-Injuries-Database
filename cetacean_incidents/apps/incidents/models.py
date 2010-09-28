@@ -28,8 +28,26 @@ class Animal(models.Model):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. Useful for error-checking; e.g. if an animal is marked as not dead in an observation after this date, a warning will be displayed."
+        verbose_name= "determined dead on", # no, not really verbose, but it's
+                                            # easier to change this than to
+                                            # alter the fieldname in the schema
+        help_text= '''\
+            A date when the animal was certainly dead, as determined from the 
+            observations of this animal. If you're unsure of an exact date, just
+            put something certainly after it; e.g. if you know it was dead
+            sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
+            you're totally unsure, just put the current date. Any animal with a
+            date before today is considered currently dead. This field is useful
+            for error-checking; e.g. if an animal is described as not dead in an
+            observation after this date, something's not right.
+        '''
     )
+    
+    # TODO timezone?
+    @property
+    def dead(self):
+        return (not self.determined_dead_before is None) and self.determined_dead_before <= datetime.date.today()
+    
     necropsy = models.BooleanField(
         default= False,
         verbose_name= "necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
@@ -58,29 +76,45 @@ class Animal(models.Model):
             '-report_datetime',
         )[0]
 
-    def _get_probable_gender(self):
+    @property
+    def probable_gender(self):
         return probable_gender(self.observation_set)
-    probable_gender = property(_get_probable_gender)
+    def get_probable_gender_display(self):
+        if self.probable_gender is None:
+            return None
+        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
     determined_gender = models.CharField(
         max_length= 1,
         blank= True,
         choices= GENDERS,
         help_text= 'as determined from the genders indicated in specific observations',
     )
-    def get_probable_gender_display(self):
-        if self.probable_gender is None:
-            return None
-        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
-    
-    def _get_probable_taxon(self):
+
+    @property
+    def gender(self):
+        if self.determined_gender:
+            return self.determined_gender
+        if self.probable_gender:
+            return self.probable_gender
+        return None
+
+    @property
+    def probable_taxon(self):
         return probable_taxon(self.observation_set)
-    probable_taxon = property(_get_probable_taxon)
     determined_taxon = models.ForeignKey(
         Taxon,
         blank= True,
         null= True,
         help_text= 'as determined from the taxa indicated in specific observations',
     )
+    
+    @property
+    def taxon(self):
+        if self.determined_taxon:
+            return self.determined_taxon
+        if self.probable_taxon:
+            return self.probable_taxon
+        return None
     
     def clean(self):
         if self.necropsy and not self.determined_dead_before:
@@ -755,7 +789,10 @@ class Observation(models.Model):
     def __unicode__(self):
         ret = 'observation '
         if self.observation_datetime:
-            ret += "on %s " % self.observation_datetime
+            if self.observation_datetime.day:
+                ret += "on %s " % self.observation_datetime
+            else:
+                ret += "in %s " % self.observation_datetime
         if self.observer:
             ret += "by %s " % self.observer
         ret += "(%d)" % self.id

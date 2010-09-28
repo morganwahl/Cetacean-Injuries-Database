@@ -97,7 +97,7 @@ class Taxon(models.Model):
     objects = TaxonManager()
 
     class Meta:
-        ordering = ['name']
+        ordering = ['-rank', 'name']
         #order_with_respect_to = 'supertaxon'
         verbose_name = 'taxon'
         verbose_name_plural = 'taxa'
