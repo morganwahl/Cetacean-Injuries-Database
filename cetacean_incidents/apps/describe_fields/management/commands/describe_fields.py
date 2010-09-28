@@ -29,21 +29,25 @@ class Command(AppCommand):
             print "----- %s -----" % (c.__name__)
             
             if m.verbose_name != c.__name__.lower():
-                print "display-name: \"%s\"" % m.verbose_name
+                print "display-name: \"%s\"" % unicode(m.verbose_name)
             if m.verbose_name_plural != m.verbose_name + 's':
-                print "display-name plural: \"%s\"" % m.verbose_name_plural
+                print "display-name plural: \"%s\"" % unicode(m.verbose_name_plural)
             
             if m.db_table != "%s_%s" % (m.app_label, c.__name__.lower()):
                 print "table name: \"%s\"" % m.db_table
             
+            if c.__doc__:
+                print
+                print c.__doc__
+            
             print
             
-            for f in m.fields + m.many_to_many:
+            for f in m.many_to_many + m.local_fields:
                 if isinstance(f, models.AutoField):
                     continue
             
                 #f_type = type_names[f.__class__]
-                f_type = f.description.decode('utf-8') % {
+                f_type = unicode(f.description) % {
                     'max_length': f.max_length,
                 }
                 
@@ -52,7 +56,7 @@ class Command(AppCommand):
                     print "\treferences %s" % f.rel.to.__name__
                 
                 if f.verbose_name != f.attname:
-                    print "\tdisplay-name: \"%s\"" % f.verbose_name
+                    print "\tdisplay-name: \"%s\"" % unicode(f.verbose_name)
                 
                 if f.max_length:
                     print "\tmax length: %d" % f.max_length
@@ -76,6 +80,8 @@ class Command(AppCommand):
                 
                 if f.help_text:
                     print "\thelp text:"
-                    print "\t\t%s" % unicode(f.help_text.decode('utf-8'))
+                    print "\t\t%s" % unicode(f.help_text.decode('utf-8')).encode('utf-8')
                     
                 print
+            
+        print
