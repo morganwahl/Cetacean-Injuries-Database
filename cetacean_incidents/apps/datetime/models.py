@@ -1,5 +1,3 @@
-'''Model to handle the various uncertainties in dates and times.'''
-
 from calendar import month_name, isleap
 import datetime
 import pytz
@@ -8,6 +6,8 @@ from django.db import models
 from django.core.exceptions import ValidationError
 
 class DateTime(models.Model):
+    '''Model to handle the various uncertainties in dates and times.'''
+
     year = models.IntegerField(
         help_text="Year is the one required field, because without it there's no point in recording the rest."
     )
