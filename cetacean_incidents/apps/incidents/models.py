@@ -434,6 +434,7 @@ class Case(models.Model):
         # current one? This makes sense because once assigned, names should
         # never be removed. But, do we want to enforce that at this level?
         self.names = ','.join(new_names)
+
     names_set = property(_get_names_set,_put_names_set)
 
     @property
