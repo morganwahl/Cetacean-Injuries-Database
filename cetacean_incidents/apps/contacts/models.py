@@ -13,12 +13,16 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
-# This exists so GearOwner can inherit all the fields from Contact but keep them
-# in a separate table.
+# This exists so GearOwner can inherit all the fields from Contact but keep
+# them in a separate table.
 class AbstractContact(models.Model):
     '''\
-    A contact is a name of a person _or_ organization, preferably with some way
-    of contacting them.
+A contact is a name of a person _or_ organization, preferably with some way of
+contacting them.
+
+Note that only one each of phone, email, etc. is given so that contacts just
+have a primary phone or email to contact them at. Other ones could be noted in
+the 'notes' field, if necessary.
     '''
     name = models.CharField(
         max_length= 1023,
@@ -31,10 +35,6 @@ class AbstractContact(models.Model):
         default= True,
         help_text= "Is this a person? (i.e. not an organization)"
     )
-    
-    # Note that only one of each thing is given so that contacts just have a 
-    # primary phone or email to contact them at. Other ones could be noted in 
-    # 'notes' field, if necessary.
     
     phone = models.CharField(
         max_length= 255,
@@ -73,8 +73,9 @@ class Contact(AbstractContact):
     sort_name = models.CharField(
         max_length= 1023,
         blank= True,
-        help_text= "leave blank if same as name",
+        help_text= "Used in sorting contacts. Leave blank if same as name.",
     )
+    
 
     @property
     def observed_ordered(self):
