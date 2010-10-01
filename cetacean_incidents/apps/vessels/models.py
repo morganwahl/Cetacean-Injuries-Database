@@ -14,9 +14,10 @@ class VesselTag(models.Model):
         ordering = ('id')
 
 class VesselInfo(models.Model):
+    # TODO perhaps a name-change is in order? Like, observer platform?
     '''\
-    Note that this _isn't_ a model for individual vessels, but for a description
-    of a vessel.
+    Note that this _isn't_ a model for data on individual vessels, but for a
+    description of a vessel.
     '''
 
     vessel_tags = models.ManyToManyField(

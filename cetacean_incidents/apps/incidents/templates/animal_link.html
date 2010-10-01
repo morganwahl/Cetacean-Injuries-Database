@@ -1,1 +1,1 @@
-<a href="{{ animal.get_absolute_url }}">{{ animal }}</a>{% if nmfs_ids %} ({{ nmfs_ids|join:", " }}){% endif %}{% if animal.dead %} &#x2620;{% endif %}
+<a href="{{ animal.get_absolute_url }}">{{ animal }}</a>{% if nmfs_ids %} ({{ nmfs_ids|join:", " }}){% endif %}{% if animal.dead %} <span title="animal is dead (died on or before {{ animal.determined_dead_before }})">&#x2620;</span>{% endif %}

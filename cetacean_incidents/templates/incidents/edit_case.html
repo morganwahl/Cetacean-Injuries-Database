@@ -117,6 +117,9 @@
             {% with forms.case.animal as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
+            {% with forms.case.happened_after as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
             {% with forms.case.valid as f %}
             {% include "labeled_field.html" %}
             {% endwith %}

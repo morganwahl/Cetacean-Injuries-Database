@@ -28,19 +28,10 @@ class Animal(models.Model):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        verbose_name= "determined dead on", # no, not really verbose, but it's
-                                            # easier to change this than to
-                                            # alter the fieldname in the schema
-        help_text= '''\
-            A date when the animal was certainly dead, as determined from the 
-            observations of this animal. If you're unsure of an exact date, just
-            put something certainly after it; e.g. if you know it was dead
-            sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
-            you're totally unsure, just put the current date. Any animal with a
-            date before today is considered currently dead. This field is useful
-            for error-checking; e.g. if an animal is described as not dead in an
-            observation after this date, something's not right.
-        '''
+        verbose_name= "dead on", # no, not really verbose, but it's easier to 
+                                 # change this than to alter the fieldname in 
+                                 # the schema
+        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
     )
     
     # TODO timezone?
@@ -191,19 +182,18 @@ class CaseManager(models.Manager):
 
 class YearCaseNumber(models.Model):
     '''\
-    A little table to do the bookkeeping when assigning yearly-numbers cases. 
-    'year' is a year, 'case' is a case, 'number' is any yearly_number
-    held by that case for that year, including it's current one.
+    A little table to do the bookkeeping when assigning yearly-numbers to cases.
+    'year' is a year, 'case' is a case, 'number' is any yearly_number held by
+    that case for that year, including it's current one.
     
-    Assigning unique numbers to each case in a year is complicated; once a 
-    case-number in a given year has been assigned to a case, it mustn't ever
-    be assigned to a different one, even if that case is changed to a different
-    year or merged with another case. Ideally, if a case was assigned, say, 
+    Assigning unique numbers to each case in a year is complicated; once a
+    case-number in a given year has been assigned to a case, it mustn't ever be
+    assigned to a different one, even if that case is changed to a different
+    year or merged with another case. Ideally, if a case was assigned, say,
     2003#67 and then it's date was changed to 2004, it would be assigned the
-    next unused yearly_number for 2004. If it was then changed back to 2003,
-    it would be assigned #67 again. Thus, this table stores all past and current
-    year-case-yearly_number combinations. Current numbers are marked
-    accordingly.
+    next unused yearly_number for 2004. If it was then changed back to 2003, it
+    would be assigned #67 again. Thus, this table stores all past and current
+    year-case-yearly_number combinations.
     '''
     
     year = models.IntegerField()
@@ -243,7 +233,7 @@ class CaseMeta(models.Model.__metaclass__):
 
 class Case(models.Model):
     '''\
-    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep most of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
+    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep much of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
     '''
     
     __metaclass__ = CaseMeta
@@ -268,6 +258,13 @@ class Case(models.Model):
         default= 1,
         verbose_name= 'Validity',
         help_text= "Invalid cases don't count towards year-totals."
+    )
+    
+    happened_after = models.DateTimeField(
+        blank= True,
+        null= True,
+        help_text= "Please use '<year>-<month>-<day>'. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put '2009-07-01'.",
+        verbose_name= 'incident was on or after',
     )
     
     ole_investigation = models.NullBooleanField(
@@ -423,8 +420,7 @@ class Case(models.Model):
         #max_length= 2048,
         blank= False,
         editable= False,
-        help_text= "Comma-separated list of autogenerated names with the format"
-            + "<year>#<case # in year> (<date>) <type> of <taxon>"
+        help_text= "Comma-separated list of autogenerated names with the format \"<year>#<case # in year> (<date>) <type> of <taxon>\", where <year> and <date> are determined by the earliest report_datetime of it's observations, <type> is 'Entanglement' for all entanglements, and <taxon> is the most general one that includes all the ones mentioned in observations. Note that a case may have multiple names because many of these elements could change as observations are added or updated, however each Case name should always refer to a specific case.",
     )
     def _get_names_set(self):
         names = filter(lambda x: x != '', self.names.split(','))
@@ -434,6 +430,7 @@ class Case(models.Model):
         # current one? This makes sense because once assigned, names should
         # never be removed. But, do we want to enforce that at this level?
         self.names = ','.join(new_names)
+
     names_set = property(_get_names_set,_put_names_set)
 
     @property
@@ -600,17 +597,26 @@ class Case(models.Model):
     
 class Observation(models.Model):
     '''\
+    The heart of the database: observations. 
+    
     An Obsevation is a source of data for an Animal. It has an observer and
     and date/time and details of how the observations were taken. Note that the
-    observer data may be scanty if this isn't a firsthand report. It's an
-    abstract model for the common fields between different types of Observations.
+    observer data may be scanty if this isn't a firsthand report.
+
+    Many of the references to other tables (specifically, observer_vessel,
+    observation_datetime, location, and report_datetime) are one-to-one
+    relationships; the other tables exist just to make programming easier, since
+    they are logical sets of fields.
     '''
 
     @property
     def relevant_observation(self):
         return self
 
-    case = models.ForeignKey('Case')
+    case = models.ForeignKey(
+        'Case',
+        help_text= 'the case that this observation is part of',
+    )
     @property
     def relevant_case(self):
         return self.case
@@ -628,6 +634,7 @@ class Observation(models.Model):
         blank= True,
         null= True,
         related_name= 'observed',
+        help_text= 'who actually saw the animal'
     )
     observer_vessel = models.OneToOneField(
         VesselInfo,
@@ -640,7 +647,7 @@ class Observation(models.Model):
         DateTime,
         blank= True,
         null= True,
-        help_text= 'the start of the observation',
+        help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest observation_datetime for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
         related_name= 'observation',
         verbose_name= 'observation date and time',
     )
@@ -650,7 +657,7 @@ class Observation(models.Model):
         blank= True,
         null= True,
         related_name= "observation",
-        help_text= 'the observer\'s location at the time of observation',
+        help_text= 'the observer\'s location at the time of observation. (strictly, where did the observation begin)',
     )
 
     @property
@@ -664,10 +671,7 @@ class Observation(models.Model):
         blank= True,
         null= True,
         related_name= 'reported',
-        help_text= '''\
-        Same as observer if this is a firsthand report. If not, this is who
-        informed us of the incidents.
-        ''',
+        help_text= "This is who informed us of the observation. Same as observer if this is a firsthand report.",
     )
     report_datetime = models.OneToOneField(
         DateTime,
@@ -687,11 +691,13 @@ class Observation(models.Model):
         # sense, but don't count on it not happening) assume the actual
         # observation datetime is the same as the report datetime
         
-        # 'wrong' case
-        if r.latest < o.earliest:
-            return r.earliest
+        result = o.earliest
         
-        return o.earliest
+        # 'wrong' situation
+        if r.latest < o.earliest:
+            result = r.earliest
+        
+        return result
     
     @property
     def latest_datetime(self):
@@ -715,7 +721,7 @@ class Observation(models.Model):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'The most specific taxon (e.g. a species) that can be applied to this animal.',
+        help_text= 'The most specific taxon (e.g. a species) the animal is described as.',
     )
 
     gender = models.CharField(
@@ -730,12 +736,7 @@ class Observation(models.Model):
     
     animal_description = models.TextField(
         blank= True,
-        help_text= """\
-        Please note anything that would help identify the individual animal or
-
-        it's species or gender, etc. Even if you've determined those already,
-        please indicate what that was on the basis of.
-        """
+        help_text= "Please note anything that would help identify the individual animal or it's species or gender, etc. Even if you've indicated those already, please indicate what that was on the basis of."
     )
     
     documentation = models.NullBooleanField(

@@ -13,13 +13,10 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
-# This exists so GearOwner can inherit all the fields from Contact but keep them
-# in a separate table.
+# This exists so GearOwner can inherit all the fields from Contact but keep
+# them in a separate table.
 class AbstractContact(models.Model):
-    '''\
-    A contact is a name of a person _or_ organization, preferably with some way
-    of contacting them.
-    '''
+
     name = models.CharField(
         max_length= 1023,
         blank= True,
@@ -31,10 +28,6 @@ class AbstractContact(models.Model):
         default= True,
         help_text= "Is this a person? (i.e. not an organization)"
     )
-    
-    # Note that only one of each thing is given so that contacts just have a 
-    # primary phone or email to contact them at. Other ones could be noted in 
-    # 'notes' field, if necessary.
     
     phone = models.CharField(
         max_length= 255,
@@ -68,12 +61,20 @@ class AbstractContact(models.Model):
         abstract = True
 
 class Contact(AbstractContact):
+    '''\
+    A contact is a name of a person _or_ organization, preferably with some way
+    of contacting them. 
+    
+    Note that only one each of phone, email, etc. is given so that contacts just
+    have a primary phone or email to contact them at. Other ones could be noted
+    in the 'notes' field, if necessary.
+    '''
 
     # should default to name. see save() func below
     sort_name = models.CharField(
         max_length= 1023,
         blank= True,
-        help_text= "leave blank if same as name",
+        help_text= "Used in sorting contacts. If left blank, will be filled in with the same value as 'name'.",
     )
 
     @property
@@ -109,9 +110,7 @@ class Contact(AbstractContact):
         related_name = 'contacts',
         blank= True,
         null= True,
-        help_text= '''\
-            The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (I.e. 'Coast Guard'). The idea is to track indivdual people or orgs (whichever makes more sense as a contact for a particular observation), but still group them into sets. I.e. a contact might be for the Boston Coast Guard office, but it would have an affiliation to simple 'Coast Guard', so that one could easily answer questions like "How many reports did we get from the Coast Guard last year?"
-        ''',
+        help_text= "The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (I.e. 'Coast Guard'). The idea is to track indivdual people or orgs (whichever makes more sense as a contact for a particular observation), but still group them into sets. I.e. a contact might be for the Boston Coast Guard office, but it would have an affiliation to simple 'Coast Guard', so that one could easily answer questions like \"How many reports did we get from the Coast Guard last year?\"",
     )
 
     def clean(self):
