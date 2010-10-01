@@ -36,7 +36,7 @@ class CaseForm(forms.ModelForm):
     
     class Meta:
         model = Case
-        # custom widgets for the SI & M date fields
+        # custom widgets for date fields
         widgets = {
             'happened_after': Datepicker,
             'review_1_date': Datepicker,

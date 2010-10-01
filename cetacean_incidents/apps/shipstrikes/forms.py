@@ -76,7 +76,7 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
 
 class ShipstrikeForm(CaseForm):
     
-    class Meta:
+    class Meta(CaseForm.Meta):
         model = Shipstrike
 
 class AddShipstrikeForm(ShipstrikeForm):
