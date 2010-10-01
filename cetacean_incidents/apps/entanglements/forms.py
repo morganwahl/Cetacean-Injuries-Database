@@ -93,14 +93,13 @@ class EntanglementForm(CaseForm):
         widget= GearTypeWidget
     )
     
-    class Meta:
+    class Meta(CaseForm.Meta):
         model = Entanglement
         exclude = 'gear_owner_info'
-        widgets = {
-            'review_1_date': Datepicker,
-            'review_2_date': Datepicker,
+        widgets = CaseForm.Meta.widgets
+        widgets.update({
             'analyzed_date': Datepicker,
-        }
+        })
 
 class AddEntanglementForm(EntanglementForm):
     
