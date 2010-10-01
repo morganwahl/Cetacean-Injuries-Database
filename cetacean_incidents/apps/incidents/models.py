@@ -403,14 +403,19 @@ class Case(models.Model):
                 
         return reduce(lambda so_far, fieldname: so_far or not is_default(fieldname), self.si_n_m_fieldnames, False)
 
-    #yearly_number = models.IntegerField(
-    #    blank= True,
-    #    null= True,
-    #    editable= False,
-    #    help_text= "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
-    #)
+    # this should always be the YearCaseNumber with case matching self.id and
+    # year matching self.date.year . But, it's here so we can order by it in
+    # the database.
+    current_yearnumber = models.ForeignKey(
+        YearCaseNumber,
+        editable=False,
+        null=True,
+        related_name='current',
+    )
+    
     @property
     def yearly_number(self):
+        "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
         if self.current_yearnumber:
             return self.current_yearnumber.number
         else:
@@ -512,16 +517,6 @@ class Case(models.Model):
     def associated_cases(self):
         return Case.objects.associated_cases(self)
 
-    # this should always be the YearCaseNumber with case matching self.id and
-    # year matching self.date.year . But, it's here so we can order by it in
-    # the database.
-    current_yearnumber = models.ForeignKey(
-        YearCaseNumber,
-        editable=False,
-        null=True,
-        related_name='current',
-    )
-    
     def clean(self):
         # if we don't have a yearly_number, set one if possible
         if self.date:
