@@ -41,6 +41,9 @@ ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 LOGIN_URL = URL_PREFIX + 'login/' 
 LOGIN_REDIRECT_URL = URL_PREFIX
 
+CACHE_MIDDLEWARE_SECONDS = 15 * 60
+CACHE_MIDDLEWARE_KEY_PREFIX = ''
+
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
@@ -49,9 +52,11 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.cache.UpdateCacheMiddleware' ,
     'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
