@@ -28,9 +28,9 @@ class Animal(models.Model):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        verbose_name= "determined dead on", # no, not really verbose, but it's
-                                            # easier to change this than to
-                                            # alter the fieldname in the schema
+        verbose_name= "dead on", # no, not really verbose, but it's easier to 
+                                 # change this than to alter the fieldname in 
+                                 # the schema
         help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
     )
     
@@ -691,11 +691,13 @@ class Observation(models.Model):
         # sense, but don't count on it not happening) assume the actual
         # observation datetime is the same as the report datetime
         
-        # 'wrong' case
-        if r.latest < o.earliest:
-            return r.earliest
+        result = o.earliest
         
-        return o.earliest
+        # 'wrong' situation
+        if r.latest < o.earliest:
+            result = r.earliest
+        
+        return result
     
     @property
     def latest_datetime(self):

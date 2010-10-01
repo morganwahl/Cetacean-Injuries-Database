@@ -101,3 +101,4 @@ class Location(models.Model):
             return unicode(self.coordinates)
         
         return u"<#%s>" % unicode(self.pk)
+        
