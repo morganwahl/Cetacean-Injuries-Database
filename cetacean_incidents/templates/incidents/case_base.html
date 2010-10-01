@@ -54,6 +54,9 @@
     <div>
         <span class="fieldname">Animal:</span> {% animal_link case.animal %}
     </div>
+    {% if case.happened_after %}
+    {% display_div case "happened_after" %}
+    {% endif %}
     <div>
         <span class="fieldname">Validity:</span>
         {% include "incidents/case-valid-icon.html" %}

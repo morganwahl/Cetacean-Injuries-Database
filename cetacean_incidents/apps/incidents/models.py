@@ -260,6 +260,13 @@ class Case(models.Model):
         help_text= "Invalid cases don't count towards year-totals."
     )
     
+    happened_after = models.DateTimeField(
+        blank= True,
+        null= True,
+        help_text= "Please use '<year>-<month>-<day>'. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put '2009-07-01'.",
+        verbose_name= 'incident was on or after',
+    )
+    
     ole_investigation = models.NullBooleanField(
         blank= True,
         null= True,
