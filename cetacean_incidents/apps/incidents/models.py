@@ -49,7 +49,6 @@ class Animal(models.Model):
     def observation_set(self):
         return Observation.objects.filter(case__animal=self)
     
-    @property
     def first_observation(self):
         if not self.observation_set.count():
             return None
@@ -58,7 +57,6 @@ class Animal(models.Model):
             'report_datetime',
         )[0]
     
-    @property
     def last_observation(self):
         if not self.observation_set.count():
             return None
@@ -67,7 +65,6 @@ class Animal(models.Model):
             '-report_datetime',
         )[0]
 
-    @property
     def probable_gender(self):
         return probable_gender(self.observation_set)
     def get_probable_gender_display(self):
@@ -81,15 +78,14 @@ class Animal(models.Model):
         help_text= 'as determined from the genders indicated in specific observations',
     )
 
-    @property
     def gender(self):
         if self.determined_gender:
             return self.determined_gender
-        if self.probable_gender:
-            return self.probable_gender
+        probable_gender = self.probable_gender()
+        if probable_gender:
+            return probable_gender
         return None
 
-    @property
     def probable_taxon(self):
         return probable_taxon(self.observation_set)
     determined_taxon = models.ForeignKey(
@@ -99,12 +95,12 @@ class Animal(models.Model):
         help_text= 'as determined from the taxa indicated in specific observations',
     )
     
-    @property
     def taxon(self):
         if self.determined_taxon:
             return self.determined_taxon
-        if self.probable_taxon:
-            return self.probable_taxon
+        probable_taxon = self.probable_taxon()
+        if probable_taxon:
+            return probable_taxon
         return None
     
     def clean(self):
@@ -121,17 +117,6 @@ class Animal(models.Model):
         return ('animal_detail', [str(self.id)]) 
 
 class CaseManager(models.Manager):
-    def cases_in_year(self, year):
-        # case.date isn't acutally in the database; it the observation.report_datetime
-        # of the observation with the earilest report_datetime. A simple approach here
-        # is to get all the cases that have _any_ observation in the year, then prune
-        # the one's whose date's aren't actually in the year
-        # TODO initially fetch cases with an observation whose report _or_ 
-        # observation dates are in the year we're looking for.
-        # TODO use YearCaseNumber ?
-        cases = self.filter(observation__observation_datetime__year__exact=year).distinct()
-        return filter(lambda c: c.date.year == year, cases)
-    
     def same_timeframe(self, case):
         '''\
         Returns cases that _may_ have been happening at the same time as the one
@@ -145,14 +130,14 @@ class CaseManager(models.Manager):
 
         # cut down our query by year. the +-1 bits are to catch cases that fall
         # within our fudge-factor (see below)
-        min_year = case.earliest_datetime.year - 1
-        max_year = case.latest_datetime.year + 1
+        min_year = case.earliest_datetime().year - 1
+        max_year = case.latest_datetime().year + 1
         same_year = self.filter(observation__observation_datetime__year__gte=min_year).filter(observation__observation_datetime__year__lte=max_year)
         result = set()
         for c in same_year:
             # find overlapping observations. 
-            if not ( c.latest_datetime + assumed_max_obs_length < case.earliest_datetime 
-                   or c.earliest_datetime > case.latest_datetime + assumed_max_obs_length ):
+            if not ( c.latest_datetime() + assumed_max_obs_length < case.earliest_datetime() 
+                   or c.earliest_datetime() > case.latest_datetime() + assumed_max_obs_length ):
                 result.add(c)
         
         # be careful here since an Entanglement isn't considered equal to it's
@@ -438,23 +423,23 @@ class Case(models.Model):
 
     names_set = property(_get_names_set,_put_names_set)
 
-    @property
     def current_name(self):
-        # Cases with no Observations yet don't get names
-        if not self.observation_set.count():
+        # Cases with no dates yet don't get names
+        date = self.date()
+        if date is None:
             return None
         s = {}
-        s['year'] = unicode(self.date.year)
+        s['year'] = unicode(date.year)
         s['yearly_number'] = self.yearly_number
         if self.yearly_number is None:
             s['yearly_number'] = -1
         # trim off anything beyond a day
-        s['date'] = "%04d" % self.date.year
-        if self.date.month:
-            s['date'] += '-%02d' % self.date.month
-            if self.date.day:
-                s['date'] += '-%02d' % self.date.day
-        taxon = self.probable_taxon
+        s['date'] = "%04d" % date.year
+        if date.month:
+            s['date'] += '-%02d' % date.month
+            if date.day:
+                s['date'] += '-%02d' % date.day
+        taxon = self.probable_taxon()
         if not taxon is None:
             s['taxon'] = unicode(taxon)
         else:
@@ -469,36 +454,26 @@ class Case(models.Model):
         
         return name
     
-    @property
     def past_names_set(self):
-        return self.names_set - set([self.current_name])
+        return self.names_set - set([self.current_name()])
 
-    @property
     def first_observation_date(self):
         if not self.observation_set.count():
             return None
         return self.observation_set.order_by('observation_datetime')[0].observation_datetime
 
-    @property
     def first_report_date(self):
         if not self.observation_set.count():
             return None
         return self.observation_set.order_by('report_datetime')[0].report_datetime
     
-    @property
-    def date(self):
-        if not self.observation_set.count():
-            return None
-        # TODO more specific dates should override less specific ones?
-        return self.first_observation_date
+    date = first_observation_date
     
-    @property
     def earliest_datetime(self):
         if not self.observation_set.count():
             return None
         return min([o.earliest_datetime for o in self.observation_set.all()])
 
-    @property
     def latest_datetime(self):
         '''\
         The latest that one of this case's observations _may_ have _started.
@@ -507,19 +482,18 @@ class Case(models.Model):
             return None
         return max([o.latest_datetime for o in self.observation_set.all()])
     
-    @property
     def breadth(self):
         if not self.observation_set.count():
             return None
-        return self.latest_datetime - self.earliest_datetime
+        return self.latest_datetime() - self.earliest_datetime()
     
-    @property
     def associated_cases(self):
         return Case.objects.associated_cases(self)
 
     def clean(self):
+        date = self.date()
+        if date:
         # if we don't have a yearly_number, set one if possible
-        if self.date:
             def _next_number_in_year(year):
                 this_year = YearCaseNumber.objects.filter(year=year)
                 if this_year.count():
@@ -527,7 +501,7 @@ class Case(models.Model):
                 else:
                     return 1
             def _new_yearcasenumber():
-                year = self.date.year
+                year = date.year
                 return YearCaseNumber.objects.create(
                     case=self,
                     year=year,
@@ -538,10 +512,10 @@ class Case(models.Model):
             if self.current_yearnumber:
                 # is our current year different from the one in our current
                 # yearly_number assignment
-                if self.date.year != self.current_yearnumber.year:
+                if date.year != self.current_yearnumber.year:
                     try:
                         # do we have a previous assignment for our current year?
-                        new_year_case_number = YearCaseNumber.objects.get(case=self, year=self.date.year)
+                        new_year_case_number = YearCaseNumber.objects.get(case=self, year=date.year)
                     except YearCaseNumber.DoesNotExist:
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
@@ -565,21 +539,20 @@ class Case(models.Model):
 
     case_type = detailed_class_name
     
-    @property
     def probable_taxon(self):
         return probable_taxon(self.observation_set)
     
-    @property
     def probable_gender(self):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        if self.current_name is None:
+        current_name = self.detailed.current_name()
+        if current_name is None:
             if self.id:
                 return u"%s (%i)" % (self.detailed_class_name, self.id)
             else:
                 return u"<new case>"
-        return self.current_name
+        return current_name
 
     @models.permalink
     def get_absolute_url(self):
