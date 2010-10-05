@@ -40,6 +40,7 @@ urlpatterns += patterns('cetacean_incidents.generic_views',
 urlpatterns += patterns('',
     (r'^new_case$', new_case, {}, 'new_case'),
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
+    (r'^revisions/object_history/(?P<content_type_id>\d+)/$', object_history, {}, 'object_history'),
     (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
 )
 
