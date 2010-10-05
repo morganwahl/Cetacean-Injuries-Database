@@ -202,7 +202,6 @@ def revision_detail(request, rev_id):
         'media': Media(js=(settings.JQUERY_FILE, 'checkboxhider.js')),
     }, RequestContext(request))
     
-
 @login_required
 def new_case(request, initial_animal_id=None):
     '''\
