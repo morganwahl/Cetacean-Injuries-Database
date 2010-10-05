@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from generic_views import direct_to_template
-from views import home, revision_detail, new_case
+from views import home, revision_detail, new_case, object_history
 from django.contrib import admin
 
 admin.autodiscover()
@@ -40,6 +40,7 @@ urlpatterns += patterns('cetacean_incidents.generic_views',
 urlpatterns += patterns('',
     (r'^new_case$', new_case, {}, 'new_case'),
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
+    (r'^revisions/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if
