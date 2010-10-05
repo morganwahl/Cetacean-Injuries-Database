@@ -206,10 +206,12 @@ def revision_detail(request, rev_id):
     }, RequestContext(request))
     
 @login_required
-def object_history(request, object_id, content_type_id):
+def object_history(request, content_type_id, object_id=None):
     content_type = ContentType.objects.get(id=content_type_id)
     
-    versions = Version.objects.filter(object_id=object_id, content_type=content_type)
+    versions = Version.objects.filter(content_type=content_type)
+    if not object_id is None:
+        versions = versions.filter(object_id=object_id)
     
     meta_keys = set()
     field_keys = set()
