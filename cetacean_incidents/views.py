@@ -254,6 +254,7 @@ def object_history(request, content_type_id, object_id=None):
             flat_version.append(data[k])
         flat_version.append(v.revision.user)
         flat_version.append(v.revision.date_created)
+        fields = data['fields']
         for k in field_keys:
             flat_version.append(fields[k])
         flat_versions.append(flat_version) 
