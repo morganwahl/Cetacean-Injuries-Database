@@ -1,5 +1,7 @@
 import numbers
 
+import json
+
 from difflib import SequenceMatcher
 
 from django.shortcuts import render_to_response, redirect
@@ -11,6 +13,7 @@ from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
 from reversion.models import Revision, Version
 
@@ -202,6 +205,68 @@ def revision_detail(request, rev_id):
         'media': Media(js=(settings.JQUERY_FILE, 'checkboxhider.js')),
     }, RequestContext(request))
     
+@login_required
+def object_history(request, object_id, content_type_id):
+    content_type = ContentType.objects.get(id=content_type_id)
+    
+    versions = Version.objects.filter(object_id=object_id, content_type=content_type)
+    
+    meta_keys = set()
+    field_keys = set()
+    
+    flat_versions = []
+    
+    for v in versions:
+        if not v.format == 'json':
+            print "!!! non-JSON version %d !!!" % v.id
+            continue
+        
+        data = json.loads(v.serialized_data)
+        if len(data) != 1:
+            print "!!! weird list in version %d !!!" % v.id
+            continue
+        
+        data = data[0]
+        
+        meta_keys.update(data.keys())
+        
+        fields = data['fields']
+        field_keys.update(fields.keys())
+
+    meta_keys.remove('fields')
+        
+    for v in versions:
+        if not v.format == 'json':
+            print "!!! non-JSON version %d !!!" % v.id
+            continue
+        
+        data = json.loads(v.serialized_data)
+        if len(data) != 1:
+            print "!!! weird list in version %d !!!" % v.id
+            continue
+        
+        data = data[0]
+
+        flat_version = []
+        for k in meta_keys:
+            flat_version.append(data[k])
+        for k in field_keys:
+            flat_version.append(fields[k])
+        flat_versions.append(flat_version) 
+    
+    return render_to_response(
+        'reversion/object_history.html', 
+        {
+            'object_id': object_id,
+            'content_type': content_type,
+            'meta_keys': map(lambda k: k.replace('_', ' '), meta_keys),
+            'field_keys': map(lambda k: k.replace('_', ' '), field_keys),
+            'flat_versions': flat_versions,
+            'versions': versions,
+        },
+        RequestContext(request),
+    )
+
 @login_required
 def new_case(request, initial_animal_id=None):
     '''\
