@@ -7,7 +7,7 @@
 
 {% block header %}
 <h2 style="text-align:center;">
-    {{ content_type }} #{{ object_id }}
+    {{ content_type }}{% if object_id %} #{{ object_id }}{% endif %}
 </h2>
 {% endblock %}
 

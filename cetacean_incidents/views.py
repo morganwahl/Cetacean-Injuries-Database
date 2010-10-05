@@ -209,7 +209,7 @@ def revision_detail(request, rev_id):
 def object_history(request, content_type_id, object_id=None):
     content_type = ContentType.objects.get(id=content_type_id)
     
-    versions = Version.objects.filter(content_type=content_type)
+    versions = Version.objects.filter(content_type=content_type).order_by('revision__date_created')
     if not object_id is None:
         versions = versions.filter(object_id=object_id)
     
