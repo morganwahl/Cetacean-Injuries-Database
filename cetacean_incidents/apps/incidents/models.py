@@ -460,12 +460,12 @@ class Case(models.Model):
     def first_observation_date(self):
         if not self.observation_set.count():
             return None
-        return self.observation_set.order_by('observation_datetime')[0].observation_datetime
+        return self.observation_set.only('observation_datetime').order_by('observation_datetime')[0].observation_datetime
 
     def first_report_date(self):
         if not self.observation_set.count():
             return None
-        return self.observation_set.order_by('report_datetime')[0].report_datetime
+        return self.observation_set.only('report_datetime').order_by('report_datetime')[0].report_datetime
     
     date = first_observation_date
     
