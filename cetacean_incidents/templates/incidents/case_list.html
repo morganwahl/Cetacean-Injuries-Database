@@ -31,7 +31,7 @@
 	    {% for case in case_list %}
 	    <tr>
 	        <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
-		    <td sorttable_customkey="{{ case.date.year|default:10000 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
+		    <td sorttable_customkey="{{ case.date.year|default:9999 }}{{ case.yearly_number|default:0|stringformat:"03d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
 		    <td>{{ case.case_type }}</td>
 		    <td>{% animal_link case.animal %}</td>
 		    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date.earliest %}">{{ case.first_observation_date }}</td>

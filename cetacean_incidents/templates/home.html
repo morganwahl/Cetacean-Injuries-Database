@@ -4,19 +4,19 @@
 {{ block.super }}
 {{ media }}
 <style type="text/css">
-ul.navlinks {
-    display: table-row;
-    width: 100%;
-}
-ul.navlinks li {
-    padding: .75em;
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-}
-ul.navlinks li a {
-    text-decoration: none;
-}
+    ul.navlinks {
+        display: table;
+        width: 100%;
+    }
+    ul.navlinks li {
+        padding: .75em;
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+    }
+    ul.navlinks li a {
+        text-decoration: none;
+    }
 </style>
 {% endblock %}
 
@@ -103,7 +103,7 @@ ul.navlinks li a {
     </tr>
     <tr class="layout">
         <td class="section layout">
-            <form action="{% url animal_search %}" method="get">
+            <form action="{% url animal_search %}" method="get" class="subform">
                 <div>
                     <h3>get a list of animals that fit some criteria</h3>
                     {% for f in forms.animal_search %}
@@ -114,7 +114,7 @@ ul.navlinks li a {
             </form>
         </td>
         <td class="section layout">
-            <form action="{% url case_search %}" method="get">
+            <form action="{% url case_search %}" method="get" class="subform">
                 <div>
                     <h3>get a list of cases that fit some criteria</h3>
                     {% for f in forms.case_search %}
