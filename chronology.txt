@@ -2,6 +2,9 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+add 'incident_on_or_after_date' to cases
+    for ents will usually be 'last seen gear free'
+replace named media-url with DJANGO.CORE.CONTEXT_PROCESSORS.MEDIA
 automate the generation of the tabbed pages
 fontographically set-off NMFS ID numbers
 edit observation doesn't default to chosen contacts
@@ -57,6 +60,6 @@ case-list sorts by case (most recent first)
 make subclass the DateTimeField instead of using the DateTime app
 google-charts venn-diagram for gear-types
 
-git hosting at NOAA
+gitweb hosting at NOAA
 directions for successor
 
