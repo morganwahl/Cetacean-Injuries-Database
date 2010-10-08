@@ -615,7 +615,7 @@ class Observation(models.Model):
         blank= True,
         null= True,
         help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest observation_datetime for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
-        related_name= 'observation',
+        related_name= 'observation_date_for',
         verbose_name= 'observation date and time',
     )
     # TODO duration?
@@ -643,7 +643,7 @@ class Observation(models.Model):
     report_datetime = models.OneToOneField(
         DateTime,
         help_text = 'when we first heard about the observation',
-        related_name = 'report',
+        related_name = 'report_date_for',
         verbose_name = 'report date and time',
     )
         

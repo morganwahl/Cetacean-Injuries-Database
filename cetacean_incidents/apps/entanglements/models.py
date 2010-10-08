@@ -28,7 +28,7 @@ class GearOwner(AbstractContact):
         DateTime,
         blank= True,
         null= True,
-        related_name= 'gear_set',
+        related_name= 'set_date_for',
         verbose_name= 'date gear was set',
     )
     
@@ -43,7 +43,7 @@ class GearOwner(AbstractContact):
         DateTime,
         blank= True,
         null= True,
-        related_name= 'gear_missing',
+        related_name= 'missing_date_for',
         verbose_name= 'date gear went missing',
     )
 
