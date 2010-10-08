@@ -227,7 +227,6 @@ def object_history(request, content_type_id, object_id=None):
         if len(data) != 1:
             print "!!! weird list in version %d !!!" % v.id
             continue
-        
         data = data[0]
         
         meta_keys.update(data.keys())
@@ -236,7 +235,7 @@ def object_history(request, content_type_id, object_id=None):
         field_keys.update(fields.keys())
 
     meta_keys.remove('fields')
-        
+
     for v in versions:
         if not v.format == 'json':
             print "!!! non-JSON version %d !!!" % v.id
@@ -246,18 +245,19 @@ def object_history(request, content_type_id, object_id=None):
         if len(data) != 1:
             print "!!! weird list in version %d !!!" % v.id
             continue
-        
         data = data[0]
 
         flat_version = []
+
         for k in meta_keys:
             flat_version.append(data[k])
         flat_version.append(v.revision.user)
         flat_version.append(v.revision.date_created)
+
         fields = data['fields']
         for k in field_keys:
             flat_version.append(fields[k])
-        flat_versions.append(flat_version) 
+        flat_versions.append(flat_version)
     
     meta_keys.add('user')
     meta_keys.add('datetime')
