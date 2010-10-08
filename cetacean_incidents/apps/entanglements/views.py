@@ -15,7 +15,7 @@ from reversion import revision
 from cetacean_incidents.apps.incidents.models import Case
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
+from cetacean_incidents.apps.uncertain_datetimes.forms import NiceDateTimeForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 

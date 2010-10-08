@@ -5,7 +5,7 @@ import pytz
 
 from django.db import models
 from cetacean_incidents.apps.contacts.models import Contact, Organization
-from cetacean_incidents.apps.datetime.models import DateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon

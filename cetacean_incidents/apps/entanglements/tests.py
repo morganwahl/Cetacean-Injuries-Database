@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from cetacean_incidents.apps.datetime.models import DateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
 from cetacean_incidents.apps.incidents.models import Animal
 
 from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation

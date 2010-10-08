@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <django-objects version="1.0">
-    <object pk="16" model="datetime.datetime">
+    <object pk="16" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">1992</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day">1</field>
@@ -9,7 +9,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="14" model="datetime.datetime">
+    <object pk="14" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2008</field>
         <field type="IntegerField" name="month"><None></None></field>
         <field type="IntegerField" name="day"><None></None></field>
@@ -18,7 +18,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="12" model="datetime.datetime">
+    <object pk="12" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2008</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day">1</field>
@@ -27,7 +27,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="6" model="datetime.datetime">
+    <object pk="6" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2009</field>
         <field type="IntegerField" name="month"><None></None></field>
         <field type="IntegerField" name="day"><None></None></field>
@@ -36,7 +36,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="2" model="datetime.datetime">
+    <object pk="2" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day"><None></None></field>
@@ -45,7 +45,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="8" model="datetime.datetime">
+    <object pk="8" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day"><None></None></field>
@@ -54,7 +54,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="10" model="datetime.datetime">
+    <object pk="10" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day"><None></None></field>
@@ -63,7 +63,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="4" model="datetime.datetime">
+    <object pk="4" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">1</field>
         <field type="IntegerField" name="day">1</field>
@@ -72,7 +72,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="1" model="datetime.datetime">
+    <object pk="1" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -81,7 +81,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="7" model="datetime.datetime">
+    <object pk="7" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -90,7 +90,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="9" model="datetime.datetime">
+    <object pk="9" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -99,7 +99,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="11" model="datetime.datetime">
+    <object pk="11" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -108,7 +108,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="15" model="datetime.datetime">
+    <object pk="15" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -117,7 +117,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="5" model="datetime.datetime">
+    <object pk="5" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -126,7 +126,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="13" model="datetime.datetime">
+    <object pk="13" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">5</field>
@@ -135,7 +135,7 @@
         <field type="FloatField" name="second"><None></None></field>
         <field type="TextField" name="import_notes"></field>
     </object>
-    <object pk="3" model="datetime.datetime">
+    <object pk="3" model="uncertain_datetimes.datetime">
         <field type="IntegerField" name="year">2010</field>
         <field type="IntegerField" name="month">2</field>
         <field type="IntegerField" name="day">6</field>
@@ -324,10 +324,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">6</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">16</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">16</field>
         <field to="locations.location" name="location" rel="OneToOneRel">8</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">15</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">15</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -343,10 +343,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">5</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">14</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">14</field>
         <field to="locations.location" name="location" rel="OneToOneRel">7</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">13</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">13</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -362,10 +362,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">5</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">12</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">12</field>
         <field to="locations.location" name="location" rel="OneToOneRel">6</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">11</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">11</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -381,10 +381,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">2</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">6</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">6</field>
         <field to="locations.location" name="location" rel="OneToOneRel">3</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">5</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">5</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -400,10 +400,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">1</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">2</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">2</field>
         <field to="locations.location" name="location" rel="OneToOneRel">1</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">1</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">1</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -419,10 +419,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">3</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">8</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">8</field>
         <field to="locations.location" name="location" rel="OneToOneRel">4</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">7</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">7</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -438,10 +438,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">4</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">10</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">10</field>
         <field to="locations.location" name="location" rel="OneToOneRel">5</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">9</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">9</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>
@@ -457,10 +457,10 @@
         <field to="incidents.case" name="case" rel="ManyToOneRel">2</field>
         <field to="contacts.contact" name="observer" rel="ManyToOneRel"><None></None></field>
         <field to="vessels.vesselinfo" name="observer_vessel" rel="OneToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="observation_datetime" rel="OneToOneRel">4</field>
+        <field to="uncertain_datetimes.datetime" name="observation_datetime" rel="OneToOneRel">4</field>
         <field to="locations.location" name="location" rel="OneToOneRel">2</field>
         <field to="contacts.contact" name="reporter" rel="ManyToOneRel"><None></None></field>
-        <field to="datetime.datetime" name="report_datetime" rel="OneToOneRel">3</field>
+        <field to="uncertain_datetimes.datetime" name="report_datetime" rel="OneToOneRel">3</field>
         <field to="taxons.taxon" name="taxon" rel="ManyToOneRel"><None></None></field>
         <field type="CharField" name="gender"></field>
         <field type="TextField" name="animal_description"></field>

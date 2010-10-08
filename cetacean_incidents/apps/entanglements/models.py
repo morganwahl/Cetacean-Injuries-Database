@@ -1,7 +1,7 @@
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
-from cetacean_incidents.apps.datetime.models import DateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
 from cetacean_incidents.apps.dag.models import DAGEdge_factory, DAGNode_factory
