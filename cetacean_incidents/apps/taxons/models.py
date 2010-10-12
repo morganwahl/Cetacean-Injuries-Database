@@ -34,6 +34,11 @@ class Taxon(models.Model):
     Taxon tree), which is more complicated than you think.
     
     '''
+    
+    tsn = models.IntegerField(
+        verbose_name= 'ITIS TSN',
+        help_text= "An ITIS (Integrated Taxonomic Information System) TSN (Taxonomic Serial Number)",
+    )
 
     # The ranks are numbered so that negative ones are part of a binomial name,
     # whereas positive ones are larger groupings.
