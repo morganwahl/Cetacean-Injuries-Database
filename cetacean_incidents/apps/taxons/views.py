@@ -8,12 +8,15 @@ except ImportError:
 import urllib
 import urllib2
 
+from lxml import etree
+from lxml import objectify
+
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
-from models import Taxon
 from django.shortcuts import render_to_response
 from django.forms import Media
 from django.template import RequestContext
+from django.template.loader import render_to_string
 
 from models import Taxon
  
@@ -74,8 +77,49 @@ def taxon_search(request):
 def itis_search(request):
     get_string = urllib.urlencode(request.GET)
     url = 'http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?' + get_string
-    print "trying %s" % url
-    return HttpResponse(urllib2.urlopen(url).read())
+    
+    url_handle = urllib2.urlopen(url)
+    # ITIS doesn't send HTTP error codes when its database is down. :-(
+    # check for a mimetype of text/html instead
+    if url_handle.info().gettype() == 'text/html':
+        return HttpResponse(
+            render_to_string('taxons/itis_error_include.html', {'error_url': url}),
+            mimetype='text/html',
+        )
+    
+    xml_doc = etree.parse(url_handle)
+    
+    namespaces = {
+        'ns': "http://itis_service.itis.usgs.org",
+        'ax': "http://data.itis_service.itis.usgs.org/xsd"
+    }
+    
+    match_elements = xml_doc.xpath("//ns:return/ax:anyMatchList", namespaces=namespaces)
+    
+    results = []
+    for e in match_elements:
+        r = {}
+        r['xml'] = etree.tostring(e, pretty_print=True)
+        
+        o = objectify.fromstring(r['xml'])
+        
+        r['tsn'] = o.tsn
+        r['name'] = o.sciName
+        
+        r['common_names'] = []
+        for name in o.commonNameList.commonNames:
+            if name.language == 'English':
+                r['common_names'].append(name.commonName)
+        
+        results.append(r)
+    
+    # render an HTML fragment that can be inserted into the taxon_import page
+    return HttpResponse(
+        render_to_string('taxons/itis_search_results.html', {
+            'results': results,
+        }),
+        mimetype="text/plain",
+    )
 
 def taxon_import(request):
 
@@ -86,3 +130,4 @@ def taxon_import(request):
         {'media': template_media},
         context_instance=RequestContext(request),
     )
+

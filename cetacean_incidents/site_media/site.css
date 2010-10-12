@@ -233,8 +233,16 @@ div.edit-warning {
     text-align: center;
 }
 
+.error {
+    background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */
+    border: thin dashed #a40000; /* scarlet red 3 */
+}
+.error a {
+    color: #a40000;  /* scarlet red 3 */
+}
+
 ul.errorlist, span.errorlist {
-    background-color: #ef2929; /* scarlet red 1 */
+    background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
     border: thin dashed #a40000; /* scarlet red 3 */
 }
 ul.errorlist {
