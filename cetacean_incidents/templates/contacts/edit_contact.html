@@ -15,6 +15,7 @@
 
 {% block contact_fields %}
 <form action="" method="post">
+{% csrf_token %}
 {% include "contacts/change_contact_include.html" %}
 <button type="submit">save changes to {{ contact }}</button>
 </form>

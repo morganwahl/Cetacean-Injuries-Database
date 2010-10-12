@@ -1,9 +1,9 @@
 import re
 
 try:
-    import simplejson as json# for 2.5 compat.
-except ImportError:
     import json
+except ImportError:
+    import simplejson as json # for python 2.5 compat.
 
 import urllib
 import urllib2
@@ -15,6 +15,8 @@ from django.shortcuts import render_to_response
 from django.forms import Media
 from django.template import RequestContext
 
+from models import Taxon
+ 
 def taxon_search(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 

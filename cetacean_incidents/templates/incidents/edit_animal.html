@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 
 {% block title %}{{ block.super }}: {{ animal }} [editing] {% endblock %}
 
@@ -7,12 +7,19 @@
 {{ all_media }}
 {% endblock %}
 
+{% block ids-dl %}
+{% with animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
 {% block header %}
 <h2>{{ animal }} [editing]</h2>
 {% endblock %}
 
 {% block content %}
 <form action="" method="post">
+    {% csrf_token %}
     <div class="section">
         {% with form.name as f %}
         {% include "labeled_field.html" %}
@@ -23,26 +30,12 @@
         {% with form.determined_gender as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-        {% with form.dead as f %}
+        {% with form.determined_dead_before as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-        <script type="text/javascript">
-            $().ready(function(){
-                CheckboxHider.init(
-                    {# TODO js-string-escaping #}
-                    "{{ form.dead.html_name }}",
-                    "if_dead"
-                );
-            });
-        </script>
-        <div id="if_dead">
-            {% with form.necropsy as f %}
-            {% include "labeled_field.html" %}
-            {% endwith %}
-            {% with form.determined_dead_before as f %}
-            {% include "labeled_field.html" %}
-            {% endwith %}
-        </div>
+        {% with form.necropsy as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
     	<button type="submit">save changes</button>
     </div>
 </form>

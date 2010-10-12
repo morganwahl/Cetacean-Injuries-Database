@@ -1,16 +1,27 @@
 {% extends "detail.html" %}
 {% load case_extras %}
+{% load observation_extras %}
+{% load contact_extras %}
+{% load datetime_extras %}
 {% load generic_field_display %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{% endblock %}
 
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>{{ animal }}</h2>
+<h2>Animal {{ animal }}</h2>
 <div><a href="{% url edit_animal animal.id %}">edit</a></div>
 {% endblock %}
 
 {% block ids-dl %}
-<dt>local ID</dt><dd>{{ animal.id }}</dd>
+{% with animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}
@@ -58,7 +69,42 @@
         <i>no cases yet</i>
     </div>
     {% endif %}
-    <a href="{% url add_case animal.id %}">add a new case</a>
+    <a href="{% url add_case animal.id %}">add a new case for this animal</a>
+</div>
+<div class="section">
+    <h3>Observations</h3>
+    {% block observations %}
+    {% if animal.observation_set.count %}
+    <table class="sortable bordered">
+        <thead>
+            <tr>
+                <th>case</th>
+                <td class="sorttable_nosort"></td>
+                <th>observer</th>
+                <th>date observed</th>
+                <th>reporter</th>
+                <th>date reported</th>
+                <th class="sorttable_nosort">start of narrative...</th>
+            </tr>
+        </thead>
+        {% for o in animal.observation_set.all %}
+        <tr>
+            <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
+            <td>{% observation_link o %}</td>
+            <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
+            <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
+            <td sorttable_customkey="{{ o.reporter.sort_name }}">{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
+            <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
+            <td>{% if o.narrative %}{{ o.narrative|truncatewords:9 }}{% else %}<i>nothing</i>{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>
+        <i>no observations yet!</i>
+    </p>
+    {% endif %}
+    {% endblock %}
 </div>
 {% endblock %}
 

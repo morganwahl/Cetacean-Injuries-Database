@@ -1,0 +1,55 @@
+<!-- TODO noscript -->
+<script type="text/javascript">
+    {# TODO no HTML escaping in js #}
+
+    {{ extra_js|safe }}
+
+    {% if not func_options.custom_focus %}
+    var {{ func_options.focus_name }} = function (event, ui) {
+        $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+
+        return false;
+    }
+    {% endif %}
+
+    {% if not func_options.custom_select %}
+    var {{ func_options.select_name }} = function (event, ui) {
+        $('#{{ autocomplete_attrs.id }}').val(ui.item.label);
+        $('#{{ value_attrs.id }}').val(ui.item.value);
+        $('#{{ value_attrs.id }}-current_val').text(ui.item.label);
+        $('#{{ value_attrs.id }}-none').hide();
+        $('#{{ value_attrs.id }}-display').show();
+        $('#{{ autocomplete_attrs.id }}').hide();
+
+        return false;
+    }
+    {% endif %}
+
+    $(function() {
+        $("#{{ autocomplete_attrs.id }}").autocomplete({
+            {% for arg, value in options.items %}{{ arg }}: {{ value }},
+            {% endfor %}
+            source: {{ source }}
+        })
+        {% if custom_html %}
+        .data("autocomplete")._renderItem = function( ul, item ) {
+            return $( "<li></li>" )
+            .data( "item.autocomplete", item )
+            .append( "<a>" + {{ custom_html }}(item) + "</a>" )
+            .appendTo( ul );
+        };
+        {% endif %}
+
+        // hook up the 'clear' button
+        $("#{{ value_attrs.id }}-clear").click(function(event) {
+            $('#{{ value_attrs.id }}').val('');
+            $('#{{ autocomplete_attrs.id }}').show();
+            $('#{{ value_attrs.id }}-none').show();
+            $('#{{ value_attrs.id }}-display').hide();
+            $('#{{ value_attrs.id }}-current_val').text('');
+        });
+    });
+</script>
+<input {{ flat_autocomplete_attrs|safe }}><span id="{{ value_attrs.id }}-none"{% if value_attrs.value %} style="display: none;"{% endif %}><i>none selected</i></span><span id="{{ value_attrs.id }}-display"{% if not value_attrs.value %} style="display: none;"{% endif %}><span id="{{ value_attrs.id }}-current_val">{{ autocomplete_attrs.value }}</span><button type="button" id="{{ value_attrs.id }}-clear">clear</button></span>
+<input {{ flat_value_attrs|safe }}>
+

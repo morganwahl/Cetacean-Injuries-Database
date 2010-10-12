@@ -6,8 +6,7 @@
 
 {% block head %}
 {{ block.super }}
-{# location_details_include.html expects this #}
-<script type="text/javascript" src="{% url site-media path="jquery/jquery-1.3.2.min.js" %}"></script>
+{{ media }}
 {% endblock %}
 
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
@@ -19,13 +18,24 @@
 <h2>{% case_link observation.case %}</h2>
 <h2 style="margin-left:2em;">{{ observation }}</h2>
 <div>
-    <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}">edit this observation</a>
+    <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}#reporting">edit this observation</a>
 </div>
 {% endblock %}
 
 {% block ids-dl %}
-<dt>case name</dt><dd>{{ observation.case.current_name }}</dd>
-<dt>observation local ID</dt><dd>{{ observation.id }}</dd>
+{% with observation.case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+<hr>
+{% with observation as o %}
+{% include "incidents/observation_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}

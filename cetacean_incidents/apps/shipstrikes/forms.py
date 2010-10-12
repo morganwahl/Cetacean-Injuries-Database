@@ -13,7 +13,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
@@ -60,6 +60,8 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     
     # should be the same as whatever ModelForm would generate for the 'captain'
     # field, except it's not required.
+    # TODO why not just have it generate field for captain? (which wouldn't
+    # be required anyway)
     _f = StrikingVesselInfo._meta.get_field('captain')
     existing_captain = forms.ModelChoiceField(
         queryset= Contact.objects.all(),
@@ -72,21 +74,15 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
         model = StrikingVesselInfo
         exclude = ('contact', 'captain')
 
-class ShipstrikeForm(forms.ModelForm):
+class ShipstrikeForm(CaseForm):
     
-    class Meta:
+    class Meta(CaseForm.Meta):
         model = Shipstrike
-
-# TODO better way of tracking this
-case_form_classes['Shipstrike'] = ShipstrikeForm
 
 class AddShipstrikeForm(ShipstrikeForm):
     
     class Meta(ShipstrikeForm.Meta):
         exclude = ('animal',)
-
-# TODO better way of tracking this
-addcase_form_classes['Shipstrike'] = AddShipstrikeForm
 
 class ShipstrikeObservationForm(ObservationForm):
 
@@ -97,7 +93,4 @@ class ShipstrikeObservationForm(ObservationForm):
 
     class Meta(ObservationForm.Meta):
         model = ShipstrikeObservation
-
-# TODO better way of tracking this
-observation_forms['Shipstrike'] = ShipstrikeObservationForm
 

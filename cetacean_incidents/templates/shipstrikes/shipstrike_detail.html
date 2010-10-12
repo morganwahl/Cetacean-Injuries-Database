@@ -1,15 +1,14 @@
 {% extends "incidents/case_base.html" %}
 
-{% block header %}
-{{ block.super }}
-<div>
-    <a href="{% url edit_shipstrike case.id %}">edit this case</a>
-</div>
+{# TODO is this needed ? will the case-edit view delegate accordingly? #}
+{% block edit_case_link %}
+{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+<a href="{% url edit_shipstrike case.id %}#case">edit this shipstrike</a>
 {% endblock %}
 
-{% block observations %}
-{{ block.super }}
-<div>
-    <a href="{% url add_shipstrikeobservation case.id %}">add an observation</a>
-</div>
+{# TODO is this needed ? will the add-observation view delegate accordingly? #}
+{% block add_observation_link %}
+{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+<a href="{% url add_shipstrikeobservation case.id %}#reporting">add an observation</a>
 {% endblock %}
+

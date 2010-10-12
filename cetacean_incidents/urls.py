@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 from django.conf import settings
 from generic_views import direct_to_template
-from views import home, revision_detail
+from views import home, revision_detail, new_case, object_history
 from django.contrib import admin
 
 admin.autodiscover()
@@ -16,7 +16,7 @@ urlpatterns = patterns('',
     (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
     (r'^entanglements/', include('cetacean_incidents.apps.entanglements.urls')),
     (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),
-    
+
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
@@ -38,7 +38,10 @@ urlpatterns += patterns('cetacean_incidents.generic_views',
     (r'^revisions/recent$', 'object_list', recent_revisions_args, 'recent_revisions'),
 )
 urlpatterns += patterns('',
+    (r'^new_case$', new_case, {}, 'new_case'),
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
+    (r'^revisions/object_history/(?P<content_type_id>\d+)/$', object_history, {}, 'object_history'),
+    (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if

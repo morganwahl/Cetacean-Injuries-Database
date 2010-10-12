@@ -1,0 +1,12 @@
+<!-- TODO noscript -->
+<script type="text/javascript">
+$(function() {
+	$("#{{ input_id }}").datepicker({
+	        dateFormat: 'yy-mm-dd', // ISO 8601
+	        showButtonPanel: true,
+	        currentText: "This Month"// TODO the 'today' button seems to just jump to this month
+	});
+});
+</script>
+<input {{ final_attrs|safe }}>
+

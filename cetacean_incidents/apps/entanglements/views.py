@@ -8,6 +8,7 @@ from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.db import transaction
 from django.db import models
+from django.conf import settings
 
 from reversion import revision
 
@@ -16,12 +17,12 @@ from cetacean_incidents.apps.incidents.models import Case
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
-from cetacean_incidents.apps.incidents.forms import observation_forms, AnimalForm
+from cetacean_incidents.apps.incidents.forms import AnimalForm
 
 from cetacean_incidents.apps.incidents.views import case_detail, edit_case, add_observation, edit_observation
 
 from models import Entanglement, GearType, EntanglementObservation
-from forms import EntanglementForm, EntanglementObservationForm, GearOwnerForm
+from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
 
 @login_required
 def edit_entanglement(request, entanglement_id):
@@ -88,7 +89,7 @@ def add_gear_owner(request, entanglement_id):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(
@@ -164,14 +165,35 @@ def edit_gear_owner(request, entanglement_id):
             if forms['gear_owner'].cleaned_data['date_set_known']:
                 _check('datetime_set')
                 gear_owner.date_gear_set = forms['datetime_set'].save()
+            else:
+                date_set = gear_owner.date_gear_set
+                if not date_set is None:
+                    gear_owner.date_gear_set = None
+                    # be sure to remove the datetime reference from the 
+                    # gear_owner and save, or else you'll delete the entire
+                    # case!
+                    gear_owner.save()
+                    date_set.delete()
             
             if forms['gear_owner'].cleaned_data['location_set_known']:
                 _check('location_set')
                 gear_owner.location_gear_set = forms['location_set'].save()
+            else:
+                loc_set = gear_owner.location_gear_set
+                if not loc_set is None:
+                    gear_owner.location_gear_set = None
+                    gear_owner.save()
+                    loc_set.delete()
 
             if forms['gear_owner'].cleaned_data['date_lost_known']:
                 _check('datetime_lost')
                 gear_owner.date_gear_missing = forms['datetime_lost'].save()
+            else:
+                date_lost = gear_owner.date_gear_missing
+                if not date_lost is None:
+                    gear_owner.date_gear_missing = None
+                    gear_owner.save()
+                    date_lost.delete()
             
             gear_owner.save()
             
@@ -183,7 +205,7 @@ def edit_gear_owner(request, entanglement_id):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
     )
     
     return render_to_response(
@@ -203,18 +225,21 @@ def entanglementobservation_detail(request, entanglementobservation_id):
         'entanglements/entanglement_observation_detail.html',
         {
             'observation': entanglementobservation,
-            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
+            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )
 
 @login_required
-def add_entanglementobservation(request, entanglement_id):
+def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     return add_observation(
         request,
+        animal_id= animal_id,
         case_id= entanglement_id,
         template= 'entanglements/add_entanglement_observation.html',
         observationform_class= EntanglementObservationForm,
+        caseform_class= EntanglementForm,
+        addcaseform_class= AddEntanglementForm,
     )
 
 @login_required
@@ -224,6 +249,7 @@ def edit_entanglementobservation(request, entanglementobservation_id):
         observation_id = entanglementobservation_id,
         template= 'entanglements/edit_entanglement_observation.html',
         observationform_class= EntanglementObservationForm,
+        caseform_class= EntanglementForm,
     )
 
 @login_required
@@ -313,7 +339,7 @@ def entanglement_report_form(request):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
     )
 
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)

@@ -8,6 +8,7 @@ from django.forms import Media
 from django.forms.formsets import formset_factory
 from django.db import transaction
 from django.db.models import Q
+from django.conf import settings
 
 from reversion import revision
 
@@ -15,11 +16,12 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
+from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
 
 from cetacean_incidents import generic_views
 
-from models import Case, Animal, Observation
-from forms import AnimalSearchForm, CaseTypeForm, CaseForm, observation_forms, MergeCaseForm, AnimalForm, case_form_classes, addcase_form_classes, ObservationForm, CaseSearchForm
+from models import Case, Animal, Observation, YearCaseNumber
+from forms import AnimalSearchForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -37,7 +39,7 @@ def create_animal(request):
     else:
         form = AnimalForm()
 
-    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
 
     return render_to_response(
         'incidents/create_animal.html',
@@ -67,7 +69,7 @@ def edit_animal(request, animal_id):
     else:
         form = AnimalForm(**form_kwargs)
 
-    template_media = Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js'))
+    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
 
     return render_to_response(
         'incidents/edit_animal.html',
@@ -78,13 +80,20 @@ def edit_animal(request, animal_id):
         },
         context_instance= RequestContext(request),
     )
+
 @login_required
 def animal_search(request):
-    # prefix should be the same as the homepage
-    form = AnimalSearchForm(request.GET, prefix='animal_search')
-    # TODO we make a useless queryset since the template expects a queryset
-    animals = Animal.objects.filter(id=None)
-
+    # prefix should be the same as the on used on the homepage
+    prefix = 'animal_search'
+    form_kwargs = {
+        'prefix': 'animal_search',
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    form = AnimalSearchForm(**form_kwargs)
+    
+    animal_list = tuple()
+    
     if form.is_valid():
         animal_order_args = ('id',)
         #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
@@ -93,94 +102,31 @@ def animal_search(request):
         
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
-            # TODO handle taxon uncertainty!
             descendants = Taxon.objects.with_descendants(t)
             animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
-
-        if 'name' in form.cleaned_data:
+        
+        # empty string for name is same as None
+        if form.cleaned_data['name']:
             name = form.cleaned_data['name']
             animals = animals.filter(name__icontains=name)
+
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        animal_list = list()
+        for a in animals:
+            if not a in seen:
+                seen.add(a)
+                animal_list.append(a)
 
     return render_to_response(
         "incidents/animal_search.html",
         {
             'form': form,
-            'animal_list': animals,
-        },
-        context_instance= RequestContext(request),
-    )
-
-# TODO merge create_case and add_case
-@login_required
-def create_case(request):
-    caseform_args = {}
-    if request.method == 'POST':
-        caseform_args = {'data': request.POST}
-    case_forms = {}
-    for case_type_name, case_form_class in case_form_classes.items():
-        case_forms[case_type_name] = case_form_class(prefix=case_type_name, **caseform_args)
-
-    if request.method == 'POST':
-        type_form = CaseTypeForm(request.POST)
-        if type_form.is_valid():
-            # get the relevant AddCaseForm subclass
-            case_form = case_forms[type_form.cleaned_data['case_type']]
-            if case_form.is_valid():
-                new_case = case_form.save()
-                return redirect(new_case)
-    else:
-        type_form = CaseTypeForm()
-        
-    template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js',),
-    )
-    
-    return render_to_response(
-        'incidents/add_case.html',
-        {
-            'media': reduce( lambda m, f: m + f.media, [type_form] +  case_forms.values(), template_media),
-            'type_form': type_form,
-            'case_forms': case_forms,
-        },
-        context_instance= RequestContext(request),
-    )
-
-@login_required
-def add_case(request, animal_id):
-    animal = Animal.objects.get(id=animal_id)
-
-    addcaseform_args = {}
-    if request.method == 'POST':
-        addcaseform_args = {'data': request.POST}
-    addcase_forms = {}
-    for case_type_name, addcase_form_class in addcase_form_classes.items():
-        addcase_forms[case_type_name] = addcase_form_class(prefix=case_type_name, **addcaseform_args)
-
-    if request.method == 'POST':
-        type_form = CaseTypeForm(request.POST)
-        if type_form.is_valid():
-            # get the relevant AddCaseForm subclass
-            case_form = addcase_forms[type_form.cleaned_data['case_type']]
-            if case_form.is_valid():
-                new_case = case_form.save(commit=False)
-                new_case.animal = animal
-                new_case.save()
-                case_form.save_m2m()
-                return redirect(new_case)
-    else:
-        type_form = CaseTypeForm()
-        
-    template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js',),
-    )
-    
-    return render_to_response(
-        'incidents/add_case.html',
-        {
-            'animal': animal,
-            'media': reduce( lambda m, f: m + f.media, [type_form] +  addcase_forms.values(), template_media),
-            'type_form': type_form,
-            'case_forms': addcase_forms,
+            'animal_list': animal_list,
+            'animal_count': len(animal_list),
         },
         context_instance= RequestContext(request),
     )
@@ -214,23 +160,45 @@ def observation_detail(request, observation_id):
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
     )
-
+    
 # TODO merge add_observation and change_observation
+# TODO rename, since it also can add animals and cases
 @login_required
 def add_observation(
         request,
-        case_id,
+        animal_id=None,
+        case_id=None,
         template='incidents/add_observation.html',
+        caseform_class=CaseForm,
+        addcaseform_class=AddCaseForm,
         observationform_class= ObservationForm,
         additional_form_classes= {},
         additional_form_saving= lambda forms, check, observation: None,
     ):
     '''\
+    The doomsday form-view. If case_id is not None, animal_id is ignored (the case's animal is used instead). If case_id is None, a new Case is created for the animal given in animal_id. If animal_id is None, a new Animal is added as well.
+    
     observationform_class, if given, should be a subclass of ObservationForm.
+    addcaseform_class should be the same as caseform_class, but without an
+    animal field.
     '''
-    case = Case.objects.get(id=case_id).detailed
+    
+    case = None
+    if not case_id is None:
+        case = Case.objects.get(id=case_id).detailed
+        animal_id = case.animal.id
+    animal = None
+    if not animal_id is None:
+        animal = Animal.objects.get(id=animal_id)
+    
+    # if we're adding a new case, there's no point in having an animal field
+    # for it. that would also makes the page non-functional if we're adding a new animal.
+    if case_id is None:
+        caseform_class = addcaseform_class
     
     form_classes = {
+        'animal': AnimalForm,
+        'case': caseform_class,
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
@@ -245,9 +213,16 @@ def add_observation(
     }
     form_classes.update(additional_form_classes)
     
+    form_kwargs = {}
+
+    if not case is None:
+        form_kwargs['case'] = {'instance': case}
+    if not animal is None:
+        form_kwargs['animal'] = {'instance': animal}
+
     forms = {}
     for form_name, form_class in form_classes.items():
-        kwargs = {}
+        kwargs = form_kwargs.get(form_name, {})
         if request.method == 'POST':
             kwargs['data'] = request.POST
         forms[form_name] = form_class(prefix=form_name, **kwargs)
@@ -263,6 +238,15 @@ def add_observation(
         @transaction.commit_on_success
         @revision.create_on_success
         def _try_saving():
+            _check('animal')
+            animal = forms['animal'].save()
+            
+            _check('case')
+            case = forms['case'].save(commit=False)
+            case.animal = animal
+            case.save()
+            forms['case'].save_m2m()
+            
             _check('observation')
             observation = forms['observation'].save(commit=False)
             observation.case = case
@@ -354,13 +338,14 @@ def add_observation(
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
     return render_to_response(
         template,
         {
+            'animal': animal,
             'case': case,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
@@ -373,6 +358,7 @@ def edit_observation(
         request,
         observation_id,
         template='incidents/add_observation.html',
+        caseform_class= CaseForm,
         observationform_class= ObservationForm,
         additional_form_classes= {},
         additional_model_instances = {},
@@ -386,6 +372,8 @@ def edit_observation(
     '''
     
     form_classes = {
+        'animal': AnimalForm,
+        'case': caseform_class,
         'observation': observationform_class,
         'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
@@ -401,8 +389,12 @@ def edit_observation(
     form_classes.update(additional_form_classes)
     
     observation = Observation.objects.get(id=observation_id).detailed
+    case = observation.case.detailed
+    animal = case.animal
 
     model_instances = {
+        'animal': observation.case.animal,
+        'case': observation.case,
         'observation': observation,
         'report_datetime': observation.report_datetime,
         'observation_datetime': observation.observation_datetime,
@@ -423,7 +415,7 @@ def edit_observation(
         if model_instances['observation'].observer == model_instances['observation'].reporter:
             form_initials['observation']['new_observer'] = 'reporter'
         else:
-            form_initials['observation']['new_observer'] = 'observer'
+            form_initials['observation']['new_observer'] = 'other'
 
     if model_instances['observer_vessel'] and model_instances['observer_vessel'].contact:
         if model_instances['observer_vessel'].contact == model_instances['observation'].reporter:
@@ -462,6 +454,12 @@ def edit_observation(
         @transaction.commit_on_success
         @revision.create_on_success
         def _try_saving():
+            _check('animal')
+            forms['animal'].save()
+            
+            _check('case')
+            forms['case'].save()
+            
             _check('observation')
             observation = forms['observation'].save(commit=False)
 
@@ -552,14 +550,15 @@ def edit_observation(
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        css= {'all': ('jqueryui/overcast/jquery-ui-1.7.2.custom.css',)},
-        js= ('jquery/jquery-1.3.2.min.js', 'jqueryui/jquery-ui-1.7.2.custom.min.js', 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
     return render_to_response(
         template,
         {
-            'case': observation.case.detailed,
+            'animal': animal,
+            'case': case,
             'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
@@ -571,18 +570,30 @@ def edit_observation(
 def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):
     case = Case.objects.get(id=case_id).detailed
     if request.method == 'POST':
-        form = form_class(request.POST, instance=case)
-        if form.is_valid():
+        animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
+        form = form_class(request.POST, prefix='case', instance=case)
+        if animal_form.is_valid() and form.is_valid():
+            animal_form.save()
             form.save()
             return redirect(case)
     else:
-        form = form_class(instance=case)
+        animal_form = AnimalForm(prefix='animal', instance=case.animal)
+        form = form_class(prefix='case', instance=case)
+    
+    template_media = Media(
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
+    )
+    
     return render_to_response(
         template, {
-            'taxon': case.probable_taxon,
-            'gender': case.probable_gender,
-            'form': form,
+            'animal': case.animal,
             'case': case,
+            'forms': {
+                'animal': animal_form,
+                'case': form,
+            },
+            'media': form.media + animal_form.media + template_media,
         },
         context_instance= RequestContext(request),
     )
@@ -733,93 +744,176 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
-def case_search(request):
+def cases_by_year(request, year=None):
+    if year is None:
+        from datetime import datetime
+        year = datetime.now().year
+    year = int(year)
+    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year)
+    return render_to_response(
+        "incidents/cases_by_year.html",
+        {
+            'year': year,
+            'yearcasenumbers': yearcasenumbers,
+        },
+        context_instance= RequestContext(request),
+    )
+
+def case_search(request, after_date=None, before_date=None):
     # prefix should be the same as the homepage
-    form = CaseSearchForm(request.GET, prefix='case_search')
-    # TODO we make a useless queryset since the template expects a queryset
-    cases = Case.objects.filter(id=None)
+    prefix = 'case_search'
+    form_kwargs = {
+        'prefix': prefix,
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    else:
+        data = {}
+        if not after_date is None:
+            data[prefix + '-after_date'] = after_date
+        if not before_date is None:
+            data[prefix + '-before_date'] = before_date
+        if data:
+            form_kwargs['data'] = data
+    form = CaseSearchForm(**form_kwargs)
+    
+    case_list = tuple()
 
     if form.is_valid():
-        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
-        #cases = Case.objects.all().distinct().order_by(*case_order_args)
-        # TODO Oracle doesn't support distinct() on models with TextFields
-        cases = Case.objects.all().order_by(*case_order_args)
-        # TODO shoulde be ordering such that cases with no date come first
-    
+
+        manager = Case.objects
         if form.cleaned_data['case_type']:
             # TODO go through different case types automatically
             ct = form.cleaned_data['case_type']
             if ct == 'e':
-                #cases = Entanglement.objects.all().distinct().order_by(*case_order_args)
-                # TODO Oracle doesn't support distinct() on models with TextFields
-                cases = Entanglement.objects.all().order_by(*case_order_args)
+                manager = Entanglement.objects
             if ct == 's':
-                #cases = Shipstrike.objects.all().distinct().order_by(*case_order_args)
-                # TODO Oracle doesn't support distinct() on models with TextFields
-                cases = Shipstrike.objects.all().order_by(*case_order_args)
+                manager = Shipstrike.objects
         
+        query = Q()
+    
         if form.cleaned_data['after_date']:
+            # 'before_date' and 'after_date' really search the
+            # observation_datetime and report_datetime of observations
+            
+            # possible matches are:
+            #  <year>-null-null
+            #  <year>-<month>-null
+            #  <year>-<month>-day
+            #
+            # in other words, where o is observation_date and q is query_date:
+            #  (o.year >= q.year & o.month is null)
+            #  | (o.year >= q.year & o.month >= q.month & o.day is null)
+            #  | (o.year >= q.year & o.month >= q.month & o.day >= q.day)
+            #
+            # which equals:
+            #  o.year >= q.year 
+            #  & (o.month is null
+            #    | (o.month >= q.month & o.day is null)
+            #    | (o.month >= q.month & o.day >= q.day))
+            #
+            #  o.year >= q.year 
+            #  & (o.month is null
+            #    | (o.month >= q.month 
+            #      & (o.day is null
+            #        | o.day >= q.day)))
+            
             date = form.cleaned_data['after_date']
-            o_date = Q(observation__observation_datetime__year__gte=date.year)
-            o_date = o_date & (
-                Q(observation__observation_datetime__month__isnull=True)
-                | Q(observation__observation_datetime__month__gte=date.month)
-            )
-            o_date = o_date & (
-                Q(observation__observation_datetime__day__isnull=True)
-                | Q(observation__observation_datetime__day__gte=date.month)
-            )
-            r_date = Q(observation__report_datetime__year__gte=date.year)
-            r_date = r_date & (
-                Q(observation__report_datetime__month__isnull=True)
-                | Q(observation__report_datetime__month__gte=date.month)
-            )
-            r_date = r_date & (
-                Q(observation__report_datetime__day__isnull=True)
-                | Q(observation__report_datetime__day__gte=date.month)
-            )
-            cases = cases.filter(o_date | r_date)
+            
+            year_match = Q(observation__observation_datetime__year__gte=date.year)
+            month_null = Q(observation__observation_datetime__month__isnull=True)
+            month_match = Q(observation__observation_datetime__month__gte=date.month)
+            day_null = Q(observation__observation_datetime__day__isnull=True)
+            day_match = Q(observation__observation_datetime__day__gte=date.day)
+            
+            observation_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            year_match = Q(observation__report_datetime__year__gte=date.year)
+            month_null = Q(observation__report_datetime__month__isnull=True)
+            month_match = Q(observation__report_datetime__month__gte=date.month)
+            day_null = Q(observation__report_datetime__day__isnull=True)
+            day_match = Q(observation__report_datetime__day__gte=date.day)
+            
+            report_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            query &= (observation_date_match | report_date_match)
 
         if form.cleaned_data['before_date']:
+            # same as above, but with 'lte' instead of 'gte'
+
             date = form.cleaned_data['before_date']
-            o_date = Q(observation__observation_datetime__year__lte=date.year)
-            o_date = o_date & (
-                Q(observation__observation_datetime__month__isnull=True)
-                | Q(observation__observation_datetime__month__lte=date.month)
-            )
-            o_date = o_date & (
-                Q(observation__observation_datetime__day__isnull=True)
-                | Q(observation__observation_datetime__day__lte=date.month)
-            )
-            r_date = Q(observation__report_datetime__year__lte=date.year)
-            r_date = r_date & (
-                Q(observation__report_datetime__month__isnull=True)
-                | Q(observation__report_datetime__month__lte=date.month)
-            )
-            r_date = r_date & (
-                Q(observation__report_datetime__day__isnull=True)
-                | Q(observation__report_datetime__day__lte=date.month)
-            )
-            cases = cases.filter(o_date | r_date)
+
+            year_match = Q(observation__observation_datetime__year__lte=date.year)
+            month_null = Q(observation__observation_datetime__month__isnull=True)
+            month_match = Q(observation__observation_datetime__month__lte=date.month)
+            day_null = Q(observation__observation_datetime__day__isnull=True)
+            day_match = Q(observation__observation_datetime__day__lte=date.day)
+            
+            observation_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            year_match = Q(observation__report_datetime__year__lte=date.year)
+            month_null = Q(observation__report_datetime__month__isnull=True)
+            month_match = Q(observation__report_datetime__month__lte=date.month)
+            day_null = Q(observation__report_datetime__day__isnull=True)
+            day_match = Q(observation__report_datetime__day__lte=date.day)
+            
+            report_date_match = (year_match 
+                & (month_null
+                    | (month_match
+                        & (day_null
+                            | day_match))))
+            
+            query &= (observation_date_match | report_date_match)
         
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!
-            cases = cases.filter(observation__taxon__in=Taxon.objects.with_descendants(t))
+            query &= Q(observation__taxon__in=Taxon.objects.with_descendants(t))
 
         if form.cleaned_data['case_name']:
             name = form.cleaned_data['case_name']
-            cases = cases.filter(names__icontains=name)
+            query &= Q(names__icontains=name)
 
         if form.cleaned_data['observation_narrative']:
             on = form.cleaned_data['observation_narrative']
-            cases = cases.filter(observation__narrative__icontains=on)
+            query &= Q(observation__narrative__icontains=on)
+
+        # TODO shoulde be ordering such that cases with no date come first
+        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
+
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        #cases = manager.filter(query).distinct().order_by(*case_order_args)
+        cases = manager.filter(query).order_by(*case_order_args)
+        
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        case_list = list()
+        for c in cases:
+            if not c in seen:
+                seen.add(c)
+                case_list.append(c)
 
     return render_to_response(
         "incidents/case_search.html",
         {
             'form': form,
-            'case_list': cases,
+            'case_list': case_list,
+            'case_count': len(case_list),
         },
         context_instance= RequestContext(request),
     )

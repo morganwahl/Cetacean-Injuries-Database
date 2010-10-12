@@ -1,15 +1,2 @@
 {% extends "incidents/case_base.html" %}
 
-{% block header %}
-{{ block.super }}
-<div>
-    <a href="{% url edit_case case.id %}">edit this case</a>
-</div>
-{% endblock %}
-
-{% block observations %}
-{{ block.super }}
-<div>
-    <a href="{% url add_observation case.id %}">add an observation</a>
-</div>
-{% endblock %}

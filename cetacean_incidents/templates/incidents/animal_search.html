@@ -1,13 +1,20 @@
-{% extends "incidents/animal_list.html" %}
+{% extends "base.html" %}
+{% load taxon_extras %}
+{% load animal_extras %}
+{% load datetime_extras %}
 
 {% block head %}
 {{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
 {{ form.media }}
 {% endblock %}
 
-{% block header %}<h2>Animal search</h2>{% endblock %}
+{% block title %}{{ block.super }}: Animals{% endblock %}
 
-{% block animals_header %}
+{% block header %}<h2>Animals</h2>{% endblock %}
+
+{% block content %}
 <form action="" method="get">
     <div class="section">
         {% with form.non_field_errors as errors %}
@@ -22,13 +29,73 @@
         {% for f in form %}
         {% include "labeled_field.html" %}
         {% endfor %}
-        <button type="submit">search again</button>
+        <button type="submit">search</button>
     </div>
 </form>
-{% if animal_list.count %}
+{% if form.is_bound %}
 <div style="text-align: center;">
-    ({{ animal_list.count }} matching animal{{ animal_list.count|pluralize }})
+({{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }})
 </div>
+{# sorttable.js doesn't like empty tables #}
+{% if animal_count > 0 %}
+<table class="bordered{% if animal_list %} sortable{% endif %}">
+    <thead>
+        <tr>
+            <th>local ID</th>
+            <th class="sorttable_nosort">link</th>
+            <th>name</th>
+            <th>taxon</th>
+            <th>cases</th>
+            <th>observations</th>
+            <th>first observed</th>
+            <th>last observed</th>
+        </tr>
+    </thead>
+	{% for animal in animal_list %}
+	<tr>
+	    <td>{{ animal.id }}</td>
+	    <td>{% animal_link animal %}</td>
+	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
+	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
+	        {% if animal.determined_taxon %}
+	        {{ animal.determined_taxon }}
+	        {% else %}
+	        {% if animal.probable_taxon %}
+	        {{ animal.probable_taxon }}, <i>probably</i>
+	        {% else %}
+	        <i>none</i>
+	        {% endif %}
+	        {% endif %}
+	    </td>
+	    <td>{{ animal.case_set.count }}</td>
+	    <td>{{ animal.observation_set.count }}</td>
+	    {% with animal.first_observation.observation_datetime as od %}
+	    {% if od %}
+	    <td sorttable_customkey="{% datetime_sort_key od %}">
+	        {{ od }}
+        </td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        {% endwith %}
+	    {% with animal.last_observation.observation_datetime as od %}
+	    {% if od %}
+	    <td sorttable_customkey="{% datetime_sort_key od %}">
+	        {{ od }}
+        </td>
+        {% else %}
+        <td></td>
+        {% endif %}
+        {% endwith %}
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="text-align:center;"><i>no animals</i></td></tr>
+	{% endfor %}
+</table>
+{% endif %}
+{% else %}
+<p>
+    click 'search' to see a list of animals
+</p>
 {% endif %}
 {% endblock %}
-

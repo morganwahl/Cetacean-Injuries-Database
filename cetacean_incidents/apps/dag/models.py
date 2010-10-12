@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 class RootDAGNodeManager(models.Manager):
     def get_query_set(self):
@@ -50,7 +51,9 @@ def DAGNode_factory(edge_model_name):
 
     return DAGNode
 
-class DAGException(Exception):
+# This is a subclass of ValidationError so it can be raised during model 
+# validation.
+class DAGException(ValidationError):
     '''\
     Exception thrown when a DAGEdge would violate the directed-
     acyclic-graph nature of DAGNodes. E.g. when the subtype and supertype
@@ -76,7 +79,7 @@ def DAGEdge_factory(node_model):
             related_name= 'supertype_relations',
         )
         
-        def save(self, *args, **kwargs):
+        def _cycle_check(self):
             # check if this new relation would create a cycle in the DAG
             if self.subtype == self.supertype:
                 raise self.DAGException(
@@ -88,11 +91,19 @@ def DAGEdge_factory(node_model):
                     # TODO determined what the cycle would be
                     "%s can't be a supertype of %s, that would create a cycle!" % (
                         unicode(self.supertype),
-                       unicode(self.subtype),
+                        unicode(self.subtype),
                     )
                 )
-
-            return super(DAGEdge, self).save(*args, **kwargs)
+        
+        def clean(self):
+            self._cycle_check()
+        
+        # clean() is not necessarily run before an instance is save()'d, but
+        # creating a cycle in the DAG could lead to nasty infinite-loop bugs,
+        # so we check for them here, too.
+        def save(self, *args, **kwargs):
+            self._cycle_check()
+            return super(DAGEdge, self,).save(*args, **kwargs)
         
         def __unicode__(self):
             return "%r -> %r" % (self.subtype, self.supertype)
@@ -100,6 +111,10 @@ def DAGEdge_factory(node_model):
         class Meta:
             abstract = True
             unique_together = ('subtype', 'supertype')
-
+    
+    # put the DAGException on the class itself, so you can catch just those
+    # Exceptions
+    DAGEdge.DAGException = DAGException
+    
     return DAGEdge
     

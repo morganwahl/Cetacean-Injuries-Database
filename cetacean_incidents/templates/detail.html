@@ -3,6 +3,7 @@
 
 {% block sidebar %}
 {{ block.super }}
+{% block ids %}
 <div id="ids_block">
     <h3>ID's</h3>
     <dl>
@@ -10,4 +11,5 @@
         {% endblock %}
     </dl>
 </div>
+{% endblock %}
 {% endblock %}

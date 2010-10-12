@@ -7,10 +7,10 @@
 {{ media }}
 {% endblock %}
 
-{% block ids-dl %}
-{{ block.super }}
-<dt>gear-analysis field #</dt>
-<dd>{{ case.gear_fieldnumber|default:"<i>none</i>" }}</dd>
+{% block case_ids %}
+{% with case as c %}
+{% include "entanglements/entanglement_ids_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block case_fields %}

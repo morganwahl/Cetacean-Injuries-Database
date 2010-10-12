@@ -1,18 +1,19 @@
+import re
+
 from django.db import models
+
 from utils import dec_to_dms, dms_to_dec
 
 class Location(models.Model):
     '''\
-    A model for incident locations.
+    A model for uncertain locations. Every observation has it's own entry in the
+    Locations table.
     '''
     
     description = models.TextField(
         blank= True,
-        help_text= '''\
-        a prose description of the location. If no coordinates were known at
-        the time, this is all the location info we have. Even if we have 
-        coordinates, the method by which they were obtained ought to be noted.
-        '''
+        help_text= "a prose description of the location. If no coordinates were known at the time, this is all the location info we have. Even if we have coordinates, the method by which they were obtained ought to be noted."
+        
         # coordinates (and a large 'roughness') may be assigned later, for some 
         # simple mapping. 
     )
@@ -30,11 +31,7 @@ class Location(models.Model):
     coordinates = models.CharField(
         max_length = 127,
         blank= True,
-        help_text= '''\
-        Comma separated latitude, longitude. In decimal degrees with south and
-        west as negative. 180 degrees E or W is -180. conversion from/to other
-        formats is handled elsewhere.
-        '''
+        help_text= "Comma separated latitude, longitude. In decimal degrees with south and west as negative. 180 degrees E or W is -180. conversion from/to other formats is handled elsewhere."
     )
     def _get_coords_pair(self):
         if not self.coordinates:
@@ -63,20 +60,34 @@ class Location(models.Model):
         self.coords_pair = map(dms_to_dec, pair)
     dms_coords_pair = property(_get_dms_coords_pair, _set_dms_coords_pair)
     
-    # TODO form validation will be essential for this field!
+    def clean(self):
+        # clean_coordinates
+        if not self.coordinates:
+            self.coordinates = ''
+        else:
+            (lat, lng) = re.search("(-?[\d\.]+)\s*,\s*(-?[\d\.]+)", self.coordinates).group(1, 2)
+
+            # TODO Decimal not Float!
+            
+            lat = float(lat)
+            lat = max(lat, -90)
+            lat = min(lat, 90)
+            
+            lng = float(lng)
+            # add 180 so that 179 E is now 359 E and 180 W is zero
+            lng += 180
+            # take it mod 360
+            lng %= 360
+            # and subtract the 180 back off
+            lng -= 180
+            
+            self.coordinates = "%.16f,%.16f" % (lat,lng)
+    
+    # TODO validation will be essential for this field!
     roughness = models.FloatField(
         blank= True,
         null= True,
-        help_text= '''\
-        Indicate the uncertainty of the coordinates, in meters. Should be the
-        radius of the circle around the coordinates that contains the actual
-        location with 95% certainty. For GPS-determined coordinates, this will
-        be a few tens of meters. For rough estimates, note that 1 mile =
-        1,609.344 meters (user interfaces should handle unit conversion). When
-        plotting locations on a map, a cirle of this size (centered at the
-        coordinates) should be used instead of a single point, so as to not give
-        a false sense of accuracy.
-        '''
+        help_text= "Indicate the uncertainty of the coordinates, in meters. Should be the radius of the circle around the coordinates that contains the actual location with 95% certainty. For GPS-determined coordinates, this will be a few tens of meters. For rough estimates, note that 1 mile = 1,609.344 meters (user interfaces should handle unit conversion). When plotting locations on a map, a cirle of this size (centered at the coordinates) should be used instead of a single point, so as to not give a false sense of accuracy."
     )
 
     import_notes = models.TextField(
@@ -90,3 +101,4 @@ class Location(models.Model):
             return unicode(self.coordinates)
         
         return u"<#%s>" % unicode(self.pk)
+        

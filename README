@@ -1,0 +1,52 @@
+Please edit local_settings.py-example and save it as local_settings.py before
+trying to run anything.
+
+The jQuery library should be present in
+
+<MEDIA_ROOT>/<JQUERY_FILE>
+
+The a jQuery-ui library with the overcast theme and the tabs component should be
+present in:
+
+<MEDIA_URL>/<JQUERYUI_CSS_FILE>
+<MEDIA_URL>/<JQUERYUI_JS_FILE>
+
+The MEDIA_ROOT is set in local_settings.py and the jQuery variables
+are set in settings.py.
+
+Uses the flag 'silk' iconsets from famfamfam.com (Mark James) (CC3.0-AT license)
+The OLE icon is derived from one of these.
+
+uses the sorttable.js script (with some very small modifications) by Stuart Langridge (x11 license)
+
+# only needed when serving static media with django itself
+MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
+
+Dependancies (earlier versions may work; these are the ones that have been
+tested):
+
+Python 2.5
+Django 1.2.1
+django-extensions 0.5
+django-reversion 1.3.1
+pytz 2010k
+
+if using the Oracle backend you need:
+
+cx_Oracle 5.0.4
+    which requires:
+    
+    Oracle instantclient-basic 11.2.0.1
+    Oracle instantclient-sdk 11.2.0.1
+
+I recommend using virtualenv and adding the following to its bin/activate
+before building and installing cx_Oracle
+
+# my additions for cx_Oracle
+export ORACLE_HOME=${VIRTUAL_ENV}/lib/instantclient_11_2
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
+
+unzip the instantclient packages to that lib directory before building
+cx_Oracle. To use a tnsnames.ora file you can then copy it to 
+${ORACLE_HOME}/NETWORK/ADMIN/TNSNAMES.ORA
+

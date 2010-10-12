@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms import Media
 from django.db import transaction
+from django.conf import settings
 
 from reversion import revision
 
@@ -18,7 +19,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalForm
 from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
 
 from models import Shipstrike, ShipstrikeObservation
-from forms import ShipstrikeObservationForm, ShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
+from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
 
 @login_required
 def edit_shipstrike(request, case_id):
@@ -30,13 +31,13 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
         'shipstrikes/shipstrike_observation_detail.html',
         {
             'observation': shipstrikeobservation,
-            'media': Media(js=('jquery/jquery-1.3.2.min.js', 'radiohider.js')),
+            'media': Media(js=(settings.JQUERY_FILE , 'radiohider.js')),
         },
         context_instance= RequestContext(request),
     )
 
 @login_required
-def add_shipstrikeobservation(request, shipstrike_id):
+def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     def _try_saving(forms, check, observation):
         if forms['observation'].cleaned_data['striking_vessel_info'] == True:
             check('striking_vessel')
@@ -72,8 +73,11 @@ def add_shipstrikeobservation(request, shipstrike_id):
 
     return add_observation(
         request,
+        animal_id= animal_id,
         case_id= shipstrike_id,
         template= 'shipstrikes/add_shipstrike_observation.html',
+        caseform_class= ShipstrikeForm,
+        addcaseform_class= AddShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
             'striking_vessel': NiceStrikingVesselInfoForm,
@@ -157,6 +161,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
         request,
         observation_id= shipstrikeobservation_id,
         template= 'shipstrikes/edit_shipstrike_observation.html',
+        caseform_class= ShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
             'striking_vessel': NiceStrikingVesselInfoForm,
@@ -263,7 +268,7 @@ def shipstrike_report_form(request):
             print "error in form %s: %s" % (formname, unicode(form.errors))
 
     template_media = Media(
-        js= ('jquery/jquery-1.3.2.min.js', 'radiohider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
     )
 
     media = reduce(lambda x, y: x + y.media, forms.itervalues(), template_media)

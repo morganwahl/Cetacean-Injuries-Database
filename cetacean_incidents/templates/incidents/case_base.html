@@ -3,6 +3,8 @@
 {% load animal_extras %}
 {% load contact_extras %}
 {% load generic_field_display %}
+{% load case_extras %}
+{% load datetime_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -13,17 +15,15 @@
 {% block title %}{{ block.super }}: {{ case }}{% endblock %}
 
 {% block ids-dl %}
-<dt>local ID</dt><dd>{{ case.id }}</dd>
-<dt>current name</dt><dd>{{ case.current_name|default:"<i>none</i>" }}</dd>
-{% if case.past_names_set %}
-<dt>past names</dt>
-<dd>
-    {% for past_name in case.past_names_set %}
-    {{ past_name }}<br>
-    {% endfor %}
-</dd>
-{% endif %}
-<dt>NMFS case number</dt><dd>{{ case.nmfs_id|default:"<i>none</i>" }}</dd>
+{% with case.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% with case as c %}
+{% include "incidents/case_ids_include.html" %}
+{% endwith %}
+{% endblock %}
 {% endblock %}
 
 {% block header %}
@@ -33,20 +33,70 @@
     {% endif %}
     <h2>{{ case }}</h2>
 </div>
+<div>
+    {% block edit_case_link %}
+    {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+    <a href="{% url edit_case case.id %}#case">edit this case</a>
+    {% endblock %}
+</div>
 {% endblock %}
 
 {% block content %}
+{% if case.associated_cases %}
+<i>other cases for this animal around the time of this one:</i>
+<ul>
+    {% for c in case.associated_cases %}
+    <li>{% case_link c %}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <div class="section">
     {% block case_fields %}
     <div>
         <span class="fieldname">Animal:</span> {% animal_link case.animal %}
     </div>
+    {% if case.happened_after %}
+    {% display_div case "happened_after" %}
+    {% endif %}
     <div>
         <span class="fieldname">Validity:</span>
         {% include "incidents/case-valid-icon.html" %}
         {{ case.get_valid_display }}
     </div>
     {% display_yesnounk_div case "ole_investigation" %}
+    {% if case.si_n_m_info %}
+    <div class="subsection">
+        <h3>Serious Injury and Mortality determination</h3>
+        {% display_div case "case_confirm_criteria" %}
+        {% display_chosen_div case "animal_fate" %}
+        {% display_chosen_div case "fate_cause" %}
+        {% display_div case "fate_cause_indications" %}
+        {% display_div case "si_prevented" %}
+        {% display_div case "included_in_sar" %}
+        <table class="layout" width="100%">
+            <tr>
+                <th>1<sup>st</sup> reviewer</th>
+                <th>2<sup>nd</sup> reviewer</tH>
+            </tr>
+            <tr>
+                <td>
+                    {% display_div case "review_1_date" "date" %}
+                    {% display_div case "review_1_inits" "initials" %}
+                    {% display_bigtext_div case "review_1_notes" "notes" %}
+                </td>
+                <td>
+                    {% display_div case "review_2_date" "date" %}
+                    {% display_div case "review_2_inits" "initials" %}
+                    {% display_bigtext_div case "review_2_notes" "notes" %}
+                </td>
+            </tr>
+        </table>
+    </div>
+    {% else %}
+    <p>
+        <i>no Serious Injury and Mortality info</i>
+    </p>
+    {% endif %}
     {% endblock %}
 </div>
 {% block extra_case_fields %}{% endblock %}
@@ -58,9 +108,9 @@
         <thead>
             <tr>
                 <td></td>
-                <th sorttable_customkey="{{ observer.sort_name }}">observer</th>
+                <th>observer</th>
                 <th>date observed</th>
-                <th sorttable_customkey="{{ observer.sort_name }}">reporter</th>
+                <th>reporter</th>
                 <th>date reported</th>
                 <th class="sorttable_nosort">start of narrative...</th>
             </tr>
@@ -68,17 +118,25 @@
         {% for o in case.observation_set.all %}
         <tr>
             <td>{% observation_link o %}</td>
-            <td>{% contact_link o.observer %}</td>
-            <td>{{ o.observation_datetime }}</td>
-            <td>{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
-            <td>{{ o.report_datetime }}</td>
+            <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
+            <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
+            <td sorttable_customkey="{{ o.reporter.sort_name }}">{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
+            <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
             <td>{% if o.narrative %}{{ o.narrative|truncatewords:9 }}{% else %}<i>nothing</i>{% endif %}</td>
         </tr>
         {% endfor %}
     </table>
     {% else %}
-    <i>no observations yet!</i>
+    <p>
+        <i>no observations yet!</i>
+    </p>
     {% endif %}
+    <div>
+        {% block add_observation_link %}
+        {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+        <a href="{% url add_observation case.id %}#reporting">add an observation</a>
+        {% endblock %}
+    </div>
     {% endblock %}
 </div>
 {% endblock %}

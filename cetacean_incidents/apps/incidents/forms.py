@@ -7,19 +7,17 @@ from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
+from django.core.urlresolvers import reverse
 
 from models import Animal, Case, YearCaseNumber, Observation
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
-
-case_form_classes = {}
-addcase_form_classes = {}
-observation_forms = {}
+from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 class AnimalForm(forms.ModelForm):
     
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # ModelForm won't fill in all the handy args for us if we specify our own
     # field
     _f = Animal.determined_taxon.field
     determined_taxon = TaxonField(
@@ -27,53 +25,28 @@ class AnimalForm(forms.ModelForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
-    
-    dead = forms.BooleanField(
-        label= "dead?",
-        initial= False,
-        help_text= "note that 'no' is the same as 'unknown'",
-        required= False,
-    )
-    
-    def clean(self):
-        d = self.cleaned_data
-        if (d['dead'] or d['necropsy']) and not d['determined_dead_before']:
-            d['determined_dead_before'] = datetime.date.today()
-        return d
 
     class Meta:
         model = Animal
-
-class CaseTypeFormMeta(forms.Form.__metaclass__):
-    
-    def __new__(self, name, bases, dict):
-        type_names = []
-        type_models = {}
-        for c in Case.detailed_classes:
-            type_names.append( (c.__name__, c._meta.verbose_name) )
-            # type_models's keys should be values of the case_type field
-            type_models[c.__name__] = c
-        type_names = tuple(type_names)
-        
-        dict['type_names'] = type_names
-        dict['case_type'] = forms.ChoiceField(choices=(('','<select a case type>'),) + type_names)
-        dict['type_models'] = type_models
-        return super(CaseTypeFormMeta, self).__new__(self, name, bases, dict)
-
-class CaseTypeForm(forms.Form):
-    '''\
-    A form with the case-type field needed when creating new cases.
-    '''
-    
-    # this form is almost entirely dynamically created
-    __metaclass__ = CaseTypeFormMeta
+        widgets = {
+            'determined_dead_before': Datepicker,
+        }
 
 class CaseForm(forms.ModelForm):
     
     class Meta:
         model = Case
+        # custom widgets for date fields
+        widgets = {
+            'happened_after': Datepicker,
+            'review_1_date': Datepicker,
+            'review_2_date': Datepicker,
+        }
 
+class AddCaseForm(CaseForm):
     
+    class Meta(CaseForm.Meta):
+        exclude = ('animal',)
 
 class MergeCaseForm(forms.ModelForm):
     
@@ -129,8 +102,7 @@ class ObservationForm(forms.ModelForm):
         model = Observation
         # the case for a new observation is set by the view. The one-to-one 
         # relations shouldn't be shown.
-        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel') 
-observation_forms['Case'] = ObservationForm
+        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel')
 
 class SubmitDetectingForm(forms.Form):
     '''\
@@ -142,7 +114,7 @@ class SubmitDetectingForm(forms.Form):
         widget= forms.HiddenInput,
         initial= 'yes',
     )
-
+    
 class AnimalIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",
@@ -219,11 +191,13 @@ class CaseSearchForm(forms.Form):
     
     after_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day"
+        help_text= "enter year-month-day",
+        widget= Datepicker,
     )
     before_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day"
+        help_text= "enter year-month-day",
+        widget= Datepicker,
     )
 
     # TODO check that after date is before before_date

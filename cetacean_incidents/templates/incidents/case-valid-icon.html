@@ -1,13 +1,13 @@
-{% ifequal case.valid 0 %}
+{% if case.valid == 0 %}
 <img
     src="{% url site-media path="icons/invalid.png"%}"
     alt="[invalid]"
     title="this case is invalid">
-{% endifequal %}
-{% ifequal case.valid 2 %}
+{% endif %}
+{% if case.valid == 2 %}
 <img
     src="{% url site-media path="icons/confirmed.png"%}"
     alt="[confirmed]"
     title="this case is confirmed">
-{% endifequal %}
+{% endif %}
 

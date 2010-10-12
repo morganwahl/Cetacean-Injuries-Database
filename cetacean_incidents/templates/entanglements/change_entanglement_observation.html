@@ -1,8 +1,47 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block case_title %}{{ case|default:"new entanglement case" }}{% endblock %}
+
+{% block case_ids %}
+{% with case as c %}
+{% include "entanglements/entanglement_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block case_header %}{{ case|default:"<i>new entanglement case</i>" }}{% endblock %}
+
+{% block case_tab %}
+{{ block.super }}
+{% if forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %}
+<div class="ui-state-error">errors!</div>
+{% endif %}
+{% endblock %}
+
+{% block case_tab_body %}
+{{ block.super }}
+{% with forms.case.gear_fieldnumber as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_analyzed as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.analyzed_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.analyzed_by as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.case.gear_types as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% endblock %}
+
 {% block incident_tab %}
 {{ block.super }}
-{% if forms.observation.anchored.errors %}
+{% if forms.observation.anchored.errors or forms.observation.gear_description.errors or forms.observation.gear_retrieved.errors or forms.observation.entanglement_details.errors or forms.observation.disentanglement_outcome.errors %}
 <div class="ui-state-error">errors!</div>
 {% endif %}
 {% endblock %}
@@ -20,6 +59,9 @@
 {% endwith %}
 {% with forms.observation.entanglement_details as f %}
 {% include "bigtext_field.html" %}
+{% endwith %}
+{% with forms.observation.disentanglement_outcome as f %}
+{% include "labeled_field.html" %}
 {% endwith %}
 {% endblock %}
 

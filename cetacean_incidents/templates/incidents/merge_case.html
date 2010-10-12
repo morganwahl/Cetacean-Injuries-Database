@@ -50,6 +50,7 @@
 
 <td class="layout">
     <form method="post" class="section">
+        {% csrf_token %}
         <div>
             <div>
        		    {% with form.animal as f %}

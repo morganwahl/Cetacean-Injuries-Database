@@ -1,0 +1,16 @@
+.taxon_name {
+    display: block;
+    font-weight: bold;
+    line-height: 90%;
+    padding: .2em;
+}
+.common_names {
+    display: block;
+    font-style: italic;
+    font-size: 85%;
+    line-height: 85%;
+    padding-left: .4em;
+    padding-bottom: .2em;
+    padding-right: .2em;
+}
+

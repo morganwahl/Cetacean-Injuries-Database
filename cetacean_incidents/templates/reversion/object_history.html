@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block header %}
+<h2 style="text-align:center;">
+    {{ content_type }}{% if object_id %} #{{ object_id }}{% endif %}
+</h2>
+{% endblock %}
+
+{% block content %}
+<table class="bordered">
+    <thead>
+        <tr>
+            {% for m in meta_keys %}
+            <th>meta:{{ m }}</th>
+            {% endfor %}
+            {% for f in field_keys %}
+            <th>{{ f }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for version in flat_versions %}
+        <tr>
+            {% for f in version %}
+            <td title="{{ f }}">{{ f|slice:":10" }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    <tbody>
+</table>
+{% endblock %}

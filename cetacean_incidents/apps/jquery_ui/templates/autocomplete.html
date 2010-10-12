@@ -1,0 +1,14 @@
+<!-- TODO noscript -->
+<script type="text/javascript">
+    {# TODO no HTML escaping in js #}
+
+    $(function() {
+        $("#{{ input_attrs.id }}").autocomplete({
+            {% for arg, value in options.items %}{{ arg }}: {{ value }},
+            {% endfor %}
+            source: {{ source }}
+        });
+    });
+</script>
+<input {{ flat_input_attrs|safe }}>
+

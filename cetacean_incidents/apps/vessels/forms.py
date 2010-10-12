@@ -3,6 +3,7 @@ from django.forms.util import flatatt
 
 from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 from models import VesselInfo
 from cetacean_incidents.apps.countries.models import Country
@@ -15,7 +16,7 @@ class FlagSelect(forms.Select):
     '''
     
     class Media:
-        js = ('jquery/jquery-1.3.2.min.js',)
+        js = (settings.JQUERY_FILE,)
     
     def render(self, name, value, attrs=None, choices=()):
         if value is None:

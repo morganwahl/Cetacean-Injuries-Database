@@ -1,31 +1,11 @@
 import re
 
 from django import forms
+
 from models import Location
-from utils import MILE_IN_METERS
+from utils import MILE_IN_METERS, dms_to_dec
 
 class LocationForm(forms.ModelForm):
-    
-    def clean_coordinates(self):
-        value = self.cleaned_data['coordinates']
-        if not value:
-            return ''
-        
-        (lat, lng) = re.search("(-?[\d\.]+)\s*,\s*(-?[\d\.]+)", value).group(1, 2)
-        
-        lat = float(lat)
-        lat = max(lat, -90)
-        lat = min(lat, 90)
-        
-        lng = float(lng)
-        # add 180 so that 179 E is now 359 E and 180 W is zero
-        lng += 180
-        # take it mod 360
-        lng %= 360
-        # and subtract the 180 back off
-        lng -= 180
-        
-        return "%.16f,%.16f" % (lat,lng)
     
     class Meta:
         model = Location
@@ -156,68 +136,37 @@ class NiceLocationForm(LocationForm):
             return None
         return self._clean_coordinate(value, is_lat=False)
     
-    # TODO This make sense when creating a new Location, but not when editing
-    # an existing one
-    #
-    #_roughness_field = Location._meta.get_field('roughness')
-    #_roughnesses = (
-    #        ('', '<unknown>'),
-    #        ('10', "good GPS fix"),
-    #        ('50', "not so good GPS fix"),
-    #        (unicode(15 * MILE_IN_METERS), "general area (e.g. Mass Bay)"), # Cap Cod Bay is roughly 30mi across
-    #        (unicode(325 * MILE_IN_METERS), "region (e.g. the Northeast)"), # 650mi from the Chesapeake to Nova Scotia
-    #)
-    #_initial_roughness = ''
-    #if _roughness_field.default:
-    #    _initial_roughness = _roughness_field.default
-    #    if not _roughness_field.blank:
-    #        _roughnesses = _roughnesses[1:]
-    #    
-    #roughness = forms.ChoiceField(
-    #    choices= _roughnesses,
-    #    initial= _initial_roughness,
-    #    # TODO onion distance?
-    #    required= _roughness_field.blank != True,
-    #    label= _roughness_field.verbose_name.capitalize(),
-    #    help_text= u'''\
-    #        A guess as to the distance these coordinates are off by, at most.
-    #    ''',
-    #)
-    #
-    #def clean_roughness(self):
-    #    if self.cleaned_data['roughness'] == '':
-    #        return None
-    #    return float(self.cleaned_data['roughness'])
-    
     def clean(self):
         cleaned_data = self.cleaned_data
         
         # note that cleaned_data may not have keys for everything if there were
         # validation errors
+        if not 'coordinates_lat_input' in cleaned_data:
+            cleaned_data['coordinates_lat_input'] = tuple()
+        if not 'coordinates_lng_input' in cleaned_data:
+            cleaned_data['coordinates_lng_input'] = tuple()
         
         # error if longitude was given, but lat wasn't.
-        if ('coordinates_lat_input' in cleaned_data and bool(cleaned_data['coordinates_lat_input'])) ^ ('coordinates_lng_input' in cleaned_data and bool(cleaned_data['coordinates_lng_input'])):
+        if bool(cleaned_data['coordinates_lat_input']) ^ bool(cleaned_data['coordinates_lng_input']):
             raise forms.ValidationError('either give both latitude and longitude, or neither')
-
-        return cleaned_data
-    
-    def save(self, commit=True, *args, **kwargs):
-        # have the superclass instantiate a Location
-        location = super(NiceLocationForm, self).save(commit=False, *args, **kwargs)
         
-        if self.cleaned_data['coordinates_lat_input'] is None or self.cleaned_data['coordinates_lng_input'] is None:
-            location.dms_coords_pair = None
+        if bool(cleaned_data['coordinates_lat_input']) and bool(cleaned_data['coordinates_lng_input']):
+            # act like the coordinates field wasn't hidden, then call super's 
+            # clean
+            self.cleaned_data['coordinates'] = "%.16f,%16f" % (
+                dms_to_dec(self.cleaned_data['coordinates_lat_input']),
+                dms_to_dec(self.cleaned_data['coordinates_lng_input']),
+            )
         else:
-            location.dms_coords_pair = (self.cleaned_data['coordinates_lat_input'], self.cleaned_data['coordinates_lng_input'])
-        
-        if commit:
-            location.save()
-            self.save_m2m()
-        
-        return location
+            self.cleaned_data['coordinates'] = ''
 
+        return super(NiceLocationForm, self).clean()
+    
     # don't forget Meta classes aren't inherited
     class Meta:
         model = Location
-        exclude = ('coordinates', 'roughness')
+        exclude = ('roughness',)
+        widgets = {
+            'coordinates': forms.HiddenInput,
+        }
     

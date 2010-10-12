@@ -10,7 +10,8 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, case_form_classes, addcase_form_classes, observation_forms
+from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm 
+from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner
 
@@ -78,8 +79,11 @@ class GearTypeWidget(forms.widgets.CheckboxSelectMultiple):
             
         return mark_safe(make_checkbox_list(GearType.roots.all()))
     
-class EntanglementForm(forms.ModelForm):
+class EntanglementForm(CaseForm):
     
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_types')
     gear_types = forms.ModelMultipleChoiceField(
         queryset= GearType.objects.all(),
@@ -89,28 +93,23 @@ class EntanglementForm(forms.ModelForm):
         widget= GearTypeWidget
     )
     
-    class Meta:
+    class Meta(CaseForm.Meta):
         model = Entanglement
         exclude = 'gear_owner_info'
-
-# TODO better way of tracking this
-case_form_classes['Entanglement'] = EntanglementForm
+        widgets = CaseForm.Meta.widgets
+        widgets.update({
+            'analyzed_date': Datepicker,
+        })
 
 class AddEntanglementForm(EntanglementForm):
     
     class Meta(EntanglementForm.Meta):
         exclude = ('gear_owner_info', 'animal')
 
-# TODO better way of tracking this
-addcase_form_classes['Entanglement'] = AddEntanglementForm
-
 class EntanglementObservationForm(ObservationForm):
     
     class Meta(ObservationForm.Meta):
         model = EntanglementObservation
-
-# TODO better way of tracking this
-observation_forms['Entanglement'] = EntanglementObservationForm
 
 class GearOwnerForm(forms.ModelForm):
     

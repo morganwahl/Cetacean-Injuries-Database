@@ -1,11 +1,11 @@
-import unittest
+from django.test import TestCase
 
 from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.incidents.models import Animal
 
 from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
 
-class GearTypeTestCase(unittest.TestCase):
+class GearTypeTestCase(TestCase):
     def setUp(self):
         pass
 
@@ -54,7 +54,7 @@ class GearTypeTestCase(unittest.TestCase):
             GearTypeRelation(subtype=line, supertype=long_line).save,
         )
 
-class EntanglementTestCase(unittest.TestCase):
+class EntanglementTestCase(TestCase):
     def test_geartypes(self):
         e = Entanglement.objects.create(animal=Animal.objects.create())
 

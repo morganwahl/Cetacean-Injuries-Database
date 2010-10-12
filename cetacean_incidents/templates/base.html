@@ -4,62 +4,13 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         {% block head %}
 
-		<!-- Blueprint CSS Framework --> 
-		{% comment %}
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/screen.css" %}"
-		    type="text/css" 
-		    media="screen, projection">
-		<link 
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/print.css" %}"
-		    type="text/css"
-		    media="print">
-		<link 
-		    rel="stylesheet" 
-		    href="{% url site-media path="blueprint/src/typography.css" %}" 
-		    type="text/css" 
-		    media="screen, projection">
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/src/reset.css" %}"
-		    type="text/css"
-		    media="screen, projection">
-		<!--[if lt IE 8]>
-		<link
-		    rel="stylesheet"
-		    href="{% url site-media path="blueprint/ie.css" %}"
-		    type="text/css"
-		    media="screen, projection">
-		<![endif]-->
-        {% endcomment %}
-		
-		<!-- our own CSS -->
 		<link
 		    rel="stylesheet"
 		    href="{% url site-media path="site.css" %}"
 		    type="text/css"
 		    >
-		
-		<style type="text/css">
-			#sidebar {
-				float: right;
-				border-left: solid thin grey;
-				border-bottom: solid thin grey;
-				background-color: inherit;
-			}
-			#sidebar div {
-				border: thin solid grey;
-				background-color: inherit;
-				padding: .25em;
-				margin: .25em;
-			}
-			#logo {
-			    margin: .25em;
-			}
-		</style>
-		
+        <style type="text/css">
+        </style>
 		<title>
 		    {% block title %}Marine Mammal Injury Database{% endblock %}
 		</title>
@@ -87,6 +38,56 @@
                     Marine Mammal Injury Database
                 </a>
             </h1>
+        </div>
+        <div id="navigation-links">
+            <!-- these should just be a styled list... but IE can't handle display:table styles
+            <ul class="navlinks">
+                <li><a href="{% url all_contacts %}">view all contacts</a></li>
+                <li><a href="{% url all_animals %}">view all animals</a></li>
+                <li><a href="{% url all_cases %}">view all cases</a></li>
+                <li><a href="{% url recent_revisions %}">recent revisions</a></li>
+                {% comment %}
+                <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
+                <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
+                {% endcomment %}
+            </ul>
+            -->
+            <table class="navlinks layout">
+                <tr>
+                    <td><a href="{% url all_contacts %}">contacts</a></td>
+                    <td>
+                        <div class="category">
+                            animals
+                        </div>
+                        <a class="action" href="{% url animal_search %}">
+                            search
+                        </a>
+                        &#x2022;
+                        <a class="action" href="{% url create_animal %}">
+                            add
+                        </a>
+                    </td>
+                    <td>
+                        <div class="category">
+                            cases
+                        </div>
+                        <a class="action" href="{% url case_search %}">
+                            search
+                        </a>
+                        &#x2022;
+                        <a class="action" href="{% url new_case %}">
+                            add
+                        </a>
+                        &#x2022;
+                        <a href="{% url cases_this_year %}">this year</a>
+                    </td>
+                    <td><a href="{% url recent_revisions %}">recent revisions</a></td>
+                    {% comment %}
+                    <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
+                    <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>
+                    {% endcomment %}
+                </tr>
+            </table>
         </div>
         <div id="header">
             {% block header %}

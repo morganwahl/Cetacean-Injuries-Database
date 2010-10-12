@@ -23,7 +23,7 @@
         </div>
     </div>
     <i><span id="{{ name }}_taxon_chosen">{{ initial_display_name }}</span></i>
-    <button type="button" id="{{ name }}_clear_taxon"{% ifequal initial_display_name none_display_name %} style="display: none;"{% endifequal %}>clear taxon</button>
+    <button type="button" id="{{ name }}_clear_taxon"{% if initial_display_name == none_display_name %} style="display: none;"{% endif %}>clear taxon</button>
     <input {{ final_attrs|safe }}>
 </div>
 

@@ -1,5 +1,7 @@
 import numbers
 
+import json
+
 from difflib import SequenceMatcher
 
 from django.shortcuts import render_to_response, redirect
@@ -10,11 +12,18 @@ from django.contrib.auth.decorators import login_required
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 
 from reversion.models import Revision, Version
 
+from forms import AnimalChoiceForm, CaseTypeForm
+
 from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
 from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.views import add_observation
+from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
+from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
 
 @login_required
 def home(request):
@@ -193,6 +202,146 @@ def revision_detail(request, rev_id):
     return render_to_response('reversion/revision_detail.html', {
         'rev': rev,
         'annotated_versions': annotated_versions,
-        'media': Media(js=('jquery/jquery-1.3.2.min.js', 'checkboxhider.js')),
+        'media': Media(js=(settings.JQUERY_FILE, 'checkboxhider.js')),
     }, RequestContext(request))
     
+@login_required
+def object_history(request, content_type_id, object_id=None):
+    content_type = ContentType.objects.get(id=content_type_id)
+    
+    versions = Version.objects.filter(content_type=content_type).order_by('revision__date_created')
+    if not object_id is None:
+        versions = versions.filter(object_id=object_id)
+    
+    meta_keys = set()
+    field_keys = set()
+    
+    flat_versions = []
+    
+    for v in versions:
+        if not v.format == 'json':
+            print "!!! non-JSON version %d !!!" % v.id
+            continue
+        
+        data = json.loads(v.serialized_data)
+        if len(data) != 1:
+            print "!!! weird list in version %d !!!" % v.id
+            continue
+        data = data[0]
+        
+        meta_keys.update(data.keys())
+        
+        fields = data['fields']
+        field_keys.update(fields.keys())
+
+    meta_keys.remove('fields')
+
+    for v in versions:
+        if not v.format == 'json':
+            print "!!! non-JSON version %d !!!" % v.id
+            continue
+        
+        data = json.loads(v.serialized_data)
+        if len(data) != 1:
+            print "!!! weird list in version %d !!!" % v.id
+            continue
+        data = data[0]
+
+        flat_version = []
+
+        for k in meta_keys:
+            flat_version.append(data[k])
+        flat_version.append(v.revision.user)
+        flat_version.append(v.revision.date_created)
+
+        fields = data['fields']
+        for k in field_keys:
+            flat_version.append(fields[k])
+        flat_versions.append(flat_version)
+    
+    meta_keys.add('user')
+    meta_keys.add('datetime')
+        
+    return render_to_response(
+        'reversion/object_history.html', 
+        {
+            'object_id': object_id,
+            'content_type': content_type,
+            'meta_keys': map(lambda k: k.replace('_', ' '), meta_keys),
+            'field_keys': map(lambda k: k.replace('_', ' '), field_keys),
+            'flat_versions': flat_versions,
+            'versions': versions,
+        },
+        RequestContext(request),
+    )
+
+@login_required
+def new_case(request, initial_animal_id=None):
+    '''\
+    Presents a page to choose either an existing animal or the option to create
+    a new one, and the type to case to create for that animal. No actual changes
+    are made to the database (i.e. no cases or animals are created). Instead,
+    when the form from this page is submitted, the response is a redirect to
+    the correct add_<case_type>observation view, with the apropriate animal_id
+    and case_id args filled in.
+    '''
+    
+    form_classes = {
+        'animal_choice': AnimalChoiceForm,
+        'case_type': CaseTypeForm,
+    }
+
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+        if request.GET:
+            form_kwargs[name]['data'] = request.GET
+    if not initial_animal_id is None:
+        form_kwargs['animal_choice']['initial'] = {'animal': initial_animal_id}
+
+    forms = {}
+    for name, f_class in form_classes.items():
+        forms[name] = f_class(**form_kwargs[name])
+    
+    if reduce(lambda so_far, f: so_far and f.is_valid(), forms.values(), True):
+        animal = forms['animal_choice'].cleaned_data['animal']
+        animal_id = None
+        if not animal is None:
+            animal_id = animal.id
+        
+        case_type = forms['case_type'].cleaned_data['case_type']
+        
+        # TODO don't hard-code case-types
+        if case_type == 'Entanglement':
+            return add_entanglementobservation(
+                request,
+                animal_id= animal_id,
+                entanglement_id= None,
+            )
+
+        if case_type == 'Shipstrike':
+            return add_shipstrikeobservation(
+                request,
+                animal_id= animal_id,
+                shipstrike_id= None,
+            )
+        
+        return add_observation(
+            request,
+            animal_id= animal_id,
+            case_id= None,
+        )
+        
+    template_media = Media()
+    
+    return render_to_response(
+        'incidents/new_case.html',
+        {
+            'forms': forms,
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
+

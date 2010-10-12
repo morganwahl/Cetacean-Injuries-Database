@@ -28,7 +28,7 @@ class GearOwner(AbstractContact):
         DateTime,
         blank= True,
         null= True,
-        related_name= 'gear_set',
+        related_name= 'set_date_for',
         verbose_name= 'date gear was set',
     )
     
@@ -43,7 +43,7 @@ class GearOwner(AbstractContact):
         DateTime,
         blank= True,
         null= True,
-        related_name= 'gear_missing',
+        related_name= 'missing_date_for',
         verbose_name= 'date gear went missing',
     )
 
@@ -95,7 +95,7 @@ class Entanglement(Case):
         
     # TODO does gear_analyzed imply gear_recovered?
     gear_analyzed = models.NullBooleanField(
-        default= None,
+        default= False,
         blank= True,
         null= True,
         verbose_name= "was gear analyzed?",
@@ -154,6 +154,19 @@ class EntanglementObservation(Observation):
         blank= True,
         null= True,
         help_text= "was gear removed from the animal for later analysis?"
+    )
+    # None, Gear shed, Partial, Complete, Monitor 
+    disentanglement_outcome = models.CharField(
+        max_length= 4,
+        choices= (
+            ('entg', 'entangled'),
+            ('shed', 'gear shed'),
+            ('part', 'partial'),
+            ('cmpl', 'complete'),
+            ('mntr', 'monitor'),
+        ),
+        blank= True,
+        help_text= "If there was a disentanglement attempted, what was the outcome?"
     )
     
     @models.permalink

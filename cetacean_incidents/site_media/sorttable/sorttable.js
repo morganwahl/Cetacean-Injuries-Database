@@ -169,7 +169,7 @@ sorttable = {
     for (var i=0; i<table.tBodies[0].rows.length; i++) {
       text = sorttable.getInnerText(table.tBodies[0].rows[i].cells[column]);
       if (text != '') {
-        if (text.match(/^-?[£$¤]?[\d,.]+%?$/)) {
+        if (text.match(/^-?[Â£$â‚¬]?[\d,.]+%?$/)) {
           return sorttable.sort_numeric;
         }
         // check for a date: dd/mm/yyyy or dd/mm/yy 
@@ -345,7 +345,10 @@ if (document.addEventListener) {
 /* for Internet Explorer */
 /*@cc_on @*/
 /*@if (@_win32)
-    document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    // HTTPS bugfix. see http://kryogenix.org/bugs/sorttable/https-secure-content.html
+    //document.write("<script id=__ie_onload defer src=javascript:void(0)><\/script>");
+    var dummy = (location.protocol == "https:") ? "//:" : "javascript:void(0)";
+    document.write("<script id=__ie_onload defer src='" + dummy + "'><\/script>");
     var script = document.getElementById("__ie_onload");
     script.onreadystatechange = function() {
         if (this.readyState == "complete") {

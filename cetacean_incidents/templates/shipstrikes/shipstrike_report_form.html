@@ -10,7 +10,7 @@
 {% block header %}<h1>New Shipstrike Report</h1>{% endblock %}
 
 {% block content %}
-<form method="POST"><table class="layout">
+<form method="POST">{% csrf_token %}<table class="layout">
     <!---
     <tr><td colspan="2" style="width:100%;">
         {% for formname, form in forms.items %}
