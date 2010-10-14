@@ -93,7 +93,7 @@ class Taxon(models.Model):
     -0.2, and +0.4, respectively. Thus a superspecies has rank -0.6 (-1.0 +
     0.4). This is handy for displaying taxons, since ones below genus (i.e. ones
     with negative rank) should include all their supertaxons before them. For
-    display genuses and above, simple use something like 'Order Oodonti'.
+    display genuses and above, simply use something like 'Order Oodonti'.
     '''
     rank = models.FloatField(choices=RANK_CHOICES)
 
@@ -128,7 +128,7 @@ class Taxon(models.Model):
         verbose_name_plural = 'taxa'
 
     def __unicode__(self):
-        if self._is_binomial():
+        if self._is_binomial() and self.supertaxon:
             # go up the taxon tree looking for a taxon with rank 0. if we find
             # one, print out it's initial, plus the names of each taxon we found
             # on the way.
