@@ -36,6 +36,9 @@ class Taxon(models.Model):
     '''
     
     tsn = models.IntegerField(
+        unique=True,
+        blank=True,
+        null=True,
         verbose_name= 'ITIS TSN',
         help_text= "An ITIS (Integrated Taxonomic Information System) TSN (Taxonomic Serial Number)",
     )
