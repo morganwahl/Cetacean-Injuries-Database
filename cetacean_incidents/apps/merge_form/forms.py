@@ -1,4 +1,6 @@
 from django import forms
+from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 
 class MergeForm(forms.ModelForm):
     '''
@@ -15,64 +17,114 @@ class MergeForm(forms.ModelForm):
     '''
 
     # TODO could this be a mix-in superclass for ModelForms?
-        
-    def get_fk_refs(self):
+    
+    @classmethod
+    def _get_fk_refs(cls, instance):
         '''
-        Get all the ForeignKey references to the source instance. Returns a 
-        list of model instances and field names that can be passed to 
-        (get|set)attr().
-        '''
-
-        return []
-   
-    def get_m2m_refs(self):
-        '''
-        Get all the ManyToMany relationship querysets that include the 
-        source instance. Returns a list of QuerySets.
+        Get all the ForeignKey and OneToOne references _to_ an instance. 
+        Returns a tuple of triples of the form: (<other model>, <other field>, 
+        <other instance>).
         '''
         
+        results = []
+        
+        import pdb; pdb.set_trace()
+        
+        rel_objs = instance._meta.get_all_related_objects()
+        for rel_obj in rel_objs:
+            # note that OneToOneFields are also ForeignKeys
+            if isinstance(rel_obj.field, models.OneToOneField):
+                # There isn't necessarily another instance at the other end of  
+                # the relation
+                try:
+                    other_instance = getattr(instance, rel_obj.get_accessor_name())
+                    results.append( (rel_obj.model, rel_obj.field, other_instance) )
+                except ObjectDoesNotExist:
+                    pass
+            else:
+                other_queryset = getattr(instance, rel_obj.get_accessor_name())
+                for other_instance in other_queryset.all():
+                    results.append( (rel_obj.model, rel_obj.field, other_instance) )
+        
+        return tuple(results)
+
+    @classmethod
+    def _get_m2m_refs(cls, instance):
+        '''
+        Get all the ManyToManyField references _to_ an instance. Returns a 
+        tuple of triples of the form: (<other model>, <other field>, 
+        <RelatedManager of other instances>).
+        '''
+        
+        if instance._meta.get_all_related_many_to_many_objects():
+            raise NotImplementedError("merging models with ManyToManyField references to them isn't implemented yet")
+        
         return []
     
-    def get_o2o_refs_in_source(self):
+    @classmethod
+    def _get_o2o_refs_from(cls, instance):
         '''
-        Get all the OneToOne references _from_ the source instance. Returns
-        a list of fieldnames.
+        Get all the OneToOne references _from_ an instance. Returns a tuple of 
+        fields.
         '''
-        pass
+        
+        results = []
+        inheritance_fields = instance._meta.parents.values()
+        for field in instance._meta.fields:
+            if isinstance(field, models.OneToOneField):
+                if not field.auto_created:
+                    results.append(field)
+        
+        return tuple(results)
     
-    def get_o2o_refs_to_source(self):
-        '''
-        Get all the OneToOne references _to_ the source instance. Returns
-        a list of QuerySets.
-        '''
-        pass
+    def __init__(self, source, destination):
+        super(MergeForm, self).__init__(data={}, instance=destination)
+        self.source = source
+        self.destination = destination
+        
+        # TODO start the transaction here! We're getting queryset of other
+        # instances to display, then later saving changes to those instances.
     
-    def __init__(self, source, destination, other_models, other_mergeforms={}, dont_merge=set())
-        '''
-        other_mergeforms is a dictionary mapping Model classes to MergeForm 
-        classes that should be used when recursively merging OneToOne
-        references.
+        self.source_fk_refs = self._get_fk_refs(self.source)
+    
+        for (other_model, other_field, other_inst) in self.source_fk_refs:
+            print "%s \"%s\" has field '%s' pointing to source" % (
+                other_model._meta.verbose_name,
+                unicode(other_inst),
+                other_field.verbose_name,
+            )
+        
+        self.source_m2m_refs = self._get_m2m_refs(self.source)
 
-        dont_merge is a set of instances (of any Model) that should be ignored
-        when recursively merging OneToOne references.
-        '''
-        super(MergeForm, self).__init__(instance=destination)
-        self.src_inst = source
-        self.dst_inst = destination
-    
+        self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
+        for field in self.source_o2o_from_refs:
+            print "source has one-to-one field %s pointing to %s" % (
+                field.name,
+                unicode(getattr(self.source, field.name)),
+            )
+
     def save(self, commit=True):
         # TODO create a transaction?
-        new_destination = super(MergeForm, self).save(commit=False)
+        if not commit:
+            self._save_m2m_todo = []
         
-        for other_inst, fieldname in get_fk_refs():
-            setattr(other_inst, fieldname, new_destination)
+        new_destination = super(MergeForm, self).save(commit=commit)
         
-        if commit:
-            new_destinaiton.save()
-            self.save_m2m()
-            
+        for (other_model, other_field, rel_manager) in self.source_fk_refs:
+            for other_instance in rel_manager.all():
+                setattr(other_instance, other_field.name, new_destination)
+                if commit:
+                    other_instance.save()
+                else:
+                    self._save_m2m_todo.append(other_instance)
+        
+        
+        
         return new_destination
     
     def save_m2m(self):
         super(MergeForm, self).save_m2m()
-
+        
+        for inst in self._save_m2m_todo:
+            inst.save()
+        
