@@ -5,6 +5,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
+from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from models import Taxon
 
@@ -104,3 +105,8 @@ class TaxonField(forms.Field):
             raise ValidationError(self.error_messages['invalid_choice'])
         return value
 
+class TaxonMergeForm(MergeForm):
+    
+    class Meta:
+        model = Taxon
+        
