@@ -6,6 +6,30 @@ from django.db import models
 register = template.Library()
 
 @register.simple_tag
+def display_cell(instance, fieldname, template_name=None, **kwargs):
+    context = {}
+    
+    field = instance._meta.get_field(fieldname)
+    
+    context['value'] = getattr(instance, fieldname)
+    display_func = getattr(instance, 'get_' + fieldname + '_display', None)
+    if display_func:
+        context['value_display'] = display_func()
+    
+    if template_name is None:
+        template_name = 'cell'
+        if isinstance(field, models.TextField):
+            template_name = 'bigtext_cell'
+    
+    context.update(kwargs)
+    
+    return render_to_string('generic_templates/display_%s.html' % template_name, context)
+
+@register.simple_tag
+def display_yesunk_cell(instance, fieldname, **kwargs):
+    return display_cell(instance, fieldname, 'yesunk_cell', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,
