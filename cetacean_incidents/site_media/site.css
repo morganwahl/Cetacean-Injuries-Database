@@ -233,8 +233,16 @@ div.edit-warning {
     text-align: center;
 }
 
+.error {
+    background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */
+    border: thin dashed #a40000; /* scarlet red 3 */
+}
+.error a {
+    color: #a40000;  /* scarlet red 3 */
+}
+
 ul.errorlist, span.errorlist {
-    background-color: #ef2929; /* scarlet red 1 */
+    background-color: #ef6c6c; /* scarlet red 1, at 2/3 saturation (55% absolute sat.) */
     border: thin dashed #a40000; /* scarlet red 3 */
 }
 ul.errorlist {
@@ -267,5 +275,26 @@ div.confidential-box div.confidential-warning {
     border-bottom: thin solid #a40000;  /* scarlet red 3 */
 
     text-align: center;
+}
+
+.taxon {
+    padding: .2em;
+}
+.taxon_name {
+    font-weight: bold;
+    font-size: 125%;
+    line-height: 90%;
+}
+.taxon_id {
+    display: none;
+    /* set some styling anyway, since individual elements may want to override
+    display:none */
+    font-family: "Terminus", "Mono", monospace;
+}
+.common_names {
+    font-style: italic;
+    font-size: 85%;
+    line-height: 95%;
+    padding-left: .2em;
 }
 
