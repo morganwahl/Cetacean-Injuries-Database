@@ -11,6 +11,7 @@ import urllib2
 from lxml import etree
 from lxml import objectify
 
+from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
@@ -75,6 +76,26 @@ def taxon_search(request):
     # TODO return 304 when not changed?
     
     return HttpResponse(json.dumps(taxons))
+
+@login_required
+def taxon_detail(request, taxon_id):
+    
+    taxon = Taxon.objects.get(id=taxon_id)
+    
+    merge_form = merge_source_form_factory(Taxon, taxon)()
+    template_media = Media(
+        js= (settings.JQUERY_FILE,),
+    )
+    
+    return render_to_response(
+        'taxons/taxon_detail.html',
+        {
+            'taxon': taxon,
+            'media': template_media + merge_form.media,
+            'merge_form': merge_form,
+        },
+        context_instance= RequestContext(request),
+    )
 
 class ITIS_Error(Exception):
     pass

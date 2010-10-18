@@ -2,6 +2,7 @@ from django.conf.urls.defaults import *
 import views
 
 urlpatterns = patterns('',
+    url(r'^(?P<taxon_id>\d+)$', views.taxon_detail, name='taxon_detail'),
     url(r'^search$', views.taxon_search, name='taxon_search'),
     url(r'^import$', views.import_search, name='taxon_import'),
     url(r'^import/(?P<tsn>\d+)$', views.import_tsn, name='taxon_import_tsn'),
