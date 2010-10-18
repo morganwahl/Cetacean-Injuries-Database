@@ -129,7 +129,7 @@ class Taxon(models.Model):
         null= True,
         blank= True,
         # TODO should be subtaxa!
-        related_name='subtaxons',
+        related_name='subtaxa',
         help_text="The smallest taxon that contains this one. A reference to another entry in this table; null for root-taxons.",
     )
 
