@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
-from views import home, revision_detail, new_case, object_history
 from django.contrib import admin
 
 from generic_views import direct_to_template
+from views import home, revision_detail, new_case, object_history, import_taxon
 from reversion.models import Revision
 
 admin.autodiscover()
@@ -43,6 +43,8 @@ urlpatterns += patterns('',
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
     (r'^revisions/object_history/(?P<content_type_id>\d+)/$', object_history, {}, 'object_history'),
     (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
+    
+    (r'staff_tools/import_taxon$', import_taxon, {}, 'import_taxon'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if

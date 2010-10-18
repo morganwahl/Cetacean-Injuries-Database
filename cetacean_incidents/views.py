@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
@@ -24,6 +25,8 @@ from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalSe
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
+
+from cetacean_incidents.apps.taxons.views import import_search as unsecured_import_taxon
 
 @login_required
 def home(request):
@@ -345,3 +348,7 @@ def new_case(request, initial_animal_id=None):
         context_instance= RequestContext(request),
     )
 
+@user_passes_test(lambda u: u.is_staff)
+def import_taxon(request):
+    
+    return unsecured_import_taxon(request)
