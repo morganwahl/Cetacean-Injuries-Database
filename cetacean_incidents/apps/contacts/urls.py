@@ -15,4 +15,5 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
 urlpatterns += patterns('',
     (r'^contacts/create$', views.create_contact, {}, 'create_contact'),
     (r'^contacts/(\d+)/edit$', views.edit_contact, {}, 'edit_contact'),
+    (r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.merge_contact, {}, 'merge_contact'),
 )

@@ -4,7 +4,7 @@ from django.template import RequestContext
 from django.forms.formsets import formset_factory
 
 from models import Contact
-from forms import ContactForm, OrganizationForm
+from forms import ContactForm, OrganizationForm, ContactMergeForm
 
 @login_required
 def _create_or_edit_contact(request, contact_id=None):
@@ -53,4 +53,50 @@ def create_contact(*args, **kwargs):
 @login_required
 def edit_contact(*args, **kwargs):
     return _create_or_edit_contact(*args, **kwargs)
+
+@login_required
+def merge_contact(request, destination_id, source_id):
+    # the "source" contact will be deleted and references to it will be changed
+    # to the "destination" contact
+    
+    source = Contact.objects.get(id=source_id)
+    destination = Contact.objects.get(id=destination_id)
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = ContactMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('contact_detail', destination.id)
+    else:
+        form = ContactMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'contacts/merge_contact.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
+        },
+        context_instance= RequestContext(request),
+    )
 
