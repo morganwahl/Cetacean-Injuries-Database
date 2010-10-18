@@ -22,16 +22,17 @@ urlpatterns = patterns('cetacean_incidents.generic_views',
     # TODO should be use reverse() or are hard-coded URLs OK when they're
     # defined in this very file?
     (r'^animals/$', 'redirect_to', {'url': 'search'}, 'all_animals'),
-    (r'^animals/(?P<object_id>\d+)/$', 'object_detail', animals_args, 'animal_detail'),
 
     (r'^cases/$', 'redirect_to', {'url': 'search'}, 'all_cases'),
 
     (r'^observations/$', 'object_list', observations_args, 'all_observations'),
 )
 urlpatterns += patterns('',
+    (r'^animals/(?P<animal_id>\d+)/$', views.animal_detail, {}, 'animal_detail'),
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
     (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
     (r'^animals/(\d+)/add_case$', new_case, {}, 'add_case'),
+    (r'^animals/(?P<destination_id>\d+)/merge$', views.animal_merge, {}, 'animal_merge'),
     (r'^animals/(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.animal_merge, {}, 'animal_merge'),
     (r'^animals/search$', views.animal_search, {}, 'animal_search'),
     url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),

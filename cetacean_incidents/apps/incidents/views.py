@@ -16,7 +16,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
-from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
+from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm, merge_source_form_factory
 
 from cetacean_incidents import generic_views
 
@@ -28,6 +28,26 @@ from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+
+@login_required
+def animal_detail(request, animal_id):
+    
+    animal = Animal.objects.get(id=animal_id)
+    
+    merge_form = merge_source_form_factory(Animal, animal)()
+    template_media = Media(
+        js= (settings.JQUERY_FILE,),
+    )
+    
+    return render_to_response(
+        'incidents/animal_detail.html',
+        {
+            'animal': animal,
+            'media': template_media + merge_form.media,
+            'merge_form': merge_form,
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 def create_animal(request):
@@ -82,12 +102,20 @@ def edit_animal(request, animal_id):
     )
 
 @login_required
-def animal_merge(request, destination_id, source_id):
+def animal_merge(request, destination_id, source_id=None):
     # the "source" animal will be deleted and references to it will be change to
     # the "destination" animal
     
-    source = Animal.objects.get(id=source_id)
     destination = Animal.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = merge_source_form_factory(Animal, destination)(request.GET)
+        if not merge_form.is_valid():
+            return redirect('animal_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Animal.objects.get(id=source_id)
+
     form_kwargs = {
         'source': source,
         'destination': destination,
