@@ -9,13 +9,33 @@
 {{ block.super }}
 <script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{{ media }}
 {% endblock %}
 
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>Animal {{ animal }}</h2>
-<div><a href="{% url edit_animal animal.id %}">edit</a></div>
+<h2>{{ animal }}</h2>
+<div><a href="{% url edit_animal animal.id %}">edit this animal</a></div>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another animal into this one...</a>
+    </div>
+    <form action="{% url animal_merge animal.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block ids-dl %}
