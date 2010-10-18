@@ -29,8 +29,6 @@ class MergeForm(forms.ModelForm):
         
         results = []
         
-        import pdb; pdb.set_trace()
-        
         rel_objs = instance._meta.get_all_related_objects()
         for rel_obj in rel_objs:
             # note that OneToOneFields are also ForeignKeys
@@ -39,7 +37,7 @@ class MergeForm(forms.ModelForm):
                 # the relation
                 try:
                     other_instance = getattr(instance, rel_obj.get_accessor_name())
-                raise NotImplementedError("merging instances with o2o references to them isn't supported yet.")
+                    raise NotImplementedError("merging instances with o2o references to them isn't supported yet.")
                 #    results.append( (rel_obj.model, rel_obj.field, other_instance) )
                 except ObjectDoesNotExist:
                     pass
@@ -93,12 +91,6 @@ class MergeForm(forms.ModelForm):
 
         self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
         
-        # alter the form widgets to show the two previous values
-        for name, field in self.fields.items():
-            if field.is_hidden:
-                continue
-            
-
     def save(self, commit=True):
         # TODO create a transaction?
         if not commit:
