@@ -16,14 +16,14 @@
 {% endfor %}
 </div>
 {% if to_add %}
-<form action="{% url add_taxa %}" method="post">
+<form action="" method="post">
     {% csrf_token %}
     <input name="taxa" type="hidden" value="{{ to_add|join:"," }}">
     <button type="submit">add these taxa</button>
 </form>
 {% else %}
 <p>
-    <i>all these taxa are already in the database</i>
+    <i>all these taxa are in the database</i>
 </p>
 {% endif %}
 {% endblock %}

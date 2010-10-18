@@ -137,13 +137,19 @@ def itis_search(request):
         # TODO better way to transmute an etree element into a objectified 
         # element
         o = objectify.fromstring(etree.tostring(e))
+        if not len(o): # no matches were returned
+            break
         
-        taxon = Taxon()
+        try:
+            taxon = Taxon.objects.get(tsn=o.tsn)
+        except:
+            taxon = Taxon()
         
-        taxon.tsn = o.tsn
-        taxon.name = o.sciName
-        taxon.itis_rank = itis_get_rank(o.tsn)
-        taxon.rank = Taxon.ITIS_RANKS[taxon.itis_rank]
+            taxon.tsn = o.tsn
+            taxon.name = o.sciName
+            taxon.itis_rank = itis_get_rank(o.tsn)
+            taxon.rank = Taxon.ITIS_RANKS[taxon.itis_rank]
+
         # skip taxons above Order
         if taxon.rank > 2:
             continue
@@ -161,6 +167,7 @@ def itis_search(request):
     return HttpResponse(
         render_to_string('taxons/itis_search_results.html', {
             'results': results,
+            'MEDIA_URL': settings.MEDIA_URL,
         }),
         mimetype="text/plain",
     )
@@ -176,6 +183,15 @@ def import_search(request):
     )
 
 def import_tsn(request, tsn):
+    
+    if request.method == 'POST':
+        tsn_list = request.POST['taxa']
+        
+        tsns = map(int, tsn_list.split(','))
+        
+        for tsn in tsns:
+            taxon = add_taxon(tsn)
+            taxon.save()
     
     # http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=1378
     xml_doc = _get_itis('getFullHierarchyFromTSN', {'tsn': tsn})
@@ -282,16 +298,4 @@ def add_taxon(tsn):
     taxon.common_names = ", ".join(common_names)
         
     return taxon
-
-def add_taxa(request):
-    if request.method == 'POST':
-        tsn_list = request.POST['taxa']
-        
-        tsns = map(int, tsn_list.split(','))
-        
-        for tsn in tsns:
-            taxon = add_taxon(tsn)
-            taxon.save()
-    
-    return HttpResponseRedirect(reverse('taxon_import'))
 
