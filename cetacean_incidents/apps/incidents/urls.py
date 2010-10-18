@@ -32,6 +32,7 @@ urlpatterns += patterns('',
     (r'^animals/create$', views.create_animal, {}, 'create_animal'),
     (r'^animals/(\d+)/edit$', views.edit_animal, {}, 'edit_animal'),
     (r'^animals/(\d+)/add_case$', new_case, {}, 'add_case'),
+    (r'^animals/(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.animal_merge, {}, 'animal_merge'),
     (r'^animals/search$', views.animal_search, {}, 'animal_search'),
     url(r'^animals/search_json$', views.animal_search_json, name='animal_search_json'),
 

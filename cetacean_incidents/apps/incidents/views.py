@@ -21,7 +21,7 @@ from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation, YearCaseNumber
-from forms import AnimalSearchForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
+from forms import AnimalSearchForm, AnimalMergeForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -77,6 +77,52 @@ def edit_animal(request, animal_id):
             'animal': animal,
             'form': form,
             'all_media': template_media + form.media
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def animal_merge(request, destination_id, source_id):
+    # the "source" animal will be deleted and references to it will be change to
+    # the "destination" animal
+    
+    source = Animal.objects.get(id=source_id)
+    destination = Animal.objects.get(id=destination_id)
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = AnimalMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('animal_detail', destination.id)
+    else:
+        form = AnimalMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/animal_merge.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
         },
         context_instance= RequestContext(request),
     )

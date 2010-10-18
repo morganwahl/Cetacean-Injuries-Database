@@ -77,8 +77,8 @@ class MergeForm(forms.ModelForm):
         
         return tuple(results)
     
-    def __init__(self, source, destination):
-        super(MergeForm, self).__init__(data={}, instance=destination)
+    def __init__(self, source, destination, data=None, **kwargs):
+        super(MergeForm, self).__init__(data, instance=destination, **kwargs)
         self.source = source
         self.destination = destination
         
@@ -86,10 +86,13 @@ class MergeForm(forms.ModelForm):
         # instances to display, then later saving changes to those instances.
     
         self.source_fk_refs = self._get_fk_refs(self.source)
+        self.destination_fk_refs = self._get_fk_refs(self.destination)
     
         self.source_m2m_refs = self._get_m2m_refs(self.source)
+        self.destination_m2m_refs = self._get_m2m_refs(self.destination)
 
         self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
+        self.destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
         
     def save(self, commit=True):
         # TODO create a transaction?
