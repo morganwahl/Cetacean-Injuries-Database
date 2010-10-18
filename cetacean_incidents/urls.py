@@ -1,8 +1,10 @@
-from django.conf.urls.defaults import *
 from django.conf import settings
-from generic_views import direct_to_template
+from django.conf.urls.defaults import *
 from views import home, revision_detail, new_case, object_history
 from django.contrib import admin
+
+from generic_views import direct_to_template
+from reversion.models import Revision
 
 admin.autodiscover()
 
@@ -24,7 +26,6 @@ urlpatterns = patterns('',
     (r'^$', home, {}, "home")
 )
 
-from reversion.models import Revision
 all_revisions_args = {
     'queryset': Revision.objects.all().order_by('-date_created'),
     'template_object_name': 'rev',
