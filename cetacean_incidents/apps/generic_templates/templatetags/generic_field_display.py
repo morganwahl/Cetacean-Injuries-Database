@@ -30,6 +30,15 @@ def display_yesunk_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'yesunk_cell', **kwargs)
 
 @register.simple_tag
+def display_yesnounk_cell(instance, fieldname, choices= "yes,no,unknown", **kwargs):
+    kwargs.update({'choices': choices})
+    return display_cell(instance, fieldname, 'yesnounk_cell', **kwargs)
+
+@register.simple_tag
+def display_bigtext_cell(instance, fieldname, **kwargs):
+    return display_cell(instance, fieldname, 'bigtext_cell', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,

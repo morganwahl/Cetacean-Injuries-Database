@@ -1,0 +1,7 @@
+{% extends "generic_templates/display_cell.html" %}
+
+{% spaceless %}
+{% block value_block %}
+{{ value|yesno:choices }}
+{% endblock %}
+{% endspaceless %}
