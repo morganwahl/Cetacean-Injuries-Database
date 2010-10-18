@@ -16,12 +16,16 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
+from django.shortcuts import redirect
 from django.forms import Media
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.conf import settings
 
+from cetacean_incidents.forms import merge_source_form_factory
+
 from models import Taxon
+from forms import TaxonMergeForm
  
 def taxon_search(request):
     '''\
@@ -93,6 +97,61 @@ def taxon_detail(request, taxon_id):
             'taxon': taxon,
             'media': template_media + merge_form.media,
             'merge_form': merge_form,
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def taxon_merge(request, destination_id, source_id=None):
+    # the "source" taxon will be deleted and references to it will be changed
+    # to the "destination" taxon
+    
+    destination = Taxon.objects.get(id=destination_id)
+
+    if source_id is None:
+        merge_form = merge_source_form_factory(Taxon, destination)(request.GET)
+
+        if not merge_form.is_valid():
+            return redirect('taxon_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Taxon.objects.get(id=source_id)
+    
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = TaxonMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('taxon_detail', destination.id)
+    else:
+        form = TaxonMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'taxons/merge_taxon.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
         },
         context_instance= RequestContext(request),
     )
