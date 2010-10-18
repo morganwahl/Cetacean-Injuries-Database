@@ -10,7 +10,7 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm 
+from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner
