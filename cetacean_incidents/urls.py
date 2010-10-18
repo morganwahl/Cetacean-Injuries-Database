@@ -4,6 +4,7 @@ from django.contrib import admin
 
 from generic_views import direct_to_template
 from views import home, revision_detail, new_case, object_history, import_taxon
+
 from reversion.models import Revision
 
 admin.autodiscover()
