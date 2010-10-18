@@ -1,10 +1,32 @@
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms.formsets import formset_factory
+from django.forms import Media
 
 from models import Contact
-from forms import ContactForm, OrganizationForm, ContactMergeForm
+from forms import ContactForm, OrganizationForm, ContactMergeForm, ContactMergeSourceForm
+
+@login_required
+def contact_detail(request, contact_id):
+    
+    merge_form = ContactMergeSourceForm()
+    template_media = Media(
+        js= (settings.JQUERY_FILE,),
+    )
+    
+    contact = Contact.objects.get(id=contact_id)
+    
+    return render_to_response(
+        'contacts/contact_detail.html',
+        {
+            'contact': contact,
+            'media': template_media + merge_form.media,
+            'merge_form': merge_form,
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 def _create_or_edit_contact(request, contact_id=None):
@@ -55,12 +77,21 @@ def edit_contact(*args, **kwargs):
     return _create_or_edit_contact(*args, **kwargs)
 
 @login_required
-def merge_contact(request, destination_id, source_id):
+def merge_contact(request, destination_id, source_id=None):
     # the "source" contact will be deleted and references to it will be changed
     # to the "destination" contact
     
-    source = Contact.objects.get(id=source_id)
     destination = Contact.objects.get(id=destination_id)
+
+    if source_id is None:
+        merge_form = ContactMergeSourceForm(request.GET)
+        if not merge_form.is_valid():
+            print "invalid mergeform!"
+            return redirect('contact_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Contact.objects.get(id=source_id)
+    
     form_kwargs = {
         'source': source,
         'destination': destination,

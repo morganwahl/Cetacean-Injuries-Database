@@ -1,11 +1,35 @@
 {% extends "contacts/contact_base.html" %}
 
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block title %}{{ block.super }}: {{ contact }}{% endblock %}
 
 {% block header %}
 {{ block.super }}
 <div>
     <a href="{% url edit_contact contact.id %}">edit this contact</a>
+</div>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another contact into this one...</a>
+    </div>
+    <form action="{% url merge_contact contact.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+        </div>
+    </form>
 </div>
 {% endblock %}
 
