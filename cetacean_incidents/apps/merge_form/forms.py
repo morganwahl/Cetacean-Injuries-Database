@@ -18,6 +18,7 @@ class MergeForm(forms.ModelForm):
 
     # TODO could this be a mix-in superclass for ModelForms?
     
+    # TODO rename, since it's both o2o and fk
     @classmethod
     def _get_fk_refs(cls, instance):
         '''
@@ -38,7 +39,8 @@ class MergeForm(forms.ModelForm):
                 # the relation
                 try:
                     other_instance = getattr(instance, rel_obj.get_accessor_name())
-                    results.append( (rel_obj.model, rel_obj.field, other_instance) )
+                raise NotImplementedError("merging instances with o2o references to them isn't supported yet.")
+                #    results.append( (rel_obj.model, rel_obj.field, other_instance) )
                 except ObjectDoesNotExist:
                     pass
             else:
@@ -87,21 +89,15 @@ class MergeForm(forms.ModelForm):
     
         self.source_fk_refs = self._get_fk_refs(self.source)
     
-        for (other_model, other_field, other_inst) in self.source_fk_refs:
-            print "%s \"%s\" has field '%s' pointing to source" % (
-                other_model._meta.verbose_name,
-                unicode(other_inst),
-                other_field.verbose_name,
-            )
-        
         self.source_m2m_refs = self._get_m2m_refs(self.source)
 
         self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
-        for field in self.source_o2o_from_refs:
-            print "source has one-to-one field %s pointing to %s" % (
-                field.name,
-                unicode(getattr(self.source, field.name)),
-            )
+        
+        # alter the form widgets to show the two previous values
+        for name, field in self.fields.items():
+            if field.is_hidden:
+                continue
+            
 
     def save(self, commit=True):
         # TODO create a transaction?
@@ -110,15 +106,16 @@ class MergeForm(forms.ModelForm):
         
         new_destination = super(MergeForm, self).save(commit=commit)
         
-        for (other_model, other_field, rel_manager) in self.source_fk_refs:
-            for other_instance in rel_manager.all():
+        for (other_model, other_field, other_instance) in self.source_fk_refs:
+            # note that OneToOneFields are also ForeignKeys
+            if isinstance(other_field, models.OneToOneField):
+                raise NotImplementedError("saving o2o references to the merged instance isn't implemented yet")
+            else:
                 setattr(other_instance, other_field.name, new_destination)
                 if commit:
                     other_instance.save()
                 else:
                     self._save_m2m_todo.append(other_instance)
-        
-        
         
         return new_destination
     
