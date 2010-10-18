@@ -69,7 +69,6 @@ class CaseTypeForm(forms.Form):
         'Shipstrike': AddShipstrikeForm
     }
 
-
 class AnimalChoiceForm(forms.Form):
     
     animal = forms.ModelChoiceField(

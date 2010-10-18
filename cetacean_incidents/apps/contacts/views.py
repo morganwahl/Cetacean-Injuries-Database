@@ -87,8 +87,8 @@ def merge_contact(request, destination_id, source_id=None):
 
     if source_id is None:
         merge_form = merge_source_form_factory(Contact, destination)(request.GET)
+
         if not merge_form.is_valid():
-            print "invalid mergeform!"
             return redirect('contact_detail', destination.id)
         source = merge_form.cleaned_data['source']
     else:
