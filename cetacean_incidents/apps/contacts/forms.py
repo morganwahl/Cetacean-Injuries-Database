@@ -47,13 +47,6 @@ class ContactForm(forms.ModelForm):
             'email': EmailInput,
         }
 
-class ContactMergeSourceForm(forms.Form):
-    
-    source = forms.ModelChoiceField(
-        queryset= Contact.objects.all(),
-        label= 'other contact',
-    )
-
 class ContactMergeForm(MergeForm):
     
     affiliations = forms.ModelMultipleChoiceField(

@@ -5,18 +5,20 @@ from django.template import RequestContext
 from django.forms.formsets import formset_factory
 from django.forms import Media
 
+from cetacean_incidents.forms import merge_source_form_factory
+
 from models import Contact
-from forms import ContactForm, OrganizationForm, ContactMergeForm, ContactMergeSourceForm
+from forms import ContactForm, OrganizationForm, ContactMergeForm
 
 @login_required
 def contact_detail(request, contact_id):
     
-    merge_form = ContactMergeSourceForm()
+    contact = Contact.objects.get(id=contact_id)
+    
+    merge_form = merge_source_form_factory(Contact, contact)()
     template_media = Media(
         js= (settings.JQUERY_FILE,),
     )
-    
-    contact = Contact.objects.get(id=contact_id)
     
     return render_to_response(
         'contacts/contact_detail.html',
@@ -84,7 +86,7 @@ def merge_contact(request, destination_id, source_id=None):
     destination = Contact.objects.get(id=destination_id)
 
     if source_id is None:
-        merge_form = ContactMergeSourceForm(request.GET)
+        merge_form = merge_source_form_factory(Contact, destination)(request.GET)
         if not merge_form.is_valid():
             print "invalid mergeform!"
             return redirect('contact_detail', destination.id)
