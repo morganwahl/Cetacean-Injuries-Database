@@ -11,12 +11,14 @@ import urllib2
 from lxml import etree
 from lxml import objectify
 
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.forms import Media
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.conf import settings
 
 from models import Taxon
  
@@ -74,44 +76,86 @@ def taxon_search(request):
     
     return HttpResponse(json.dumps(taxons))
 
-def itis_search(request):
-    get_string = urllib.urlencode(request.GET)
-    url = 'http://www.itis.gov/ITISWebService/services/ITISService/searchForAnyMatch?' + get_string
+class ITIS_Error(Exception):
+    pass
+
+itis_namespaces = {
+    'ns': "http://itis_service.itis.usgs.org",
+    'ax': "http://data.itis_service.itis.usgs.org/xsd"
+}
     
+def _get_itis(funcname, get_args={}):
+    '''Given an ITIS WebServices function name and a dictionary of args, returns a parse xml document of the results. Raises an ITIS_Error Exception on errors.'''
+    # TODO can't urllib compose a document and get-string for us?
+    url = 'http://www.itis.gov/ITISWebService/services/ITISService/' + funcname + '?' + urllib.urlencode(get_args)
+    #print "getting %s" % url
     url_handle = urllib2.urlopen(url)
+    #print "\topened"
     # ITIS doesn't send HTTP error codes when its database is down. :-(
     # check for a mimetype of text/html instead
     if url_handle.info().gettype() == 'text/html':
-        return HttpResponse(
-            render_to_string('taxons/itis_error_include.html', {'error_url': url}),
-            mimetype='text/html',
-        )
+        raise ITIS_Error(render_to_string('taxons/itis_error_include.html', {'error_url': url}))
     
-    xml_doc = etree.parse(url_handle)
+    #print "\tparsing..."
+    result = etree.parse(url_handle)
+    #print "\tdone"
     
-    namespaces = {
-        'ns': "http://itis_service.itis.usgs.org",
-        'ax': "http://data.itis_service.itis.usgs.org/xsd"
-    }
+    return result
+
+def _is_animal(tsn):
+    # http://www.itis.gov/ITISWebService/services/ITISService/getKingdomNameFromTSN?tsn=202385
+    xml_doc = _get_itis('getKingdomNameFromTSN', {'tsn': tsn})
     
-    match_elements = xml_doc.xpath("//ns:return/ax:anyMatchList", namespaces=namespaces)
+    kingdom_id_elements = xml_doc.xpath('//ns:return/ax:kingdomId', namespaces=itis_namespaces)
+    kingdom_id = int(kingdom_id_elements[0].text)
+    
+    return kingdom_id == 5
+
+def itis_get_rank(tsn):
+    
+    # if it's already been imported just look it up locally
+    q = Taxon.objects.filter(tsn=tsn)
+    if q.exists():
+        for (itis_rank_name, rank) in Taxon.ITIS_RANKS.items():
+            if rank == q[0].rank:
+                return itis_rank_name
+
+    # http://www.itis.gov/ITISWebService/services/ITISService/getTaxonomicRankNameFromTSN?tsn= 202385
+    xml_doc = _get_itis('getTaxonomicRankNameFromTSN', {'tsn': tsn})
+    
+    itis_rankname = xml_doc.xpath("//ns:return/ax:rankName", namespaces=itis_namespaces)[0].text
+    
+    return itis_rankname
+    
+def itis_search(request):
+    xml_doc = _get_itis('searchForAnyMatch', request.GET)
+    
+    match_elements = xml_doc.xpath("//ns:return/ax:anyMatchList", namespaces=itis_namespaces)
     
     results = []
     for e in match_elements:
-        r = {}
-        r['xml'] = etree.tostring(e, pretty_print=True)
+        # TODO better way to transmute an etree element into a objectified 
+        # element
+        o = objectify.fromstring(etree.tostring(e))
         
-        o = objectify.fromstring(r['xml'])
+        taxon = Taxon()
         
-        r['tsn'] = o.tsn
-        r['name'] = o.sciName
+        taxon.tsn = o.tsn
+        taxon.name = o.sciName
+        taxon.itis_rank = itis_get_rank(o.tsn)
+        taxon.rank = Taxon.ITIS_RANKS[taxon.itis_rank]
+        # skip taxons above Order
+        if taxon.rank > 2:
+            continue
         
-        r['common_names'] = []
+        common_names = []
         for name in o.commonNameList.commonNames:
-            if name.language == 'English':
-                r['common_names'].append(name.commonName)
+            if name:
+                if name.language == 'English':
+                    common_names.append(unicode(name.commonName))
+        taxon.common_names = ', '.join(common_names)
         
-        results.append(r)
+        results.append(taxon)
     
     # render an HTML fragment that can be inserted into the taxon_import page
     return HttpResponse(
@@ -121,13 +165,133 @@ def itis_search(request):
         mimetype="text/plain",
     )
 
-def taxon_import(request):
+def import_search(request):
 
-    template_media = Media(js= ('jquery/jquery-1.3.2.min.js',))
-
+    template_media = Media(js=(settings.JQUERY_FILE,))
+    
     return render_to_response(
-        'taxons/import.html',
+        'taxons/import_search.html',
         {'media': template_media},
         context_instance=RequestContext(request),
     )
+
+def import_tsn(request, tsn):
+    
+    # http://www.itis.gov/ITISWebService/services/ITISService/getFullHierarchyFromTSN?tsn=1378
+    xml_doc = _get_itis('getFullHierarchyFromTSN', {'tsn': tsn})
+    
+    taxa_elements = xml_doc.xpath("//ns:return/ax:hierarchyList", namespaces=itis_namespaces)
+    
+    taxa_info = {}
+    taxa_children = {}
+    to_add = set()
+    root_taxon = None
+    for e in taxa_elements:
+        o = objectify.fromstring(etree.tostring(e))
+        tsn = int(o.tsn)
+        rank_name = unicode(o.rankName)
+        rank = Taxon.ITIS_RANKS[rank_name]
+        # skip taxa above Order
+        if rank > 2:
+            continue
+        # the Order is our root taxon
+        # TODO multiple orders?
+        if rank == 2:
+            root_taxon = tsn
+        taxa_info[tsn] = {
+            'tsn': tsn,
+            'name': unicode(o.taxonName),
+            'itis_rank': rank_name,
+            'exists': Taxon.objects.filter(tsn=tsn).exists(),
+        }
+        if not tsn == root_taxon:
+            parent = int(o.parentTsn)
+            taxa_info[tsn]['supertaxon'] = parent
+            if not parent in taxa_children.keys():
+                taxa_children[parent] = []
+            taxa_children[parent].append(tsn)
+        
+    # sort into the hierarchy
+    def _info_for_tsn(tsn, level):
+        info = taxa_info[tsn]
+        if tsn in taxa_children.keys():
+            children = taxa_children[tsn]
+        else:
+            children = []
+        
+        info['level'] = level
+        
+        results = [info]
+        for child in children:
+            child_info = _info_for_tsn(child, level + 2)
+            results += child_info
+        
+        return results
+    
+    taxa_list = _info_for_tsn(root_taxon, 0)
+    
+    to_add = []
+    for taxon in taxa_list:
+        if not taxon['exists']:
+            to_add.append(taxon['tsn'])
+    
+    return render_to_response(
+        'taxons/import_tsn.html',
+        {
+            'tsn': tsn,
+            'taxa': taxa_list,
+            'to_add': to_add,
+        },
+        context_instance=RequestContext(request),
+    )
+
+def add_taxon(tsn):
+    #http://www.itis.gov/ITISWebService/services/ITISService/getScientificNameFromTSN?tsn=531894
+    
+    taxon = Taxon(tsn=tsn)
+    
+    name_xml = _get_itis('getScientificNameFromTSN', {'tsn': tsn})
+    name = None
+    for i in range(1,5):
+        this_name = name_xml.xpath("//ns:return/ax:unitName%d" % i, namespaces=itis_namespaces)[0].text
+        if this_name:
+            name = this_name
+    taxon.name = name
+    
+    rank_name_xml = _get_itis('getTaxonomicRankNameFromTSN', {'tsn': tsn})
+    rank_name = rank_name_xml.xpath("//ns:return/ax:rankName", namespaces=itis_namespaces)[0].text
+    taxon.rank = Taxon.ITIS_RANKS[rank_name]
+
+    supertaxon_xml = _get_itis('getParentTSNFromTSN', {'tsn': tsn})
+    supertaxon_tsn = supertaxon_xml.xpath("//ns:return/ax:parentTsn", namespaces=itis_namespaces)[0]
+    supertaxon_tsn = int(supertaxon_tsn.text)
+    q = Taxon.objects.filter(tsn=supertaxon_tsn)
+    if q.exists():
+        taxon.supertaxon = q[0]
+    
+    common_names_xml = _get_itis('getCommonNamesFromTSN', {'tsn': tsn})
+    common_names_elements = common_names_xml.xpath("//ns:return/ax:commonNames", namespaces=itis_namespaces)
+    common_names = []
+    for name in common_names_elements:
+        name = objectify.fromstring(etree.tostring(name))
+        if not name:
+            continue
+        if name.language != "English":
+            continue
+        common_names.append(unicode(name.commonName))
+    taxon.common_names = ", ".join(common_names)
+        
+    return taxon
+
+def add_taxa(request):
+    if request.method == 'POST':
+        tsn_list = request.POST['taxa']
+        
+        tsns = map(int, tsn_list.split(','))
+        
+        for tsn in tsns:
+            taxon = add_taxon(tsn)
+            taxon.save()
+    
+    return HttpResponseRedirect(reverse('taxon_import'))
 

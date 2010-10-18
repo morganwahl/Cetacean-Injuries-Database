@@ -61,7 +61,59 @@ class Taxon(models.Model):
             rank,
             (rank[0] + 0.4, 'super' + rank[1]),
         )
+    
+    '''A map from ITIS rank names to our numeric ranks'''
+    ITIS_RANKS = {
+        'Kingdom':    6.0,
+        'Subkingdom': 5.8,
 
+        'Division':    5.0,
+        'Subdivision': 4.8,
+
+        'Phylum':    4.0,
+        'Subphylum': 3.8,
+
+        'Superclass': 3.4,
+        'Class':      3.0,
+        'Subclass':   2.8,
+        'Infraclass': 2.6,
+
+        'Superorder': 2.4,
+        'Order':      2.0,
+        'Suborder':   1.8,
+        'Infraorder': 1.6,
+
+        'Superfamily': 1.4,
+        'Family':      1.0,
+        'Subfamily':   0.8,
+        #'Infrafamily', 0.6,
+        
+        #'Supertribe': .054,
+        'Tribe':      .050,
+        'Subtribe':   .048,
+        #'Infratribe': .046,
+
+        #'Supergenus':  0.4,
+        'Genus':       0.0,
+        'Subgenus':   -0.2,
+        #'Infragenus': -0.4,
+
+        #'Supersection': -0.46,
+        'Section':      -0.50,
+        'Subsection':   -0.52,
+        #'Infrasection': -0.54,
+
+        #'Superspecies': -0.6,
+        'Species':      -1.0,
+        'Subspecies':   -1.2,
+
+        'Variety':    -2.0,
+        'Subvariety': -2.2,
+
+        'Forma':    -3.0,
+        'Subforma': -3.2,
+    }
+    
     name = models.CharField(
         max_length= 255,
         help_text= 'The scientific name for this taxon (i.e. the one in Latin). Genuses and larger groups should be capitalized.',

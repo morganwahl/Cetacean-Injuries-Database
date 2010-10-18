@@ -277,3 +277,24 @@ div.confidential-box div.confidential-warning {
     text-align: center;
 }
 
+.taxon {
+    padding: .2em;
+}
+.taxon_name {
+    font-weight: bold;
+    font-size: 125%;
+    line-height: 90%;
+}
+.taxon_id {
+    display: none;
+    /* set some styling anyway, since individual elements may want to override
+    display:none */
+    font-family: "Terminus", "Mono", monospace;
+}
+.common_names {
+    font-style: italic;
+    font-size: 85%;
+    line-height: 95%;
+    padding-left: .2em;
+}
+

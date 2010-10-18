@@ -1,4 +1,9 @@
-{% for result in results %}
-{{ result.xml }}
+{% for taxon in results %}
+<div class="taxon">
+    <div class="taxon_name">{{ taxon.name }} {{ taxon.itis_rank|lower }}</div>
+    <div class="taxon_id" style="display:block;">TSN: {{ taxon.tsn }}</div>
+    <div class="common_names">{{ taxon.common_names }}</div>
+    <a href="{% url taxon_import_tsn taxon.tsn %}">import this taxon</a>
+</div>
 {% endfor %}
 
