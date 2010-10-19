@@ -50,7 +50,7 @@
     <h3>Info:</h3>
     <table>
         {% display_row animal 'name' %}
-        <tr>
+        <tr class="field">
             <th style="text-align:right;">taxon</th>
             <td>
                 {% if animal.determined_taxon %}
@@ -60,7 +60,7 @@
                 {% endif %}
             </td>
         </tr>
-        <tr>
+        <tr class="field">
             <th style="text-align:right;">gender</th>
             <td>
                 {% if animal.determined_gender %}
