@@ -21,6 +21,7 @@ class Animal(models.Model):
     name = models.CharField(
         blank= True,
         null= True,
+        unique=True,
         max_length= 255,
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
@@ -109,8 +110,8 @@ class Animal(models.Model):
 
     def __unicode__(self):
         if self.name:
-            return "%06d %s" % (self.id, self.name)
-        return "%06d" % self.id
+            return self.name
+        return "unnamed animal #%06d" % self.id
     
     @models.permalink
     def get_absolute_url(self):
