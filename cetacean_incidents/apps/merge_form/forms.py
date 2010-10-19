@@ -99,24 +99,28 @@ class MergeForm(forms.ModelForm):
         if not commit:
             self._save_m2m_todo = []
         
-        new_destination = super(MergeForm, self).save(commit=commit)
-        
         for (other_model, other_field, other_instance) in self.source_fk_refs:
             # note that OneToOneFields are also ForeignKeys
             if isinstance(other_field, models.OneToOneField):
                 raise NotImplementedError("saving o2o references to the merged instance isn't implemented yet")
             else:
-                setattr(other_instance, other_field.name, new_destination)
+                setattr(other_instance, other_field.name, self.destination)
                 if commit:
                     other_instance.save()
                 else:
                     self._save_m2m_todo.append(other_instance)
         
-        return new_destination
-    
-    def save_m2m(self):
-        super(MergeForm, self).save_m2m()
+        if self.source_m2m_refs:
+            raise NotImplementedError("saving merged instances with ManyToManyField references to them is not implemented")
         
+        if commit:
+            self.source.delete()
+
+        return super(MergeForm, self).save(commit=commit)
+    
+    def pre_save(self):
         for inst in self._save_m2m_todo:
             inst.save()
         
+        self.source.delete()
+
