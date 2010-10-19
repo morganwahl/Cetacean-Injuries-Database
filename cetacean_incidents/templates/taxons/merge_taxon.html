@@ -40,6 +40,15 @@ This template is an amalgam of editing and viewing.
             {% display_cell source 'tsn' %}
     	</tr>
         <tr>
+            {% display_cell destination 'supertaxon' %}
+            <td>
+                {% with form.supertaxon as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </td>
+            {% display_cell source 'supertaxon' %}
+    	</tr>
+        <tr>
             {% display_cell destination 'name' %}
             <td>
                 {% with form.name as f %}
