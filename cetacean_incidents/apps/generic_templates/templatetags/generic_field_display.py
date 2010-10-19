@@ -39,6 +39,10 @@ def display_bigtext_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'bigtext_cell', **kwargs)
 
 @register.simple_tag
+def display_chosen_cell(instance, fieldname, **kwargs):
+    return display_cell(instance, fieldname, 'chosen_cell', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,

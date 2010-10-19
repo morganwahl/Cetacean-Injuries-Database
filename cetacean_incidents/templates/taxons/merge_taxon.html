@@ -49,13 +49,13 @@ This template is an amalgam of editing and viewing.
             {% display_cell source 'name' %}
     	</tr>
         <tr>
-            {% display_cell destination 'rank' %}
+            {% display_chosen_cell destination 'rank' %}
             <td>
                 {% with form.rank as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
             </td>
-            {% display_cell source 'rank' %}
+            {% display_chosen_cell source 'rank' %}
     	</tr>
         <tr>
             {% display_cell destination 'common_names' %}
