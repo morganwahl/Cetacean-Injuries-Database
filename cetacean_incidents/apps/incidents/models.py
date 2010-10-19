@@ -5,12 +5,14 @@ import pytz
 
 from django.core.exceptions import ValidationError
 from django.db import models
+
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
+
 from utils import probable_gender
 
 GENDERS = (

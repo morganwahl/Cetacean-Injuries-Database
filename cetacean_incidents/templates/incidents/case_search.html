@@ -50,8 +50,8 @@
         {% for case in case_list %}
         <tr>
             <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
-	            {% case_link case %}
-	        </td>
+                {% case_link case %}
+            </td>
             <td>{% animal_link case.animal %}</td>
             <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
             <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
@@ -64,3 +64,4 @@
 <p>click 'search' to see a list of cases</p>
 {% endif %} {# form.is_bound #}
 {% endblock %}
+
