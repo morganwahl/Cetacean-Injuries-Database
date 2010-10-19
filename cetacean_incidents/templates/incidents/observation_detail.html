@@ -3,6 +3,7 @@
 {% load contact_extras %}
 {% load case_extras %}
 {% load generic_field_display %}
+{% load taxon_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -85,7 +86,7 @@
                 <h3>Animal identification</h3>
                 <table>
                     {% if observation.taxon %}
-                    {% display_row observation "taxon" %}
+                    <tr><th>taxon</th><td>{% taxon_link observation.taxon %}</td></tr>
                     {% endif %}
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}

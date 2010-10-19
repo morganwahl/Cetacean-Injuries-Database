@@ -186,6 +186,10 @@ class Taxon(models.Model):
         verbose_name = 'taxon'
         verbose_name_plural = 'taxa'
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('taxon_detail', [str(self.id)]) 
+
     def __unicode__(self):
         if self._is_binomial() and self.supertaxon:
             # go up the taxon tree looking for a taxon with rank 0. if we find

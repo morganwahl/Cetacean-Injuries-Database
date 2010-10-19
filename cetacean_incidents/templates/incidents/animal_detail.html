@@ -4,6 +4,7 @@
 {% load contact_extras %}
 {% load datetime_extras %}
 {% load generic_field_display %}
+{% load taxon_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -53,9 +54,9 @@
             <th style="text-align:right;">taxon</th>
             <td>
                 {% if animal.determined_taxon %}
-                {{ animal.determined_taxon }} ({{ animal.determined_taxon.common_names }})
+                {% taxon_link animal.determined_taxon %} ({{ animal.determined_taxon.common_names }})
                 {% else %}
-                <i>undetermined</i>{% if animal.probable_taxon %} (probably <i>{{ animal.probable_taxon }}</i>){% endif %}
+                <i>undetermined{% if animal.probable_taxon %} (probably {% taxon_link animal.probable_taxon %})</i>{% endif %}
                 {% endif %}
             </td>
         </tr>
