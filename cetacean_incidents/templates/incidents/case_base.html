@@ -108,9 +108,9 @@
         <thead>
             <tr>
                 <td></td>
-                <th>observer</th>
+                <th class="sorttable_nosort">observer</th>
                 <th>date observed</th>
-                <th>reporter</th>
+                <th class="sorttable_nosort">reporter</th>
                 <th>date reported</th>
                 <th class="sorttable_nosort">start of narrative...</th>
             </tr>
@@ -118,9 +118,9 @@
         {% for o in case.observation_set.all %}
         <tr>
             <td>{% observation_link o %}</td>
-            <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
+            <td>{% contact_link o.observer %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
-            <td sorttable_customkey="{{ o.reporter.sort_name }}">{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
+            <td>{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
             <td>{% if o.narrative %}{{ o.narrative|truncatewords:9 }}{% else %}<i>nothing</i>{% endif %}</td>
         </tr>
