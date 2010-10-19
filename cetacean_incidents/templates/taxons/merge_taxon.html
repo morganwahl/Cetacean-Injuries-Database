@@ -78,7 +78,7 @@ This template is an amalgam of editing and viewing.
     	<tr>
     	    <td>
     	        {% if form.destination_fk_refs %}
-    	        This contact is referenced by:
+    	        This taxon is referenced by:
     	        <ul>
     	            {% for other_model, other_field, other_instance in destination_fk_refs %}
     	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
@@ -86,7 +86,7 @@ This template is an amalgam of editing and viewing.
     	        </ul>
     	        {% endif %}
     	        {% if form.destination_m2m_refs %}
-    	        This contact is among the references in:
+    	        This taxon is among the references in:
     	        <ul>
     	            {% for other_model, other_field, other_instance in destination_m2m_refs %}
     	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
@@ -94,10 +94,10 @@ This template is an amalgam of editing and viewing.
     	        </ul>
     	        {% endif %}
     	    </td>
-    	    <td>the merged contact will have all the references of these two contacts</td>
+    	    <td>the merged taxon will have all the references of these two contacts</td>
     	    <td>
     	        {% if form.source_fk_refs %}
-    	        This contact is referenced by:
+    	        This taxon is referenced by:
     	        <ul>
     	            {% for other_model, other_field, other_instance in source_fk_refs %}
     	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
@@ -105,7 +105,7 @@ This template is an amalgam of editing and viewing.
     	        </ul>
     	        {% endif %}
     	        {% if form.source_m2m_refs %}
-    	        This contact is among the references in:
+    	        This taxon is among the references in:
     	        <ul>
     	            {% for other_model, other_field, other_instance in source_m2m_refs %}
     	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
