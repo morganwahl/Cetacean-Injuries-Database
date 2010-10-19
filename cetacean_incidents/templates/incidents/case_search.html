@@ -40,8 +40,7 @@
 <table{% if case_list %} class="bordered sortable"{% endif %}>
     <thead>
         <tr>
-            <th class="sorttable_numeric">case</th>
-            <th>NMFS ID</th>
+            <th>case</th>
             <th class="sorttable_nosort">animal</th>
             <th>first observed</th>
             <th>first reported</th>
@@ -50,8 +49,9 @@
     <tbody>
         {% for case in case_list %}
         <tr>
-            <td sorttable_customkey="{{ case.date.year|default:9999 }}{{ case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link case %}</td>
-            <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
+            <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
+	            {% case_link case %}
+	        </td>
             <td>{% animal_link case.animal %}</td>
             <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
             <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>

@@ -3,6 +3,7 @@
 import datetime
 import pytz
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.datetime.models import DateTime
@@ -433,10 +434,19 @@ class Case(models.Model):
         if date is None:
             return None
         s = {}
-        s['year'] = unicode(date.year)
-        s['yearly_number'] = self.yearly_number
-        if self.yearly_number is None:
-            s['yearly_number'] = -1
+        
+        # if there's a NMFS ID use that
+        if self.nmfs_id:
+            s['id'] = self.nmfs_id
+        else:
+        # otherwise use our YearCaseNumber IDs
+            s['year'] = unicode(date.year)
+            s['yearly_number'] = self.yearly_number
+            if self.yearly_number is None:
+                s['yearly_number'] = -1
+            
+            s['id'] = "%(year)s#%(yearly_number)d" % s
+        
         # trim off anything beyond a day
         s['date'] = "%04d" % date.year
         if date.month:
@@ -449,7 +459,7 @@ class Case(models.Model):
         else:
             s['taxon'] = u'Unknown taxon'
         s['type'] = self.case_type
-        name = u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
+        name = u"%(id)s (%(date)s) %(type)s of %(taxon)s" % s
 
         # add the current_name to the names set, if necessary
         if not name in self.names_set:
@@ -495,6 +505,11 @@ class Case(models.Model):
         return Case.objects.associated_cases(self)
 
     def clean(self):
+        if not self.nmfs_id is None and self.nmfs_id != '':
+            # check that an existing case doesn't already have this nmfs_id
+            if Case.objects.filter(nmfs_id=self.nmfs_id).exists():
+                raise ValidationError("NMFS ID '%s' is already in use" % self.nmfs_id)
+        
         date = self.date()
         if date:
             def _next_number_in_year(year):
