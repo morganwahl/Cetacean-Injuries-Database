@@ -55,19 +55,19 @@ TaxonWidget = {
                 // TODO get URL from django
                 query_url,
                 { q: query},
-                function(taxons){
+                function(taxa){
                     place_results_box();
 
                     // TODO this func is called asynchronously. make
                     // sure old results don't overright newer ones.
-                    if (! taxons.length) {
-                        $('#' + results_id).html("<i>no taxons match</i>");
+                    if (! taxa.length) {
+                        $('#' + results_id).html("<i>no taxa match</i>");
                         return;
                     }
                     var table_id = field_name + '_taxon_list';
                     $('#' + results_id).html('<table id="' + table_id + '"></table>');
-                    for(var i = 0; i < taxons.length; i++) {
-                        var taxon = taxons[i];
+                    for(var i = 0; i < taxa.length; i++) {
+                        var taxon = taxa[i];
                         var tr_id = table_id + '_taxon' + taxon.id;
                         var item = '<tr id="' + tr_id + '"><td class="taxon">';
                         item += '<div class="taxon_name">' + taxon.display_name + '</div>';

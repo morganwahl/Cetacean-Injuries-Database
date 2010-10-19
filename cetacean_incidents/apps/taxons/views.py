@@ -87,9 +87,9 @@ def taxon_search(request):
     # since we wont have access to the handy properties and functions of the
     # Taxon objects, we have to call them now and include their output
     # in the JSON
-    taxons = []
+    taxa = []
     for result in results:
-        taxons.append({
+        taxa.append({
             'id': result.id,
             'name': result.name,
             'display_name': unicode(result),
@@ -97,7 +97,7 @@ def taxon_search(request):
         })
     # TODO return 304 when not changed?
     
-    return HttpResponse(json.dumps(taxons))
+    return HttpResponse(json.dumps(taxa))
 
 @login_required
 def taxon_detail(request, taxon_id):
@@ -248,7 +248,7 @@ def itis_search(request):
             taxon.itis_rank = itis_get_rank(o.tsn)
             taxon.rank = Taxon.ITIS_RANKS[taxon.itis_rank]
 
-        # skip taxons above Order
+        # skip taxa above Order
         if taxon.rank > 2:
             continue
         

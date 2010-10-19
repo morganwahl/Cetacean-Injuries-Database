@@ -9,13 +9,13 @@ var taxon_autocomplete_source = function (request, response) {
         // TODO error-handling!
         taxon_autocomplete_source_url,
         { q: request.term},
-        function(taxons) {
+        function(taxa) {
             var suggests  = []
-            for(var i = 0; i < taxons.length; i++) {
+            for(var i = 0; i < taxa.length; i++) {
                 suggests[i] = {};
-                suggests[i].label = taxons[i].display_name;
-                suggests[i].value = taxons[i].id;
-                suggests[i].common_names = taxons[i].common_names;
+                suggests[i].label = taxa[i].display_name;
+                suggests[i].value = taxa[i].id;
+                suggests[i].common_names = taxa[i].common_names;
             }
             
             response(suggests);
