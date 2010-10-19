@@ -2,6 +2,8 @@ from django.conf.urls.defaults import *
 import views
 
 urlpatterns = patterns('',
+    url(r'^$', views.taxon_tree, name='taxon_list'),
+    url(r'^(?P<root_id>\d+)/tree_node$', views.taxon_tree, name='taxon_tree'),
     url(r'^(?P<taxon_id>\d+)$', views.taxon_detail, name='taxon_detail'),
     (r'^(?P<destination_id>\d+)/merge$', views.taxon_merge, {}, 'merge_taxon'),
     (r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.taxon_merge, {}, 'merge_taxon'),

@@ -27,6 +27,24 @@ from cetacean_incidents.forms import merge_source_form_factory
 from models import Taxon
 from forms import TaxonMergeForm
  
+def taxon_tree(request, root_id=None):
+    
+    if root_id is None:
+        root_taxa = Taxon.objects.filter(supertaxon__isnull=True)
+        taxa_name = 'root taxa'
+    else:
+        root_taxa = Taxon.objects.filter(supertaxon=root_id)
+        taxa_name = 'subtaxa of %s' % unicode(Taxon.objects.get(id=root_id))
+    
+    return render_to_response(
+        'taxons/taxon_tree.html',
+        {
+            'taxa_name': taxa_name,
+            'taxa': root_taxa,
+        },
+        context_instance= RequestContext(request),
+    )
+
 def taxon_search(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 
