@@ -44,7 +44,7 @@
     {% display_row taxon "tsn" %}
     {% display_row taxon "name" %}
     {% display_chosen_row taxon "rank" %}
-    {% display_row taxon "common_names" %}
+    <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>" }}</td></tr>
 </table>
 
 <h3>Animals determined to be {{ taxon }}</h3>

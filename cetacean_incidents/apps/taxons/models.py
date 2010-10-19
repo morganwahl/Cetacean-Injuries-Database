@@ -124,6 +124,10 @@ class Taxon(models.Model):
         blank= True,
         help_text= "a comma-delimited list of common English name(s) for this taxon (e.g. \"humpback whale\" or \"dolphins, porpises\"). _Very_ useful in helping the user find the one they're looking for.",
     )
+    @property
+    def common_names_list(self):
+        return map(lambda s: s.strip(), self.common_names.split(','))
+        
     supertaxon = models.ForeignKey(
         'self',
         null= True,
