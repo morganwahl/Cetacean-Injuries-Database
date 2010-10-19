@@ -47,6 +47,20 @@
 {% endblock %}
 
 {% block content %}
+{% if forms.animal.non_field_errors %}
+<ul class="ui-state-error">
+    {% for error in forms.animal.non_field_errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if forms.case.non_field_errors %}
+<ul class="ui-state-error">
+    {% for error in forms.case.non_field_errors %}
+    <li>{{ error }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 <form action="" method="post">
     {% csrf_token %}
     <div id="tabs">
