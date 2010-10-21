@@ -211,14 +211,15 @@ div.field_wrapper {
     text-align: left;
 }
 
-tr.field th, tr.field td {
+tr.field > th, tr.field > td {
     border-top: thin solid #d3d7cf; /* aluminium 3 */;
     border-bottom: thin solid #d3d7cf; /* aluminium 3 */;
 }
-tr.field th {
+tr.field > th {
     border-left: thin dotted #d3d7cf; /* aluminium 2 */
+    text-align: right;
 }
-tr.field td {
+tr.field > td {
     border-right: thin dotted #d3d7cf; /* aluminium 2 */
 }
 table th, .fieldname {

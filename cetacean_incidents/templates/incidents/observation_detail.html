@@ -47,7 +47,7 @@
                 <h3>Observation</h3>
                 <table>
                     {% display_row observation "observation_datetime" %}
-                    <tr>
+                    <tr class="field">
                         <th>observation location</th>
                         <td>
                             {% with observation.location as l %}
@@ -55,9 +55,9 @@
                             {% endwith %}
                         </td>
                     </tr>
-                    <tr><th>observer</th><td>{% contact_link observation.observer %}</td></tr>
+                    <tr class="field"><th>observer</th><td>{% contact_link observation.observer %}</td></tr>
                     {% if observation.observer_vessel %}
-                    <tr>
+                    <tr class="field">
                         <th>vessel info for observer's vessel</th>
                         <td>
                             {% with observation.observer_vessel as v %}
@@ -70,7 +70,7 @@
                 <h3>Reporting</h3>
                 <table>
                     {% display_row observation "report_datetime" %}
-                    <tr>
+                    <tr class="field">
                         <th>reporter</th>
                         <td>
                             {% if observation.firsthand %}
@@ -86,14 +86,12 @@
                 <h3>Animal identification</h3>
                 <table>
                     {% if observation.taxon %}
-                    <tr><th>taxon</th><td>{% taxon_link observation.taxon %}</td></tr>
+                    <tr class="field"><th>taxon</th><td>{% taxon_link observation.taxon %}</td></tr>
                     {% endif %}
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
                     {% display_row observation "animal_description" "description" %}
-                </table>
-                <table>
                     {% display_yesnounk_row observation "biopsy" %}
                     {% display_yesnounk_row observation "tagged" %}
                 </table>

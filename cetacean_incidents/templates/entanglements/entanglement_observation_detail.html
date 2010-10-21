@@ -1,4 +1,5 @@
 {% extends "incidents/observation_detail.html" %}
+{% load generic_field_display %}
 
 {% block case_ids %}
 {% with observation.case as c %}
@@ -11,8 +12,8 @@
 {% block case_type_fields %}
 <h3>Entanglement</h3>
 <table>
-    <tr><th>anchored?</th><td><i>{{ observation.anchored|yesno:"yes,no,unknown" }}</i></td></tr>
-    <tr>
+    {% display_yesnounk_row observation "anchored" %}
+    <tr class="field">
         <th>gear</th>
         <td>
             <p>
@@ -21,15 +22,9 @@
             <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
          </td>
      </tr>
-     <tr>
-        <th>entanglement description</th>
-        <td>{{ observation.entanglement_details|default:"<i>none</i>" }}</td>
-     </tr>
+     {% display_bigtext_row observation "entanglement_details" %}
      {% if observation.disentanglement_outcome %}
-     <tr>
-        <th>disentanglement outcome</th>
-        <td>{{ observation.get_disentanglement_outcome_display }}</td>
-     </tr>
+     {% display_chosen_row observation "disentanglement_outcome" %}
      {% endif %}
 </table>
 {% endblock %}
