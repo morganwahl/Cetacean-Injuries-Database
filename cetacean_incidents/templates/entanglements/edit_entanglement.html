@@ -7,10 +7,12 @@
 {% endblock %}
 
 {% block case_tab %}
-{{ block.super }}
-{% if forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %}
-<div class="ui-state-error">errors!</div>
-{% endif %}
+<li{% if forms.case.non_field_errors or forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.happened_after.errors or forms.case.valid.errors or forms.case.ole_investigation.errors or forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %} class="ui-state-error"{% endif %}>
+    <a href="#case">
+        <em>Case</em>
+        <br>&nbsp;
+    </a>
+</li>
 {% endblock %}
 
 {% block case_tab_body %}
