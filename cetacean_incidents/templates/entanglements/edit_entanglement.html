@@ -1,39 +1,68 @@
 {% extends "incidents/edit_case.html" %}
 
+{% block other_tabs_js %}
+$('.link-to-case-entanglement').click(function() { // bind click event to link
+    $tabs.tabs('select', '#case-entanglement'); // switch to case tab
+    return false;
+});
+{% endblock %}
+
 {% block case_ids %}
 {% with case as c %}
 {% include "entanglements/entanglement_ids_include.html" %}
 {% endwith %}
 {% endblock %}
 
-{% block case_tab %}
-<li{% if forms.case.non_field_errors or forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.happened_after.errors or forms.case.valid.errors or forms.case.ole_investigation.errors or forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %} class="ui-state-error"{% endif %}>
-    <a href="#case">
+{% block other_tabs %}
+<li{% if forms.case.non_field_errors or forms.case.gear_fieldnumber.errors or forms.case.gear_retrieved.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %} class="ui-state-error"{% endif %}>
+    <a href="#case-entanglement">
         <em>Case</em>
-        <br>&nbsp;
+        <br>Entanglement
     </a>
 </li>
 {% endblock %}
 
-{% block case_tab_body %}
-{{ block.super }}
-{% with forms.case.gear_fieldnumber as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_retrieved as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_analyzed as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.analyzed_date as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.analyzed_by as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_types as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
+{% block other_tabs_next_link %}<a class="link-to-case-entanglement" href="#case-entanglement">{% endblock %}
+
+{% block other_tabs_body %}
+<div id="case-entanglement">
+    {% if case.observation_set.count > 1 %}
+    <div class="edit-warning">
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+        Note that this is the case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+    </div>
+    {% endif %}
+    {% with forms.case.gear_fieldnumber as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_retrieved as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_analyzed as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.analyzed_date as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.analyzed_by as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_types as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    <div style="text-align:left; float: left;">
+        <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+    </div>
+    <div style="text-align: right;">
+        <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+    </div>
+</div> <!-- id="case-entanglement" -->
 {% endblock %}
+
+{% block other_tabs_prev_link %}<a class="link-to-case-entanglement" href="#case-entanglement">{% endblock %}
 

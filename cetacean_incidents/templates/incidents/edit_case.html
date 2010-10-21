@@ -21,6 +21,7 @@
             $tabs.tabs('select', '#case-sinmd'); // switch to case tab
             return false;
         });
+        {% block other_tabs_js %}{% endblock %}
     });
 </script>
 {% endblock %}
@@ -64,6 +65,7 @@
                     <br>&nbsp;
                 </a>
             </li>
+            {% block other_tabs %}{% endblock %}
             {% endblock %}
             <li{% if forms.case.non_field_errors or forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case-sinmd">
@@ -122,9 +124,10 @@
                 <a class="link-to-animal" href="#animal">&#x2190; previous tab</a>
             </div>
             <div style="text-align: right;">
-                <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+                {% block other_tabs_next_link %}<a class="link-to-case-sinmd" href="#case-sinmd">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="case" -->
+        {% block other_tabs_body %}{% endblock %}
         <div id="case-sinmd">
             {% if case.observation_set.count > 1 %}
             <div class="edit-warning">
@@ -178,7 +181,7 @@
                 <button type="submit">save changes to this case and its animal</button>
             </div>
             <div style="text-align:left; float: left;">
-                <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+                {% block other_tabs_prev_link %}<a class="link-to-case" href="#case">{% endblock %}&#x2190; previous tab</a>
             </div>
         </div> <!-- id="case-sinmd" -->
     </div>
