@@ -3,7 +3,7 @@
 {{ f }}
 {% else %}
 <span class="field_wrapper">
-	<span class="fieldname">{{ f.label_tag }}</span>: {{ f }}
+	<span style="white-space: nowrap;"><span class="fieldname">{{ f.label_tag }}</span>: {{ f }}</span>
 	{% if f.help_text %}
 	<i>({{ f.help_text }})</i>
 	{% endif %}
