@@ -43,6 +43,7 @@
             $tabs.tabs('select', '#save'); // switch to save tab
             return false;
         });
+        {% block other_tabs_js %}{% endblock %}
     });
 </script>
 <style type="text/css">
@@ -100,6 +101,7 @@
                 </a>
             </li>
             {% endblock %}
+            {% block other_case_tabs %}{% endblock %}
             <li{% if forms.case.non_field_errors or forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case-sinmd">
                     <em>Case</em>
@@ -135,6 +137,7 @@
                 </a>
             </li>
             {% endblock %}
+            {% block other_observation_tabs %}{% endblock %}
             <li{% if forms.observation.non_field_errors or forms.observation.narrative.errors %} class="ui-state-error"{% endif %}
 >
                 <a href="#save">
@@ -198,9 +201,10 @@
                 <a class="link-to-animal" href="#animal">&#x2190; previous tab</a>
             </div>
             <div style="text-align: right;">
-                <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+                {% block other_case_tabs_next_link %}<a class="link-to-case-sinmd" href="#case-sinmd">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="case" -->
+        {% block other_case_tabs_body %}{% endblock %}
         <div id="case-sinmd">
             {{ forms.case.non_field_errors }}
             {% if case.observation_set.count > 1 %}
@@ -251,7 +255,7 @@
             {% include "labeled_field.html" %}
             {% endwith %}
             <div style="text-align:left; float: left;">
-                <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+                {% block other_case_tabs_prev_link %}<a class="link-to-case" href="#case">{% endblock %}&#x2190; previous tab</a>
             </div>
             <div style="text-align: right;">
                 <a class="link-to-reporting" href="#reporting">next tab &#x2192;</a>
@@ -443,9 +447,10 @@
                 <a class="link-to-animal-identification" href="#animal-identification">&#x2190; previous tab</a>
             </div>
             <div style="text-align: right;">
-                <a class="link-to-save" href="#save">next tab &#x2192;</a>
+                {% block other_observation_tabs_next_link %}<a class="link-to-save" href="#save">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="incident" -->
+        {% block other_observation_tabs_body %}{% endblock %}
         <div id="save">
             {{ forms.observation.non_field_errors }}
             <h3>Narrative</h3>
@@ -455,7 +460,7 @@
                 {% endwith %}
             </div>
             <div style="text-align:left; float: left;">
-                <a class="link-to-incident" href="#incident">&#x2190; previous tab</a>
+                {% block other_observation_tabs_prev_link %}<a class="link-to-incident" href="#incident">{% endblock %}&#x2190; previous tab</a>
             </div>
             <div style="text-align:center;">
                 <button type="submit">

@@ -1,5 +1,16 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block other_tabs_js %}
+$('.link-to-case-entanglement').click(function() { // bind click event to link
+    $tabs.tabs('select', '#case-entanglement'); // switch to case tab
+    return false;
+});
+$('.link-to-observation-entanglement').click(function() { // bind click event to link
+    $tabs.tabs('select', '#observation-entanglement'); // switch to case tab
+    return false;
+});
+{% endblock %}
+
 {% block case_title %}{{ case|default:"new entanglement case" }}{% endblock %}
 
 {% block case_ids %}
@@ -10,62 +21,96 @@
 
 {% block case_header %}{{ case|default:"<i>new entanglement case</i>" }}{% endblock %}
 
-{% block case_tab %}
-<li{% if forms.case.non_field_errors or forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.happened_after.errors or forms.case.valid.errors or forms.case.ole_investigation.errors or forms.case.gear_fieldnumber.errors or forms.case.gear_retrived.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %} class="ui-state-error"{% endif %}>
-    <a href="#case">
+{% block other_case_tabs %}
+<li{% if forms.case.non_field_errors or forms.case.gear_fieldnumber.errors or forms.case.gear_retrieved.errors or forms.case.gear_analyzed.errors or forms.case.analyzed_date.errors or forms.case.analyzed_by.errors or forms.case.gear_types.errors %} class="ui-state-error"{% endif %}>
+    <a href="#case-entanglement">
         <em>Case</em>
-        <br>&nbsp;
+        <br>Entanglement
     </a>
 </li>
 {% endblock %}
 
-{% block case_tab_body %}
-{{ block.super }}
-{% with forms.case.gear_fieldnumber as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_retrieved as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_analyzed as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.analyzed_date as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.analyzed_by as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.case.gear_types as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
+{% block other_case_tabs_next_link %}<a class="link-to-case-entanglement" href="#case-entanglement">{% endblock %}
+
+{% block other_case_tabs_body %}
+<div id="case-entanglement">
+    {% if case.observation_set.count > 1 %}
+    <div class="edit-warning">
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+        Note that this is the case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+    </div>
+    {% endif %}
+    {% with forms.case.gear_fieldnumber as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_retrieved as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_analyzed as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.analyzed_date as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.analyzed_by as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.case.gear_types as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    <div style="text-align:left; float: left;">
+        <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+    </div>
+    <div style="text-align: right;">
+        <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+    </div>
+</div> <!-- id="case-entanglement" -->
 {% endblock %}
 
-{% block incident_tab %}
-<li{% if forms.observation.non_field_errors or forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.anchored.errors or forms.observation.gear_description.errors or forms.observation.gear_retrieved.errors or forms.observation.entanglement_details.errors or forms.observation.disentanglement_outcome.errors %} class="ui-state-error"{% endif %}>
-    <a href="#incident">
+{% block other_case_tabs_prev_link %}<a class="link-to-case-entanglement" href="#case-entanglement">{% endblock %}
+
+
+{% block other_observation_tabs %}
+<li{% if forms.observation.non_field_errors or forms.observation.anchored.errors or forms.observation.gear_description.errors or forms.observation.gear_retrieved.errors or forms.observation.entanglement_details.errors or forms.observation.disentanglement_outcome.errors %} class="ui-state-error"{% endif %}>
+    <a href="#observation-entanglement">
         <em>Observation</em>
-        <br>Incident
+        <br>Entanglement
     </a>
 </li>
 {% endblock %}
 
-{% block incident_tab_body %}
-{{ block.super }}
-{% with forms.observation.anchored as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.observation.gear_description as f %}
-{% include "bigtext_field.html" %}
-{% endwith %}
-{% with forms.observation.gear_retrieved as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with forms.observation.entanglement_details as f %}
-{% include "bigtext_field.html" %}
-{% endwith %}
-{% with forms.observation.disentanglement_outcome as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
+{% block other_observation_tabs_next_link %}<a class="link-to-observation-entanglement" href="#observation-entanglement">{% endblock %}
+
+{% block other_observation_tabs_body %}
+<div id="observation-entanglement">
+    {% with forms.observation.anchored as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.observation.gear_description as f %}
+    {% include "bigtext_field.html" %}
+    {% endwith %}
+    {% with forms.observation.gear_retrieved as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.observation.entanglement_details as f %}
+    {% include "bigtext_field.html" %}
+    {% endwith %}
+    {% with forms.observation.disentanglement_outcome as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    <div style="text-align:left; float: left;">
+        <a class="link-to-incident" href="#incident">&#x2190; previous tab</a>
+    </div>
+    <div style="text-align: right;">
+        <a class="link-to-save" href="#save">next tab &#x2192;</a>
+    </div>
+</div> <!-- id="observation-entanglement" -->
 {% endblock %}
+
+{% block other_observation_tabs_prev_link %}<a class="link-to-observation-entanglement" href="#observation-entanglement">{% endblock %}
 
