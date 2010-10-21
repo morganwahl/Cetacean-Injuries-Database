@@ -86,86 +86,67 @@
     {% csrf_token %}
     <div id="tabs">
         <ul>
-            <li>
+            <li{% if forms.animal.errors %} class="ui-state-error"{% endif %}>
                 <a href="#animal">
                     <em>Animal</em>
                     <br>&nbsp;
-                    {% if forms.animal.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
                 </a>
             </li>
-            <li>
+            {% block case_tab %}
+            <li{% if forms.case.non_field_errors or forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.happened_after.errors or forms.case.valid.errors or forms.case.ole_investigation.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case">
-                    {% block case_tab %}
                     <em>Case</em>
                     <br>&nbsp;
-                    {% if forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.valid.errors or forms.case.ole_investigation.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
-                    {% endblock %}
                 </a>
             </li>
-            <li>
+            {% endblock %}
+            <li{% if forms.case.non_field_errors or forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case-sinmd">
                     <em>Case</em>
                     <br><abbr title="Serious Injury and Mortality Determination">SI&MD</abbr>
-                    {% if forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
                 </a>
             </li>
-            <li>
+            {# TODO check for errors on forms.new_reporter_affiliations #}
+            <li{% if forms.observation.non_field_errors or forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %} class="ui-state-error"{% endif %}>
                 <a href="#reporting">
                     <em>Observation</em>
                     <br>Reporter
-                    {% if forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
                 </a>
             </li>
-            <li>
+            {# TODO check for errors on forms.new_observer_affiliations #}
+            {# TODO check for errors on forms.new_vesselcontact_affiliations #}
+            <li{% if forms.observation.non_field_errors or forms.observation_datetime.errors or forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %} class="ui-state-error"{% endif %}>
                 <a href="#observation">
                     <em>Observation</em>
                     <br>Observer
-                    {% if forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.observation.datetime.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
                 </a>
             </li>
-            <li>
+            <li{% if forms.observation.non_field_errors or forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_descriptions.errors or forms.observation.biopsy.errors or forms.observation.tagged.errors %} class="ui-state-error"{% endif %}>
                 <a href="#animal-identification">
                     <em>Observation</em>
                     <br>Animal Identification
-                    {% if forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_description.errors or forms.observation.biopsy.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
                 </a>
             </li>
-            <li>
+            {% block incident_tab %}
+            <li{% if forms.observation.non_field_errors or forms.observation.wounded.errors or forms.observation.wound_description.errors %} class="ui-state-error"{% endif %}>
                 <a href="#incident">
-                    {% block incident_tab %}
                     <em>Observation</em>
                     <br>Incident
-                    {% if forms.observation.wound_description.errors %}
-                    <div class="ui-state-error">errors!</div>
-                    {% endif %}
-                    {% endblock %}
                 </a>
             </li>
-            <li>
+            {% endblock %}
+            <li{% if forms.observation.non_field_errors or forms.observation.narrative.errors %} class="ui-state-error"{% endif %}
+>
                 <a href="#save">
                     {% block save_tab %}
                     <em>Observation</em>
                     <br>Narrative & Save
-                    {% if forms.observation.narrative.errors %}
-                    <span class="ui-state-error">errors in this tab!</span>
-                    {% endif %}
                     {% endblock %}
                 </a>
             </li>
         </ul>
         <div id="animal">
+            {{ forms.animal.non_field_errors }}
             {# TODO this arithmatic isn't correct for adding new observations #}
             {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
             <div class="edit-warning">
@@ -184,6 +165,7 @@
             </div>
         </div> <!-- id="animal" -->
         <div id="case">
+            {{ forms.case.non_field_errors }}
             {% if case.observation_set.count > 1 %}
             <div class="edit-warning">
                 <img
@@ -220,6 +202,7 @@
             </div>
         </div> <!-- id="case" -->
         <div id="case-sinmd">
+            {{ forms.case.non_field_errors }}
             {% if case.observation_set.count > 1 %}
             <div class="edit-warning">
                 <img
@@ -275,6 +258,7 @@
             </div>
         </div> <!-- id="case-sinmd" -->
         <div id="reporting">
+            {{ forms.observation.non_field_errors }}
             <div class="section">
                 <h4>report date and time</h4>
                 {% with forms.report_datetime as d_form %}
@@ -321,6 +305,7 @@
             </div>
         </div> <!-- id="reporting" -->
         <div id="observation">
+            {{ forms.observation.non_field_errors }}
             <div class="section">
                 <h4>observation date and time</h4>
                 {% with forms.observation_datetime as d_form %}
@@ -391,6 +376,7 @@
             </div>
         </div> <!-- id="observation" -->
         <div id="animal-identification">
+            {{ forms.observation.non_field_errors }}
             <table>
                 <tr>
                     <th>taxon</th>
@@ -433,6 +419,7 @@
             </div>
         </div> <!-- id="animal-identification" -->
         <div id="incident">
+            {{ forms.observation.non_field_errors }}
             {% block incident_tab_body %}
             <script type="text/javascript">
                 $().ready(function(){
@@ -460,6 +447,7 @@
             </div>
         </div> <!-- id="incident" -->
         <div id="save">
+            {{ forms.observation.non_field_errors }}
             <h3>Narrative</h3>
             <div>
                 {% with forms.observation.narrative as f %}

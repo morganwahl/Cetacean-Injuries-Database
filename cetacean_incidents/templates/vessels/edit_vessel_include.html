@@ -1,6 +1,7 @@
 {# intended to be included in another template, with a NiceVesselInfoForm as v_form, a ContactForm as c_form, and a OrganizationForm formset as c_aff_form #}
 {# assumes RadioHider is already defined #}
 <div>
+    {{ v_form.non_field_errors }}
     <div class="subform">
         <h4>Vessel Contact</h4>
         <script type="text/javascript">

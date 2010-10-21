@@ -5,10 +5,12 @@
 {% block case_header %}{{ case|default:"<i>new shipstrike case</i>" }}{% endblock %}
 
 {% block incident_tab %}
-{{ block.super }}
-{% if forms.observation.anchored.errors %}
-<div class="ui-state-error">errors!</div>
-{% endif %}
+<li{% if forms.observation.non_field_errors or forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.striking_vessel_info.errors or forms.striking_vessel.errors or forms.striking_vessel_contact.errors or forms.striking_vessel_captain.errors %} class="ui-state-error"{% endif %}>
+    <a href="#incident">
+        <em>Observation</em>
+        <br>Incident
+    </a>
+</li>
 {% endblock %}
 
 {% block incident_tab_body %}
