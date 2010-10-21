@@ -510,11 +510,10 @@ class Case(models.Model):
         if not self.nmfs_id is None and self.nmfs_id != '':
             # check that an existing case doesn't already have this nmfs_id
             cases = Case.objects.filter(nmfs_id=self.nmfs_id)
-            if cases.count() > 1:
-                raise ValidationError("Multiple cases have NMFS ID '%s'!" % self.nmfs_id)
+            if self.id:
+                cases = cases.exclude(id=self.id)
             if cases.count() > 0:
-                if cases[0] != self:
-                    raise ValidationError("NMFS ID '%s' is already in use" % self.nmfs_id)
+                raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
         
         date = self.date()
         if date:
