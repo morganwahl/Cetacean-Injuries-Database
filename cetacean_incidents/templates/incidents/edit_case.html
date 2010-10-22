@@ -62,7 +62,6 @@
                     <br>&nbsp;
                 </a>
             </li>
-            {% block case_tab %}
             <li{% if forms.case.non_field_errors or forms.case.nmfs_id.errors or forms.case.animal.errors or forms.case.happened_after.errors or forms.case.valid.errors or forms.case.ole_investigation.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case">
                     <em>Case</em>
@@ -70,7 +69,6 @@
                 </a>
             </li>
             {% block other_tabs %}{% endblock %}
-            {% endblock %}
             <li{% if forms.case.non_field_errors or forms.case.review_1_date.errors or forms.case.review_1_inits.errors or forms.case.review_2_date.errors or forms.case.review_2_inits.errors or forms.case.case_confirm_criteria.errors or forms.case.animal_fate.errors or forms.case.fate_cause.errors or forms.case.fate_cause_indications.errors or forms.case.si_prevented.errors or forms.case.included_in_sar.errors or forms.case.review_1_notes.errors or forms.case.review_2_notes.errors %} class="ui-state-error"{% endif %}>
                 <a href="#case-sinmd">
                     <em>Case</em>
@@ -107,7 +105,6 @@
                 >
             </div>
             {% endif %}
-            {% block case_tab_body %}
             {% with forms.case.nmfs_id as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
@@ -123,7 +120,6 @@
             {% with forms.case.ole_investigation as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
-            {% endblock %}
             <div style="text-align:left; float: left;">
                 <a class="link-to-animal" href="#animal">&#x2190; previous tab</a>
             </div>
