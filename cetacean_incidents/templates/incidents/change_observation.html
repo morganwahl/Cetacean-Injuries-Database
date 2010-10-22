@@ -51,7 +51,7 @@
 </style>
 {% endblock %}
 
-{% block title %}{{ block.super }}: {% block case_title %}{{ case|default:"new case" }}{% endblock %}: {{ observation|default:"new observation" }}{% endblock %}
+{% block title %}{{ block.super }}: {% block case_title %}{{ case|default:"new case" }}{% endblock %}: {% if observation %}{{ observation }} [editing]{% else %}new observation{% endif %}{% endblock %}
 
 {% block ids %}
 {% if animal %}
@@ -159,6 +159,7 @@
                 </a>
             </li>
         </ul>
+
         <div id="animal">
             {{ forms.animal.non_field_errors }}
             {# TODO this arithmatic isn't correct for adding new observations #}
@@ -178,6 +179,7 @@
                 <a class="link-to-case" href="#case">next tab &#x2192;</a>
             </div>
         </div> <!-- id="animal" -->
+
         <div id="case">
             {{ forms.case.non_field_errors }}
             {% if case.observation_set.count > 1 %}
@@ -185,6 +187,7 @@
                 <img
                     src="{% url site-media path="icons/warning.png"%}"
                 >
+
                 Note that this is the case data for {{ case.observation_set.count|add:"-1" }} other observation{{ case.observation_set.count|add:"-1"|pluralize }}.
                 <img
                     src="{% url site-media path="icons/warning.png"%}"
@@ -215,7 +218,9 @@
                 {% block other_case_tabs_next_link %}<a class="link-to-case-sinmd" href="#case-sinmd">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="case" -->
+        
         {% block other_case_tabs_body %}{% endblock %}
+        
         <div id="case-sinmd">
             {{ forms.case.non_field_errors }}
             {% if case.observation_set.count > 1 %}
@@ -272,6 +277,7 @@
                 <a class="link-to-reporting" href="#reporting">next tab &#x2192;</a>
             </div>
         </div> <!-- id="case-sinmd" -->
+
         <div id="reporting">
             {{ forms.observation.non_field_errors }}
             <div class="section">
@@ -319,6 +325,7 @@
                 <a class="link-to-observation" href="#observation">next tab &#x2192;</a>
             </div>
         </div> <!-- id="reporting" -->
+
         <div id="observation">
             {{ forms.observation.non_field_errors }}
             <div class="section">
@@ -390,6 +397,7 @@
                 <a class="link-to-animal-identification" href="#animal-identification">next tab &#x2192;</a>
             </div>
         </div> <!-- id="observation" -->
+
         <div id="animal-identification">
             {{ forms.observation.non_field_errors }}
             <table>
@@ -433,6 +441,7 @@
                 <a class="link-to-incident" href="#incident">next tab &#x2192;</a>
             </div>
         </div> <!-- id="animal-identification" -->
+
         <div id="incident">
             {{ forms.observation.non_field_errors }}
             {% block incident_tab_body %}
@@ -461,7 +470,9 @@
                 {% block other_observation_tabs_next_link %}<a class="link-to-narrative" href="#narrative">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="incident" -->
+        
         {% block other_observation_tabs_body %}{% endblock %}
+        
         <div id="narrative">
             {{ forms.observation.non_field_errors }}
             <h3>Narrative</h3>
@@ -476,5 +487,5 @@
         </div>
     </div> <!-- id="tabs" -->
 </form>
-{% endblock %}
+{% endblock content %}
 

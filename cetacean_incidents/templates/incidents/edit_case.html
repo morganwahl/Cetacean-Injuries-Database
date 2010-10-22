@@ -76,6 +76,7 @@
                 </a>
             </li>
         </ul>
+
         <div id="animal">
             {% if case.animal.case_set.count > 1 or case.animal.observation_set.count > 1 %}
             <div class="edit-warning">
@@ -93,6 +94,7 @@
                 <a class="link-to-case" href="#case">next tab &#x2192;</a>
             </div>
         </div> <!-- id="animal" -->
+
         <div id="case">
             {% if case.observation_set.count > 1 %}
             <div class="edit-warning">
@@ -127,7 +129,9 @@
                 {% block other_tabs_next_link %}<a class="link-to-case-sinmd" href="#case-sinmd">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="case" -->
+        
         {% block other_tabs_body %}{% endblock %}
+
         <div id="case-sinmd">
             {% if case.observation_set.count > 1 %}
             <div class="edit-warning">

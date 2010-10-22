@@ -36,8 +36,8 @@
         {% with form.necropsy as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-    	<button type="submit">save changes</button>
     </div>
+	<button type="submit">save changes to {{ animal }}</button>
 </form>
 {% endblock %}
 
