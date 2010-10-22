@@ -760,7 +760,8 @@ class Observation(models.Model):
     )
     wound_description = models.TextField(
         blank= True,
-        help_text= "describe wounds, noting severity and location on the animal.",
+        verbose_name= 'body condition and wounds description',
+        help_text= "Note the general condition of the animal: is it emaciated, robust, where are there visible parasites, etc. Describe wounds, noting severity and location on the animal.",
     )
     
     narrative = models.TextField(

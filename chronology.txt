@@ -2,7 +2,6 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
-'change wound description to 'wounds description and body condition''
 add wound-locations as per the paper form
 taxa for new observation should default to determined taxon for animal
 'taxons' should be taxa
