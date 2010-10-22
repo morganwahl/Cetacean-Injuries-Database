@@ -27,12 +27,11 @@
 {% endblock %}
 
 {% block header %}
-<div>
-    {% if case.ole_investigation %}
-    {% include "incidents/ole-warning.html" %}
-    {% endif %}
-    <h2>{{ case }}</h2>
-</div>
+{% if case.ole_investigation %}
+{% include "incidents/ole-warning.html" %}
+{% endif %}
+<h2>{% animal_link case.animal %}</h2>
+<h2 style="margin-left:1em;">{{ case }}</h2>
 <div>
     {% block edit_case_link %}
     {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}

@@ -44,7 +44,8 @@
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}
-<h2>{{ case }} [editing]</h2>
+<h2>{{ animal|default:"<i>new animal</i>" }}</h2>
+<h2 style="margin-left:1em;">{{ case }}</h2>
 {% endblock %}
 
 {% block content %}
