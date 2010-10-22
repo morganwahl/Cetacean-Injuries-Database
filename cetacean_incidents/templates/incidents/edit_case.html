@@ -50,6 +50,9 @@
 
 {% block content %}
 <form action="" method="post">
+    <button type="submit">
+        save changes to {{ case }} and {{ animal }}
+    </button>
     {% csrf_token %}
     <div id="tabs">
         <ul>
@@ -178,9 +181,6 @@
             {% include "labeled_field.html" %}
             {% endwith %}
             <hr>
-            <div style="text-align: center;">
-                <button type="submit">save changes to this case and its animal</button>
-            </div>
             <div style="text-align:left; float: left;">
                 {% block other_tabs_prev_link %}<a class="link-to-case" href="#case">{% endblock %}&#x2190; previous tab</a>
             </div>

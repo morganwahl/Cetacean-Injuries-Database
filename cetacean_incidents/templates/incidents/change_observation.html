@@ -39,8 +39,8 @@
             $tabs.tabs('select', '#incident'); // switch to incident tab
             return false;
         });
-        $('.link-to-save').click(function() { // bind click event to link
-            $tabs.tabs('select', '#save'); // switch to save tab
+        $('.link-to-narrative').click(function() { // bind click event to link
+            $tabs.tabs('select', '#narrative'); // switch to save tab
             return false;
         });
         {% block other_tabs_js %}{% endblock %}
@@ -84,6 +84,19 @@
 
 {% block content %}
 <form action="" method="post">
+    <button type="submit">
+        {% block submit_button %}
+        {% if observation.id %}
+        save changes to this observation and {{ case }} and {{ animal }}
+        {% else %}{% if case.id %}
+        add a new observation to {{ case }} and save changes to it and {{ animal }}
+        {% else %}{% if animal.id %}
+        add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
+        {% else %}
+        add a new animal and its first case and that case's initial observation
+        {% endif %}{% endif %}{% endif %}
+        {% endblock %}
+    </button>
     {% csrf_token %}
     <div id="tabs">
         <ul>
@@ -140,10 +153,10 @@
             {% block other_observation_tabs %}{% endblock %}
             <li{% if forms.observation.non_field_errors or forms.observation.narrative.errors %} class="ui-state-error"{% endif %}
 >
-                <a href="#save">
+                <a href="#narrative">
                     {% block save_tab %}
                     <em>Observation</em>
-                    <br>Narrative & Save
+                    <br>Narrative
                     {% endblock %}
                 </a>
             </li>
@@ -447,11 +460,11 @@
                 <a class="link-to-animal-identification" href="#animal-identification">&#x2190; previous tab</a>
             </div>
             <div style="text-align: right;">
-                {% block other_observation_tabs_next_link %}<a class="link-to-save" href="#save">{% endblock %}next tab &#x2192;</a>
+                {% block other_observation_tabs_next_link %}<a class="link-to-narrative" href="#narrative">{% endblock %}next tab &#x2192;</a>
             </div>
         </div> <!-- id="incident" -->
         {% block other_observation_tabs_body %}{% endblock %}
-        <div id="save">
+        <div id="narrative">
             {{ forms.observation.non_field_errors }}
             <h3>Narrative</h3>
             <div>
@@ -461,22 +474,6 @@
             </div>
             <div style="text-align:left; float: left;">
                 {% block other_observation_tabs_prev_link %}<a class="link-to-incident" href="#incident">{% endblock %}&#x2190; previous tab</a>
-            </div>
-            <div style="text-align:center;">
-                <button type="submit">
-                    {% block submit_button %}
-                    {% if observation %}
-                    save changes to this observation and {{ case }} and {{ animal }}
-                    {% else %}{% if case %}
-                    add a new observation to {{ case }} and save changes to it  and {{ animal }}
-                    {% else %}{% if animal %}
-                    add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
-                    {% else %}
-                    add a new animal and its first case and that case's initial observation
-
-                    {% endif %}{% endif %}{% endif %}
-                    {% endblock %}
-                </button>
             </div>
         </div>
     </div> <!-- id="tabs" -->
