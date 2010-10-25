@@ -87,6 +87,7 @@ class ObservationForm(forms.ModelForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
+
     observer_on_vessel = forms.BooleanField(
         required= False,
         help_text= "Was the observer on a vessel?"

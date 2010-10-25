@@ -1,6 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import Animal, Case, Observation, YearCaseNumber
+from models import Animal, YearCaseNumber
 
 class AnimalAdmin(VersionAdmin):
     pass
@@ -24,3 +24,4 @@ admin.site.register(Animal, AnimalAdmin)
 class YearCaseNumberAdmin(VersionAdmin):
     pass
 admin.site.register(YearCaseNumber, YearCaseNumberAdmin)
+
