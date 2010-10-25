@@ -1,7 +1,7 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
 
-from models import Entanglement, EntanglementObservation, GearType, GearTypeRelation, GearOwner
+from models import Entanglement, EntanglementObservation, GearType, GearTypeRelation, GearOwner, BodyLocation, GearBodyLocation
 
 class EntanglementAdmin(VersionAdmin):
     pass
@@ -22,4 +22,12 @@ admin.site.register(GearTypeRelation, GearTypeRelationAdmin)
 class GearOwnerAdmin(VersionAdmin):
     pass
 admin.site.register(GearOwner, GearOwnerAdmin)
+
+class BodyLocationAdmin(VersionAdmin):
+    list_display = ('name', 'definition', 'ordering')
+admin.site.register(BodyLocation, BodyLocationAdmin)
+
+class GearBodyLocationAdmin(VersionAdmin):
+    pass
+admin.site.register(GearBodyLocation, GearBodyLocationAdmin)
 

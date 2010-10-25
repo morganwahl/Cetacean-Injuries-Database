@@ -45,6 +45,9 @@ class EntanglementObservationForm(ObservationForm):
     
     class Meta(ObservationForm.Meta):
         model = EntanglementObservation
+        # TODO how to access superclasses attrs here?
+        exclude = getattr(ObservationForm.Meta, 'exclude', tuple())
+        exclude += ('gear_body_location',)
 
 class GearOwnerForm(forms.ModelForm):
     

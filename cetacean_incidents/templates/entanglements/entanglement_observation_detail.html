@@ -22,6 +22,27 @@
             <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
          </td>
      </tr>
+     <tr class="field">
+        <th>gear locations on body</th>
+        <td>
+            <table>
+                {% for loc, gear_loc in gear_body_locations %}
+                <tr class="field">
+                    <th>{{ loc.name }}</th>
+                    <td>
+                        <i>
+                        {% if gear_loc %}
+                        {{ gear_loc.gear_seen_here|yesno }}
+                        {% else %}
+                        unknown
+                        {% endif %}
+                        </i>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        </td>
+     </tr>
      {% display_bigtext_row observation "entanglement_details" %}
      {% if observation.disentanglement_outcome %}
      {% display_chosen_row observation "disentanglement_outcome" %}

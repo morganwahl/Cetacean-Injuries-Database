@@ -21,7 +21,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalForm
 
 from cetacean_incidents.apps.incidents.views import case_detail, edit_case, add_observation, edit_observation
 
-from models import Entanglement, GearType, EntanglementObservation
+from models import Entanglement, GearType, EntanglementObservation, BodyLocation, GearBodyLocation
 from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
 
 @login_required
@@ -221,10 +221,18 @@ def edit_gear_owner(request, entanglement_id):
 @login_required
 def entanglementobservation_detail(request, entanglementobservation_id):
     entanglementobservation = EntanglementObservation.objects.get(id=entanglementobservation_id)
+    body_locations = []
+    for loc in BodyLocation.objects.all():
+        gear_loc = GearBodyLocation.objects.filter(observation=entanglementobservation, location=loc)
+        if gear_loc.exists():
+            body_locations.append((loc, gear_loc[0]))
+        else:
+            body_locations.append((loc, None))
     return render_to_response(
         'entanglements/entanglement_observation_detail.html',
         {
             'observation': entanglementobservation,
+            'gear_body_locations': body_locations,
             'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
         },
         context_instance= RequestContext(request),
