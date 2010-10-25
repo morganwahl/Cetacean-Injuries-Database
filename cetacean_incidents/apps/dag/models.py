@@ -1,12 +1,25 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+def get_roots(queryset):
+    '''\
+    Filters out nodes that are _direct_ descendants of other nodes in this queryset.
+    '''
+    
+    # filter out all DAGNodes that are the subtype in a DAGEdge
+    # TODO simplier way to query for that?
+    
+    # the list of relevant edges
+    edges_model = queryset.model.supertypes.through
+    edges_qs = edges_model.objects.filter(subtype__in=queryset, supertype__in=queryset)
+    
+    non_roots = edges_qs.values('subtype').query
+    
+    return queryset.exclude(id__in=non_roots)
+    
 class RootDAGNodeManager(models.Manager):
     def get_query_set(self):
-        qs = super(self.__class__, self).get_query_set()
-        # filter out all DAGNodes that are the subtype in a DAGEdge
-        # TODO simplier way to query for that?
-        return qs.annotate(supertypes_num=models.Count('supertypes')).filter(supertypes_num=0)
+        return get_roots(super(RootDAGNodeManager, self).get_query_set())
 
 # TODO There's gotta be a more elegant way than these factory functions.
 # Perhaps using metaclasses?
