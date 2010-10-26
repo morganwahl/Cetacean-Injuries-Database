@@ -24,7 +24,6 @@ class Animal(models.Model):
     name = models.CharField(
         blank= True,
         null= True,
-        unique=True,
         max_length= 255,
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
