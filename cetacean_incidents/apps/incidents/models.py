@@ -24,7 +24,6 @@ GENDERS = (
 class Animal(models.Model):
     name = models.CharField(
         blank= True,
-        null= True,
         max_length= 255,
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
@@ -233,7 +232,6 @@ class Case(models.Model):
     nmfs_id = models.CharField(
         max_length= 255,
         blank= True,
-        null= True,
         verbose_name= "NMFS case number",
     )
     
