@@ -107,6 +107,14 @@ class Animal(models.Model):
         return None
     
     def clean(self):
+        if not self.name is None and self.name != '':
+            # check that an existing animal doesn't already have this name
+            animals = Animal.objects.filter(name=self.name)
+            if self.id:
+                animals = animals.exclude(id=self.id)
+            if animals.count() > 0:
+                raise ValidationError("name '%s' is already in use by animal '%s'" % (self.name, unicode(animals[0])))
+
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
 
