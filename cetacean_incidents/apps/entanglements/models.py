@@ -162,7 +162,6 @@ class EntanglementObservation(Observation):
         null= True,
         help_text= "was gear removed from the animal for later analysis?"
     )
-    # None, Gear shed, Partial, Complete, Monitor 
     disentanglement_outcome = models.CharField(
         max_length= 4,
         choices= (
