@@ -18,6 +18,7 @@
 {% endblock %}
 
 {% block content %}
+{{ form.non_field_errors }}
 <form action="" method="post">
     {% csrf_token %}
     <div class="section">
