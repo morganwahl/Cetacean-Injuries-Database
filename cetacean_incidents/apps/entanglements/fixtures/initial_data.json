@@ -1,0 +1,56 @@
+[
+  {
+    "pk": 1, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.1", 
+      "definition": "The skull area forward and including the blowholes. Also includes external oral areas (lips, rostrum, etc.).", 
+      "name": "head"
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.2", 
+      "definition": "Entanglement interacts with baleen, tongue, rete or other internal-only mouth regions.", 
+      "name": "mouth"
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.3", 
+      "definition": "Insertion area to the entire flipper.", 
+      "name": "flippers"
+    }
+  }, 
+  {
+    "pk": 4, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.6", 
+      "definition": "Aft of the blowholes, not involving the flipper, forward of the genital slit.", 
+      "name": "thorax"
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.7", 
+      "definition": "Aft and including the genital slit, forward of the insertion area of the fluke.", 
+      "name": "tailstock"
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "entanglements.bodylocation", 
+    "fields": {
+      "ordering": "0.9", 
+      "definition": "Aft and including the insertion area of the fluke.", 
+      "name": "fluke"
+    }
+  }
+]
