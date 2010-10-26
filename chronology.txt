@@ -2,6 +2,7 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+remove 'first reported' from case lists, add 'last observed' and '# of observations'
 taxa for new observation should default to determined taxon for animal
 'taxons' should be taxa
 put gear-analysis in seperate tabs
@@ -57,6 +58,7 @@ administrative page for cleaning up DateTime/Location objects with no info.
 case-list sorts by case (most recent first)
 make subclass the DateTimeField instead of using the DateTime app
 google-charts venn-diagram for gear-types
+API change in DAGEdge: change subtype/supertype to generic DAG names
 
 gitweb hosting at NOAA
 directions for successor
