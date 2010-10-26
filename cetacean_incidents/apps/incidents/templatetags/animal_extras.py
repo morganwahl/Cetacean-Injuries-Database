@@ -17,5 +17,5 @@ def animal_link(animal):
     
     return {
         'animal': animal,
-        'nmfs_ids': Case.objects.filter(animal=animal).exclude(nmfs_id='').values_list('nmfs_id', flat=True),
+        'nmfs_ids': Case.objects.filter(animal=animal).exclude(nmfs_id__isnull=True).values_list('nmfs_id', flat=True),
     }
