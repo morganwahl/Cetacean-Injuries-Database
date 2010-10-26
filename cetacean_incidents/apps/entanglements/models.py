@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
 from cetacean_incidents.apps.datetime.models import DateTime
@@ -136,6 +137,9 @@ class Entanglement(Case):
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])
 
+    def get_edit_url(self):
+        return reverse('edit_entanglement', args=[self.id])
+
 class EntanglementObservation(Observation):
     anchored = models.NullBooleanField(
         blank= True,
@@ -178,6 +182,9 @@ class EntanglementObservation(Observation):
     @models.permalink
     def get_absolute_url(self):
         return('entanglementobservation_detail', [str(self.id)])
+    
+    def get_edit_url(self):
+        return reverse('edit_entanglementobservation', args=[self.id])
 
 Entanglement.observation_model = EntanglementObservation
 

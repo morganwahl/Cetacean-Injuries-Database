@@ -33,6 +33,7 @@
 <table class="bordered sortable">
     <tr>
         {# TODO this is the same table as in case_search, just with two extra columns #}
+        <th class="sorttable_nosort"></th>
         <th>case</th>
         <th class="sorttable_nosort">animal</th>
         <th>first observed</th>
@@ -42,6 +43,11 @@
     {% for ycn in yearcasenumbers %}
     <tr>
         {% with ycn.case as case %}
+        <td>
+            <a href="{{ case.detailed.get_edit_url }}#case">
+                <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
+            </a>
+        </td>
         <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
 	        {% case_link case %}
 	    </td>

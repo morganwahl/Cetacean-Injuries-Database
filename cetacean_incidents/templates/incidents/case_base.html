@@ -35,7 +35,7 @@
 <div>
     {% block edit_case_link %}
     {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
-    <a href="{% url edit_case case.id %}#case">edit this case</a>
+    <a href="{{ case.get_edit_url }}#case">edit this case</a>
     {% endblock %}
 </div>
 {% endblock %}
@@ -107,15 +107,22 @@
         <thead>
             <tr>
                 <td class="sorttable_nosort"></td>
+                <td class="sorttable_nosort"></td>
                 <th class="sorttable_nosort">observer</th>
                 <th>date observed</th>
                 <th class="sorttable_nosort">reporter</th>
                 <th>date reported</th>
                 <th class="sorttable_nosort">start of narrative...</th>
+                {% endblock %}
             </tr>
         </thead>
         {% for o in case.observation_set.all %}
         <tr>
+            <td>
+                <a href="{{ o.detailed.get_edit_url }}#reporting">
+                    <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation">
+                </a>
+            </td>
             <td>{% observation_link o %}</td>
             <td>{% contact_link o.observer %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>

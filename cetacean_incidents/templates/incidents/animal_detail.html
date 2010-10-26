@@ -82,7 +82,12 @@
     {% if animal.case_set.count %}
     <ul>
         {% for case in animal.case_set.all %}
-        <li>{% case_link case %}</li>
+        <li>
+            <a href="{{ case.detailed.get_edit_url }}#case">
+                <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
+            </a>
+            {% case_link case %}
+        </li>
         {% endfor %}
     </ul>
     {% else %}
@@ -101,6 +106,7 @@
             <tr>
                 <th>case</th>
                 <td class="sorttable_nosort"></td>
+                <td class="sorttable_nosort"></td>
                 <th>observer</th>
                 <th>date observed</th>
                 <th>reporter</th>
@@ -111,6 +117,7 @@
         {% for o in animal.observation_set.all %}
         <tr>
             <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
+            <td><a href="{{ o.detailed.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
             <td>{% observation_link o %}</td>
             <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>

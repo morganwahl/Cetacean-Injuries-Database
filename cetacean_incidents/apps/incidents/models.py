@@ -3,6 +3,7 @@
 import datetime
 import pytz
 
+from django.core.urlresolvers import reverse
 from django.core.exceptions import ValidationError
 from django.db import models
 
@@ -580,6 +581,9 @@ class Case(models.Model):
     def get_absolute_url(self):
         return ('case_detail', [str(self.id)]) 
     
+    def get_edit_url(self):
+        return reverse('edit_case', args=[self.id])
+
     objects = CaseManager()
 
     class Meta:
@@ -777,6 +781,9 @@ class Observation(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('observation_detail', [str(self.id)]) 
+
+    def get_edit_url(self):
+        return reverse('edit_observation', args=[self.id])
 
     def __unicode__(self):
         ret = 'observation '
