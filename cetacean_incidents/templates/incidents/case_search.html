@@ -44,7 +44,7 @@
             <th>case</th>
             <th class="sorttable_nosort">animal</th>
             <th>first observed</th>
-            <th>first reported</th>
+            <th># obs.</th>
         </tr>
     </thead>
     <tbody>
@@ -60,7 +60,7 @@
             </td>
             <td>{% animal_link case.animal %}</td>
             <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
-            <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
+    	    <td>{{ case.observation_set.count }}</td>
         </tr>
         {% endfor %}
     </tbody>
