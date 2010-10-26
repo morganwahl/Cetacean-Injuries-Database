@@ -106,6 +106,9 @@
                     src="{% url site-media path="icons/warning.png"%}"
                 >
             </div>
+            {% if forms.case.non_field_errors %}
+            {{ forms.case.non_field_errors }}
+            {% endif %}
             {% endif %}
             {% with forms.case.nmfs_id as f %}
             {% include "labeled_field.html" %}
@@ -143,6 +146,9 @@
                     src="{% url site-media path="icons/warning.png"%}"
                 >
             </div>
+            {% if forms.case.non_field_errors %}
+            {{ forms.case.non_field_errors }}
+            {% endif %}
             {% endif %}
             {% with forms.case.review_1_date as f %}
             {% include "labeled_field.html" %}

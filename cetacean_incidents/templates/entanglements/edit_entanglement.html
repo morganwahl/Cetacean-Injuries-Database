@@ -36,6 +36,9 @@ $('.link-to-case-entanglement').click(function() { // bind click event to link
             src="{% url site-media path="icons/warning.png"%}"
         >
     </div>
+    {% if forms.case.non_field_errors %}
+    {{ forms.case.non_field_errors }}
+    {% endif %}
     {% endif %}
     {% with forms.case.gear_fieldnumber as f %}
     {% include "labeled_field.html" %}
