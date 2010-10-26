@@ -28,7 +28,8 @@
             <table>
                 {% for loc, gear_loc in gear_body_locations %}
                 <tr class="field">
-                    <th>{{ loc.name }}</th>
+                    {# TODO this is abuse of the title attribute #}
+                    <th title="{{ loc.definition }}">{{ loc.name }}</th>
                     <td>
                         <i>
                         {% if gear_loc %}

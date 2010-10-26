@@ -221,6 +221,9 @@ class GearBodyLocation(models.Model):
     location = models.ForeignKey(BodyLocation)
     gear_seen_here = models.BooleanField()
     
+    def __unicode__(self):
+        return "%s of %s" % (self.observation, self.location)
+    
     class Meta:
         unique_together = ('observation', 'location')
 
