@@ -760,7 +760,8 @@ class Observation(models.Model):
         verbose_name= "was a tag put on the animal?",
     )
     
-    # TODO is this needed? surely a wound description would suffice...
+    # note that wounded is for injuries, 'wound_description' is for maladies in
+    # general
     wounded = models.NullBooleanField(
         blank= True,
         null= True,
