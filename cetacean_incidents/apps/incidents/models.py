@@ -196,7 +196,7 @@ class YearCaseNumber(models.Model):
     year-case-yearly_number combinations.
     '''
     
-    year = models.IntegerField()
+    year = models.IntegerField(db_index= True)
     case = models.ForeignKey('Case')
     number = models.IntegerField()
     
