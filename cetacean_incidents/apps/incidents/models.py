@@ -71,9 +71,10 @@ class Animal(models.Model):
     def probable_gender(self):
         return probable_gender(self.observation_set)
     def get_probable_gender_display(self):
-        if self.probable_gender is None:
+        gender = self.probable_gender()
+        if gender is None:
             return None
-        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
+        return [g[1] for g in GENDERS if g[0] == gender][0]
     determined_gender = models.CharField(
         max_length= 1,
         blank= True,
