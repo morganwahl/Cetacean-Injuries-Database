@@ -467,23 +467,12 @@
         <div id="incident">
             {{ forms.observation.non_field_errors }}
             {% block incident_tab_body %}
-            <script type="text/javascript">
-                $().ready(function(){
-                    SelectHider.init('{{ forms.observation.wounded.html_name }}', {
-                        {# TODO? get the keys from forms.observation.wounded.field #}
-                        '1': 'observation_wounded',
-                        '2': 'observation_wounded'
-                    });
-                });
-            </script>
             {% with forms.observation.wounded as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
-            <div id="observation_wounded">
-                {% with forms.observation.wound_description as f %}
-                {% include "bigtext_field.html" %}
-                {% endwith %}
-            </div>
+            {% with forms.observation.wound_description as f %}
+            {% include "bigtext_field.html" %}
+            {% endwith %}
             {% endblock %}
             <div style="text-align:left; float: left;">
                 <a class="link-to-animal-identification" href="#animal-identification">&#x2190; previous tab</a>
