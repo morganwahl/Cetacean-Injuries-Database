@@ -2,7 +2,7 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
-remove 'first reported' from case lists, add 'last observed' and '# of observations'
+case lists, add 'last observed'
 'taxons' should be taxa
 put gear-analysis in seperate tabs
 add permissions for SI&M editors
