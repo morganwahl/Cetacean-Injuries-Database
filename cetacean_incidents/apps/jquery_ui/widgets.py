@@ -74,6 +74,11 @@ class ModelAutocomplete(Autocomplete):
         return self.model.objects.get(id=id).__unicode__()
     
     def render(self, name, value, attrs=None, custom_html= None, extra_js= None):
+    
+        # TODO should render take object IDs or objects them selves as values?
+        if isinstance(value, self.model):
+            value = value.id
+
         attrs = self.build_attrs(attrs, type=self.input_type, name=name)
         
         # split the attributes into ones for the visible autocomplete-field
