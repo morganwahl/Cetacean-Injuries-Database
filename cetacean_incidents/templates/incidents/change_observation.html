@@ -122,7 +122,7 @@
                 </a>
             </li>
             {# TODO check for errors on forms.new_reporter_affiliations #}
-            <li{% if forms.observation.non_field_errors or forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors or forms.observation.documentation.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %} class="ui-state-error"{% endif %}>
                 <a href="#reporting">
                     <em>Observation</em>
                     <br>Reporter
@@ -143,7 +143,7 @@
                 </a>
             </li>
             {% block incident_tab %}
-            <li{% if forms.observation.non_field_errors or forms.observation.wounded.errors or forms.observation.wound_description.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.documentation.errors or forms.observation.wounded.errors or forms.observation.wound_description.errors %} class="ui-state-error"{% endif %}>
                 <a href="#incident">
                     <em>Observation</em>
                     <br>Incident
@@ -313,11 +313,6 @@
                     {% endwith %}
                 </div>
             </div>
-            <div class="section">
-                {% with forms.observation.documentation as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-            </div>
             <div style="text-align:left; float: left;">
                 <a class="link-to-case-sinmd" href="#case-sinmd">&#x2190; previous tab</a>
             </div>
@@ -467,6 +462,9 @@
         <div id="incident">
             {{ forms.observation.non_field_errors }}
             {% block incident_tab_body %}
+            {% with forms.observation.documentation as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
             {% with forms.observation.wounded as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
