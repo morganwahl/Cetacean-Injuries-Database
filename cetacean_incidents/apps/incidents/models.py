@@ -559,8 +559,8 @@ class Case(models.Model):
         '''Get the more specific instance of this Case, if any.'''
         for clas in self._subclasses:
             subcases = clas.objects.filter(case_ptr= self.id)
-            if subcases.count():
-                return subcases.all()[0]
+            if subcases.exists():
+                return subcases[0]
         return self
 
     @property
