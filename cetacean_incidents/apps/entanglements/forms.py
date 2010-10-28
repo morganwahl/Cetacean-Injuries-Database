@@ -139,7 +139,10 @@ class EntanglementObservationForm(ObservationForm):
                     instance = instance[0]
                     subform_kwargs['instance'] = instance
             subform_kwargs['initial'] = initial_data
-            subform_kwargs['prefix'] = self.prefix + '-' + loc.name
+            if self.prefix:
+                subform_kwargs['prefix'] = self.prefix + '-' + loc.name
+            else:
+                subform_kwargs['prefix'] = loc.name
             if self.data:
                 subform_kwargs['data'] = self.data
 
