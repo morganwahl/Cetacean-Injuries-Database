@@ -63,8 +63,8 @@ urlpatterns += patterns("django.views",
 js_info_dict = {
     'packages': ('django.conf',),
 }
-urlpatterns += patterns('',
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
+urlpatterns += patterns('django.views',
+    (r'^jsi18n/$', 'i18n.javascript_catalog', js_info_dict, 'jsi18n'),
 )
 
 from django.contrib import databrowse

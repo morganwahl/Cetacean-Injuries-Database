@@ -26,7 +26,7 @@ from cetacean_incidents.forms import merge_source_form_factory
 
 from models import Taxon
 from forms import TaxonMergeForm
- 
+
 def taxon_tree(request, root_id=None):
     
     if root_id is None:
