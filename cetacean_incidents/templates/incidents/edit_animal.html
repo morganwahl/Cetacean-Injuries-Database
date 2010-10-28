@@ -26,12 +26,14 @@
         {% include "labeled_field.html" %}
         {% endwith %}
         {% with animal.probable_taxon as t %}
-        {% if t and t != animal.determined_taxon %}
+        {% if t %}
+        {% if not animal.determined_taxon or animal.determined_taxon not in t.with_descendants %}
         <div class="edit-warning">
             <img src="{% url site-media path="icons/warning.png"%}">
             Based on observations of this animal, it is probably a <i>{{ t }}</i>.
             <img src="{% url site-media path="icons/warning.png"%}">
         </div>
+        {% endif %}
         {% endif %}
         {% endwith %}
         {% with form.determined_taxon as f %}

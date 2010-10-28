@@ -179,6 +179,10 @@ class Taxon(models.Model):
     # TODO cycle detection!
 
     objects = TaxonManager()
+    def descendants(self):
+        return Taxon.objects.descendants(self)
+    def with_descendants(self):
+        return Taxon.objects.with_descendants(self)
 
     class Meta:
         ordering = ['-rank', 'name']
