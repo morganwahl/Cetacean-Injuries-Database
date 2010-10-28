@@ -764,7 +764,7 @@ class Observation(models.Model):
     wounded = models.NullBooleanField(
         blank= True,
         null= True,
-        default= True,
+        default= None,
         help_text= "were there any wounds? No means none were observered, Yes means they were, Unknown means we don't know whether any were observed or not.",
         verbose_name= "wounds observed?",
     )
