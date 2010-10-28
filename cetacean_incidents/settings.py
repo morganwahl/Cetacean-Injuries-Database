@@ -76,7 +76,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.databrowse',
-    'django_extensions',
     'reversion',
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
@@ -89,5 +88,6 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.shipstrikes',
     'cetacean_incidents.apps.generic_templates',
     'cetacean_incidents.apps.jquery_ui',
+    'cetacean_incidents.apps.describe_fields',
 )
 
