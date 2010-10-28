@@ -122,13 +122,14 @@ class AddEntanglementForm(EntanglementForm):
         exclude = ('gear_owner_info', 'animal')
 
 class EntanglementObservationForm(ObservationForm):
-    
+
     def __init__(self, *args, **kwargs):
         super(EntanglementObservationForm, self).__init__(*args, **kwargs)
 
         self.gear_body_location_forms = []
         for loc in BodyLocation.objects.all():
             subform_kwargs = {}
+
             initial_data = {}
             initial_data['location'] = loc.pk
             obs_id = self.initial.get('id', None)
@@ -139,24 +140,26 @@ class EntanglementObservationForm(ObservationForm):
                     instance = instance[0]
                     subform_kwargs['instance'] = instance
             subform_kwargs['initial'] = initial_data
+
             if self.prefix:
                 subform_kwargs['prefix'] = self.prefix + '-' + loc.name
             else:
                 subform_kwargs['prefix'] = loc.name
+
             if self.data:
                 subform_kwargs['data'] = self.data
 
             self.gear_body_location_forms.append(GearBodyLocationForm(**subform_kwargs))
-    
+
     def is_valid(self):
         return reduce(
             __and__,
             map(
                 lambda form: form.is_valid(),
-                [super(EntanglementObservationForm, self)] + self.gear_body_location_forms
+                [super(EntanglementObservationForm, self)] + self.gear_body_location_forms,
             ),
         )
-    
+
     def save(self, commit=True):
         result = super(EntanglementObservationForm, self).save(commit)
         if commit:
