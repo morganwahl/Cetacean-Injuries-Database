@@ -576,12 +576,13 @@ class Case(models.Model):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        current_name = self.detailed.current_name()
+        self = self.detailed
+        current_name = self.current_name()
         if current_name is None:
             if self.id:
-                return u"%s (%i)" % (self.detailed_class_name, self.id)
+                return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:
-                return u"<new case>"
+                return u"<new %s>" % (self._meta.verbose_name,)
         return current_name
 
     @models.permalink
