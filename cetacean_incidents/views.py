@@ -147,6 +147,7 @@ def html_diff(old, new):
     else:
         return "<i>%s -> %s</i>" % map(unicode, (old.__class__, new.__class__))
 
+@login_required
 def revision_detail(request, rev_id):
     
     rev = Revision.objects.get(id=rev_id)

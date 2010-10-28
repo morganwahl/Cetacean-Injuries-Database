@@ -717,6 +717,7 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
+@login_required
 def cases_by_year(request, year=None):
     if year is None:
         from datetime import datetime
@@ -732,6 +733,7 @@ def cases_by_year(request, year=None):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def case_search(request, after_date=None, before_date=None):
     # prefix should be the same as the homepage
     prefix = 'case_search'
