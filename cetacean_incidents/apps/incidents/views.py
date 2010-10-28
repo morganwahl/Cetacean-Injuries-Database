@@ -293,6 +293,14 @@ def add_observation(
         form_kwargs['case'] = {'instance': case}
     if not animal is None:
         form_kwargs['animal'] = {'instance': animal}
+        taxon = animal.taxon()
+        gender = animal.gender()
+        if taxon or gender:
+            form_kwargs['observation'] = {'initial': {}}
+        if taxon:
+            form_kwargs['observation']['initial']['taxon'] = taxon
+        if gender:
+            form_kwargs['observation']['initial']['gender'] = gender
 
     forms = {}
     for form_name, form_class in form_classes.items():

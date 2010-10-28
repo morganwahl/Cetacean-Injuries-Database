@@ -3,7 +3,6 @@ General order to do thing in (and a timeframe):
 TODO in order of importance:
 
 remove 'first reported' from case lists, add 'last observed' and '# of observations'
-taxa for new observation should default to determined taxon for animal
 'taxons' should be taxa
 put gear-analysis in seperate tabs
 add permissions for SI&M editors
