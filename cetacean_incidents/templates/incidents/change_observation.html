@@ -404,6 +404,17 @@
                 <tr>
                     <th>taxon</th>
                     <td>
+                        {% if animal.id and animal.determined_taxon %}
+                        <div class="edit-warning">
+                            <img
+                                src="{% url site-media path="icons/warning.png"%}"
+                            >
+                            Note that this animal has been determined to be a <i>{{ animal.determined_taxon }}</i>.
+                            <img
+                                src="{% url site-media path="icons/warning.png"%}"
+                            >
+                        </div>
+                        {% endif %}
                         {% with forms.observation.taxon as f %}
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
@@ -412,6 +423,17 @@
                 <tr>
                     <th>sex</th>
                     <td>
+                        {% if animal.id and animal.determined_gender %}
+                        <div class="edit-warning">
+                            <img
+                                src="{% url site-media path="icons/warning.png"%}"
+                            >
+                            Note that this animal has been determined to be {{ animal.get_determined_gender_display }}.
+                            <img
+                                src="{% url site-media path="icons/warning.png"%}"
+                            >
+                        </div>
+                        {% endif %}
                         {% with forms.observation.gender as f %}
                         {% include "unlabeled_field.html" %}
                         {% endwith %}
