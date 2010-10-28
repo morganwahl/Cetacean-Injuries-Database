@@ -207,11 +207,15 @@ def animal_search(request):
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
-    case = Case.objects.get(id=case_id).detailed
+    case_class = Case
+    for detailed_class in Case.detailed_classes:
+        if detailed_class.objects.filter(id=case_id).exists():
+            case_class = detailed_class
+            break
     return generic_views.object_detail(
         request,
         object_id= case_id,
-        queryset= case.__class__.objects.all(),
+        queryset= case_class.objects.all(),
         template_object_name= 'case',
         extra_context= extra_context,
     )
