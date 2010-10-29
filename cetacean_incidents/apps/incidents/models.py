@@ -501,14 +501,20 @@ class Case(models.Model):
         return self.names_set - set([self.current_name()])
 
     def first_observation_date(self):
-        if not self.observation_set.count():
+        # this assumes the default ordering is from earlier to later
+        obs_dates = DateTime.objects.filter(observation_date_for__case=self)
+        if obs_dates.exists():
+            return obs_dates[0]
+        else:
             return None
-        return self.observation_set.only('observation_datetime').order_by('observation_datetime')[0].observation_datetime
 
     def first_report_date(self):
-        if not self.observation_set.count():
+        # this assumes the default ordering is from earlier to later
+        rep_dates = DateTime.objects.filter(report_date_for__case=self)
+        if rep_dates.exists():
+            return rep_dates[0]
+        else:
             return None
-        return self.observation_set.only('report_datetime').order_by('report_datetime')[0].report_datetime
     
     date = first_observation_date
     
