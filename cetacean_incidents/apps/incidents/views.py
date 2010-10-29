@@ -727,7 +727,7 @@ def cases_by_year(request, year=None):
         from datetime import datetime
         year = datetime.now().year
     year = int(year)
-    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year)
+    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year).select_related('case')
     return render_to_response(
         "incidents/cases_by_year.html",
         {
