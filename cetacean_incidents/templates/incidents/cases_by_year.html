@@ -52,7 +52,11 @@
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>
-	    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
+	    {% with case.observation_dates as obs_dates %}
+	    {% with obs_dates.0 as first_obs_date %}
+	    <td sorttable_customkey="{% datetime_sort_key first_obs_date %}">{{ first_obs_date }}</td>
+	    {% endwith %}
+        {% endwith %}
 	    <td>{{ case.observation_set.count }}</td>
 	    {% endwith %}
         <td>
