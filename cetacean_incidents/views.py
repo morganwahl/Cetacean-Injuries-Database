@@ -20,7 +20,7 @@ from reversion.models import Revision, Version
 
 from forms import AnimalChoiceForm, CaseTypeForm
 
-from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
+from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
 from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
@@ -77,6 +77,10 @@ def home(request):
     return render_to_response(
         'home.html',
         {
+            # pass in some big querysets for database stats
+            'animals': Animal.objects.all(),
+            'cases': Case.objects.all(),
+            'observations': Observation.objects.all(),
             'forms': forms,
             'media': reduce(lambda m, f: m + f.media, forms.values(), template_media),
         },

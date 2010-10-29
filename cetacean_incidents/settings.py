@@ -76,6 +76,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.databrowse',
+    'django.contrib.humanize',
     'reversion',
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
