@@ -1,6 +1,7 @@
 from calendar import month_name, isleap
 import datetime
 import pytz
+import math
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -115,6 +116,8 @@ class DateTime(models.Model):
             minute = 59
         if second is None:
             second = 59 # not bothering with leap-seconds
+        else:
+            second = math.floor(second)
         
         result = datetime.datetime(year, month, day, hour, minute, second, 0, pytz.utc)
         
