@@ -455,6 +455,9 @@ class Case(models.Model):
     names_set = property(_get_names_set,_put_names_set)
 
     def current_name(self):
+        
+        self = self.detailed
+    
         # Cases with no dates yet don't get names
         date = self.date()
         if date is None:
@@ -484,7 +487,7 @@ class Case(models.Model):
             s['taxon'] = unicode(taxon)
         else:
             s['taxon'] = u'Unknown taxon'
-        s['type'] = self.case_type
+        s['type'] = self._meta.verbose_name.capitalize()
         name = u"%(id)s (%(date)s) %(type)s of %(taxon)s" % s
 
         # add the current_name to the names set, if necessary
