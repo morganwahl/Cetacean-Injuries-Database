@@ -24,6 +24,8 @@ GENDERS = (
 class Animal(models.Model):
     name = models.CharField(
         blank= True,
+        unique= False, # Names aren't assigned by us, so leave open the
+                       # posibility for duplicates
         max_length= 255,
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
@@ -240,6 +242,8 @@ class Case(models.Model):
     
     nmfs_id = models.CharField(
         max_length= 255,
+        unique= False, # in case a NMFS case corresponds to multiple cases in
+                       # our database
         blank= True,
         verbose_name= "NMFS case number",
     )
