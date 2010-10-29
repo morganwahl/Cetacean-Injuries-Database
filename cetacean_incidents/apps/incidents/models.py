@@ -198,9 +198,9 @@ class YearCaseNumber(models.Model):
     year-case-yearly_number combinations.
     '''
     
-    year = models.IntegerField()
+    year = models.IntegerField(db_index= True)
     case = models.ForeignKey('Case')
-    number = models.IntegerField()
+    number = models.IntegerField(db_index= True)
     
     def __unicode__(self):
         return "%04d #%03d <%s>" % (
@@ -223,14 +223,31 @@ class CaseMeta(models.Model.__metaclass__):
     # For now though, our inheritance DAG is just a 2-level tree with Case as
     # the root...
     def __new__(self, name, bases, dict):
-        the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+    
         if self.case_class is None and name == 'Case':
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
             self.case_class = the_class
-            self.case_class._subclasses = set()
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            self.case_class.detailed_classes = {}
+
         elif self.case_class in bases:
-            self.case_class._subclasses.add(the_class)
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            # modify the save method to set the case_type field
+
+            if 'save' in dict.keys():
+                def save_wrapper(old_save):
+                    def new_save(inst, *args, **kwargs):
+                        isnt.case_type = name
+                        return old_save(inst, *args, **kwargs)
+                    return new_save
+                dict['save'] = save_wrapper(dict['save'])
+            else:
+                def new_save(inst, *args, **kwargs):
+                    inst.case_type = name
+                    return self.case_class.save(inst, *args, **kwargs)
+                dict['save'] = new_save
+
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+            self.case_class.detailed_classes[name] = the_class
+
         return the_class
 
 class Case(models.Model):
@@ -442,6 +459,9 @@ class Case(models.Model):
     names_set = property(_get_names_set,_put_names_set)
 
     def current_name(self):
+        
+        self = self.detailed
+    
         # Cases with no dates yet don't get names
         date = self.date()
         if date is None:
@@ -471,7 +491,7 @@ class Case(models.Model):
             s['taxon'] = unicode(taxon)
         else:
             s['taxon'] = u'Unknown taxon'
-        s['type'] = self.case_type
+        s['type'] = self._meta.verbose_name.capitalize()
         name = u"%(id)s (%(date)s) %(type)s of %(taxon)s" % s
 
         # add the current_name to the names set, if necessary
@@ -485,15 +505,21 @@ class Case(models.Model):
         return self.names_set - set([self.current_name()])
 
     def first_observation_date(self):
-        if not self.observation_set.count():
+        # this assumes the default ordering is from earlier to later
+        obs_dates = DateTime.objects.filter(observation_date_for__case=self)
+        if obs_dates.exists():
+            return obs_dates[0]
+        else:
             return None
-        return self.observation_set.only('observation_datetime').order_by('observation_datetime')[0].observation_datetime
 
     def first_report_date(self):
-        if not self.observation_set.count():
+        # this assumes the default ordering is from earlier to later
+        rep_dates = DateTime.objects.filter(report_date_for__case=self)
+        if rep_dates.exists():
+            return rep_dates[0]
+        else:
             return None
-        return self.observation_set.only('report_datetime').order_by('report_datetime')[0].report_datetime
-    
+
     date = first_observation_date
     
     def earliest_datetime(self):
@@ -516,9 +542,10 @@ class Case(models.Model):
     
     def associated_cases(self):
         return Case.objects.associated_cases(self)
-
+    
     def clean(self):
         if not self.nmfs_id is None and self.nmfs_id != '':
+            # TODO do they have to be unique or not?
             # check that an existing case doesn't already have this nmfs_id
             cases = Case.objects.filter(nmfs_id=self.nmfs_id)
             if self.id:
@@ -557,21 +584,27 @@ class Case(models.Model):
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-
+    
     @property
     def detailed(self):
         '''Get the more specific instance of this Case, if any.'''
-        for clas in self._subclasses:
-            subcases = clas.objects.filter(case_ptr= self.id)
-            if subcases.count():
-                return subcases.all()[0]
-        return self
+        return self.detailed_classes[self.case_type].objects.get(id=self.id)
 
     @property
     def detailed_class_name(self):
-        return self.detailed.__class__.__name__
+        return self.case_type
 
-    case_type = detailed_class_name
+    case_type = models.CharField(
+        max_length= 512,
+        editable= False,
+        null= False,
+        help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
+    )
+    
+    def save(self, *args, **kwargs):
+        if not self.case_type:
+            raise NotImplementedError("Can't save generic cases!")
+        super(Case, self).save(*args, **kwargs)
     
     def probable_taxon(self):
         return probable_taxon(self.observation_set)
@@ -580,12 +613,13 @@ class Case(models.Model):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        current_name = self.detailed.current_name()
+        self = self.detailed
+        current_name = self.current_name()
         if current_name is None:
             if self.id:
-                return u"%s (%i)" % (self.detailed_class_name, self.id)
+                return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:
-                return u"<new case>"
+                return u"<new %s>" % (self._meta.verbose_name,)
         return current_name
 
     @models.permalink
