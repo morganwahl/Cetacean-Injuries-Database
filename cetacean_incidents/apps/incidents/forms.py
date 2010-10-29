@@ -149,6 +149,23 @@ class AnimalIDLookupForm(SubmitDetectingForm):
             raise forms.ValidationError("no animal with that ID")
         return animal
 
+class AnimalNMFSIDLookupForm(SubmitDetectingForm):
+    nmfs_id = forms.CharField(
+        help_text= u"look up an animal by the NMFS ID for one of its cases",
+        label= "NMFS case ID",
+    )
+    
+    def clean_nmfs_id(self):
+        data = self.cleaned_data['nmfs_id']
+        animals = Animal.objects.filter(case__nmfs_id__iexact=data)
+        # nmfs_id isn't garanteed to be unique
+        if animals.count() < 1:
+            raise forms.ValidationError("no case has been marked as corresponding to that NMFS case")
+        elif animals.count() > 1:
+            animal_ids = animals.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple animals have cases that correspond to that NMFS case. Their local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
+        return animals[0]
+
 class CaseIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",
