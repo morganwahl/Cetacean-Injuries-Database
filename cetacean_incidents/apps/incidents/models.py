@@ -507,16 +507,12 @@ class Case(models.Model):
     def observation_dates(self):
         return DateTime.objects.filter(observation_date_for__case=self)
     
-    def first_report_date(self):
-        # this assumes the default ordering is from earlier to later
-        rep_dates = DateTime.objects.filter(report_date_for__case=self)
-        if rep_dates.exists():
-            return rep_dates[0]
+    def date(self):
+        obs_dates = self.observation_dates()
+        if obs_dates.exists():
+            return obs_dates[0]
         else:
             return None
-
-    def date(self):
-        return self.observation_dates()[0]
     
     def earliest_datetime(self):
         if not self.observation_set.count():
