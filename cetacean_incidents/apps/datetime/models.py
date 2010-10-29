@@ -111,11 +111,11 @@ class DateTime(models.Model):
             else:
                 day = MONTH_DAYS[month]
         if hour is None:
-            hour = 23
+            hour = 24 - 1
         if minute is None:
-            minute = 59
+            minute = 60 - 1
         if second is None:
-            second = 59 # not bothering with leap-seconds
+            second = 60 - 1 # not bothering with leap-seconds
         else:
             second = math.floor(second)
         
