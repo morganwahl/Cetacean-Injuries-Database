@@ -198,7 +198,7 @@ class YearCaseNumber(models.Model):
     
     year = models.IntegerField(db_index= True)
     case = models.ForeignKey('Case')
-    number = models.IntegerField()
+    number = models.IntegerField(db_index= True)
     
     def __unicode__(self):
         return "%04d #%03d <%s>" % (
