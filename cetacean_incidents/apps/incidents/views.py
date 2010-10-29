@@ -208,7 +208,7 @@ def animal_search(request):
 @login_required
 def case_detail(request, case_id, extra_context={}):
     case_class = Case
-    for detailed_class in Case.detailed_classes:
+    for detailed_class in Case.detailed_classes.values():
         if detailed_class.objects.filter(id=case_id).exists():
             case_class = detailed_class
             break

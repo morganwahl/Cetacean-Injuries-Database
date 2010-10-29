@@ -221,14 +221,31 @@ class CaseMeta(models.Model.__metaclass__):
     # For now though, our inheritance DAG is just a 2-level tree with Case as
     # the root...
     def __new__(self, name, bases, dict):
-        the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+    
         if self.case_class is None and name == 'Case':
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
             self.case_class = the_class
-            self.case_class._subclasses = set()
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            self.case_class.detailed_classes = {}
+
         elif self.case_class in bases:
-            self.case_class._subclasses.add(the_class)
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            # modify the save method to set the case_type field
+
+            if 'save' in dict.keys():
+                def save_wrapper(old_save):
+                    def new_save(inst, *args, **kwargs):
+                        isnt.case_type = name
+                        return old_save(inst, *args, **kwargs)
+                    return new_save
+                dict['save'] = save_wrapper(dict['save'])
+            else:
+                def new_save(inst, *args, **kwargs):
+                    inst.case_type = name
+                    return self.case_class.save(inst, *args, **kwargs)
+                dict['save'] = new_save
+
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+            self.case_class.detailed_classes[name] = the_class
+
         return the_class
 
 class Case(models.Model):
@@ -553,21 +570,27 @@ class Case(models.Model):
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-
+    
     @property
     def detailed(self):
         '''Get the more specific instance of this Case, if any.'''
-        for clas in self._subclasses:
-            subcases = clas.objects.filter(case_ptr= self.id)
-            if subcases.exists():
-                return subcases[0]
-        return self
+        return self.detailed_classes[self.case_type].objects.get(id=self.id)
 
     @property
     def detailed_class_name(self):
-        return self.detailed.__class__.__name__
+        return self.case_type
 
-    case_type = detailed_class_name
+    case_type = models.CharField(
+        max_length= 512,
+        editable= False,
+        null= False,
+        help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
+    )
+    
+    def save(self, *args, **kwargs):
+        if not self.case_type:
+            raise NotImplementedError("Can't save generic cases!")
+        super(Case, self).save(*args, **kwargs)
     
     def probable_taxon(self):
         return probable_taxon(self.observation_set)

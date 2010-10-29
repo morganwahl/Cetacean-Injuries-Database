@@ -22,7 +22,7 @@ class CaseTypeFormMeta(forms.Form.__metaclass__):
     def __new__(self, name, bases, dict):
         type_names = []
         type_models = {}
-        for c in Case.detailed_classes:
+        for c in Case.detailed_classes.values():
             type_names.append( (c.__name__, c._meta.verbose_name) )
             # type_models's keys should be values of the case_type field
             type_models[c.__name__] = c
