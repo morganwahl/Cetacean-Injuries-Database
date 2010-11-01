@@ -622,9 +622,9 @@ class Case(models.Model):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        self = self.detailed
         current_name = self.current_name()
         if current_name is None:
+            self = self.detailed
             if self.id:
                 return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:
