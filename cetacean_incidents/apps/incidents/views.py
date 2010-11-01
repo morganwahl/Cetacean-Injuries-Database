@@ -16,18 +16,38 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.uncertain_datetimes.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
-from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm
+from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm, merge_source_form_factory
 
 from cetacean_incidents import generic_views
 
 from models import Case, Animal, Observation, YearCaseNumber
-from forms import AnimalSearchForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
+from forms import AnimalSearchForm, AnimalMergeForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+
+@login_required
+def animal_detail(request, animal_id):
+    
+    animal = Animal.objects.get(id=animal_id)
+    
+    merge_form = merge_source_form_factory(Animal, animal)()
+    template_media = Media(
+        js= (settings.JQUERY_FILE,),
+    )
+    
+    return render_to_response(
+        'incidents/animal_detail.html',
+        {
+            'animal': animal,
+            'media': template_media + merge_form.media,
+            'merge_form': merge_form,
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 def create_animal(request):
@@ -77,6 +97,60 @@ def edit_animal(request, animal_id):
             'animal': animal,
             'form': form,
             'all_media': template_media + form.media
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def animal_merge(request, destination_id, source_id=None):
+    # the "source" animal will be deleted and references to it will be change to
+    # the "destination" animal
+    
+    destination = Animal.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = merge_source_form_factory(Animal, destination)(request.GET)
+        if not merge_form.is_valid():
+            return redirect('animal_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Animal.objects.get(id=source_id)
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = AnimalMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('animal_detail', destination.id)
+    else:
+        form = AnimalMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/animal_merge.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
         },
         context_instance= RequestContext(request),
     )
@@ -133,11 +207,15 @@ def animal_search(request):
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
-    case = Case.objects.get(id=case_id).detailed
+    case_class = Case
+    for detailed_class in Case.detailed_classes.values():
+        if detailed_class.objects.filter(id=case_id).exists():
+            case_class = detailed_class
+            break
     return generic_views.object_detail(
         request,
         object_id= case_id,
-        queryset= case.__class__.objects.all(),
+        queryset= case_class.objects.select_related().all(),
         template_object_name= 'case',
         extra_context= extra_context,
     )
@@ -219,6 +297,14 @@ def add_observation(
         form_kwargs['case'] = {'instance': case}
     if not animal is None:
         form_kwargs['animal'] = {'instance': animal}
+        taxon = animal.taxon()
+        gender = animal.gender()
+        if taxon or gender:
+            form_kwargs['observation'] = {'initial': {}}
+        if taxon:
+            form_kwargs['observation']['initial']['taxon'] = taxon
+        if gender:
+            form_kwargs['observation']['initial']['gender'] = gender
 
     forms = {}
     for form_name, form_class in form_classes.items():
@@ -598,115 +684,6 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
         context_instance= RequestContext(request),
     )
 
-@login_required
-def merge_case(request, case1_id, case2_id):
-    # synthesize the values from the two cases to create the ones for the merged
-    # case. we'll actually be modifiying the 'older' of the two, not creating a
-    # new one. 'older' means coming earlier when sorting by case.date.year, 
-    # case.yearly_number, ascending. if a case has no date (should only occur
-    # if it has no observations yet), it's the "newer" one. if neither case has
-    # a date, order them by their database IDs.
-    
-    # TODO check that the cases (and case.observation_models?) are the same type
-    case1 = Case.objects.get(id=case1_id)
-    case2 = Case.objects.get(id=case2_id)
-    
-    # we make case1 the older_case by default, so we only need to check for
-    # conditions where case2 is older; if any are found, we switch them
-    (older_case, newer_case) = (case1, case2)
-    switch = False
-    
-    # check for null dates
-    if older_case.date is None:
-        if newer_case.date is not None:
-            switch = True
-        else:
-            # sort by IDs
-            if newer_case.id < older_case.id:
-                switch = True
-    elif newer_case.date is not None:
-        if newer_case.date.year < older_case.date.year:
-            switch = True
-        elif newer_case.date.year == older_case.date.year:
-            if newer_case.yearly_number < older_case.yearly_number:
-                switch = True
-            elif newer_case.yearly_number == older_case.yearly_number:
-                # TODO should never get here!
-                pass
-    
-    if newer_case.date is not None:
-        if older_case.date is None:
-            switch = True
-        elif newer_case.date.year < older_case.date.year:
-            switch = True
-        elif newer_case.date.year == older_case.date.year:
-            if newer_case.yearly_number < older_case.yearly_number:
-                switch = True
-    elif older_case.date is None:
-        # sort by IDs
-        if newer_case.id < older_case.id:
-            switch = True
-    
-    if switch:
-        (older_case, newer_case) = (newer_case, older_case)
-    
-    if request.method == 'POST':
-        form = MergeCaseForm(request.POST, older_case)
-        if form.is_valid():
-            form.save()
-            # make sure we get all the past names
-            older_case.names_set = older_case.names_set | newer_case.names_set
-            # move all the observations. 
-            # TODO not sure if save() func gets called when you do QuerySet.update()...
-            for o in newer_case.observation_set.all():
-                o.case = older_case
-                o.save()
-            # delete newer_case
-            newer_case.delete()
-            return redirect('case_detail', older_case.id)
-    else:
-        # compare the fields in the two cases, one by one
-        
-        # animal should be the one from the older_case
-        animal = older_case.animal.id
-        
-        # merge the ole_investigation NullableBoolean
-        # abbr. for convience.
-        ole_investigation = None
-        if not older_case.ole_investigation is None:
-            # the older case isn't unknown
-            if not newer_case.ole_investigation is None:
-                # the newer case isn't unknown
-                if older_case.ole_investigation == newer_case.ole_investigation:
-                    # two cases are the same
-                    ole_investigation = older_case.ole_investigation
-            else:
-                # the newer case is unknown
-                ole_investigation = older_case.ole_investigation
-        else:
-            # the older case is unknown
-            if not newer_case.ole_investigation is None:
-                # the newer case isn't
-                ole_investigation = newer_case.ole_investigation
-        
-        form = MergeCaseForm(
-            data= {
-                'animal': animal,
-                'ole_investigation': ole_investigation,
-            },
-            instance= older_case,
-        )
-            
-    return render_to_response(
-        'incidents/merge_case.html',
-        {
-            'form': form,
-            'older_case': older_case,
-            'newer_case': newer_case,
-        },
-        context_instance= RequestContext(request),
-    )
-
 def animal_search_json(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 
@@ -744,12 +721,13 @@ def animal_search_json(request):
     
     return HttpResponse(json.dumps(animals))
 
+@login_required
 def cases_by_year(request, year=None):
     if year is None:
         from datetime import datetime
         year = datetime.now().year
     year = int(year)
-    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year)
+    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year).select_related('case')
     return render_to_response(
         "incidents/cases_by_year.html",
         {
@@ -759,6 +737,7 @@ def cases_by_year(request, year=None):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def case_search(request, after_date=None, before_date=None):
     # prefix should be the same as the homepage
     prefix = 'case_search'

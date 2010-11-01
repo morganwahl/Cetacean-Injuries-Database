@@ -22,7 +22,7 @@ class CaseTypeFormMeta(forms.Form.__metaclass__):
     def __new__(self, name, bases, dict):
         type_names = []
         type_models = {}
-        for c in Case.detailed_classes:
+        for c in Case.detailed_classes.values():
             type_names.append( (c.__name__, c._meta.verbose_name) )
             # type_models's keys should be values of the case_type field
             type_models[c.__name__] = c
@@ -69,7 +69,6 @@ class CaseTypeForm(forms.Form):
         'Shipstrike': AddShipstrikeForm
     }
 
-
 class AnimalChoiceForm(forms.Form):
     
     animal = forms.ModelChoiceField(
@@ -78,4 +77,15 @@ class AnimalChoiceForm(forms.Form):
         required=False,
         help_text= "choose an existing animal in the database, or to add a new one",
     )
+
+def merge_source_form_factory(model, destination):
+
+    class _MergeSourceForm(forms.Form):
+        
+        source = forms.ModelChoiceField(
+            queryset= model.objects.exclude(id=destination.id),
+            label= 'other %s' % model._meta.verbose_name,
+        )
+    
+    return _MergeSourceForm
 

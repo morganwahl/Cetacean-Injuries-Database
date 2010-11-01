@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% load generic_field_display %}
+{% load animal_extras %}
+{% load observation_extras %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block title %}{{ block.super }}: {{ taxon }}{% endblock %}
+
+{% block header %}
+{% if taxon.supertaxon %}
+<h3><a href="{% url taxon_detail taxon.supertaxon.id %}">{{ taxon.supertaxon }}</a></h3>
+{% endif %}
+<h2 style="margin-left:2em;">{{ taxon }}</h2>
+{% for subtaxon in taxon.subtaxa.all %}
+<h3 style="margin-left:4em;"><a href="{% url taxon_detail subtaxon.id %}">{{ subtaxon }}</a></h3>
+{% endfor %}
+{% if user.is_staff %}
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another taxon into this one...</a>
+    </div>
+    <form action="{% url merge_taxon taxon.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<table>
+    {% display_row taxon "tsn" %}
+    {% display_row taxon "name" %}
+    {% display_chosen_row taxon "rank" %}
+    <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>" }}</td></tr>
+</table>
+
+<h3>Animals determined to be {{ taxon }}</h3>
+{% if taxon.animal_set.count %}
+<table>
+{% for a in taxon.animal_set.all %}
+<tr><td>{% animal_link a %}</td></tr>
+{% endfor %}
+</table>
+{% else %}
+<i>none</i>
+{% endif %}
+
+<h3>Observations of {{ taxon }}</h3>
+{% if taxon.observation_set.count %}
+<table>
+{% for o in taxon.observation_set.all %}
+<tr><td>{% observation_link o %}</td></tr>
+{% endfor %}
+</table>
+{% else %}
+<i>none</i>
+{% endif %}
+
+{% endblock %}
+

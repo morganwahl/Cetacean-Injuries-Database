@@ -1,8 +1,11 @@
-from django.conf.urls.defaults import *
 from django.conf import settings
-from generic_views import direct_to_template
-from views import home, revision_detail, new_case, object_history
+from django.conf.urls.defaults import *
 from django.contrib import admin
+
+from generic_views import direct_to_template
+from views import home, revision_detail, new_case, object_history, import_taxon
+
+from reversion.models import Revision
 
 admin.autodiscover()
 
@@ -24,7 +27,6 @@ urlpatterns = patterns('',
     (r'^$', home, {}, "home")
 )
 
-from reversion.models import Revision
 all_revisions_args = {
     'queryset': Revision.objects.all().order_by('-date_created'),
     'template_object_name': 'rev',
@@ -42,6 +44,8 @@ urlpatterns += patterns('',
     (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
     (r'^revisions/object_history/(?P<content_type_id>\d+)/$', object_history, {}, 'object_history'),
     (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
+    
+    (r'staff_tools/import_taxon$', import_taxon, {}, 'import_taxon'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if
@@ -59,8 +63,8 @@ urlpatterns += patterns("django.views",
 js_info_dict = {
     'packages': ('django.conf',),
 }
-urlpatterns += patterns('',
-    (r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict, 'jsi18n'),
+urlpatterns += patterns('django.views',
+    (r'^jsi18n/$', 'i18n.javascript_catalog', js_info_dict, 'jsi18n'),
 )
 
 from django.contrib import databrowse

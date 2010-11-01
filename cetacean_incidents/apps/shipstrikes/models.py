@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.contacts.models import Contact
@@ -51,6 +52,9 @@ class Shipstrike(Case):
     def get_absolute_url(self):
         return('shipstrike_detail', [str(self.id)])
 
+    def get_edit_url(self):
+        return reverse('edit_shipstrike', args=[self.id])
+
 class ShipstrikeObservation(Observation):
     striking_vessel = models.OneToOneField(
         StrikingVesselInfo,
@@ -61,6 +65,9 @@ class ShipstrikeObservation(Observation):
     @models.permalink
     def get_absolute_url(self):
         return('shipstrikeobservation_detail', [str(self.id)])
+
+    def get_edit_url(self):
+        return reverse('edit_shipstrikeobservation', args=[self.id])
 
 Shipstrike.observation_model = ShipstrikeObservation
 

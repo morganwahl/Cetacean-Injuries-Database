@@ -34,4 +34,4 @@ class CaseManagerTestCase(TestCase):
                 Case.objects.associated_cases(Case.objects.get(id=case_id)),
                 set(Case.objects.filter(id__in=result_ids)),
             )
-
+        

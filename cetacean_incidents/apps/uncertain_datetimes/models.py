@@ -1,6 +1,7 @@
 from calendar import month_name, isleap
 import datetime
 import pytz
+import math
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -85,8 +86,12 @@ class DateTime(models.Model):
             minute = 0
         if second is None:
             second = 0
+            usecond = 0
+        else:
+            usecond = math.fmod(second, 1)
+            second = math.floor(second)
         
-        return datetime.datetime(year, month, day, hour, minute, second, 0, pytz.utc)
+        return datetime.datetime(year, month, day, hour, minute, second, usecond, pytz.utc)
     
     @property
     def latest(self):
@@ -110,17 +115,21 @@ class DateTime(models.Model):
             else:
                 day = MONTH_DAYS[month]
         if hour is None:
-            hour = 23
+            hour = 24 - 1
         if minute is None:
-            minute = 59
+            minute = 60 - 1
         if second is None:
-            second = 59 # not bothering with leap-seconds
+            second = 60 - 1 # not bothering with leap-seconds
+            usecond = 1000000 - 1
+        else:
+            usecond = math.fmod(second, 1)
+            second = math.floor(second)
         
-        result = datetime.datetime(year, month, day, hour, minute, second, 0, pytz.utc)
+        result = datetime.datetime(year, month, day, hour, minute, second, usecond, pytz.utc)
         
         # we actually want the point at the _end_ of the range, so add one
         # microsecond to the result of the above maxing-out of each field
-        result += datetime.timedelta(seconds=1)
+        result += datetime.timedelta(microseconds=1)
         
         return result
 

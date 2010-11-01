@@ -11,11 +11,30 @@ from django.core.urlresolvers import reverse
 
 from models import Animal, Case, YearCaseNumber, Observation
 
+from cetacean_incidents.apps.merge_form.forms import MergeForm
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 class AnimalForm(forms.ModelForm):
+    
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = Animal.determined_taxon.field
+    determined_taxon = TaxonField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    class Meta:
+        model = Animal
+        widgets = {
+            'determined_dead_before': Datepicker,
+        }
+
+# TODO this is the same as the AnimalForm, just with a different superclass
+class AnimalMergeForm(MergeForm):
     
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
@@ -68,6 +87,7 @@ class ObservationForm(forms.ModelForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
+
     observer_on_vessel = forms.BooleanField(
         required= False,
         help_text= "Was the observer on a vessel?"
@@ -128,6 +148,23 @@ class AnimalIDLookupForm(SubmitDetectingForm):
         except Animal.DoesNotExist:
             raise forms.ValidationError("no animal with that ID")
         return animal
+
+class AnimalNMFSIDLookupForm(SubmitDetectingForm):
+    nmfs_id = forms.CharField(
+        help_text= u"look up an animal by the NMFS ID for one of its cases",
+        label= "NMFS case ID",
+    )
+    
+    def clean_nmfs_id(self):
+        data = self.cleaned_data['nmfs_id']
+        animals = Animal.objects.filter(case__nmfs_id__iexact=data)
+        # nmfs_id isn't garanteed to be unique
+        if animals.count() < 1:
+            raise forms.ValidationError("no case has been marked as corresponding to that NMFS case")
+        elif animals.count() > 1:
+            animal_ids = animals.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple animals have cases that correspond to that NMFS case. Their local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
+        return animals[0]
 
 class CaseIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(

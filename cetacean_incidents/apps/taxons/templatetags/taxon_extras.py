@@ -6,6 +6,18 @@ from cetacean_incidents.apps.taxons.models import Taxon
 
 register = template.Library()
 
+# assumes the the django.template.loaders.app_directories.load_template_source 
+# is being used, which is the default.
+@register.inclusion_tag('taxon_link.html')
+def taxon_link(taxon):
+    '''\
+    Returns the link HTML for a taxon.
+    '''
+    
+    return {
+        'taxon': taxon,
+    }
+
 @register.simple_tag
 def taxon_sort_key(taxon, interleaved=False):
     '''\
@@ -13,11 +25,11 @@ def taxon_sort_key(taxon, interleaved=False):
     descending rank, then by name; i.e. a breadth-first traversal of the tree,
     same as the Taxon model's default sort-order. If 'interleaved' is True, will
     sort like a depth-first traversal of the taxon tree, sorted by name within
-    the subtaxons of a taxon. Null taxons (which mean 'unknown taxon') sort
+    the subtaxa of a taxon. Null taxa (which means 'unknown taxon') sort
     before everything else.
     
     Note that these keys aren't guranteed to be stable with the additon of new
-    taxons.
+    taxa.
     '''
     
     if interleaved:
@@ -44,7 +56,7 @@ def _queryset_sort_keys(queryset):
     return keys
 
 def depth_first_sort_key(taxon):
-    # assumes no more than 100 subtaxons of any taxon
+    # assumes no more than 100 subtaxa of any taxon
     
     if taxon is None:
         return '%02d.' % 0
@@ -56,7 +68,7 @@ def depth_first_sort_key(taxon):
     
     # the sortkey will be the supertaxon's sort key with two digits appended
     prefix = depth_first_sort_key(taxon.supertaxon)
-    suffix = _queryset_sort_keys(taxon.supertaxon.subtaxons.all())[taxon]
+    suffix = _queryset_sort_keys(taxon.supertaxon.subtaxa.all())[taxon]
     
     return '%s%02d' % (prefix, suffix)
     

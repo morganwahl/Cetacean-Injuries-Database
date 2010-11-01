@@ -33,23 +33,36 @@
 <table class="bordered sortable">
     <tr>
         {# TODO this is the same table as in case_search, just with two extra columns #}
-        <th class="sorttable_numeric">#</th>
+        <th class="sorttable_nosort"></th>
         <th>case</th>
-        <th>NMFS ID</th>
         <th class="sorttable_nosort">animal</th>
         <th>first observed</th>
-        <th>first reported</th>
+        <th>last observed</th>
+        <th># obs.</th>
         <th class="sorttable_nosort">notes</th>
     </tr>
     {% for ycn in yearcasenumbers %}
     <tr>
-        <td sorttable_customkey="{{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{{ ycn.year }}#{{ ycn.number }}</td>
         {% with ycn.case as case %}
-	    <td>{% case_link case %}</td>
-        <td>{{ case.nmfs_id|default:"<i>none</i>" }}</td>
+        <td>
+            <a href="{{ case.detailed.get_edit_url }}#case">
+                <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
+            </a>
+        </td>
+        <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
+	        {% case_link case %}
+	    </td>
 	    <td>{% animal_link case.animal %}</td>
-	    <td sorttable_customkey="{% datetime_sort_key case.first_observation_date %}">{{ case.first_observation_date }}</td>
-	    <td sorttable_customkey="{% datetime_sort_key case.first_report_date %}">{{ case.first_report_date }}</td>
+	    {# these assume datetimes are sorted from less recent to more recent #}
+	    {% with case.observation_dates as obs_dates %}
+	    {% with obs_dates.0 as first_obs_date %}
+	    <td sorttable_customkey="{% datetime_sort_key first_obs_date %}">{{ first_obs_date }}</td>
+	    {% endwith %}
+	    {% with obs_dates.reverse.0 as last_obs_date %}
+	    <td sorttable_customkey="{% datetime_sort_key last_obs_date %}">{{ last_obs_date }}</td>
+	    {% endwith %}
+        {% endwith %}
+	    <td>{{ case.observation_set.count }}</td>
 	    {% endwith %}
         <td>
             {% if ycn.case.yearcasenumber_set.count > 1 %}

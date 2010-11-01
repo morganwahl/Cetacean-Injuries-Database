@@ -1,16 +1,2 @@
 {% extends "entanglements/change_entanglement_observation.html" %}
 
-{% block observation_title %}{{ observation }} [editing]{% endblock %}
-
-{% block observation_header %}{{ observation }} [editing]{% endblock %}
-
-{% block ids-dl %}
-{{ block.super }}
-<hr>
-{% with observation as o %}
-{% include "incidents/observation_ids_include.html" %}
-{% endwith %}
-{% endblock %}
-
-{% block submit_button %}save changes{% endblock %}
-

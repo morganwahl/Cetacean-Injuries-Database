@@ -18,14 +18,35 @@
 {% endblock %}
 
 {% block content %}
+{{ form.non_field_errors }}
 <form action="" method="post">
     {% csrf_token %}
     <div class="section">
         {% with form.name as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
+        {% with animal.probable_taxon as t %}
+        {% if t %}
+        {% if not animal.determined_taxon or animal.determined_taxon not in t.with_descendants %}
+        <div class="edit-warning">
+            <img src="{% url site-media path="icons/warning.png"%}">
+            Based on observations of this animal, it is probably a <i>{{ t }}</i>.
+            <img src="{% url site-media path="icons/warning.png"%}">
+        </div>
+        {% endif %}
+        {% endif %}
+        {% endwith %}
         {% with form.determined_taxon as f %}
         {% include "labeled_field.html" %}
+        {% endwith %}
+        {% with animal.probable_gender as s %}
+        {% if s and s != animal.determined_gender %}
+        <div class="edit-warning">
+            <img src="{% url site-media path="icons/warning.png"%}">
+            Based on observations of this animal, it is probably {{ animal.get_probable_gender_display }}.
+            <img src="{% url site-media path="icons/warning.png"%}">
+        </div>
+        {% endif %}
         {% endwith %}
         {% with form.determined_gender as f %}
         {% include "labeled_field.html" %}
@@ -36,8 +57,8 @@
         {% with form.necropsy as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-    	<button type="submit">save changes</button>
     </div>
+	<button type="submit">save changes to {{ animal }}</button>
 </form>
 {% endblock %}
 

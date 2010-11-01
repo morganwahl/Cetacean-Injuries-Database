@@ -9,10 +9,13 @@ contacts_args = {
 
 urlpatterns = patterns('cetacean_incidents.generic_views',
     (r'^$', 'object_list', contacts_args, 'all_contacts'),
-    (r'^(?P<object_id>\d+)/$', 'object_detail', contacts_args, 'contact_detail'),
 )
 
 urlpatterns += patterns('',
-    (r'^contacts/create$', views.create_contact, {}, 'create_contact'),
-    (r'^contacts/(\d+)/edit$', views.edit_contact, {}, 'edit_contact'),
+    (r'^(?P<contact_id>\d+)/$', views.contact_detail, {}, 'contact_detail'),
+    (r'^create$', views.create_contact, {}, 'create_contact'),
+    (r'^(\d+)/edit$', views.edit_contact, {}, 'edit_contact'),
+    (r'^(?P<destination_id>\d+)/merge$', views.merge_contact, {}, 'merge_contact'),
+    (r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.merge_contact, {}, 'merge_contact'),
 )
+

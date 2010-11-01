@@ -1,4 +1,6 @@
 from itertools import chain
+from operator import __and__
+
 from django import forms
 from django.forms import fields
 from django.template.loader import render_to_string
@@ -10,87 +12,100 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm 
+from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+from cetacean_incidents.apps.dag.forms import DAGField
 
-from models import Entanglement, EntanglementObservation, GearType, GearOwner
+from models import Entanglement, EntanglementObservation, GearType, GearOwner, BodyLocation, GearBodyLocation
 
-class GearTypeWidget(forms.widgets.CheckboxSelectMultiple):
+class InlineRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
+    def render(self):
+        """Outputs a <ul> for this set of radio fields."""
+        return mark_safe(
+            u'<div>\n%s\n</div>' % u'\n'.join(
+                [u'<span>%s</span>' % force_unicode(w) for w in self]
+            )
+        )
+
+class GearBodyLocationForm(forms.ModelForm):
     '''\
-    A widget that shows a javascripty heirarchy of checkboxes for GearTypes.
+    Form to manipulate GearBodyLocation relations. The location
+    field is hidden, and its value should be passed to
+    __init__ (either in 'intial' or via 'instance').
     '''
     
-    # a modified version of django.forms.widgets.CheckboxSelectMultiple
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None: value = []
-        print repr(value)
-        has_id = attrs and 'id' in attrs
-        final_attrs = self.build_attrs(attrs, name=name)
-        # Normalize to strings
-        str_values = set([force_unicode(v) for v in value])
+    def __init__(self, *args, **kwargs):
+        super(GearBodyLocationForm, self).__init__(*args, **kwargs)
+        
+        if not 'location' in self.initial:
+            raise KeyError("location wasn't passed to a GearBodyLocationForm")        
+        # transmute the one visible field
+        f = self.fields['gear_seen']
+        loc = BodyLocation.objects.get(pk=self.initial['location'])
+        f.label = loc.name
+        f.help_text = loc.definition
+        
+        # if we're editing an exiting relationship
+        if not self.instance.pk is None:
+            f.initial = {
+                True: 'y',
+                False: 'n',
+            }[self.instance.gear_seen_here]
+    
+    def save(self, commit=True):
+        inst = super(GearBodyLocationForm, self).save(commit=False)
 
-        choices_iter = chain(self.choices, choices)
+        if self.cleaned_data['gear_seen'] == 'u':
+            if commit:
+                inst.delete()
+                def save_m2m():
+                    pass
+                self.save_m2m = save_m2m
+                return
+            else:
+                def save_m2m():
+                    self.instance.delete()
+                self.save_m2m = save_m2m
+        else:
+            inst.gear_seen_here = {
+                'y': True,
+                'n': False,
+                'u': None,
+            }[self.cleaned_data['gear_seen']]
         
-        # traverse all GearTypes in a tree-fashion. Note that geartypes with
-        # multiple supertypes will appear multiple times.
-        choice_map = {}
-        for i, choice in enumerate(choices_iter):
-            # TODO don't assume choice[0] is an id for a GearType?
-            geartype = GearType.objects.get(id=choice[0])
-            geartype.order = i
-            # TODO make use of geartype.order in the ordering
-            choice_map[geartype] = choice
+        if commit:
+            inst.save()
+            self.save_m2m()
         
-        def make_checkbox_list(geartypes, id_suffix=u'', final_attrs=final_attrs):
-            checkboxes = []
-            
-            this_list = []
-            for i, geartype in enumerate(geartypes):
-                this_box = []
-                if geartype in choice_map.keys():
-                    (option_value, option_label) = choice_map[geartype]
-                    # If an ID attribute was given, add a numeric index as a 
-                    # suffix, so that the checkboxes don't all have the same ID 
-                    # attribute.
-                    if has_id:
-                        final_attrs = dict(final_attrs, id='%s_%s_%s' % (attrs['id'], id_suffix, i))
-                        label_for = u' for="%s"' % final_attrs['id']
-                    else:
-                        label_for = ''
-                    
-                    cb = forms.widgets.CheckboxInput(final_attrs, check_test=lambda value: value in str_values)
-                    option_value = force_unicode(option_value)
-                    rendered_cb = cb.render(name, option_value)
-                    option_label = conditional_escape(force_unicode(option_label))
-                    this_box.append(u'<label%s>%s %s</label>' % (label_for, rendered_cb, option_label))
-                    
-                sub_boxes = make_checkbox_list(geartype.subtypes.all(), id_suffix=i)
-                if this_box or sub_boxes:
-                    this_list.append(u'<li>%s' % '\n'.join(this_box))
-                    this_list.append(u'%s' % sub_boxes)
-                    this_list.append(u'</li>')
-            
-            if set(geartypes) & set(choice_map.keys()):
-                checkboxes.append(u'<ul>')
-                checkboxes.append(u'\n'.join(this_list))
-                checkboxes.append(u'</ul>')
-            
-            return u'\n'.join(checkboxes)
-            
-        return mark_safe(make_checkbox_list(GearType.roots.all()))
+        return inst
     
+    gear_seen = forms.ChoiceField(
+        choices=(
+            ('y', 'yes'),
+            ('n', 'no'),
+            ('u', 'unknown'),
+        ),
+        initial= 'u',
+        widget= forms.RadioSelect(renderer=InlineRadioFieldRenderer),
+    )
+    
+    class Meta:
+        model = GearBodyLocation
+        exclude = ('gear_seen_here', 'observation')
+        widgets = {
+            'location': forms.HiddenInput,
+        }
+
 class EntanglementForm(CaseForm):
-    
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
     # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_types')
-    gear_types = forms.ModelMultipleChoiceField(
+    gear_types = DAGField(
         queryset= GearType.objects.all(),
         required= _f.blank != True,
         help_text= 'selecting a type implies the ones above it in the hierarchy',
         label= _f.verbose_name.capitalize(),
-        widget= GearTypeWidget
     )
     
     class Meta(CaseForm.Meta):
@@ -107,9 +122,74 @@ class AddEntanglementForm(EntanglementForm):
         exclude = ('gear_owner_info', 'animal')
 
 class EntanglementObservationForm(ObservationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EntanglementObservationForm, self).__init__(*args, **kwargs)
+
+        self.gear_body_location_forms = []
+        for loc in BodyLocation.objects.all():
+            subform_kwargs = {}
+
+            initial_data = {}
+            initial_data['location'] = loc.pk
+            obs_id = self.initial.get('id', None)
+            if not obs_id is None:
+                initial_data['observation'] = obs_id
+                instance = GearBodyLocation.objects.filter(observation=obs_id, location=loc.pk)
+                if instance.exists():
+                    instance = instance[0]
+                    subform_kwargs['instance'] = instance
+            subform_kwargs['initial'] = initial_data
+
+            if self.prefix:
+                subform_kwargs['prefix'] = self.prefix + '-' + loc.name
+            else:
+                subform_kwargs['prefix'] = loc.name
+
+            if self.data:
+                subform_kwargs['data'] = self.data
+
+            self.gear_body_location_forms.append(GearBodyLocationForm(**subform_kwargs))
+
+    def is_valid(self):
+        return reduce(
+            __and__,
+            map(
+                lambda form: form.is_valid(),
+                [super(EntanglementObservationForm, self)] + self.gear_body_location_forms,
+            ),
+        )
+
+    def save(self, commit=True):
+        result = super(EntanglementObservationForm, self).save(commit)
+        if commit:
+            for gblf in self.gear_body_location_forms:
+                gbl = gblf.save(commit=False)
+                gbl.observation = result
+                gbl.save()
+                gblf.save_m2m()
+
+        # save_m2m() is added by save(), and thus isn't simply overrideable
+        else:
+            old_save_m2m = self.save_m2m
+            def new_save_m2m():
+                old_save_m2m()
+                for gblf in self.gear_body_location_forms:
+                    gbl = gblf.save(commit=False)
+                    gbl.observation = self.instance
+                    gbl.save()
+                    gblf.save_m2m()
+            self.save_m2m = new_save_m2m
+        
+        return result
     
     class Meta(ObservationForm.Meta):
         model = EntanglementObservation
+        # TODO how to access superclasses attrs here?
+        exclude = getattr(ObservationForm.Meta, 'exclude', tuple())
+        # form submission fails if we even include this m2m field (since it 
+        # uses in intermediary model)
+        exclude += ('gear_body_location',)
 
 class GearOwnerForm(forms.ModelForm):
     

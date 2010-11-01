@@ -2,7 +2,8 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
-add 'save changes' button to title in tabbed-editing pages
+case lists, add 'last observed'
+'taxons' should be taxa
 put gear-analysis in seperate tabs
 add permissions for SI&M editors
 add 'incident_on_or_after_date' to cases
@@ -56,6 +57,7 @@ administrative page for cleaning up DateTime/Location objects with no info.
 case-list sorts by case (most recent first)
 make subclass the DateTimeField instead of using the DateTime app
 google-charts venn-diagram for gear-types
+API change in DAGEdge: change subtype/supertype to generic DAG names
 
 gitweb hosting at NOAA
 directions for successor

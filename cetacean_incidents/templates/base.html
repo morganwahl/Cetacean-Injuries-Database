@@ -81,7 +81,16 @@
                         &#x2022;
                         <a href="{% url cases_this_year %}">this year</a>
                     </td>
-                    <td><a href="{% url recent_revisions %}">recent revisions</a></td>
+                    {% if user.is_staff %}
+                    <td>
+                        <div class="category">
+                            administrative tools
+                        </div>
+                        <a class="action" href="{% url import_taxon %}">import taxa</a>
+                        &#x2022;
+                        <a href="{% url recent_revisions %}">recent revisions</a>
+                    </td>
+                    {% endif %}
                     {% comment %}
                     <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
                     <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>

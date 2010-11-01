@@ -4,18 +4,39 @@
 {% load contact_extras %}
 {% load uncertain_datetime_extras %}
 {% load generic_field_display %}
+{% load taxon_extras %}
 
 {% block head %}
 {{ block.super }}
 <script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{{ media }}
 {% endblock %}
 
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>Animal {{ animal }}</h2>
-<div><a href="{% url edit_animal animal.id %}">edit</a></div>
+<h2>{{ animal }}</h2>
+<div><a href="{% url edit_animal animal.id %}">edit this animal</a></div>
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another animal into this one...</a>
+    </div>
+    <form action="{% url animal_merge animal.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+        </div>
+    </form>
+</div>
 {% endblock %}
 
 {% block ids-dl %}
@@ -29,17 +50,17 @@
     <h3>Info:</h3>
     <table>
         {% display_row animal 'name' %}
-        <tr>
+        <tr class="field">
             <th style="text-align:right;">taxon</th>
             <td>
                 {% if animal.determined_taxon %}
-                {{ animal.determined_taxon }} ({{ animal.determined_taxon.common_names }})
+                {% taxon_link animal.determined_taxon %} ({{ animal.determined_taxon.common_names }})
                 {% else %}
-                <i>undetermined</i>{% if animal.probable_taxon %} (probably <i>{{ animal.probable_taxon }}</i>){% endif %}
+                <i>undetermined{% if animal.probable_taxon %} (probably {% taxon_link animal.probable_taxon %})</i>{% endif %}
                 {% endif %}
             </td>
         </tr>
-        <tr>
+        <tr class="field">
             <th style="text-align:right;">gender</th>
             <td>
                 {% if animal.determined_gender %}
@@ -61,7 +82,12 @@
     {% if animal.case_set.count %}
     <ul>
         {% for case in animal.case_set.all %}
-        <li>{% case_link case %}</li>
+        <li>
+            <a href="{{ case.detailed.get_edit_url }}#case">
+                <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
+            </a>
+            {% case_link case %}
+        </li>
         {% endfor %}
     </ul>
     {% else %}
@@ -80,6 +106,7 @@
             <tr>
                 <th>case</th>
                 <td class="sorttable_nosort"></td>
+                <td class="sorttable_nosort"></td>
                 <th>observer</th>
                 <th>date observed</th>
                 <th>reporter</th>
@@ -90,6 +117,7 @@
         {% for o in animal.observation_set.all %}
         <tr>
             <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
+            <td><a href="{{ o.detailed.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
             <td>{% observation_link o %}</td>
             <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>

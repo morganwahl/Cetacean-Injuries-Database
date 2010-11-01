@@ -169,4 +169,4 @@ class NiceLocationForm(LocationForm):
         widgets = {
             'coordinates': forms.HiddenInput,
         }
-    
+

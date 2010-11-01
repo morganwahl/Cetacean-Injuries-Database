@@ -12,7 +12,7 @@
     {% if v.name or v.flag %}
     {% display_boatname_row v %}
     {% endif %}
-    <tr>
+    <tr class="field">
         <th>contact</th>
         <td>
         {% if v.contact %}
@@ -23,7 +23,7 @@
         </td>
     </tr>
     {% if v.description %}
-    <tr><th>description</th><td>{{ v.description }}</td></tr>
+    <tr class="field"><th>description</th><td>{{ v.description }}</td></tr>
     {% endif %}
 {% endblock %}
 </table>

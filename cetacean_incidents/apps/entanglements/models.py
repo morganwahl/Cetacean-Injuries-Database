@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
 from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
@@ -136,6 +137,9 @@ class Entanglement(Case):
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])
 
+    def get_edit_url(self):
+        return reverse('edit_entanglement', args=[self.id])
+
 class EntanglementObservation(Observation):
     anchored = models.NullBooleanField(
         blank= True,
@@ -146,6 +150,13 @@ class EntanglementObservation(Observation):
         blank= True,
         help_text= "describe physical characteristics of gear",
     )
+    gear_body_location = models.ManyToManyField(
+        'BodyLocation',
+        through= 'GearBodyLocation',
+        blank= True,
+        null= True,
+        help_text= "where on the animal's body was gear seen or not seen"
+    )
     entanglement_details = models.TextField(
         blank= True,
         help_text= "details of how the animal was entangled",
@@ -155,7 +166,6 @@ class EntanglementObservation(Observation):
         null= True,
         help_text= "was gear removed from the animal for later analysis?"
     )
-    # None, Gear shed, Partial, Complete, Monitor 
     disentanglement_outcome = models.CharField(
         max_length= 4,
         choices= (
@@ -172,9 +182,54 @@ class EntanglementObservation(Observation):
     @models.permalink
     def get_absolute_url(self):
         return('entanglementobservation_detail', [str(self.id)])
+    
+    def get_edit_url(self):
+        return reverse('edit_entanglementobservation', args=[self.id])
 
 Entanglement.observation_model = EntanglementObservation
 
 # TODO how to inherit signal handlers?
 models.signals.post_save.connect(_observation_post_save, sender=EntanglementObservation)
+
+class BodyLocation(models.Model):
+    '''\
+    Model for customizable/extensible classification of location on/in an
+    animal's body.
+    '''
+    
+    # future developement: add a reference to a Taxon field (or fields) whose
+    # animals this location is defined for
+    
+    name = models.CharField(
+        max_length= 512,
+        unique=True,
+    )
+    
+    definition = models.TextField(
+        blank= True,
+        null= True,
+    )
+    
+    ordering = models.DecimalField(
+        max_digits= 5,
+        decimal_places = 5,
+        default = '.5',
+    )
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('ordering', 'name')
+
+class GearBodyLocation(models.Model):
+    observation = models.ForeignKey(EntanglementObservation)
+    location = models.ForeignKey(BodyLocation)
+    gear_seen_here = models.BooleanField()
+    
+    def __unicode__(self):
+        return "%s of %s" % (self.observation, self.location)
+    
+    class Meta:
+        unique_together = ('observation', 'location')
 

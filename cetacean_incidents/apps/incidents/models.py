@@ -3,13 +3,17 @@
 import datetime
 import pytz
 
+from django.core.urlresolvers import reverse
+from django.core.exceptions import ValidationError
 from django.db import models
+
 from cetacean_incidents.apps.contacts.models import Contact, Organization
 from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
+
 from utils import probable_gender
 
 GENDERS = (
@@ -20,7 +24,8 @@ GENDERS = (
 class Animal(models.Model):
     name = models.CharField(
         blank= True,
-        null= True,
+        unique= False, # Names aren't assigned by us, so leave open the
+                       # posibility for duplicates
         max_length= 255,
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
@@ -68,9 +73,10 @@ class Animal(models.Model):
     def probable_gender(self):
         return probable_gender(self.observation_set)
     def get_probable_gender_display(self):
-        if self.probable_gender is None:
+        gender = self.probable_gender()
+        if gender is None:
             return None
-        return [g[1] for g in GENDERS if g[0] == self.probable_gender][0]
+        return [g[1] for g in GENDERS if g[0] == gender][0]
     determined_gender = models.CharField(
         max_length= 1,
         blank= True,
@@ -104,17 +110,28 @@ class Animal(models.Model):
         return None
     
     def clean(self):
+        if not self.name is None and self.name != '':
+            # check that an existing animal doesn't already have this name
+            animals = Animal.objects.filter(name=self.name)
+            if self.id:
+                animals = animals.exclude(id=self.id)
+            if animals.count() > 0:
+                raise ValidationError("name '%s' is already in use by animal '%s'" % (self.name, unicode(animals[0])))
+
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
 
     def __unicode__(self):
         if self.name:
-            return "%06d %s" % (self.id, self.name)
-        return "%06d" % self.id
+            return self.name
+        return "unnamed animal #%06d" % self.id
     
     @models.permalink
     def get_absolute_url(self):
         return ('animal_detail', [str(self.id)]) 
+    
+    class Meta:
+        ordering = ('name', 'id')
 
 class CaseManager(models.Manager):
     def same_timeframe(self, case):
@@ -181,9 +198,9 @@ class YearCaseNumber(models.Model):
     year-case-yearly_number combinations.
     '''
     
-    year = models.IntegerField()
+    year = models.IntegerField(db_index= True)
     case = models.ForeignKey('Case')
-    number = models.IntegerField()
+    number = models.IntegerField(db_index= True)
     
     def __unicode__(self):
         return "%04d #%03d <%s>" % (
@@ -206,14 +223,31 @@ class CaseMeta(models.Model.__metaclass__):
     # For now though, our inheritance DAG is just a 2-level tree with Case as
     # the root...
     def __new__(self, name, bases, dict):
-        the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+    
         if self.case_class is None and name == 'Case':
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
             self.case_class = the_class
-            self.case_class._subclasses = set()
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            self.case_class.detailed_classes = {}
+
         elif self.case_class in bases:
-            self.case_class._subclasses.add(the_class)
-            self.case_class.detailed_classes = frozenset(self.case_class._subclasses)
+            # modify the save method to set the case_type field
+
+            if 'save' in dict.keys():
+                def save_wrapper(old_save):
+                    def new_save(inst, *args, **kwargs):
+                        isnt.case_type = name
+                        return old_save(inst, *args, **kwargs)
+                    return new_save
+                dict['save'] = save_wrapper(dict['save'])
+            else:
+                def new_save(inst, *args, **kwargs):
+                    inst.case_type = name
+                    return self.case_class.save(inst, *args, **kwargs)
+                dict['save'] = new_save
+
+            the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+            self.case_class.detailed_classes[name] = the_class
+
         return the_class
 
 class Case(models.Model):
@@ -225,8 +259,9 @@ class Case(models.Model):
     
     nmfs_id = models.CharField(
         max_length= 255,
+        unique= False, # in case a NMFS case corresponds to multiple cases in
+                       # our database
         blank= True,
-        null= True,
         verbose_name= "NMFS case number",
     )
     
@@ -424,28 +459,41 @@ class Case(models.Model):
     names_set = property(_get_names_set,_put_names_set)
 
     def current_name(self):
-        # Cases with no dates yet don't get names
-        date = self.date()
-        if date is None:
+        
+        self = self.detailed_queryset().select_related('current_yearnumber')[0]
+        obs = Observation.objects.filter(case__id=self.id)
+        # Cases with no obs yet don't get names
+        if not obs.exists():
             return None
+
+        date = self.date(obs)
         s = {}
-        s['year'] = unicode(date.year)
-        s['yearly_number'] = self.yearly_number
-        if self.yearly_number is None:
-            s['yearly_number'] = -1
+        
+        # if there's a NMFS ID use that
+        if self.nmfs_id:
+            s['id'] = self.nmfs_id
+        else:
+        # otherwise use our YearCaseNumber IDs
+            s['year'] = unicode(self.current_yearnumber.year)
+            s['yearly_number'] = self.current_yearnumber.number
+            if self.yearly_number is None:
+                s['yearly_number'] = -1
+            
+            s['id'] = "%(year)s#%(yearly_number)d" % s
+        
         # trim off anything beyond a day
         s['date'] = "%04d" % date.year
         if date.month:
             s['date'] += '-%02d' % date.month
             if date.day:
                 s['date'] += '-%02d' % date.day
-        taxon = self.probable_taxon()
+        taxon = probable_taxon(obs)
         if not taxon is None:
             s['taxon'] = unicode(taxon)
         else:
             s['taxon'] = u'Unknown taxon'
-        s['type'] = self.case_type
-        name = u"%(year)s#%(yearly_number)d (%(date)s) %(type)s of %(taxon)s" % s
+        s['type'] = self._meta.verbose_name.capitalize()
+        name = u"%(id)s (%(date)s) %(type)s of %(taxon)s" % s
 
         # add the current_name to the names set, if necessary
         if not name in self.names_set:
@@ -456,18 +504,25 @@ class Case(models.Model):
     
     def past_names_set(self):
         return self.names_set - set([self.current_name()])
-
-    def first_observation_date(self):
-        if not self.observation_set.count():
-            return None
-        return self.observation_set.only('observation_datetime').order_by('observation_datetime')[0].observation_datetime
-
-    def first_report_date(self):
-        if not self.observation_set.count():
-            return None
-        return self.observation_set.only('report_datetime').order_by('report_datetime')[0].report_datetime
     
-    date = first_observation_date
+    def observation_dates(self):
+        return DateTime.objects.filter(observation_date_for__case=self)
+    
+    def date(self, obs=None):
+        '''\
+        obs is a queryset of observations. it defaults to this case's
+        observations.
+        '''
+        if obs is None:
+            obs_dates = self.observation_dates()
+            if not obs_dates.exists():
+                return None
+            # assumes DateTime querysets are in chronological order by default
+            return obs_dates[0]
+        else:
+            if not obs.exists():
+                return None
+            return obs.order_by('observation_datetime')[0].observation_datetime
     
     def earliest_datetime(self):
         if not self.observation_set.count():
@@ -489,8 +544,17 @@ class Case(models.Model):
     
     def associated_cases(self):
         return Case.objects.associated_cases(self)
-
+    
     def clean(self):
+        if not self.nmfs_id is None and self.nmfs_id != '':
+            # TODO do they have to be unique or not?
+            # check that an existing case doesn't already have this nmfs_id
+            cases = Case.objects.filter(nmfs_id=self.nmfs_id)
+            if self.id:
+                cases = cases.exclude(id=self.id)
+            if cases.count() > 0:
+                raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
+        
         date = self.date()
         if date:
             def _next_number_in_year(year):
@@ -522,21 +586,34 @@ class Case(models.Model):
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-
+    
+    def detailed_queryset(self):
+        '''\
+        Returns a Case-subclass queryset that contains only the case returned by
+        detailed().
+        '''
+        return self.detailed_classes[self.case_type].objects.filter(id=self.id)
+    
     @property
     def detailed(self):
         '''Get the more specific instance of this Case, if any.'''
-        for clas in self._subclasses:
-            subcases = clas.objects.filter(case_ptr= self.id)
-            if subcases.count():
-                return subcases.all()[0]
-        return self
+        return self.detailed_classes[self.case_type].objects.get(id=self.id)
 
     @property
     def detailed_class_name(self):
-        return self.detailed.__class__.__name__
+        return self.case_type
 
-    case_type = detailed_class_name
+    case_type = models.CharField(
+        max_length= 512,
+        editable= False,
+        null= False,
+        help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
+    )
+    
+    def save(self, *args, **kwargs):
+        if not self.case_type:
+            raise NotImplementedError("Can't save generic cases!")
+        super(Case, self).save(*args, **kwargs)
     
     def probable_taxon(self):
         return probable_taxon(self.observation_set)
@@ -545,18 +622,22 @@ class Case(models.Model):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        current_name = self.detailed.current_name()
+        current_name = self.current_name()
         if current_name is None:
+            self = self.detailed
             if self.id:
-                return u"%s (%i)" % (self.detailed_class_name, self.id)
+                return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:
-                return u"<new case>"
+                return u"<new %s>" % (self._meta.verbose_name,)
         return current_name
 
     @models.permalink
     def get_absolute_url(self):
         return ('case_detail', [str(self.id)]) 
     
+    def get_edit_url(self):
+        return reverse('edit_case', args=[self.id])
+
     objects = CaseManager()
 
     class Meta:
@@ -726,17 +807,19 @@ class Observation(models.Model):
         verbose_name= "was a tag put on the animal?",
     )
     
-    # TODO is this needed? surely a wound description would suffice...
+    # note that wounded is for injuries, 'wound_description' is for maladies in
+    # general
     wounded = models.NullBooleanField(
         blank= True,
         null= True,
-        default= True,
+        default= None,
         help_text= "were there any wounds? No means none were observered, Yes means they were, Unknown means we don't know whether any were observed or not.",
         verbose_name= "wounds observed?",
     )
     wound_description = models.TextField(
         blank= True,
-        help_text= "describe wounds, noting severity and location on the animal.",
+        verbose_name= 'body condition and wounds description',
+        help_text= "Note the general condition of the animal: is it emaciated, robust, where are there visible parasites, etc. Describe wounds, noting severity and location on the animal.",
     )
     
     narrative = models.TextField(
@@ -753,6 +836,9 @@ class Observation(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('observation_detail', [str(self.id)]) 
+
+    def get_edit_url(self):
+        return reverse('edit_observation', args=[self.id])
 
     def __unicode__(self):
         ret = 'observation '

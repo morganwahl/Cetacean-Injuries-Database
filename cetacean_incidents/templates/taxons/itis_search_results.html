@@ -1,0 +1,12 @@
+{% for taxon in results %}
+<div class="taxon">
+    <div class="taxon_name">{{ taxon }}</div>
+    <div class="taxon_id" style="display:block;">TSN: {{ taxon.tsn }}</div>
+    <div class="common_names">{{ taxon.common_names }}</div>
+    {% if taxon.id %}<img src="{{ MEDIA_URL }}icons/current.png" title="there is already a taxon with this TSN in the database"> already imported{% else %}<a href="{% url taxon_import_tsn taxon.tsn %}">
+<img src="{{ MEDIA_URL }}icons/add.png" title="there is no taxon with this TSN already in the database">
+        import this taxon{% endif %}
+    </a>
+</div>
+{% endfor %}
+

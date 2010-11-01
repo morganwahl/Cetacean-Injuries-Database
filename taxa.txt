@@ -1,0 +1,145 @@
+from Entanglement Summary Sample.XLS
+
+right
+sperm
+hump
+fin
+minke
+unknown
+
+from DRAFT NOV09 2008 Entanglement and Shipstrike.doc
+
+right whale
+humpback whale
+finback whale
+minke whale
+sei whale
+bryde's spp.
+unknown
+fin/sei
+
+from figa db fields.xls
+
+right
+humpback
+fin
+minke
+blue
+sperm
+brydes
+
+from Disentanglement.mdb
+Basking shark
+Blue
+Finback
+Harbor seal
+Humpback
+Kogia
+Leatherback turtle
+Manatee
+Minke
+Pilot whale
+Right
+Sei
+Sperm
+Animal
+Cetacean
+Mysticete
+Odontocete
+pinniped
+Turtle
+
+from 2010-10-19 database
+observations:
+1   Cetacea cetaceans
+6   M. novaeangliae humpback
+12  E. glacialis    right
+14  Balaenoptera    rorquals
+15  B. physalus     finback
+16  B. acutorostrata    minke
+
+animals:
+1
+6
+12
+14
+15
+16
+
+all together:
+
+cetacean
+180403  Cetacea
+
+right
+180533  Balaena mysticetus
+    black right whale
+    Bowhead
+    bowhead whale
+
+180537  Eubalaena glacialis
+    black right whale
+    North Atlantic Right Whale
+    Northern Right Whale
+
+sperm
+180492  Kogia sima
+    Dwarf Sperm Whale
+
+180491  Kogia breviceps
+    Pygmy Sperm Whale
+
+180488  Physeter macrocephalus
+    Sperm Whale
+
+humpback
+180530  Megaptera novaeangliae
+
+finback
+180527  Balaenoptera physalus
+    Fin Whale
+    finback whale
+
+612629  Balaenoptera physalus physalus
+    Northern Fin Whale
+
+minke
+180524  Balaenoptera acutorostrata
+    Common Minke Whale
+    Minke Whale
+    northern minke whale
+
+sei
+180526  Balaenoptera borealis
+    Sei Whale
+
+612601  Balaenoptera borealis borealis
+    Northern Sei Whale
+
+bryde's spp.
+612597  Balaenoptera brydei
+    Bryde's whale
+
+fin/sei, rorquals
+180523  Balaenoptera
+    baleen whales
+    finback whales
+    rorquals
+
+blue
+180528  Balaenoptera musculus
+    Blue Whale
+
+612603  Balaenoptera musculus musculus
+    Northern Blue Whale
+
+612606  Balaenoptera musculus intermedia
+    Southern Blue Whale
+
+pilot
+612614  
+180466
+
+
+
+

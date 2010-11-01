@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block header %}<h2>import ITIS taxon TSN:{{ tsn }}</h2>{% endblock %}
+
+{% block content %}
+<div>
+{% for taxon in taxa %}
+<div class="taxon" style="padding-left: {{ taxon.level }}em;">
+    {% if taxon.exists %}<img title="this taxon has already been imported" src="{{ MEDIA_URL }}icons/current.png">{% else %}<img title="this taxon will be imported" src="{{ MEDIA_URL}}icons/add.png">{% endif %}<span class="taxon_name">{{ taxon.name }} {{ taxon.itis_rank|lower }}</span>
+</div>
+{% endfor %}
+</div>
+{% if to_add %}
+<form action="" method="post">
+    {% csrf_token %}
+    <input name="taxa" type="hidden" value="{{ to_add|join:"," }}">
+    <button type="submit">add these taxa</button>
+</form>
+{% else %}
+<p>
+    <i>all these taxa are in the database</i>
+</p>
+{% endif %}
+{% endblock %}

@@ -45,15 +45,15 @@ class TaxonManagerTestCase(TestCase):
     def test_descendants(self):
         self.assertEqual(Taxon.objects.descendants(self.humans), tuple())
         self.assertEqual(Taxon.objects.descendants(self.homo), (self.humans,))
-        orangs = tuple(self.orang.subtaxons.all())
-        orangs += tuple(orangs[0].subtaxons.all())
+        orangs = tuple(self.orang.subtaxa.all())
+        orangs += tuple(orangs[0].subtaxa.all())
         self.assertEqual(Taxon.objects.descendants(self.orang), orangs)
     
     def test_with_descendants(self):
         self.assertEqual(Taxon.objects.with_descendants(self.humans), (self.humans,))
         self.assertEqual(Taxon.objects.with_descendants(self.homo), (self.homo, self.humans))
         orangs = (self.orang,)
-        orangs += tuple(self.orang.subtaxons.all())
-        orangs += tuple(orangs[1].subtaxons.all())
+        orangs += tuple(self.orang.subtaxa.all())
+        orangs += tuple(orangs[1].subtaxa.all())
         self.assertEqual(Taxon.objects.with_descendants(self.orang), orangs)
 

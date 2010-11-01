@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load taxon_extras %}
+
+{% block title %}{{ block.super}}: {{ taxa_name }}{% endblock %}
+
+{% block header %}<h2>{{ taxa_name }}</h2>{% endblock %}
+
+{% block content %}
+<ul>
+    {% for taxon in taxa %}
+    <li>
+        {% taxon_link taxon %}
+        {% if taxon.subtaxa.count %}
+        <a href="{% url taxon_tree taxon.id %}">+</a>
+        <ul>
+            {% for subtaxon in taxon.subtaxa.all %}
+            <li>
+                {% taxon_link subtaxon %}
+                {% if subtaxon.subtaxa.count %}
+                <a href="{% url taxon_tree subtaxon.id %}">...</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}
+

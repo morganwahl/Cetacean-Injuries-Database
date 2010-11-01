@@ -9,6 +9,7 @@ from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
@@ -19,16 +20,19 @@ from reversion.models import Revision, Version
 
 from forms import AnimalChoiceForm, CaseTypeForm
 
-from cetacean_incidents.apps.incidents.models import Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
+from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
+
+from cetacean_incidents.apps.taxons.views import import_search as unsecured_import_taxon
 
 @login_required
 def home(request):
     form_classes = {
         'animal_lookup_id': AnimalIDLookupForm,
+        'animal_lookup_nmfs': AnimalNMFSIDLookupForm,
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
         'case_lookup_nmfs': CaseNMFSIDLookupForm,
@@ -47,6 +51,10 @@ def home(request):
         if 'animal_lookup_id-submitted' in request.GET:
             if forms['animal_lookup_id'].is_valid():
                 animal = forms['animal_lookup_id'].cleaned_data['local_id']
+                return redirect(animal)
+        if 'animal_lookup_nmfs-submitted' in request.GET:
+            if forms['animal_lookup_nmfs'].is_valid():
+                animal = forms['animal_lookup_nmfs'].cleaned_data['nmfs_id']
                 return redirect(animal)
         if 'case_lookup_id-submitted' in request.GET:
             if forms['case_lookup_id'].is_valid():
@@ -69,6 +77,10 @@ def home(request):
     return render_to_response(
         'home.html',
         {
+            # pass in some big querysets for database stats
+            'animals': Animal.objects.all(),
+            'cases': Case.objects.all(),
+            'observations': Observation.objects.all(),
             'forms': forms,
             'media': reduce(lambda m, f: m + f.media, forms.values(), template_media),
         },
@@ -144,6 +156,7 @@ def html_diff(old, new):
     else:
         return "<i>%s -> %s</i>" % map(unicode, (old.__class__, new.__class__))
 
+@login_required
 def revision_detail(request, rev_id):
     
     rev = Revision.objects.get(id=rev_id)
@@ -345,3 +358,7 @@ def new_case(request, initial_animal_id=None):
         context_instance= RequestContext(request),
     )
 
+@user_passes_test(lambda u: u.is_staff)
+def import_taxon(request):
+    
+    return unsecured_import_taxon(request)

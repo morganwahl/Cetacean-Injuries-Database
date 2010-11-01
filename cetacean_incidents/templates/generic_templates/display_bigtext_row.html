@@ -1,4 +1,4 @@
 {% extends "generic_templates/display_row.html" %}
 
-{% block row %}<td colspan="2"><span class="fieldname">{{ label }}</span><div style="margin-left:2em;">{{ value|default:"<i>nothing</i>"|linebreaks }}</div></td>{% endblock %}
+{% block row %}<td colspan="2"><div class="fieldname" style="text-align:center;">{{ label }}</div><div>{{ value|default:"<i>nothing</i>"|linebreaks }}</div></td>{% endblock %}
 
