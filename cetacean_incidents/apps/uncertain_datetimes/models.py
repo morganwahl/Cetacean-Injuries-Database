@@ -2,9 +2,98 @@ from calendar import month_name, isleap
 import datetime
 import pytz
 import math
+import re
 
 from django.db import models
 from django.core.exceptions import ValidationError
+
+class UncertainDateTime(object):
+    """Class similiar to a python datetime, except the individual fields can be
+    None (to indicate 'unknown')"""
+    
+    def __init__(self, year=None, month=None, day=None, hour=None, minute=None, second=None, microsecond=None):
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+        self.second = second
+        self.microsecond = microsecond
+    
+class UncertainDateTimeField(models.Field):
+    
+    description = """a DateTime whose individual fields (year, month, day, etc)
+    may be unknown"""
+    
+    __metaclass__ = models.SubfieldBase
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = len('YYYYMMDDHHMMSSuSSSSS')
+        super(UncertainDateTimeField, self).__init__(*args, **kwargs)
+    
+    def to_python(self, value):
+        if value is None:
+            return None
+        
+        if isinstance(value, UncertainDateTime):
+            return value
+        
+        if not isinstance(value, basestring):
+            raise TypeError("UncertainDateTimeField can't hold type %s" % type(value))
+        
+        p = re.compile(r'(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})(.{6})')
+        args = p.search(value).groups()
+
+        blank_re = re.compile(r'^ +$')
+        def string_converter(val):
+            if blank_re.search(val):
+                return None
+            return int(val)
+        args = map(string_converter, args)
+
+        return UncertainDateTime(*args)
+    
+    def get_prep_value(self, value):
+        
+        if value is None:
+            return None
+        
+        parts = []
+        for fieldname, width in (
+            (       'year', 4),
+            (      'month', 2),
+            (        'day', 2),
+            (       'hour', 2),
+            (     'minute', 2),
+            (     'second', 2),
+            ('microsecond', 6),
+        ):
+            val = getattr(value, fieldname)
+            if val is None:
+                parts.append(' ' * width) 
+            else:
+                parts.append(('%0' + str(width) + 'd') % val)
+        
+        return ''.join(parts)
+
+    # django lookup types:
+    # exact, iexact, contains, icontains, gt, gte, lt, lte, in, startswith,
+    # istartswith, endswith, iendswith, range, year, month, day, isnull, search,
+    # regex, iregex
+    def get_prep_lookup(self, lookup_type, value):
+        if lookup_type == 'exact':
+            return self.get_prep_value(value)
+        elif lookup_type == 'in':
+            return [self.get_prep_value(v) for v in value]
+        else:
+            raise TypeError('Lookup type %r not supported.' % lookup_type)
+
+    def get_internal_type(self):
+        return 'CharField'
+        
+    def value_to_string(self, obj):
+        value = self._get_val_from_obj(obj)
+        return self.get_db_prep_value(value)
 
 class DateTime(models.Model):
     '''Model to handle the various uncertainties in dates and times.'''
