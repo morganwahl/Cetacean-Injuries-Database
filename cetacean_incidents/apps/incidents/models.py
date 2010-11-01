@@ -460,12 +460,13 @@ class Case(models.Model):
 
     def current_name(self):
         
-        self = self.detailed
-    
-        # Cases with no dates yet don't get names
-        date = self.date()
-        if date is None:
+        self = self.detailed_queryset().select_related('current_yearnumber')[0]
+        obs = Observation.objects.filter(case__id=self.id)
+        # Cases with no obs yet don't get names
+        if not obs.exists():
             return None
+
+        date = self.date(obs)
         s = {}
         
         # if there's a NMFS ID use that
@@ -473,8 +474,8 @@ class Case(models.Model):
             s['id'] = self.nmfs_id
         else:
         # otherwise use our YearCaseNumber IDs
-            s['year'] = unicode(date.year)
-            s['yearly_number'] = self.yearly_number
+            s['year'] = unicode(self.current_yearnumber.year)
+            s['yearly_number'] = self.current_yearnumber.number
             if self.yearly_number is None:
                 s['yearly_number'] = -1
             
@@ -486,7 +487,7 @@ class Case(models.Model):
             s['date'] += '-%02d' % date.month
             if date.day:
                 s['date'] += '-%02d' % date.day
-        taxon = self.probable_taxon()
+        taxon = probable_taxon(obs)
         if not taxon is None:
             s['taxon'] = unicode(taxon)
         else:
@@ -507,12 +508,21 @@ class Case(models.Model):
     def observation_dates(self):
         return DateTime.objects.filter(observation_date_for__case=self)
     
-    def date(self):
-        obs_dates = self.observation_dates()
-        if obs_dates.exists():
+    def date(self, obs=None):
+        '''\
+        obs is a queryset of observations. it defaults to this case's
+        observations.
+        '''
+        if obs is None:
+            obs_dates = self.observation_dates()
+            if not obs_dates.exists():
+                return None
+            # assumes DateTime querysets are in chronological order by default
             return obs_dates[0]
         else:
-            return None
+            if not obs.exists():
+                return None
+            return obs.order_by('observation_datetime')[0].observation_datetime
     
     def earliest_datetime(self):
         if not self.observation_set.count():
@@ -576,6 +586,13 @@ class Case(models.Model):
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
+    
+    def detailed_queryset(self):
+        '''\
+        Returns a Case-subclass queryset that contains only the case returned by
+        detailed().
+        '''
+        return self.detailed_classes[self.case_type].objects.filter(id=self.id)
     
     @property
     def detailed(self):
