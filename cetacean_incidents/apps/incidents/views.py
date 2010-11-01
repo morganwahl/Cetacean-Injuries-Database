@@ -215,7 +215,7 @@ def case_detail(request, case_id, extra_context={}):
     return generic_views.object_detail(
         request,
         object_id= case_id,
-        queryset= case_class.objects.all(),
+        queryset= case_class.objects.select_related().all(),
         template_object_name= 'case',
         extra_context= extra_context,
     )
