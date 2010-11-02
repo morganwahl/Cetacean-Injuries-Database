@@ -218,6 +218,17 @@ class UncertainDateTime(object):
         
         return self.latest - self.earliest
 
+    def __unicode__(self):
+        d = {}
+        d['year'] = u'%04d' % self.year if not self.year is None else u'?' * 4
+        d['month'] = u'%02d' % self.month if not self.month is None else u'?' * 2
+        d['day'] = u'%02d' % self.day if not self.day is None else u'?' * 2
+        d['hour'] = u'%02d' % self.hour if not self.hour is None else u'?' * 2
+        d['minute'] = u'%02d' % self.minute if not self.minute is None else u'?' * 2
+        d['second'] = u'%02d' % self.second if not self.second is None else u'?' * 2
+        d['microsecond'] = u'%06d' % self.microsecond if not self.microsecond is None else u'?' * 6
+        return "%(year)s-%(month)s-%(day)s %(hour)s:%(minute)s:%(second)s.%(microsecond)s" % d
+
 class UncertainDateTimeField(models.Field):
     
     description = """a DateTime whose individual fields (year, month, day, etc)
