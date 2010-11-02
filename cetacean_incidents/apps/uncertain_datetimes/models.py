@@ -3,11 +3,11 @@ from calendar import month_name, isleap
 
 from django.db import models
 
+MAXMONTH = len(month_name) - 1 # month_name[0] is blank
+
 class UncertainDateTime(object):
     """Class similiar to a python datetime, except the individual fields can be
     None (to indicate 'unknown')"""
-    
-    MAX_MONTH = len(month_name) - 1 # month_name[0] is blank
     
     def __init__(self, year=None, month=None, day=None, hour=None, minute=None, second=None, microsecond=None):
 
@@ -21,8 +21,8 @@ class UncertainDateTime(object):
                 raise TypeError("month must be an integer or None, not a %s" % type(month))
             if not month >= 1:
                 raise ValueError("month must be greater than or equal to 1")
-            if not month <= self.MAX_MONTH:
-                raise ValueError("month must be less than or equal to %d" % self.MAX_MONTH
+            if not month <= MAXMONTH:
+                raise ValueError("month must be less than or equal to %d" % MAXMONTH)
         self.month = month
 
         if not day is None:
