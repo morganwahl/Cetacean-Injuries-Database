@@ -1,9 +1,15 @@
 import re
 from calendar import month_name, isleap
+import datetime
 
 from django.db import models
 
 MAXMONTH = len(month_name) - 1 # month_name[0] is blank
+
+def month_days(year=None):
+    feb_days = 29 if year is None or isleap(year) else 28
+    #             jan feb       mar apr may jun jul aug sep oct nov dec
+    return (None, 31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 
 class UncertainDateTime(object):
     """Class similiar to a python datetime, except the individual fields can be
@@ -19,6 +25,11 @@ class UncertainDateTime(object):
                 raise ValueError("year must be greater than -1000")
             if not year < 10000:
                 raise ValueError("year must be less than 10000")
+            # don't allow years that aren't useable in python datetimes
+            if not year >= datetime.MINYEAR:
+                raise ValueError("year must be greater than %d" % datetime.MINYEAR)
+            if not year <= datetime.MAXYEAR:
+                raise ValueError("year must be less than %d" % datetime.MAXYEAR)
         self.year = year
 
         if not month is None:
@@ -36,9 +47,7 @@ class UncertainDateTime(object):
             if not day >= 1:
                 raise ValueError("day must be greater than or equal to 1")
             if not month is None:
-                feb_days = 29 if year is None or isleap(year) else 28
-                #                jan feb       mar apr may jun jul aug sep oct nov dec
-                max_day = (None, 31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[month]
+                month_days(year)[month]
                 if not day <= max_day:
                     raise ValueError("day must be less than or equal to %d when month is %d" % (max_day, month))
             else:
@@ -144,6 +153,63 @@ class UncertainDateTime(object):
         
         return cls(*args)
     
+    @property
+    def earliest(self):
+        '''\
+        Returns a python datetime that's the earliest possible point in this
+        UncertainDateTime.
+        '''
+        
+        (year, month, day, hour, minute, second, microsecond) = (self.year, self.month, self.day,  self.hour, self.minute, self.second, self.microsecond)
+        if year is None:
+            year = datetime.MINYEAR
+        if month is None:
+            month = 1
+        if day is None:
+            day = 1
+        if hour is None:
+            hour = 0
+        if minute is None:
+            minute = 0
+        if second is None:
+            second = 0
+        if microsecond is None:
+            microsecond = 0
+        
+        return datetime.datetime(year, month, day, hour, minute, second, microsecond)
+    
+    @property
+    def latest(self):
+        '''\
+        Returns a python datetime that's the latest possible point in this
+        UncertainDateTime.
+        '''
+        
+        (year, month, day, hour, minute, second, microsecond) = (self.year, self.month, self.day, self.hour, self.minute, self.second, self.microsecond)
+        if year is None:
+            year = datetime.MAXYEAR
+        if month is None:
+            month = MAXMONTH
+        if day is None:
+            day = month_days(year)[month]
+        if hour is None:
+            hour = 24 - 1
+        if minute is None:
+            minute = 60 - 1
+        if second is None:
+            second = 60 - 1 # not bothering with leap-seconds
+        if microsecond is None:
+            microsecond = 1000000 - 1
+        
+        result = datetime.datetime(year, month, day, hour, minute, second, microsecond)
+        
+        # we actually want the point at the _end_ of the range, so add one
+        # microsecond to the result of the above maxing-out of each field.
+        if result < datetime.datetime.max:
+            result += datetime.timedelta(microseconds=1)
+        
+        return result
+
 class UncertainDateTimeField(models.Field):
     
     description = """a DateTime whose individual fields (year, month, day, etc)
