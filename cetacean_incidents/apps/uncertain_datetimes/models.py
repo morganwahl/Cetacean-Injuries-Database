@@ -35,11 +35,11 @@ class UncertainDateTime(object):
                 #                jan feb       mar apr may jun jul aug sep oct nov dec
                 max_day = (None, 31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[month]
                 if not day <= max_day:
-                    raise ValueError("day must be less than or equal to %d when month is %d" % (max_day, month)
+                    raise ValueError("day must be less than or equal to %d when month is %d" % (max_day, month))
             else:
                 max_day = 31
                 if not day <= max_day:
-                    raise ValueError("day must be less than or equal to %d when month is None" % max_day
+                    raise ValueError("day must be less than or equal to %d when month is None" % max_day)
         self.day = day
 
         if not hour is None:
