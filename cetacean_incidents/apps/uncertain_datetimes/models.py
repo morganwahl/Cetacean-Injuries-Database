@@ -79,43 +79,17 @@ class UncertainDateTime(object):
                 raise ValueError('microsecond must be less than %d' % 10 ** 6)
         self.microsecond = microsecond
     
-class UncertainDateTimeField(models.Field):
-    
-    description = """a DateTime whose individual fields (year, month, day, etc)
-    may be unknown"""
-    
-    __metaclass__ = models.SubfieldBase
-    
-    def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = len('YYYYMMDDHHMMSSuSSSSS')
-        super(UncertainDateTimeField, self).__init__(*args, **kwargs)
-    
-    def to_python(self, value):
-        if value is None:
-            return None
-        
-        if isinstance(value, UncertainDateTime):
-            return value
-        
-        if not isinstance(value, basestring):
-            raise TypeError("UncertainDateTimeField can't hold type %s" % type(value))
-        
-        p = re.compile(r'(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})(.{6})')
-        args = p.search(value).groups()
+    SORTKEY_MAX_LEN = len('YYYYMMDDHHMMSSuSSSSS')
+    SORTS_BEFORE_DIGITS = ' '
+    SORTS_AFTER_DIGITS = 'z'
 
-        blank_re = re.compile(r'^ +$')
-        def string_converter(val):
-            if blank_re.search(val):
-                return None
-            return int(val)
-        args = map(string_converter, args)
-
-        return UncertainDateTime(*args)
-    
-    def get_prep_value(self, value):
-        
-        if value is None:
-            return None
+    def sortkey(self, unknown_is_later=False):
+        '''\
+        If unknown_is_later is True, the sortkeys returned will sort unknown
+        elements of the date _after_ dates where they're known (that are other 
+        wise identical). For example: 2004-03-?? 08:??:?? will sort _after_
+        2004-03-20 08:??:?? but _before_ 2004-03-20 09:??:?? .
+        '''
         
         parts = []
         for fieldname, width in (
@@ -127,13 +101,70 @@ class UncertainDateTimeField(models.Field):
             (     'second', 2),
             ('microsecond', 6),
         ):
-            val = getattr(value, fieldname)
+            val = getattr(self, fieldname)
             if val is None:
-                parts.append(' ' * width) 
+                if unknown_is_later:
+                    parts.append(self.SORTS_AFTER_DIGITS * width) 
+                else:
+                    parts.append(self.SORTS_BEFORE_DIGITS * width) 
             else:
                 parts.append(('%0' + str(width) + 'd') % val)
         
         return ''.join(parts)
+    
+    @classmethod
+    def from_sortkey(cls, key):
+        '''\
+        Constructs a new UncertainDateTime from a return value of another 
+        UncertainDateTime's sortkey() method.
+        '''
+
+        if not isinstance(key, basestring):
+            raise TypeError(
+                "key passed to sortkey must be a string or unicode, not %s" 
+                % type(key)
+            )
+        
+        match = re.search(r'(.{4})(.{2})(.{2})(.{2})(.{2})(.{2})(.{6})', key)
+        if not match:
+            raise ValueError("key passed wasn't formatted correctly: %s" % key)
+        args = match.groups()
+
+        blank_re = re.compile(r'^[' + cls.SORTS_BEFORE_DIGITS + cls.SORTS_AFTER_DIGITS + ']+$')
+        def string_converter(val):
+            if blank_re.search(val):
+                return None
+            return int(val)
+        args = map(string_converter, args)
+        
+        return cls(*args)
+    
+class UncertainDateTimeField(models.Field):
+    
+    description = """a DateTime whose individual fields (year, month, day, etc)
+    may be unknown"""
+    
+    __metaclass__ = models.SubfieldBase
+    
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = UncertainDateTime.SORTKEY_MAX_LEN
+        super(UncertainDateTimeField, self).__init__(*args, **kwargs)
+    
+    def to_python(self, value):
+        if value is None:
+            return None
+        
+        if isinstance(value, UncertainDateTime):
+            return value
+        
+        return UncertainDateTime.from_sortkey(value)
+        
+    def get_prep_value(self, value):
+        
+        if value is None:
+            return None
+        
+        return value.sortkey()
 
     # django lookup types:
     # exact, iexact, contains, icontains, gt, gte, lt, lte, in, startswith,
