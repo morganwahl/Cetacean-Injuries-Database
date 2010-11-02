@@ -210,6 +210,14 @@ class UncertainDateTime(object):
         
         return result
 
+    @property
+    def breadth(self):
+        '''\
+        The length of time that this UncertainDateTime might refer to.
+        '''
+        
+        return self.latest - self.earliest
+
 class UncertainDateTimeField(models.Field):
     
     description = """a DateTime whose individual fields (year, month, day, etc)
