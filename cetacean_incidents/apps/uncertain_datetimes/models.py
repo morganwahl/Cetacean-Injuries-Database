@@ -1,4 +1,5 @@
 import re
+from calendar import month_name, isleap
 
 from django.db import models
 
@@ -6,13 +7,76 @@ class UncertainDateTime(object):
     """Class similiar to a python datetime, except the individual fields can be
     None (to indicate 'unknown')"""
     
+    MAX_MONTH = len(month_name) - 1 # month_name[0] is blank
+    
     def __init__(self, year=None, month=None, day=None, hour=None, minute=None, second=None, microsecond=None):
+
+        if not year is None:
+            if not isinstance(year, int):
+                raise TypeError("year must be an integer or None, not a %s" % type(year))
         self.year = year
+
+        if not month is None:
+            if not isinstance(month, int):
+                raise TypeError("month must be an integer or None, not a %s" % type(month))
+            if not month >= 1:
+                raise ValueError("month must be greater than or equal to 1")
+            if not month <= self.MAX_MONTH:
+                raise ValueError("month must be less than or equal to %d" % self.MAX_MONTH
         self.month = month
+
+        if not day is None:
+            if not isinstance(day, int):
+                raise TypeError("day must be an integer or None, not a %s" % type(day))
+            if not day >= 1:
+                raise ValueError("day must be greater than or equal to 1")
+            if not month is None:
+                feb_days = 29 if year is None or isleap(year) else 28
+                #                jan feb       mar apr may jun jul aug sep oct nov dec
+                max_day = (None, 31, feb_days, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)[month]
+                if not day <= max_day:
+                    raise ValueError("day must be less than or equal to %d when month is %d" % (max_day, month)
+            else:
+                max_day = 31
+                if not day <= max_day:
+                    raise ValueError("day must be less than or equal to %d when month is None" % max_day
         self.day = day
+
+        if not hour is None:
+            if not isinstance(hour, int):
+                raise TypeError("hour must be an integer or None, not a %s" % type(hour))
+            if not hour >= 0:
+                raise ValueError('hour must be greater than or equal to 0')
+            if not hour < 24:
+                raise ValueError('hour must be less than 24')
         self.hour = hour
+
+        if not minute is None:
+            if not isinstance(minute, int):
+                raise TypeError("minute must be an integer or None, not a %s" % type(minute))
+            if not minute >= 0:
+                raise ValueError('minute must be greater than or equal to 0')
+            if not minute < 60:
+                raise ValueError('minute must be less than 60')
         self.minute = minute
+
+        if not second is None:
+            if not isinstance(second, int):
+                raise TypeError("second must be an integer or None, not a %s" % type(second))
+            if not second >= 0:
+                raise ValueError('second must be greater than or equal to 0')
+            # not bothering with leap-seconds
+            if not second < 60:
+                raise ValueError('second must be less than 60')
         self.second = second
+
+        if not microsecond is None:
+            if not isinstance(microsecond, int):
+                raise TypeError("microsecond must be an integer or None, not a %s" % type(year))
+            if not microsecond >= 0:
+                raise ValueError('microsecond must be greater than or equal to 0')
+            if not microsecond < 10 ** 6 :
+                raise ValueError('microsecond must be less than %d' % 10 ** 6)
         self.microsecond = microsecond
     
 class UncertainDateTimeField(models.Field):
