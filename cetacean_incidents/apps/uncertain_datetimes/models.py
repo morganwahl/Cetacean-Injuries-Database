@@ -47,7 +47,7 @@ class UncertainDateTime(object):
             if not day >= 1:
                 raise ValueError("day must be greater than or equal to 1")
             if not month is None:
-                month_days(year)[month]
+                max_day = month_days(year)[month]
                 if not day <= max_day:
                     raise ValueError("day must be less than or equal to %d when month is %d" % (max_day, month))
             else:
