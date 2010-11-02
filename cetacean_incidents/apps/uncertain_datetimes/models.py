@@ -14,6 +14,11 @@ class UncertainDateTime(object):
         if not year is None:
             if not isinstance(year, int):
                 raise TypeError("year must be an integer or None, not a %s" % type(year))
+            # sortkey() assumes a four-character year
+            if not year > -1000:
+                raise ValueError("year must be greater than -1000")
+            if not year < 10000:
+                raise ValueError("year must be less than 10000")
         self.year = year
 
         if not month is None:
