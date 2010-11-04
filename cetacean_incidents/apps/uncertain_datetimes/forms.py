@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django import forms
 from django.forms.util import ErrorList
 from django.utils.safestring import mark_safe
@@ -129,7 +130,10 @@ class UncertainDateTimeField(forms.MultiValueField):
                 error_messages= {'invalid': errors['invalid_microsecond']},
             ),
         )
-        super(UncertainDateTimeField, self).__init__(fields, *args, **kwargs)
+        # skip MultiValueField's __init__ since it set's required=False on 
+        # all the fields
+        super(forms.MultiValueField, self).__init__(*args, **kwargs)
+        self.fields = fields
 
     def clean(self, value):
         # based on MultiValueField's clean()

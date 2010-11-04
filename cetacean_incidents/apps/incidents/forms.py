@@ -74,7 +74,7 @@ class MergeCaseForm(forms.ModelForm):
         model = Case
 
 class ObservationDateField(UncertainDateTimeField):
-    pass
+    required_fields = set(['year'])
 
 class ObservationForm(forms.ModelForm):
     '''\
