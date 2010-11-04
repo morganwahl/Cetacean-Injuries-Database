@@ -15,6 +15,7 @@ from cetacean_incidents.apps.merge_form.forms import MergeForm
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
 class AnimalForm(forms.ModelForm):
     
@@ -72,6 +73,9 @@ class MergeCaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
+class ObservationDateField(UncertainDateTimeField):
+    pass
+
 class ObservationForm(forms.ModelForm):
     '''\
     This class merely handles commonalities between the different observation
@@ -83,6 +87,24 @@ class ObservationForm(forms.ModelForm):
     # field
     _f = Observation._meta.get_field('taxon')
     taxon = TaxonField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = Observation._meta.get_field('observation_datetime')
+    observation_datetime = ObservationDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = Observation._meta.get_field('report_datetime')
+    report_datetime = ObservationDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
@@ -122,7 +144,7 @@ class ObservationForm(forms.ModelForm):
         model = Observation
         # the case for a new observation is set by the view. The one-to-one 
         # relations shouldn't be shown.
-        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel')
+        exclude = ('case', 'location', 'observer_vessel')
 
 class SubmitDetectingForm(forms.Form):
     '''\

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from cetacean_incidents.apps.incidents.models import Animal
 
 from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
@@ -99,20 +99,20 @@ class EntanglementTestCase(TestCase):
         e = Entanglement.objects.create(animal=Animal.objects.create())
         true_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= DateTime.objects.create(year=2000),
-            report_datetime= DateTime.objects.create(year=2000),
+            observation_datetime= UncertainDateTime(year=2000),
+            report_datetime= UncertainDateTime(year=2000),
             gear_retrieved= True,
         )
         false_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= DateTime.objects.create(year=2000),
-            report_datetime= DateTime.objects.create(year=2000),
+            observation_datetime= UncertainDateTime(year=2000),
+            report_datetime= UncertainDateTime(year=2000),
             gear_retrieved= False,
         )
         none_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= DateTime.objects.create(year=2000),
-            report_datetime= DateTime.objects.create(year=2000),
+            observation_datetime= UncertainDateTime(year=2000),
+            report_datetime= UncertainDateTime(year=2000),
             gear_retrieved= None,
         )
         self.assertEqual(

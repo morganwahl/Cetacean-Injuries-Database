@@ -13,7 +13,6 @@ from django.conf import settings
 from reversion import revision
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.uncertain_datetimes.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm, merge_source_form_factory
@@ -278,10 +277,8 @@ def add_observation(
         'animal': AnimalForm,
         'case': caseform_class,
         'observation': observationform_class,
-        'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
         'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
-        'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
         'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
@@ -337,9 +334,6 @@ def add_observation(
             observation = forms['observation'].save(commit=False)
             observation.case = case
 
-            _check('report_datetime')
-            observation.report_datetime = forms['report_datetime'].save()
-
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
                 _check('new_reporter_affiliations')
@@ -351,9 +345,6 @@ def add_observation(
                         continue
                     org = org_form.save()
                     observation.reporter.affiliations.add(org)
-            
-            _check('observation_datetime')
-            observation.observation_datetime = forms['observation_datetime'].save()
             
             _check('location')
             observation.location = forms['location'].save()
@@ -461,10 +452,8 @@ def edit_observation(
         'animal': AnimalForm,
         'case': caseform_class,
         'observation': observationform_class,
-        'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
         'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
-        'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
         'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
@@ -482,8 +471,6 @@ def edit_observation(
         'animal': observation.case.animal,
         'case': observation.case,
         'observation': observation,
-        'report_datetime': observation.report_datetime,
-        'observation_datetime': observation.observation_datetime,
         'location': observation.location,
         'observer_vessel': observation.observer_vessel,
     }
@@ -549,9 +536,6 @@ def edit_observation(
             _check('observation')
             observation = forms['observation'].save(commit=False)
 
-            _check('report_datetime')
-            observation.report_datetime = forms['report_datetime'].save()
-
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
                 _check('new_reporter_affiliations')
@@ -563,9 +547,6 @@ def edit_observation(
                         continue
                     org = org_form.save()
                     observation.reporter.affiliations.add(org)
-            
-            _check('observation_datetime')
-            observation.observation_datetime = forms['observation_datetime'].save()
             
             _check('location')
             observation.location = forms['location'].save()

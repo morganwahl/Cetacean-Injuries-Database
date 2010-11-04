@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact, Organization
-from cetacean_incidents.apps.uncertain_datetimes.models import DateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
@@ -505,24 +505,17 @@ class Case(models.Model):
     def past_names_set(self):
         return self.names_set - set([self.current_name()])
     
-    def observation_dates(self):
-        return DateTime.objects.filter(observation_date_for__case=self)
-    
     def date(self, obs=None):
         '''\
         obs is a queryset of observations. it defaults to this case's
         observations.
         '''
         if obs is None:
-            obs_dates = self.observation_dates()
-            if not obs_dates.exists():
-                return None
-            # assumes DateTime querysets are in chronological order by default
-            return obs_dates[0]
-        else:
-            if not obs.exists():
-                return None
-            return obs.order_by('observation_datetime')[0].observation_datetime
+            obs = self.observation_set
+
+        if not obs.exists():
+            return None
+        return obs.order_by('observation_datetime')[0].observation_datetime
     
     def earliest_datetime(self):
         if not self.observation_set.count():
@@ -691,12 +684,8 @@ class Observation(models.Model):
         related_name= 'observed',
         help_text= 'the vessel the observer was on, if any',
     )
-    observation_datetime = models.OneToOneField(
-        DateTime,
-        blank= True,
-        null= True,
+    observation_datetime = UncertainDateTimeField(
         help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest observation_datetime for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
-        related_name= 'observation_date_for',
         verbose_name= 'observation date and time',
     )
     # TODO duration?
@@ -721,10 +710,8 @@ class Observation(models.Model):
         related_name= 'reported',
         help_text= "This is who informed us of the observation. Same as observer if this is a firsthand report.",
     )
-    report_datetime = models.OneToOneField(
-        DateTime,
+    report_datetime = UncertainDateTimeField(
         help_text = 'when we first heard about the observation',
-        related_name = 'report_date_for',
         verbose_name = 'report date and time',
     )
         
@@ -843,13 +830,10 @@ class Observation(models.Model):
     def __unicode__(self):
         ret = 'observation '
         if self.observation_datetime:
-            if self.observation_datetime.day:
-                ret += "on %s " % self.observation_datetime
-            else:
-                ret += "in %s " % self.observation_datetime
+            ret += "at %s " % self.observation_datetime.__unicode__(seconds=False)
         if self.observer:
             ret += "by %s " % self.observer
-        ret += "(%d)" % self.id
+        ret += "(#%06d)" % self.id
         return ret
     
     class Meta:
@@ -857,13 +841,6 @@ class Observation(models.Model):
 
 Case.observation_model = Observation
     
-def _get_observation_dates(contact):
-    return DateTime.objects.filter(observation__observer=contact)
-Contact.observation_dates = property(_get_observation_dates)
-def _get_report_dates(contact):
-    return DateTime.objects.filter(report__reporter=contact)
-Contact.report_dates = property(_get_report_dates)
-
 # since adding a new Observation whose case is this could change things like
 # case.date or even assign yearly_number, we need to listen for Observation
 # saves
