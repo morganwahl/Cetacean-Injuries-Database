@@ -224,7 +224,7 @@ class UncertainDateTime(object):
         if seconds:
             d['minute'] += ((u':%02d' % self.second) if not self.second is None else u':??')
         if seconds and microseconds:
-            d['minute'] += ((u':%06d' % self.microsecond) if not self.microsecond is None else u':??????')
+            d['minute'] += ((u'.%06d' % self.microsecond) if not self.microsecond is None else u'.??????')
         return "%(year)s-%(month)s-%(day)s %(hour)s:%(minute)s" % d
         
     def humanize(self):
