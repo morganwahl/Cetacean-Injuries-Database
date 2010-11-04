@@ -7,7 +7,7 @@ class TaxonManager(models.Manager):
         
         # how much does order matter ? This is a depth-first traversal right
         # now.
-        children = taxon.subtaxa.all().order_by('name')
+        children = taxon.subtaxa.all()
         result = []
         for child in children:
             result.append(child)
