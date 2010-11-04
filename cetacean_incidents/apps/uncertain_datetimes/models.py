@@ -2,6 +2,7 @@ from django.db import models
 
 from . import UncertainDateTime
 
+from forms import UncertainDateTimeField as UncertainDateTimeFormField
 
 class UncertainDateTimeField(models.Field):
     
@@ -20,6 +21,9 @@ class UncertainDateTimeField(models.Field):
         
         if isinstance(value, UncertainDateTime):
             return value
+        
+        if value is '':
+            return UncertainDateTime()
         
         return UncertainDateTime.from_sortkey(value)
         
@@ -41,6 +45,14 @@ class UncertainDateTimeField(models.Field):
             return [self.get_prep_value(v) for v in value]
         else:
             raise TypeError('Lookup type %r not supported.' % lookup_type)
+
+    def formfield(self, **kwargs):
+        "Returns a django.forms.Field instance for this database Field."
+        # This is a fairly standard way to set up some defaults
+        # while letting the caller override them.
+        defaults = {'form_class': UncertainDateTimeFormField}
+        defaults.update(kwargs)
+        return super(UncertainDateTimeField, self).formfield(**defaults)
 
     def get_internal_type(self):
         return 'CharField'
