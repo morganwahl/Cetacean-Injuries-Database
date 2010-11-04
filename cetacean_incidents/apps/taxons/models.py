@@ -15,6 +15,19 @@ class TaxonManager(models.Manager):
 
         return tuple(result)
 
+    def descendants_ids(self, taxon):
+        'Return a tuple of the ids of all taxa that descend from the given taxon (not including the given taxon)'
+        
+        # how much does order matter ? This is a depth-first traversal right
+        # now.
+        children = taxon.subtaxa.all()
+        result = []
+        for child in children:
+            result.append(child.id)
+            result += self.descendants(child)
+
+        return tuple(result)
+
     def with_descendants(self, taxon):
         'Return a tuple of all taxa that descend from the given taxon (including the given taxon)'
 

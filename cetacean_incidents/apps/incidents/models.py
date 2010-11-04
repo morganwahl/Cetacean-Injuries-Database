@@ -21,6 +21,15 @@ GENDERS = (
     ("m", "male"),
 )
 
+class AnimalManager(models.Manager):
+    
+    def animals_under_taxon(self, taxon):
+        '''\
+        Returns a queryset of animals determined to be eith taxon of a subtaxon 
+        of it.
+        '''
+        return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
+
 class Animal(models.Model):
     name = models.CharField(
         blank= True,
@@ -129,6 +138,8 @@ class Animal(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('animal_detail', [str(self.id)]) 
+    
+    objects = AnimalManager()
     
     class Meta:
         ordering = ('name', 'id')
