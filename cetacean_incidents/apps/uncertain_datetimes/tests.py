@@ -1,7 +1,10 @@
 from django.test import TestCase
 
+import django.forms
+
 from datetime import datetime, timedelta
 from models import UncertainDateTime
+from forms import UncertainDateTimeField as UncertainDateTimeFormField
 
 class UncertainDateTimeTestCase(TestCase):
     def setUp(self):
@@ -28,3 +31,46 @@ class UncertainDateTimeTestCase(TestCase):
         self.assertEquals(self.regfeb.breadth, timedelta(days=28))
         self.assertEquals(self.leapday.breadth, timedelta(days=1))
 
+class UncertainDateTimeFormFieldTestCase(TestCase):
+    def setUp(self):
+        class the_form(django.forms.Form):
+            f = UncertainDateTimeFormField()
+            
+        self.form_class = the_form
+        
+        self.blank_data = {
+            'f_0': '',
+            'f_1': '',
+            'f_2': '',
+            'f_3': '',
+            'f_4': '',
+            'f_5': '',
+            'f_6': '',
+        }
+        self.full_data = {
+            'f_0': '1982',
+            'f_1': '3',
+            'f_2': '20',
+            'f_3': '12',
+            'f_4': '38',
+            'f_5': '02',
+            'f_6': '0',
+        }
+        self.year_data = self.blank_data.copy()
+        self.year_data['f_0'] = '2010'
+    
+    def test_full(self):
+        form = self.form_class(self.full_data)
+        self.assertEquals(form.is_valid(), True)
+        self.assertEquals(unicode(form.cleaned_data['f']), '1982-03-20 12:38:02.000000')
+
+    def test_blank(self):
+        form = self.form_class(self.blank_data)
+        self.assertEquals(form.is_valid(), True)
+        self.assertEquals(unicode(form.cleaned_data['f']), '????-??-?? ??:??:??.??????')
+
+    def test_year(self):
+        form = self.form_class(self.year_data)
+        self.assertEquals(form.is_valid(), True)
+        self.assertEquals(unicode(form.cleaned_data['f']), '2010-??-?? ??:??:??.??????')
+    
