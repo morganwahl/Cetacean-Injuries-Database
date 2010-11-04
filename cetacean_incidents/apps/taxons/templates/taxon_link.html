@@ -1,1 +1,1 @@
-<a href="{{ taxon.get_absolute_url }}" title="{{ taxon.common_names }}">{{ taxon }}</a>
+{% load taxon_extras %}<a href="{{ taxon.get_absolute_url }}">{% taxon_display taxon %}</a>

@@ -163,7 +163,7 @@ class Taxon(models.Model):
     'a list of ancestor Taxa, starting at a root'
     ancestors = property(_get_ancestors)
 
-    def _is_binomial(self):
+    def is_binomial(self):
         if not self.rank is None:
             return self.rank < 0
         # go up ancestors until a ranked one is found, if it's 0 or below, this
@@ -194,8 +194,12 @@ class Taxon(models.Model):
     def get_absolute_url(self):
         return ('taxon_detail', [str(self.id)]) 
 
-    def __unicode__(self):
-        if self._is_binomial() and self.supertaxon:
+    def scientific_name(self):
+        '''\
+        Returns just the name for taxa with rank of genus or above. For those below, returns the "G. species" style.
+        '''
+
+        if self.is_binomial() and self.supertaxon:
             # go up the taxon tree looking for a taxon with rank 0. if we find
             # one, print out it's initial, plus the names of each taxon we found
             # on the way.
@@ -208,5 +212,8 @@ class Taxon(models.Model):
                 t = t.supertaxon
             if t.rank == 0:
                 return u'%s. %s' % (t.name[0], nomens)
+        return self.name
+
+    def __unicode__(self):
         return u'%s %s' % (self.name, self.get_rank_display())
 

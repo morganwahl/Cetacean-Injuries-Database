@@ -8,6 +8,16 @@ register = template.Library()
 
 # assumes the the django.template.loaders.app_directories.load_template_source 
 # is being used, which is the default.
+@register.inclusion_tag('taxon_display.html')
+def taxon_display(taxon):
+    '''\
+    The display HTML for a taxon.
+    '''
+    
+    return {'taxon': taxon }
+
+# assumes the the django.template.loaders.app_directories.load_template_source 
+# is being used, which is the default.
 @register.inclusion_tag('taxon_link.html')
 def taxon_link(taxon):
     '''\

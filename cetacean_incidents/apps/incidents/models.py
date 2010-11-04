@@ -489,7 +489,7 @@ class Case(models.Model):
                 s['date'] += '-%02d' % date.day
         taxon = probable_taxon(obs)
         if not taxon is None:
-            s['taxon'] = unicode(taxon)
+            s['taxon'] = taxon.scientific_name()
         else:
             s['taxon'] = u'Unknown taxon'
         s['type'] = self._meta.verbose_name.capitalize()

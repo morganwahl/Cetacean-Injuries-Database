@@ -2,6 +2,7 @@
 {% load generic_field_display %}
 {% load animal_extras %}
 {% load observation_extras %}
+{% load taxon_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -12,11 +13,11 @@
 
 {% block header %}
 {% if taxon.supertaxon %}
-<h3><a href="{% url taxon_detail taxon.supertaxon.id %}">{{ taxon.supertaxon }}</a></h3>
+<h3>{% taxon_link taxon.supertaxon %}</h3>
 {% endif %}
-<h2 style="margin-left:2em;">{{ taxon }}</h2>
+<h2 style="margin-left:2em;">{% taxon_display taxon %}</h2>
 {% for subtaxon in taxon.subtaxa.all %}
-<h3 style="margin-left:4em;"><a href="{% url taxon_detail subtaxon.id %}">{{ subtaxon }}</a></h3>
+<h3 style="margin-left:4em;">{% taxon_link subtaxon %}</h3>
 {% endfor %}
 {% if perms.taxons.change_taxon and perms.taxons.delete_taxon %}
 <script type="text/javascript">
@@ -60,7 +61,7 @@
 <i>none</i>
 {% endif %}
 
-<h3>Observations of {{ taxon }}</h3>
+<h3>Observations of {% taxon_display taxon %}</h3>
 {% if taxon.observation_set.count %}
 <table>
 {% for o in taxon.observation_set.all %}
