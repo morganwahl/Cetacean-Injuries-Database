@@ -301,11 +301,15 @@
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 <div id="reporter_new_contact" style="display:none;">
+                    {% if perms.contacts.add_contact %}
                     {% with forms.new_reporter as form %}
                     {% with forms.new_reporter_affiliations as  new_affiliations %}
                     {% include "contacts/change_contact_include.html" %}
                     {% endwith %}
                     {% endwith %}
+                    {% else %}
+                    <div class="warning">you don't have permission to add a new contact</div>
+                    {% endif %}
                 </div>
                 <div id="reporter_existing_contact" style="display:none;">
                     {% with forms.observation.reporter as f %}
@@ -344,11 +348,15 @@
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 <div id="observer_new_contact" style="display:none;">
+                    {% if perms.contact.add_contact %}
                     {% with forms.new_observer as form %}
                     {% with forms.new_observer_affiliations as  new_affiliations %}
                     {% include "contacts/change_contact_include.html" %}
                     {% endwith %}
                     {% endwith %}
+                    {% else %}
+                    <div class="warning">you don't have permission to add a new contact</div>
+                    {% endif %}
                 </div>
                 <div id="observer_existing_contact" style="display:none;">
                     {% with forms.observation.observer as f %}

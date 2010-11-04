@@ -96,9 +96,11 @@
             {% else %}
             <i>No contacts yet!</i>
             {% endif %}
+            {% if perms.contacts.add_contact %}
             <div>
                 <a href="{% url create_contact %}">new contact</a>
             </div>
+            {% endif %}
         </td>
     </tr>
 </table>

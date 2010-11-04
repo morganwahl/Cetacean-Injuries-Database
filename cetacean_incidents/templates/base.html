@@ -39,6 +39,8 @@
                 </a>
             </h1>
         </div>
+        {# don't bother showing navlinks unless logged in #}
+        {% if user.is_authenticated %}
         <div id="navigation-links">
             <!-- these should just be a styled list... but IE can't handle display:table styles
             <ul class="navlinks">
@@ -46,10 +48,6 @@
                 <li><a href="{% url all_animals %}">view all animals</a></li>
                 <li><a href="{% url all_cases %}">view all cases</a></li>
                 <li><a href="{% url recent_revisions %}">recent revisions</a></li>
-                {% comment %}
-                <li><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></li>
-                <li><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></li>
-                {% endcomment %}
             </ul>
             -->
             <table class="navlinks layout">
@@ -62,10 +60,12 @@
                         <a class="action" href="{% url animal_search %}">
                             search
                         </a>
+                        {% if perms.incidents.add_animal %}
                         &#x2022;
                         <a class="action" href="{% url create_animal %}">
                             add
                         </a>
+                        {% endif %}
                     </td>
                     <td>
                         <div class="category">
@@ -74,10 +74,12 @@
                         <a class="action" href="{% url case_search %}">
                             search
                         </a>
+                        {% if perms.incidents.add_animal and perms.incidents.change_animal and perms.incidents.add_case and perms.incidents.add_observation %}
                         &#x2022;
                         <a class="action" href="{% url new_case %}">
                             add
                         </a>
+                        {% endif %}
                         &#x2022;
                         <a href="{% url cases_this_year %}">this year</a>
                     </td>
@@ -86,18 +88,17 @@
                         <div class="category">
                             administrative tools
                         </div>
+                        {% if perms.taxons.add_taxon %}
                         <a class="action" href="{% url import_taxon %}">import taxa</a>
                         &#x2022;
+                        {% endif %}
                         <a href="{% url recent_revisions %}">recent revisions</a>
                     </td>
                     {% endif %}
-                    {% comment %}
-                    <td><a href="{% url entanglement_report_form %}">create an entanglement case for a new animal and add an intial observation</a></td>
-                    <td><a href="{% url shipstrike_report_form %}">create a shipstrike case for a new animal and add an intial observation</a></td>
-                    {% endcomment %}
                 </tr>
             </table>
         </div>
+        {% endif %}
         <div id="header">
             {% block header %}
             <h2 class="error">NO HEADER!</h2>

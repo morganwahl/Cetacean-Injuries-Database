@@ -40,7 +40,10 @@
 <table{% if case_list %} class="bordered sortable"{% endif %}>
     <thead>
         <tr>
-            <th class="sorttable_nosort"></th>
+            {# the case-editing page can also change animals #}
+            {% if perms.incidents.change_animal and perms.incidents.change_case %}
+            <th class="sorttable_nosort"><!-- case edit link --></th>
+            {% endif %}
             <th>case</th>
             <th class="sorttable_nosort">animal</th>
             <th>first observed</th>
@@ -51,11 +54,14 @@
     <tbody>
         {% for case in case_list %}
         <tr>
+            {# the case-editing page can also change animals #}
+            {% if perms.incidents.change_animal and perms.incidents.change_case %}
             <td>
                 <a href="{{ case.detailed.get_edit_url }}#case">
                     <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
                 </a>
             </td>
+            {% endif %}
             <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
                 {% case_link case %}
             </td>

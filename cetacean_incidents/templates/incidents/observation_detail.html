@@ -19,9 +19,12 @@
 <h2>{% animal_link observation.case.animal %}</h2>
 <h2 style="margin-left:1em;">{% case_link observation.case %}</h2>
 <h2 style="margin-left:2em;">{{ observation }}</h2>
+{# the observation-editing page change also change animals and cases #}
+{% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
 <div>
     <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}#reporting">edit this observation</a>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block ids-dl %}

@@ -50,11 +50,3 @@ urlpatterns += patterns('',
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
 )
 
-# for backwards compatibility on old /incidents/ URLs
-urlpatterns += patterns('cetacean_incidents.apps.entanglements.views',
-    (r'^entanglement_report_form/$', 'entanglement_report_form', {}, 'entanglement_report_form'),
-)
-urlpatterns += patterns('cetacean_incidents.apps.shipstrikes.views',
-    (r'^shipstrike_report_form/$', 'shipstrike_report_form', {}, 'shipstrike_report_form'),
-)
-

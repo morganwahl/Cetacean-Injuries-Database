@@ -9,9 +9,12 @@
 
 {% block header %}
 {{ block.super }}
+{% if perms.contacts.change_contact %}
 <div>
     <a href="{% url edit_contact contact.id %}">edit this contact</a>
 </div>
+{% endif %}
+{% if perms.contacts.change_contact and perms.contacts.delete_contact %}
 <script type="text/javascript">
     jQuery(document).ready(function(){
 	    $('.accordion .header').click(function() {
@@ -31,5 +34,6 @@
         </div>
     </form>
 </div>
+{% endif %}
 {% endblock %}
 

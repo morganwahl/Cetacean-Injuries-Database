@@ -15,9 +15,13 @@
     {% include "unlabeled_field.html" %}
     {% endwith %}
     <div id="{{ v_form.prefix }}-vesselcaptain_new_contact" style="display:none;">
+        {% if perms.contacts.add_contact %}
         <table>
         {{ cap_form.as_table }}
         </table>
+        {% else %}
+        <div class="warning">you don't have permission to add a new contact</div>
+        {% endif %}
     </div>
     <div id="{{ v_form.prefix }}-vesselcaptain_existing_contact" style="display:none;">
         {% with v_form.existing_captain as f %}
