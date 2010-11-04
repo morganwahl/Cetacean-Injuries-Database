@@ -525,7 +525,7 @@ class Case(models.Model):
             return obs.order_by('observation_datetime')[0].observation_datetime
     
     def earliest_datetime(self):
-        if not self.observation_set.count():
+        if not self.observation_set.exists():
             return None
         return min([o.earliest_datetime for o in self.observation_set.all()])
 
@@ -533,12 +533,12 @@ class Case(models.Model):
         '''\
         The latest that one of this case's observations _may_ have _started.
         '''
-        if not self.observation_set.count():
+        if not self.observation_set.exists():
             return None
         return max([o.latest_datetime for o in self.observation_set.all()])
     
     def breadth(self):
-        if not self.observation_set.count():
+        if not self.observation_set.exists():
             return None
         return self.latest_datetime() - self.earliest_datetime()
     

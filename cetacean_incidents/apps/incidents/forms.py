@@ -79,7 +79,7 @@ class ObservationForm(forms.ModelForm):
     VesselInfo, and two Contacts.
     '''
 
-    # ModelForm won't fill in all the handy args for us if we sepcify our own
+    # ModelForm won't fill in all the handy args for us if we specify our own
     # field
     _f = Observation._meta.get_field('taxon')
     taxon = TaxonField(
