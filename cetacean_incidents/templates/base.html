@@ -39,6 +39,8 @@
                 </a>
             </h1>
         </div>
+        {# don't bother showing navlinks unless logged in #}
+        {% if user.is_authenticated %}
         <div id="navigation-links">
             <!-- these should just be a styled list... but IE can't handle display:table styles
             <ul class="navlinks">
@@ -96,6 +98,7 @@
                 </tr>
             </table>
         </div>
+        {% endif %}
         <div id="header">
             {% block header %}
             <h2 class="error">NO HEADER!</h2>
