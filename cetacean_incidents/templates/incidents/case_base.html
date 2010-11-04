@@ -44,6 +44,7 @@
 
 {% block content %}
 {% comment %}
+{# commented out since it takes forever #}
 {% if case.associated_cases %}
 <i>other cases for this animal around the time of this one:</i>
 <ul>
@@ -112,7 +113,7 @@
             <tr>
                 {# the observation-editing page can also change animals and cases #}
                 {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
-                <td class="sorttable_nosort"></td>
+                <td class="sorttable_nosort"><!-- the edit link --></td>
                 {% endif %}
                 <td class="sorttable_nosort"></td>
                 <th class="sorttable_nosort">observer</th>

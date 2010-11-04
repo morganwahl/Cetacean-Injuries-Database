@@ -35,7 +35,7 @@
         {# TODO this is the same table as in case_search, just with two extra columns #}
         {# the case-editing page can also change animals #}
         {% if perms.incidents.change_animal and perms.incidents.change_case %}
-        <th class="sorttable_nosort"></th>
+        <th class="sorttable_nosort"><!-- case edit link --></th>
         {% endif %}
         <th>case</th>
         <th class="sorttable_nosort">animal</th>
