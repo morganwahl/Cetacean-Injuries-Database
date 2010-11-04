@@ -18,7 +18,7 @@
 {% for subtaxon in taxon.subtaxa.all %}
 <h3 style="margin-left:4em;"><a href="{% url taxon_detail subtaxon.id %}">{{ subtaxon }}</a></h3>
 {% endfor %}
-{% if user.is_staff %}
+{% if perms.taxons.change_taxon and perms.taxons.delete_taxon %}
 <script type="text/javascript">
     jQuery(document).ready(function(){
 	    $('.accordion .header').click(function() {

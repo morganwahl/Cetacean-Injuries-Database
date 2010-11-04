@@ -2,13 +2,17 @@
 
 {# TODO is this needed ? will the case-edit view delegate accordingly? #}
 {% block edit_case_link %}
+{% if perms.shipstrikes.change_shipstrike %}
 {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
 <a href="{% url edit_shipstrike case.id %}#case">edit this shipstrike</a>
+{% endif %}
 {% endblock %}
 
 {# TODO is this needed ? will the add-observation view delegate accordingly? #}
 {% block add_observation_link %}
+{% if perms.shipstrikes.change_shipstrike perms.shipstrikes.add_shipstrikeobservation %}
 {# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
 <a href="{% url add_shipstrikeobservation case.id %}#reporting">add an observation</a>
+{% endif %}
 {% endblock %}
 

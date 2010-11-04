@@ -62,10 +62,12 @@
                         <a class="action" href="{% url animal_search %}">
                             search
                         </a>
+                        {% if perms.incidents.add_animal %}
                         &#x2022;
                         <a class="action" href="{% url create_animal %}">
                             add
                         </a>
+                        {% endif %}
                     </td>
                     <td>
                         <div class="category">
@@ -74,10 +76,12 @@
                         <a class="action" href="{% url case_search %}">
                             search
                         </a>
+                        {% if perms.incidents.add_case %}
                         &#x2022;
                         <a class="action" href="{% url new_case %}">
                             add
                         </a>
+                        {% endif %}
                         &#x2022;
                         <a href="{% url cases_this_year %}">this year</a>
                     </td>
@@ -86,8 +90,10 @@
                         <div class="category">
                             administrative tools
                         </div>
+                        {% if perms.taxons.add_taxon %}
                         <a class="action" href="{% url import_taxon %}">import taxa</a>
                         &#x2022;
+                        {% endif %}
                         <a href="{% url recent_revisions %}">recent revisions</a>
                     </td>
                     {% endif %}

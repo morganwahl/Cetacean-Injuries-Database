@@ -17,7 +17,10 @@
 
 {% block header %}
 <h2>{{ animal }}</h2>
+{% if perms.incidents.change_animal %}
 <div><a href="{% url edit_animal animal.id %}">edit this animal</a></div>
+{% endif %}
+{% if perms.incidents.change_animal and perms.incidents.delete_animal %}
 <script type="text/javascript">
     jQuery(document).ready(function(){
 	    $('.accordion .header').click(function() {
@@ -37,6 +40,7 @@
         </div>
     </form>
 </div>
+{% endif %}
 {% endblock %}
 
 {% block ids-dl %}
@@ -83,9 +87,11 @@
     <ul>
         {% for case in animal.case_set.all %}
         <li>
+            {% if perms.incidents.change_animal and perms.incidents.change_case %}
             <a href="{{ case.detailed.get_edit_url }}#case">
                 <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
             </a>
+            {% endif %}
             {% case_link case %}
         </li>
         {% endfor %}
@@ -95,7 +101,10 @@
         <i>no cases yet</i>
     </div>
     {% endif %}
+    {# don't forget the case-editing page can also change animals #}
+    {% if perms.incidents.change_animal and perms.incidents.add_case %}
     <a href="{% url add_case animal.id %}">add a new case for this animal</a>
+    {% endif %}
 </div>
 <div class="section">
     <h3>Observations</h3>
@@ -106,7 +115,10 @@
             <tr>
                 <th>case</th>
                 <td class="sorttable_nosort"></td>
+                {# don't forget the observation-editing page can also change animals and cases #}
+                {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
                 <td class="sorttable_nosort"></td>
+                {% endif %}
                 <th>observer</th>
                 <th>date observed</th>
                 <th>reporter</th>
@@ -117,7 +129,10 @@
         {% for o in animal.observation_set.all %}
         <tr>
             <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
+            {# don't forget the observation-editing page can also change animals and cases #}
+            {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
             <td><a href="{{ o.detailed.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
+            {% endif %}
             <td>{% observation_link o %}</td>
             <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>
             <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>

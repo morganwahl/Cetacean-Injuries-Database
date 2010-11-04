@@ -96,14 +96,18 @@
         </table>
         {% endwith %}
     </div>
+    {% if perms.entanglements.change_gear_owner %}
     <div>
         <a href="{% url edit_gear_owner case.id %}">edit gear owner info</a>
     </div>
+    {% endif %}
     {% else %}
     <i>none</i>
+    {% if perms.entanglements.add_gear_owner %}
     <div>
         <a href="{% url add_gear_owner case.id %}">add gear owner info</a>
     </div>
+    {% endif %}
     {% endif %}
     {% endblock %}
     {% else %}
