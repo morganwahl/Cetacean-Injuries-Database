@@ -3,7 +3,7 @@ from django import template
 register = template.Library()
 
 @register.simple_tag
-def uncertaindatetime_sort_key(uncertaindatetime):
+def uncertain_datetime_sort_key(uncertaindatetime):
     '''\
     Include a key that can be sorted lexicographically (or numerically). a part
     of the date is None, it will sort _after_ datetimes that are otherwise 
