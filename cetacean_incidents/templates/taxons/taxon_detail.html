@@ -50,15 +50,37 @@
     <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>" }}</td></tr>
 </table>
 
-<h3>Animals determined to be {{ taxon }}</h3>
-{% if taxon.animal_set.count %}
-<table>
-{% for a in taxon.animal_set.all %}
-<tr><td>{% animal_link a %}</td></tr>
-{% endfor %}
-</table>
-{% else %}
-<i>none</i>
+<div>
+    <h3>Animals only determined to be {% taxon_display taxon %}</h3>
+    {% if taxon.animal_set.count %}
+    <table>
+        {% for a in taxon.animal_set.all %}
+        <tr><td>{% animal_link a %}</td></tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <i>none</i>
+    {% endif %}
+</div>
+
+{% if taxon.descendants %}
+<div>
+    <h3>Animals determined to be subtaxa of {% taxon_display taxon %}</h3>
+    <table>
+        {% for subtaxon in taxon.descendants %}
+        {% if subtaxon.animal_set.count %}
+        {% for a in subtaxon.animal_set.all %}
+        <tr>
+            <th style="text-align: right;">
+                {% taxon_link subtaxon %}
+            </th>
+            <td>{% animal_link a %}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+        {% endfor %}
+    </table>
+</div>
 {% endif %}
 
 <h3>Observations of {% taxon_display taxon %}</h3>
