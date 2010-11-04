@@ -11,12 +11,10 @@ register = template.Library()
 @register.inclusion_tag('taxon_link.html')
 def taxon_link(taxon):
     '''\
-    Returns the link HTML for a taxon.
+    The link HTML for a taxon.
     '''
     
-    return {
-        'taxon': taxon,
-    }
+    return {'taxon': taxon}
 
 @register.simple_tag
 def taxon_sort_key(taxon, interleaved=False):
