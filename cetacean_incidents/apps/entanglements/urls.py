@@ -23,7 +23,5 @@ urlpatterns += patterns('',
 
     (r'^observations/(\d+)/$', views.entanglementobservation_detail, {}, 'entanglementobservation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_entanglementobservation, {}, 'edit_entanglementobservation'),
-
-    (r'^entanglement_report_form/$', views.entanglement_report_form, {}, 'entanglement_report_form'),
 )
 
