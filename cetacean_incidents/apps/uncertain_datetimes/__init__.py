@@ -185,7 +185,7 @@ class UncertainDateTime(object):
         if year is None:
             year = datetime.MAXYEAR
         if month is None:
-            month = MAXMONTH
+            month = len(month_name) - 1
         if day is None:
             day = month_days(year)[month]
         if hour is None:
