@@ -3,6 +3,8 @@ from django.template.loader import render_to_string
 
 from django.db import models
 
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
+
 register = template.Library()
 
 @register.simple_tag
@@ -69,6 +71,8 @@ def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
         template_name = 'row'
         if isinstance(field, models.TextField):
             template_name = 'bigtext_row'
+        if isinstance(field, UncertainDateTimeField):
+            template_name = 'uncertain_datetime_row'
     
     context.update(kwargs)
     

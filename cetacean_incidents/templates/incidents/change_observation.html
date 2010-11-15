@@ -122,7 +122,7 @@
                 </a>
             </li>
             {# TODO check for errors on forms.new_reporter_affiliations #}
-            <li{% if forms.observation.non_field_errors or forms.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.report_datetime.errors or forms.observation.new_reporter.errors or forms.new_reporter.errors or forms.observation.reporter.errors %} class="ui-state-error"{% endif %}>
                 <a href="#reporting">
                     <em>Observation</em>
                     <br>Reporter
@@ -130,7 +130,7 @@
             </li>
             {# TODO check for errors on forms.new_observer_affiliations #}
             {# TODO check for errors on forms.new_vesselcontact_affiliations #}
-            <li{% if forms.observation.non_field_errors or forms.observation_datetime.errors or forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.observation_datetime.errors or forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %} class="ui-state-error"{% endif %}>
                 <a href="#observation">
                     <em>Observation</em>
                     <br>Observer
@@ -282,8 +282,8 @@
             {{ forms.observation.non_field_errors }}
             <div class="section">
                 <h4>report date and time</h4>
-                {% with forms.report_datetime as d_form %}
-                {% include "datetime/edit_datetime_include.html" %}
+                {% with forms.observation.report_datetime as f %}
+                {% include "unlabeled_field.html" %}
                 {% endwith %}
             </div>
             <div class="section">
@@ -329,8 +329,8 @@
             {{ forms.observation.non_field_errors }}
             <div class="section">
                 <h4>observation date and time</h4>
-                {% with forms.observation_datetime as d_form %}
-                {% include "datetime/edit_datetime_include.html" %}
+                {% with forms.observation.observation_datetime as f %}
+                {% include "unlabeled_field.html" %}
                 {% endwith %}
             </div>
             <div class="section">

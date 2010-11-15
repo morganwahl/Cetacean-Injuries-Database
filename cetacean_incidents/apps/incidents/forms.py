@@ -74,7 +74,12 @@ class MergeCaseForm(forms.ModelForm):
         model = Case
 
 class ObservationDateField(UncertainDateTimeField):
-    required_fields = set(['year'])
+    
+    def __init__(self, *args, **kwargs):
+        return super(ObservationDateField, self).__init__(
+            required_subfields= ('year',),
+            hidden_subfields=('second', 'microsecond'),
+        )
 
 class ObservationForm(forms.ModelForm):
     '''\

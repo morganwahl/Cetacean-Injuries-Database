@@ -830,7 +830,7 @@ class Observation(models.Model):
     def __unicode__(self):
         ret = 'observation '
         if self.observation_datetime:
-            ret += "at %s " % self.observation_datetime.__unicode__(seconds=False)
+            ret += "at %s " % self.observation_datetime.__unicode__(unknown_char=None)
         if self.observer:
             ret += "by %s " % self.observer
         ret += "(#%06d)" % self.id
