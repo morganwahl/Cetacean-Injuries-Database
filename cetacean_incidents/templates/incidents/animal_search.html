@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load taxon_extras %}
 {% load animal_extras %}
-{% load uncertain_datetime_extras %}
+{% load observation_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -71,8 +71,8 @@
 	    <td>{{ animal.observation_set.count }}</td>
 	    {% with animal.first_observation.observation_datetime as od %}
 	    {% if od %}
-	    <td sorttable_customkey="{% datetime_sort_key od %}">
-	        {{ od }}
+	    <td sorttable_customkey="{{ od.sortkey }}">
+	        {% observation_datetime_display od %}
         </td>
         {% else %}
         <td></td>
@@ -80,8 +80,8 @@
         {% endwith %}
 	    {% with animal.last_observation.observation_datetime as od %}
 	    {% if od %}
-	    <td sorttable_customkey="{% datetime_sort_key od %}">
-	        {{ od }}
+	    <td sorttable_customkey="{{ od.sortkey }}">
+	        {% observation_datetime_display od %}
         </td>
         {% else %}
         <td></td>
