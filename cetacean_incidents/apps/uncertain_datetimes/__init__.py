@@ -43,49 +43,49 @@ class UncertainDateTime(object):
         if not year is None:
             if not isinstance(year, int):
                 raise TypeError("year must be an integer or None, not a %s" % type(year))
-            if not year >= self.MINYEAR and year <= self.MAXYEAR:
-                raise ValueError("integer year must be between %d and %d (inclusive)"  % (self.MINYEAR, self.MAXYEAR))
+            if not (year >= self.MINYEAR and year <= self.MAXYEAR):
+                raise OverflowError("integer year must be between %d and %d (inclusive)"  % (self.MINYEAR, self.MAXYEAR))
         self.year = year
 
         if not month is None:
             if not isinstance(month, int):
                 raise TypeError("month must be an integer or None, not a %s" % type(month))
-            if not month >= self.MINMONTH and month <= self.MAXMONTH:
+            if not (month >= self.MINMONTH and month <= self.MAXMONTH):
                 raise ValueError("integer month must be between %d and %d (inclusive)"  % (self.MINMONTH, self.MAXMONTH))
         self.month = month
 
         if not day is None:
             if not isinstance(day, int):
                 raise TypeError("day must be an integer or None, not a %s" % type(day))
-            if not day >= self.MINDAY and day <= self.maxday(year, month):
-                raise ValueError("integer day must be between %d and %d (inclusive) when year is %s and month is %s"  % (self.MINMONTH, self.MAXMONTH, year, month))
+            if not (day >= self.MINDAY and day <= self.maxday(year, month)):
+                raise ValueError("integer day must be between %d and %d (inclusive) when year is %s and month is %s"  % (self.MINDAY, self.maxday(year, month), year, month))
         self.day = day
 
         if not hour is None:
             if not isinstance(hour, int):
                 raise TypeError("hour must be an integer or None, not a %s" % type(hour))
-            if not hour >= self.MINHOUR and hour <= self.MAXHOUR:
+            if not (hour >= self.MINHOUR and hour <= self.MAXHOUR):
                 raise ValueError("integer hour must be between %d and %d (inclusive)"  % (self.MINHOUR, self.MAXHOUR))
         self.hour = hour
 
         if not minute is None:
             if not isinstance(minute, int):
                 raise TypeError("minute must be an integer or None, not a %s" % type(minute))
-            if not minute >= self.MINMINUTE and minute <= self.MAXMINUTE:
+            if not (minute >= self.MINMINUTE and minute <= self.MAXMINUTE):
                 raise ValueError("integer minute must be between %d and %d (inclusive)"  % (self.MINMINUTE, self.MAXMINUTE))
         self.minute = minute
 
         if not second is None:
             if not isinstance(second, int):
                 raise TypeError("second must be an integer or None, not a %s" % type(second))
-            if not second >= self.MINSECOND and second <= self.MAXSECOND:
+            if not (second >= self.MINSECOND and second <= self.MAXSECOND):
                 raise ValueError("integer second must be between %d and %d (inclusive)"  % (self.MINSECOND, self.MAXSECOND))
         self.second = second
 
         if not microsecond is None:
             if not isinstance(microsecond, int):
                 raise TypeError("microsecond must be an integer or None, not a %s" % type(year))
-            if not microsecond >= self.MINMICROSECOND and microsecond <= self.MAXMICROSECOND:
+            if not (microsecond >= self.MINMICROSECOND and microsecond <= self.MAXMICROSECOND):
                 raise ValueError("integer microsecond must be between %d and %d (inclusive)"  % (self.MINMICROSECOND, self.MAXMICROSECOND))
         self.microsecond = microsecond
     
