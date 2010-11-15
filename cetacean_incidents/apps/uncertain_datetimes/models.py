@@ -39,9 +39,9 @@ class UncertainDateTimeField(models.Field):
     # istartswith, endswith, iendswith, range, year, month, day, isnull, search,
     # regex, iregex
     def get_prep_lookup(self, lookup_type, value):
-        if lookup_type == 'exact':
+        if lookup_type in ('exact',):
             return self.get_prep_value(value)
-        elif lookup_type == 'in':
+        elif lookup_type in ('in',):
             return [self.get_prep_value(v) for v in value]
         else:
             raise TypeError('Lookup type %r not supported.' % lookup_type)
