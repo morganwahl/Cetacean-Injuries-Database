@@ -140,7 +140,9 @@ class UncertainDateTimeField(forms.Field):
         },
         'month': {
             'required': False,
-            'choices': tuple(enumerate(month_name))[1:],
+            'choices': (
+                ('', '<unknown month>'),
+            ) + tuple(enumerate(month_name))[1:],
             'coerce': int,
             'empty_value': None,
             'error_messages': {
@@ -270,28 +272,32 @@ class UncertainDateTimeField(forms.Field):
             except ValidationError, e:
                 errors.extend(e.messages)
         
+        try:
+            out = self.compress(clean_data)
+        except ValueError, e:
+            errors.extend([e.message])
+        
         if errors:
             raise ValidationError(errors)
         
-        out = self.compress(clean_data)
         self.validate(out)
         return out
         
     def compress(self, data_dict):
         # TODO put this in a proper UncertainTimeField
-        print data_dict
         if 'time' in data_dict.keys():
-            match = re.search(r'(\d*):(\d*):(\d*).(\d*)', data_dict['time'])
+            match = re.search(r'(?P<hour>\d*)(:(?P<minute>\d*))?(:(?P<second>\d*))?(\.(?P<microsecond>\d*))?', data_dict['time'])
             if match:
-                fields = match.groups()
-                fields = map(lambda f: int(f) if not f == '' else None, fields)
-                print fields
-                data_dict['hour'] = fields[0]
-                data_dict['minute'] = fields[1]
-                data_dict['second'] = fields[2]
-                data_dict['microsecond'] = fields[3]
+                fields = match.groupdict()
+                def int_or_none(i):
+                    if i is None or i == '':
+                        return None
+                    return int(i)
+                data_dict['hour'] = int_or_none(fields['hour'])
+                data_dict['minute'] = int_or_none(fields['minute'])
+                data_dict['second'] = int_or_none(fields['second'])
+                data_dict['microsecond'] = int_or_none(fields['microsecond'])
             del data_dict['time']
-        print data_dict
         
         return UncertainDateTime(**data_dict)
 
