@@ -2,6 +2,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
+from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
@@ -25,9 +26,16 @@ class GearOwner(AbstractContact):
     
     # TODO enforce view permissions at the model level!
     
-    date_gear_set = UncertainDateTimeField(
+    datetime_set = UncertainDateTimeField(
         blank= True,
         null= True,
+        verbose_name= 'date gear was set',
+    )
+    date_gear_set = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        related_name= 'set_date_for',
         verbose_name= 'date gear was set',
     )
     
@@ -38,7 +46,14 @@ class GearOwner(AbstractContact):
         help_text= "please note depth as well"
     )    
         
-    date_gear_missing = UncertainDateTimeField(
+    date_gear_missing = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        related_name= 'missing_date_for',
+        verbose_name= 'date gear went missing',
+    )
+    datetime_missing = UncertainDateTimeField(
         blank= True,
         null= True,
         verbose_name= 'date gear went missing',

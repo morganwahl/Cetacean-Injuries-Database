@@ -2,14 +2,14 @@ from django.test import TestCase
 
 from datetime import datetime, timedelta
 import pytz
-from models import UncertainDateTime
+from models import DateTime
 
-class UncertainDateTimeTestCase(TestCase):
+class DateTimeTestCase(TestCase):
     def setUp(self):
-        self.me = UncertainDateTime(year=1982,month=3,day=20)
-        self.leapfeb = UncertainDateTime(year=2004, month=2)
-        self.regfeb = UncertainDateTime(year=1900, month=2)
-        self.leapday = UncertainDateTime(year=2004, month=2, day=29)
+        self.me = DateTime.objects.create(year=1982,month=3,day=20)
+        self.leapfeb = DateTime.objects.create(year=2004, month=2)
+        self.regfeb = DateTime.objects.create(year=1900, month=2)
+        self.leapday = DateTime.objects.create(year=2004, month=2, day=29)
 
     def test_earliest(self):
         self.assertEquals(self.me.earliest, datetime(1982, 3, 20, 0, 0, 0, 0, pytz.utc))

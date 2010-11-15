@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact, Organization
+from cetacean_incidents.apps.datetime.models import DateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -684,8 +685,16 @@ class Observation(models.Model):
         related_name= 'observed',
         help_text= 'the vessel the observer was on, if any',
     )
-    observation_datetime = UncertainDateTimeField(
+    datetime_observed = UncertainDateTimeField(
         help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest observation_datetime for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
+        verbose_name= 'observation date and time',
+    )
+    observation_datetime = models.OneToOneField(
+        DateTime,
+        blank= True,
+        null= True,
+        help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest observation_datetime for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
+        related_name= 'observation_date_for',
         verbose_name= 'observation date and time',
     )
     # TODO duration?
@@ -710,8 +719,14 @@ class Observation(models.Model):
         related_name= 'reported',
         help_text= "This is who informed us of the observation. Same as observer if this is a firsthand report.",
     )
-    report_datetime = UncertainDateTimeField(
+    datetime_reported = UncertainDateTimeField(
         help_text = 'when we first heard about the observation',
+        verbose_name = 'report date and time',
+    )
+    report_datetime = models.OneToOneField(
+        DateTime,
+        help_text = 'when we first heard about the observation',
+        related_name = 'report_date_for',
         verbose_name = 'report date and time',
     )
         
