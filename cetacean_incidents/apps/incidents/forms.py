@@ -2,6 +2,7 @@ import datetime
 from itertools import chain
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import fields
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
@@ -78,8 +79,33 @@ class ObservationDateField(UncertainDateTimeField):
     def __init__(self, *args, **kwargs):
         return super(ObservationDateField, self).__init__(
             required_subfields= ('year',),
-            hidden_subfields=('second', 'microsecond'),
+            hidden_subfields=('hour', 'minute', 'second', 'microsecond'),
         )
+    
+    def clean(self, value):
+        dt = super(ObservationDateField, self).clean(value)
+        
+        if not dt.month is None:
+            if dt.year is None:
+                raise ValidationError("can't give month without year")
+        
+        if not dt.day is None:
+            if dt.month is None:
+                raise ValidationError("can't give day without month")
+        
+        if not dt.minute is None:
+            if dt.hour is None:
+                raise ValidationError("can't give minute without hour")
+        
+        if not dt.second is None:
+            if dt.minute is None:
+                raise ValidationError("can't give second without minute")
+        
+        if not dt.microsecond is None:
+            if dt.second is None:
+                raise ValidationError("can't give microsecond without second")
+
+        return dt
 
 class ObservationForm(forms.ModelForm):
     '''\
