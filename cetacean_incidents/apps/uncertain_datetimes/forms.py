@@ -1,5 +1,6 @@
 from calendar import month_name
 import re
+from copy import deepcopy
 
 from django.core.exceptions import ValidationError
 from django import forms
@@ -220,9 +221,9 @@ class UncertainDateTimeField(forms.Field):
     }
     
     def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), *args, **kwargs):
-        self.subfield_classes = self.default_subfield_classes
+        self.subfield_classes = deepcopy(self.default_subfield_classes)
 
-        self.subfield_kwargs = self.default_subfield_kwargs
+        self.subfield_kwargs = deepcopy(self.default_subfield_kwargs)
         
         for fieldname in required_subfields:
             self.subfield_kwargs[fieldname]['required'] = True
