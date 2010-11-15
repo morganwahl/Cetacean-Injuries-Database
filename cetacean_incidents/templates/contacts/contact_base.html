@@ -2,7 +2,6 @@
 {% load contact_extras %}
 {% load observation_extras %}
 {% load generic_field_display %}
-{% load uncertain_datetime_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -78,9 +77,9 @@
                 <tr>
                     <td>{% observation_link o %}</td>
                     <td>{% if o.observer %}{% contact_link o.observer %}{% else %}<i>none</i>{% endif %}</td>
-                    <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
+                    <td sorttable_customkey="{{ o.observation_datetime.sortkey }}">{% observation_datetime_display o.observation_datetime %}</td>
                     <td>{% if o.reporter %}{% contact_link o.reporter %}{% else %}<i>none</i>{% endif %}</td>
-                    <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
+                    <td sorttable_customkey="{{ o.report_datetime.sortkey }}">{% observation_datetime_display o.report_datetime %}</td>
                     <td>{{ o.narrative|truncatewords:9 }}</td>
                 </tr>
                 {% endfor %}
