@@ -163,7 +163,7 @@ class UncertainDateTimeField(forms.Field):
             },
         },
         'time': {
-            'widget': forms.TextInput(attrs={'size': 5}),
+            'widget': forms.TextInput(attrs={'size': 15}),
             'required': False,
             'error_messages': {
                 'required': 'Time is required.',
