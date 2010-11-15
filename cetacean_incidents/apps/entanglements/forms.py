@@ -216,5 +216,5 @@ class GearOwnerForm(forms.ModelForm):
     
     class Meta:
         model = GearOwner
-        exclude = ('case', 'date_gear_set', 'location_gear_set', 'date_gear_missing')
+        exclude = ('case', 'location_gear_set')
 

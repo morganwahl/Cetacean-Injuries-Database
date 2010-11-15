@@ -15,7 +15,6 @@ from reversion import revision
 from cetacean_incidents.apps.incidents.models import Case
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetimes.forms import NiceDateTimeForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
@@ -40,9 +39,7 @@ def add_gear_owner(request, entanglement_id):
 
     form_classes = {
         'gear_owner': GearOwnerForm,
-        'datetime_set': NiceDateTimeForm,
         'location_set': NiceLocationForm,
-        'datetime_lost': NiceDateTimeForm,
     }
     forms = {}
     for form_name, form_class in form_classes.items():
@@ -69,15 +66,9 @@ def add_gear_owner(request, entanglement_id):
             entanglement.gear_owner_info = gear_owner
             entanglement.save()
             
-            if forms['gear_owner'].cleaned_data['date_set_known']:
-                _check('datetime_set')
-                gear_owner.date_gear_set = forms['datetime_set'].save()
             if forms['gear_owner'].cleaned_data['location_set_known']:
                 _check('location_set')
                 gear_owner.location_gear_set = forms['location_set'].save()
-            if forms['gear_owner'].cleaned_data['date_lost_known']:
-                _check('datetime_lost')
-                gear_owner.date_gear_missing = forms['datetime_lost'].save()
             
             gear_owner.save()
 
@@ -109,9 +100,7 @@ def edit_gear_owner(request, entanglement_id):
 
     form_classes = {
         'gear_owner': GearOwnerForm,
-        'datetime_set': NiceDateTimeForm,
         'location_set': NiceLocationForm,
-        'datetime_lost': NiceDateTimeForm,
     }
 
     form_initials = {
@@ -129,9 +118,7 @@ def edit_gear_owner(request, entanglement_id):
 
     model_instances = {
         'gear_owner': gear_owner,
-        'datetime_set': gear_owner.date_gear_set,
         'location_set': gear_owner.location_gear_set,
-        'datetime_lost': gear_owner.date_gear_missing,
     }
 
     forms = {}
@@ -162,19 +149,6 @@ def edit_gear_owner(request, entanglement_id):
             entanglement.gear_owner_info = gear_owner
             entanglement.save()
             
-            if forms['gear_owner'].cleaned_data['date_set_known']:
-                _check('datetime_set')
-                gear_owner.date_gear_set = forms['datetime_set'].save()
-            else:
-                date_set = gear_owner.date_gear_set
-                if not date_set is None:
-                    gear_owner.date_gear_set = None
-                    # be sure to remove the datetime reference from the 
-                    # gear_owner and save, or else you'll delete the entire
-                    # case!
-                    gear_owner.save()
-                    date_set.delete()
-            
             if forms['gear_owner'].cleaned_data['location_set_known']:
                 _check('location_set')
                 gear_owner.location_gear_set = forms['location_set'].save()
@@ -185,16 +159,6 @@ def edit_gear_owner(request, entanglement_id):
                     gear_owner.save()
                     loc_set.delete()
 
-            if forms['gear_owner'].cleaned_data['date_lost_known']:
-                _check('datetime_lost')
-                gear_owner.date_gear_missing = forms['datetime_lost'].save()
-            else:
-                date_lost = gear_owner.date_gear_missing
-                if not date_lost is None:
-                    gear_owner.date_gear_missing = None
-                    gear_owner.save()
-                    date_lost.delete()
-            
             gear_owner.save()
             
             return entanglement
