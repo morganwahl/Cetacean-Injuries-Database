@@ -1,176 +1,297 @@
+from calendar import month_name
+import re
+
 from django.core.exceptions import ValidationError
 from django import forms
 from django.forms.util import ErrorList
 from django.utils.safestring import mark_safe
+from django.utils import copycompat as copy
+from django.template.loader import render_to_string
 
 from . import UncertainDateTime
 
-# based on Django's SplitDateTimeWidget
-class UncertainDateTimeWidget(forms.MultiWidget):
+# similiar to Django's MultiWidget, but not really a subclass
+class UncertainDateTimeWidget(forms.Widget):
     """
     A Widget that splits an UncertainDateTime input into 7 <input type="text"> inputs.
     """
     
-    def __init__(self, attrs=None):
+    def __init__(self, subwidgets, attrs=None):
+        
+        self.subwidgets = subwidgets
 
-        year_attrs = {'size': '4'}
-        month_attrs = {'size': '2'}
-        day_attrs = {'size': '2'}
-
-        hour_attrs = {'size': '2'}
-        minute_attrs = {'size': '2'}
-        second_attrs = {'size': '2'}
-        microsecond_attrs = {'size': '6'}
-
-        if not attrs is None:
-            year_attrs.update(attrs)
-            month_attrs.update(attrs)
-            day_attrs.update(attrs)
-            hour_attrs.update(attrs)
-            minute_attrs.update(attrs)
-            second_attrs.update(attrs)
-            microsecond_attrs.update(attrs)
-
-        widgets = (
-            forms.TextInput(attrs=year_attrs), # year
-            forms.TextInput(attrs=month_attrs), # month
-            forms.TextInput(attrs=day_attrs), # day
-
-            forms.TextInput(attrs=hour_attrs), # hour
-            forms.TextInput(attrs=minute_attrs), # minute
-            forms.TextInput(attrs=second_attrs), # second
-            forms.TextInput(attrs=microsecond_attrs), # microsecond
-        )
-        super(UncertainDateTimeWidget, self).__init__(widgets, attrs)
-
-    def format_output(self, rendered_widgets):
-        return '%s-%s-%s %s:%s:%s.%s' % tuple(rendered_widgets)
+        super(UncertainDateTimeWidget, self).__init__(attrs)
+    
+    def render(self, name, value, attrs=None):
+        # value is a dictionary with keys corresponding to self.subwidgets
+        if not isinstance(value, dict):
+            value = self.decompress(value)
+        output = []
+        final_attrs = self.build_attrs(attrs)
+        id_ = final_attrs.get('id', None)
+        # TODO move this ordering info into UncertainDateTimeWidget
+        # really we should be using lists with key-lookup
+        for subname in (
+            'year',
+            'month',
+            'day',
+            'time',
+            'hour',
+            'minute',
+            'second',
+            'microsecond',
+        ):
+            subwidget = self.subwidgets[subname]
+            
+            try:
+                widget_value = value[subname]
+            except KeyError:
+                widget_value = None
+            if id_:
+                final_attrs = dict(final_attrs, id='%s_%s' % (id_, subname))
+            
+            rendering = subwidget.render(name + '_%s' % subname, widget_value, final_attrs)
+            
+            output.append({
+                'name': subname,
+                'widget': subwidget,
+                'rendering': rendering,
+            })
+        
+        return mark_safe(render_to_string(
+            'uncertain_datetime_widget.html',
+            {
+                'widget': self,
+                'subwidgets': output
+            }
+        ))
+    
+    @classmethod
+    def id_for_label(self, id_):
+        # TODO
+        return id_
+    
+    def value_from_datadict(self, data, files, name):
+        value = {}
+        for widget_name, widget in self.subwidgets.items():
+            value[widget_name] = widget.value_from_datadict(data, files, name + '_%s' % widget_name)
+        return value
+    
+    def _has_changed(self, intial, data):
+        raise NotImplementedError("UncertainDateTimeWidget._has_changed")
 
     def decompress(self, value):
-        if value is None:
-            return [None] * 7
-        return [value.year, value.month, value.day, value.hour, value.minute, value.second, value.microsecond]
+        if not value:
+            return {}
+        if value is dict:
+            return value
+        return {
+            'year': value.year,
+            'month': value.month,
+            'day': value.day,
+            'hour': value.hour,
+            'time': value.time_unicode(unknown_char=None),
+            'minute': value.minute,
+            'second': value.second,
+            'microsecond': value.microsecond,
+        }
 
-# based on Django's SplitHiddenDateTimeWidget
-class UncertainHiddenDateTimeWidget(UncertainDateTimeWidget):
+    def _get_media(self):
+        raise NotImplementedError("UncertainDateTimeWidget._get_media")
+        
+    def __deepcopy__(self, memo):
+        obj = super(UncertainDateTimeWidget, self).__deepcopy__(memo)
+        obj.subwidgets = copy.deepcopy(self.subwidgets)
+        return obj
+
+class UncertainDateTimeHiddenWidget(UncertainDateTimeWidget):
     """
     A Widget that splits an UncertainDateTime input into 7 <input type="hidden"> inputs.
     """
     is_hidden = True
 
-    def __init__(self, attrs=None):
-        super(UncertainHiddenDateTimeWidget, self).__init__(attrs)
-        for widget in self.widgets:
-            widget.input_type = 'hidden'
-            widget.is_hidden = True
+# similiar to Django's ComboField and MultiValueField, but not really a subclass
+# of them
+class UncertainDateTimeField(forms.Field):
 
-class UncertainDateTimeField(forms.MultiValueField):
-    widget = UncertainDateTimeWidget
-    hidden_widget = UncertainHiddenDateTimeWidget
-    default_error_messages = {
-        'invalid_date': u'Enter a valid date.',
-        'invalid_year': u'Enter a valid year.',
-        'invalid_month': u'Enter a valid month.',
-        'invalid_day': u'Enter a valid day.',
-        'invalid_hour': u'Enter a valid hour.',
-        'invalid_minute': u'Enter a valid minute.',
-        'invalid_second': u'Enter a valid second.',
-        'invalid_microsecond': u'Enter a valid microsecond.',
+    default_subfield_classes = {
+        'year': forms.IntegerField,
+        'month': forms.TypedChoiceField,
+        'day': forms.IntegerField,
+        'hour': forms.IntegerField,
+        'time': forms.CharField,
+        'minute': forms.IntegerField,
+        'second': forms.IntegerField,
+        'microsecond': forms.IntegerField,
     }
+    
+    default_subfield_kwargs = {
+        'year': {
+            'widget': forms.TextInput(attrs={'size': 4}),
+            'required': False,
+            'min_value': UncertainDateTime.MINYEAR,
+            'max_value': UncertainDateTime.MAXYEAR,
+            'error_messages': {
+                'required': 'Year is required.',
+                'invalid': 'Year must be a whole number.',
+                'min_value': 'Year must be greater than {0}.'.format(UncertainDateTime.MINYEAR - 1),
+                'max_value': 'Year must be less than {0}.'.format(UncertainDateTime.MAXYEAR + 1),
+            }
+        },
+        'month': {
+            'required': False,
+            'choices': tuple(enumerate(month_name))[1:],
+            'coerce': int,
+            'empty_value': None,
+            'error_messages': {
+                'required': 'Month is required.',
+            },
+        },
+        # TODO UncertainDateTime needs to raise a ValueError when given Feb 31st
+        'day': {
+            'widget': forms.TextInput(attrs={'size': 2}),
+            'required': False,
+            'min_value': UncertainDateTime.MINDAY, 
+            'max_value': UncertainDateTime.maxday(),
+            'error_messages': {
+                'required': 'Day is required.',
+                'invalid': 'Day must be a whole number.',
+                'min_value': 'Day must be greater than or equal to {0}.'.format(UncertainDateTime.MINDAY),
+                'max_value': 'Day must be less than or equal to {0}.'.format(UncertainDateTime.maxday()),
+            },
+        },
+        'time': {
+            'widget': forms.TextInput(attrs={'size': 5}),
+            'required': False,
+            'error_messages': {
+                'required': 'Time is required.',
+            },
+        },
+        'hour': {
+            'widget': forms.TextInput(attrs={'size': 2}),
+            'required': False,
+            'min_value': UncertainDateTime.MINHOUR, 
+            'max_value': UncertainDateTime.MAXHOUR,
+            'error_messages': {
+                'required': 'Hour is required.',
+                'invalid': 'Hour must be a whole number.',
+                'min_value': 'Hour must be greater than or equal to {0}.'.format(UncertainDateTime.MINHOUR),
+                'max_value': 'Hour must be less than or equal to {0}.'.format(UncertainDateTime.MAXHOUR),
+            },
+        },
+        'minute': {
+            'widget': forms.TextInput(attrs={'size': 2}),
+            'required': False,
+            'min_value': UncertainDateTime.MINMINUTE, 
+            'max_value': UncertainDateTime.MAXMINUTE,
+            'error_messages': {
+                'required': 'Minute is required.',
+                'invalid': 'Minute must be a whole number.',
+                'min_value': 'Minute must be greater than or equal to {0}.'.format(UncertainDateTime.MINMINUTE),
+                'max_value': 'Minute must be less than or equal to {0}.'.format(UncertainDateTime.MAXMINUTE),
+            },
+        },
+        'second': {
+            'widget': forms.TextInput(attrs={'size': 2}),
+            'required': False,
+            'min_value': UncertainDateTime.MINSECOND, 
+            'max_value': UncertainDateTime.MAXSECOND,
+            'error_messages': {
+                'required': 'Second is required.',
+                'invalid': 'Second must be a whole number.',
+                'min_value': 'Second must be greater than or equal to {0}.'.format(UncertainDateTime.MINSECOND),
+                'max_value': 'Second must be less than or equal to {0}.'.format(UncertainDateTime.MAXSECOND),
+            },
+        },
+        'microsecond': {
+            'widget': forms.TextInput(attrs={'size': 6}),
+            'required': False,
+            'min_value': UncertainDateTime.MINMICROSECOND, 
+            'max_value': UncertainDateTime.MAXMICROSECOND,
+            'error_messages': {
+                'required': 'Microsecond is required.',
+                'invalid': 'Microsecond must be a whole number.',
+                'min_value': 'Microsecond must be greater than or equal to {0}.'.format(UncertainDateTime.MINMICROSECOND),
+                'max_value': 'Microsecond must be less than or equal to {0}.'.format(UncertainDateTime.MAXMICROSECOND),
+            },
+        },
+    }
+    
+    def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), *args, **kwargs):
+        self.subfield_classes = self.default_subfield_classes
 
-    # intended to be overriden in subclasses
-    required_fields = set()
-
-    def __init__(self, *args, **kwargs):
-        errors = self.default_error_messages.copy()
-        if 'error_messages' in kwargs:
-            errors.update(kwargs['error_messages'])
-        fields = (
-            forms.IntegerField(
-                required= 'year' in self.required_fields,
-                min_value= UncertainDateTime.MINYEAR, 
-                max_value= UncertainDateTime.MAXYEAR,
-                error_messages= {'invalid': errors['invalid_year']},
-            ),
-            forms.IntegerField(
-                required= 'month' in self.required_fields,
-                min_value=UncertainDateTime.MINMONTH, 
-                max_value=UncertainDateTime.MAXMONTH,
-                error_messages= {'invalid': errors['invalid_month']},
-            ),
-            forms.IntegerField(
-                required= 'day' in self.required_fields,
-                min_value=UncertainDateTime.MINDAY, 
-                max_value=UncertainDateTime.maxday(),
-                error_messages= {'invalid': errors['invalid_day']},
-            ),
-
-            forms.IntegerField(
-                required= 'hour' in self.required_fields,
-                min_value=UncertainDateTime.MINHOUR, 
-                max_value=UncertainDateTime.MAXHOUR,
-                error_messages= {'invalid': errors['invalid_hour']},
-            ),
-            forms.IntegerField(
-                required= 'minute' in self.required_fields,
-                min_value=UncertainDateTime.MINMINUTE, 
-                max_value=UncertainDateTime.MAXMINUTE,
-                error_messages= {'invalid': errors['invalid_minute']},
-            ),
-            forms.IntegerField(
-                required= 'second' in self.required_fields,
-                min_value=UncertainDateTime.MINSECOND, 
-                max_value=UncertainDateTime.MAXSECOND,
-                error_messages= {'invalid': errors['invalid_second']},
-            ),
-            forms.IntegerField(
-                required= 'microsecond' in self.required_fields,
-                min_value=UncertainDateTime.MINMICROSECOND, 
-                max_value=UncertainDateTime.MAXMICROSECOND,
-                error_messages= {'invalid': errors['invalid_microsecond']},
-            ),
-        )
-        # skip MultiValueField's __init__ since it set's required=False on 
-        # all the fields
-        super(forms.MultiValueField, self).__init__(*args, **kwargs)
-        self.fields = fields
-
-    def clean(self, value):
-        # based on MultiValueField's clean()
+        self.subfield_kwargs = self.default_subfield_kwargs
         
-        clean_data = []
+        for fieldname in required_subfields:
+            self.subfield_kwargs[fieldname]['required'] = True
+        for fieldname in hidden_subfields:
+            self.subfield_kwargs[fieldname]['widget'] = forms.HiddenInput        
+
+        subfields = {}
+        for fieldname in self.subfield_classes.keys():
+            subfields[fieldname] = self.subfield_classes[fieldname](**self.subfield_kwargs[fieldname])
+        
+        self.subfields = subfields
+        
+        subfield_widgets = {}
+        subfield_hidden_widgets = {}
+        for subfield_name, subfield in self.subfields.items():
+            subfield_widgets[subfield_name] = subfield.widget
+            subfield_hidden_widgets[subfield_name] = subfield.hidden_widget
+        self.widget = UncertainDateTimeWidget(subwidgets=subfield_widgets)
+        self.hidden_widgets = UncertainDateTimeHiddenWidget(subwidgets=subfield_hidden_widgets)
+        
+        super(UncertainDateTimeField, self).__init__(*args, **kwargs)
+    
+    def validate(self, value):
+        pass
+    
+    def clean(self, value):
+        '''\
+        value is assumed to be a dictionary of values with keys corresponding
+        to the ones in self.subfields. Each value is validated against it's 
+        corresponding field.
+        '''
+        clean_data = {}
         errors = ErrorList()
         
-        if value and not isinstance(value, (list, tuple)):
+        if not isinstance(value, dict):
             raise ValidationError(self.error_messages['invalid'])
         
-        if not value:
-            if self.required_fields:
-                raise ValidationError(self.error_messages['required_%s' % self.required_fields[0]])
-            else:
-                if self.required:
-                    raise ValidationError(self.error_messages['required'])
-                return self.compress([])
-
-        for i, field in enumerate(self.fields):
+        for fieldname, field in self.subfields.items():
+            if not fieldname in value.keys():
+                if field.required:
+                    raise ValidationError(field.error_messages['required'])
+                else:
+                    continue
+            
             try:
-                field_value = value[i]
-            except IndexError:
-                field_value = None
-            try:
-                clean_data.append(field.clean(field_value))
+                clean_data[fieldname] = field.clean(value[fieldname])
             except ValidationError, e:
-                # Collect all validation errors in a single list, which we'll
-                # raise at the end of clean(), rather than raising a single
-                # exception for the first error we encounter.
                 errors.extend(e.messages)
+        
         if errors:
             raise ValidationError(errors)
-
+        
         out = self.compress(clean_data)
         self.validate(out)
         return out
-    
-    def compress(self, data_list):
-        return UncertainDateTime(*data_list)
+        
+    def compress(self, data_dict):
+        # TODO put this in a proper UncertainTimeField
+        print data_dict
+        if 'time' in data_dict.keys():
+            match = re.search(r'(\d*):(\d*):(\d*).(\d*)', data_dict['time'])
+            if match:
+                fields = match.groups()
+                fields = map(lambda f: int(f) if not f == '' else None, fields)
+                print fields
+                data_dict['hour'] = fields[0]
+                data_dict['minute'] = fields[1]
+                data_dict['second'] = fields[2]
+                data_dict['microsecond'] = fields[3]
+            del data_dict['time']
+        print data_dict
+        
+        return UncertainDateTime(**data_dict)
 
