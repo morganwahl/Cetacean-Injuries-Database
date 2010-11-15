@@ -1,5 +1,3 @@
 {% extends "generic_templates/display_row.html" %}
-{% load observation_extras %}
-
-{% block value_block %}{% observation_datetime_display value %}{% endblock %}
+{% block value_block %}{{ value|default:"<i>unknown</i>" }}{% endblock %}
 
