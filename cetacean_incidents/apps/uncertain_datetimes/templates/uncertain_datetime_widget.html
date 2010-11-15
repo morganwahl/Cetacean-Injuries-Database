@@ -9,7 +9,9 @@
     </tr>
     <tr>
         {% for sub in subwidgets %}
+        {% if not sub.widget.is_hidden %}
         <td>{{ sub.rendering }}</td>
+        {% endif %}
         {% endfor %}
     </tr>
     <caption>
