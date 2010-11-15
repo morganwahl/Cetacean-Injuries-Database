@@ -4,6 +4,7 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from cetacean_incidents.apps.incidents.models import Animal
 
 from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
+from forms import GearOwnerForm
 
 class GearTypeTestCase(TestCase):
     def setUp(self):
@@ -132,3 +133,9 @@ class EntanglementTestCase(TestCase):
             False,
         )
 
+class GearOwnerFormTestCase(TestCase):
+    
+    def test_blank(self):
+        form = GearOwnerForm({})
+        self.assertEquals(form.is_valid(), True)
+        
