@@ -39,7 +39,12 @@ class UncertainDateTime(object):
     MAXMICROSECOND = 10 ** 6 - 1
     
     def __init__(self, year=None, month=None, day=None, hour=None, minute=None, second=None, microsecond=None):
-
+        
+        # note that years hypothetically extend to infinity in both directions,
+        # thus we give an OverflowError for ones that are too large or small.
+        # The other things have a finite set of values by definition, thus we
+        # raise a ValueError.
+        
         if not year is None:
             if not isinstance(year, int):
                 raise TypeError("year must be an integer or None, not a %s" % type(year))
@@ -156,6 +161,9 @@ class UncertainDateTime(object):
         UncertainDateTime.
         '''
         
+        # note that we use the minimums for a python datetime, not an 
+        # UncertainDateTime
+        
         (year, month, day, hour, minute, second, microsecond) = (self.year, self.month, self.day,  self.hour, self.minute, self.second, self.microsecond)
         if year is None:
             year = datetime.MINYEAR
@@ -181,6 +189,9 @@ class UncertainDateTime(object):
         UncertainDateTime.
         '''
         
+        # note that we use the maximums for a python datetime, not an 
+        # UncertainDateTime
+
         (year, month, day, hour, minute, second, microsecond) = (self.year, self.month, self.day, self.hour, self.minute, self.second, self.microsecond)
         if year is None:
             year = datetime.MAXYEAR
