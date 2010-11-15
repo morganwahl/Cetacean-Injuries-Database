@@ -69,7 +69,7 @@ def add_gear_owner(request, entanglement_id):
             if forms['gear_owner'].cleaned_data['location_set_known']:
                 _check('location_set')
                 gear_owner.location_gear_set = forms['location_set'].save()
-            
+
             gear_owner.save()
 
             return entanglement
