@@ -40,22 +40,9 @@
                 </td>
                 <td class="layout" width="50%">
                     <div class="subform">
-                        <script type="text/javascript">
-                            $().ready(function(){
-                                CheckboxHider.init(
-                                    'gear_owner-date_set_known',
-                                    'date_set_known'
-                                );
-                            });
-                        </script>
-                        {% with forms.gear_owner.date_set_known as f %}
+                        {% with forms.gear_owner.date_gear_set as f %}
                         {% include "labeled_field.html" %}
                         {% endwith %}
-                        <div id="date_set_known">
-                            {% with forms.gear_owner.date_gear_set as f %}
-                            {% include "labeled_field.html" %}
-                            {% endwith %}
-                        </div>
                     </div>
                     <div class="subform">
                         <script type="text/javascript">
@@ -76,22 +63,9 @@
                         </div>
                     </div>
                     <div class="subform">
-                        <script type="text/javascript">
-                            $().ready(function(){
-                                CheckboxHider.init(
-                                    'gear_owner-date_lost_known',
-                                    'date_lost_known'
-                                );
-                            });
-                        </script>
-                        {% with forms.gear_owner.date_lost_known as f %}
+                        {% with forms.gear_owner.date_gear_missing as f %}
                         {% include "labeled_field.html" %}
                         {% endwith %}
-                        <div id="date_lost_known">
-                            {% with forms.gear_owner.date_gear_missing as f %}
-                            {% include "labeled_field.html" %}
-                            {% endwith %}
-                        </div>
                     </div>
                     {% with forms.gear_owner.missing_gear as f %}
                     {% include "bigtext_field.html" %}

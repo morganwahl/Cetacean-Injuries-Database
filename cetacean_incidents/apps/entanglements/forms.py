@@ -193,25 +193,11 @@ class EntanglementObservationForm(ObservationForm):
 
 class GearOwnerForm(forms.ModelForm):
     
-    date_set_known = forms.BooleanField(
-        initial= False,
-        required= False,
-        label= 'date gear was set is known',
-        help_text= "check even if just the year is known"
-    )
-    
     location_set_known = forms.BooleanField(
         initial= False,
         required= False,
         label= 'location gear was set is known',
         help_text= "check even if just a vague location is known",
-    )
-    
-    date_lost_known = forms.BooleanField(
-        initial= False,
-        required= False,
-        label= 'date gear went missing is known',
-        help_text= "check even if just the year is known"
     )
     
     class Meta:
