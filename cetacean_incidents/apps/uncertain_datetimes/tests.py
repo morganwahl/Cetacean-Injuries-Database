@@ -144,38 +144,36 @@ class UncertainDateTimeFormFieldTestCase(TestCase):
         self.form_class = the_form
         
         self.blank_data = {
-            'f_0': '',
-            'f_1': '',
-            'f_2': '',
-            'f_3': '',
-            'f_4': '',
-            'f_5': '',
-            'f_6': '',
+            'f_year': '',
+            'f_month': '',
+            'f_day': '',
+            'f_time': '',
         }
         self.full_data = {
-            'f_0': '1982',
-            'f_1': '3',
-            'f_2': '20',
-            'f_3': '12',
-            'f_4': '38',
-            'f_5': '02',
-            'f_6': '0',
+            'f_year': '1982',
+            'f_month': '3',
+            'f_day': '20',
+            'f_time': '12:38:02.0',
         }
         self.year_data = self.blank_data.copy()
-        self.year_data['f_0'] = '2010'
+        self.year_data['f_year'] = '2010'
+    
+    def test_unbound(self):
+        form = self.form_class()
+        form.is_valid()
     
     def test_full(self):
         form = self.form_class(self.full_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), '1982-03-20 12:38:02.000000')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'1982-03-20 12:38:02.000000')
 
     def test_blank(self):
         form = self.form_class(self.blank_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), '????-??-?? ??:??:??.??????')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'????-??-?? ??:??:??.??????')
 
     def test_year(self):
         form = self.form_class(self.year_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), '2010-??-?? ??:??:??.??????')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'2010-??-?? ??:??:??.??????')
     
