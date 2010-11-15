@@ -224,44 +224,48 @@ class UncertainDateTime(object):
         '''
         
         return self.latest - self.earliest
+    
+    def time_unicode(self, unknown_char='?', seconds=True, microseconds=True):
+        format = u''
 
-    def __unicode__(self, seconds=True, microseconds=True):
-        d = {}
-        d['year'] = u'%04d' % self.year if not self.year is None else u'?' * 4
-        d['month'] = u'%02d' % self.month if not self.month is None else u'?' * 2
-        d['day'] = u'%02d' % self.day if not self.day is None else u'?' * 2
-        d['hour'] = u'%02d' % self.hour if not self.hour is None else u'?' * 2
-        d['minute'] = u'%02d' % self.minute if not self.minute is None else u'?' * 2
-        if seconds:
-            d['minute'] += ((u':%02d' % self.second) if not self.second is None else u':??')
-        if seconds and microseconds:
-            d['minute'] += ((u'.%06d' % self.microsecond) if not self.microsecond is None else u'.??????')
-        return "%(year)s-%(month)s-%(day)s %(hour)s:%(minute)s" % d
-        
-    def humanize(self):
-        # ymd
-        # 100 in <year>
-        # 010 in           <month>
-        # 110 in <year>    <month>
-        # 001           on      ?? <day>th
-        # 101 in <year> on      ?? <day>th
-        # 011           on <month> <day>th
-        # 111 in <year> on <month> <day>th
-        
-        # 1000 around <hour>
-        # 0100 at        <minute> past
-        # 1100 at <hour>:<minute>
-        # 0010 at ??    :??            :<second>
-        # 1010 at <hour>:??            :<second>
-        # 0110 at ??    :<minute>      :<second>
-        # 1110 at <hour>:<minute>      :<second>
-        # 0001 at ??    :??            :??      .<microsecond>
-        
-        result = []
-        if not self.year is None:
-            result.append('in %04d' % self.year)
-        if not self.day is None:
-            result.append('on')
-        if not self.month is None:
-            result.append('%02d' % self.month)
+        if unknown_char is not None:
+            format += ' {0.hour:02}' if not self.hour is None else ' ' + unknown_char * 2
+            format += ':{0.minute:02}' if not self.minute is None else ':' + unknown_char * 2
+            if seconds:
+                format += ':{0.second:02}' if not self.second is None else ':' + unknown_char * 2
+                if microseconds:
+                    format += '.{0.microsecond:06}' if not self.microsecond is None else '.' + unknown_char * 6
+            
+        else:
+            if not self.hour is None:
+                format += '{0.hour:02}'
+                if not self.minute is None:
+                    format += ':{0.minute:02}'
+                    if seconds and not self.second is None:
+                        format += ':{0.second:02}'
+                        if microseconds and not self.microsecond is None:
+                            format += '.{0.microsecond:06}'
+
+        return format.format(self)
+    
+    def __unicode__(self, unknown_char='?', seconds=True, microseconds=True):
+        format = u''
+
+        if unknown_char is not None:
+            format += '{0.year:04}' if not self.year is None else unknown_char * 4
+            format += '-{0.month:02}' if not self.month is None else '-' + unknown_char * 2
+            format += '-{0.day:02}' if not self.day is None else '-' + unknown_char * 2
+            
+        else:
+            if not self.year is None:
+                format += '{0.year:04}' 
+                if not self.month is None:
+                    format += '-{0.month:02}'
+                    if not self.day is None:
+                        format += '-{0.day:02}'
+            
+            if not (format == '' or self.hour is None):
+                format += ' '
+            
+        return format.format(self) + self.time_unicode(unknown_char, seconds, microseconds)
 
