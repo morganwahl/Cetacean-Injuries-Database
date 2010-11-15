@@ -155,6 +155,12 @@ class UncertainDateTimeFormFieldTestCase(TestCase):
             'f_day': '20',
             'f_time': '12:38:02.0',
         }
+        self.partial_time_data = {
+            'f_year': '1982',
+            'f_month': '3',
+            'f_day': '20',
+            'f_time': '12:20',
+        }
         self.year_data = self.blank_data.copy()
         self.year_data['f_year'] = '2010'
     
@@ -165,7 +171,17 @@ class UncertainDateTimeFormFieldTestCase(TestCase):
     def test_full(self):
         form = self.form_class(self.full_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), u'1982-03-20 12:38:02.000000')
+        dt = form.cleaned_data['f']
+        self.assertEquals(unicode(dt), u'1982-03-20 12:38:02.000000')
+        
+        # hard to test the HTML output, but at least make sure it doesn't raise
+        # an exception
+        form = self.form_class(initial={'f': dt})
+
+    def test_partial_time(self):
+        form = self.form_class(self.partial_time_data)
+        self.assertEquals(form.is_valid(), True)
+        self.assertEquals(unicode(form.cleaned_data['f']), u'1982-03-20 12:20:??.??????')
 
     def test_blank(self):
         form = self.form_class(self.blank_data)
