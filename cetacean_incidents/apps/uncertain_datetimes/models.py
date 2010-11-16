@@ -22,7 +22,7 @@ class UncertainDateTimeField(models.Field):
         if isinstance(value, UncertainDateTime):
             return value
         
-        if value is '':
+        if value == '':
             return UncertainDateTime()
         
         return UncertainDateTime.from_sortkey(value)
