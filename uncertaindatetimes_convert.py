@@ -1,5 +1,8 @@
 from math import modf
 
+from django.db import transaction
+from reversion import revision
+
 from cetacean_incidents.apps.incidents.models import Observation
 from cetacean_incidents.apps.entanglements.models import GearOwner
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
@@ -20,14 +23,19 @@ def dt_to_udt(dt):
     print "%s <- %s" % (udt.__unicode__(), dt)
     return udt
 
+# pack this up in a function so we can use these decorators
+@transaction.commit_on_success
+@revision.create_on_success
+def update():
+    for o in Observation.objects.all():
+        o.datetime_observed = dt_to_udt(o.observation_datetime)
+        o.datetime_reported = dt_to_udt(o.report_datetime)
+        o.save()
 
-for o in Observation.objects.all():
-    o.datetime_observed = dt_to_udt(o.observation_datetime)
-    o.datetime_reported = dt_to_udt(o.report_datetime)
-    o.save()
+    for go in GearOwner.objects.all():
+        go.datetime_set = dt_to_udt(go.date_gear_set)
+        go.datetime_missing = dt_to_udt(go.date_gear_missing)
+        go.save()
 
-for go in GearOwner.objects.all():
-    go.datetime_set = dt_to_udt(go.date_gear_set)
-    go.datetime_missing = dt_to_udt(go.date_gear_missing)
-    go.save()
-    
+update()
+
