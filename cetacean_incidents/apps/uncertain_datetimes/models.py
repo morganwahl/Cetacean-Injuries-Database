@@ -15,6 +15,10 @@ class UncertainDateTimeField(models.Field):
         kwargs['max_length'] = UncertainDateTime.SORTKEY_MAX_LEN
         super(UncertainDateTimeField, self).__init__(*args, **kwargs)
     
+    def db_type(self, connection):
+                            # year month day hour minute second microsecond
+        return 'char(%d)' % (    4   + 2 + 2  + 2    + 2    + 2         + 6)
+
     def to_python(self, value):
         if value is None:
             return None
@@ -54,10 +58,7 @@ class UncertainDateTimeField(models.Field):
         defaults.update(kwargs)
         return super(UncertainDateTimeField, self).formfield(**defaults)
 
-    def get_internal_type(self):
-        return 'CharField'
-        
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)
-        return self.get_db_prep_value(value)
+        return self.get_prep_value(value)
 
