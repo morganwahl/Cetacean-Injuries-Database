@@ -13,7 +13,7 @@ def observation_link(observation):
     return {'observation': observation}
     
 @register.simple_tag
-def observation_datetime_display(dt):
+def datetime_observed_display(dt):
     '''\
     Returns the HTML for displaying a UncertainDateTime from an Observation
     '''

@@ -80,8 +80,8 @@ class Contact(AbstractContact):
     @property
     def observed_ordered(self):
         return self.observed.order_by(
-            'observation_datetime',
-            'report_datetime',
+            'datetime_observed',
+            'datetime_reported',
             'id',
         )
     
@@ -89,8 +89,8 @@ class Contact(AbstractContact):
     @property
     def reported_ordered(self):
         return self.reported.order_by(
-            'report_datetime',
-            'observation_datetime',
+            'datetime_reported',
+            'datetime_observed',
             'id',
         )
     
@@ -100,8 +100,8 @@ class Contact(AbstractContact):
         # doing this here avoids circular imports
         from cetacean_incidents.apps.incidents.models import Observation
         return Observation.objects.filter(observed | reported).order_by(
-            'observation_datetime',
-            'report_datetime',
+            'datetime_observed',
+            'datetime_reported',
             'id',
         )
 

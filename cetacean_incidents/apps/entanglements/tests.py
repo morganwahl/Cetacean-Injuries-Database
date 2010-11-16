@@ -100,20 +100,20 @@ class EntanglementTestCase(TestCase):
         e = Entanglement.objects.create(animal=Animal.objects.create())
         true_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= UncertainDateTime(year=2000),
-            report_datetime= UncertainDateTime(year=2000),
+            datetime_observed= UncertainDateTime(year=2000),
+            datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= True,
         )
         false_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= UncertainDateTime(year=2000),
-            report_datetime= UncertainDateTime(year=2000),
+            datetime_observed= UncertainDateTime(year=2000),
+            datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= False,
         )
         none_obv = EntanglementObservation.objects.create(
             case= e,
-            observation_datetime= UncertainDateTime(year=2000),
-            report_datetime= UncertainDateTime(year=2000),
+            datetime_observed= UncertainDateTime(year=2000),
+            datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= None,
         )
         self.assertEqual(

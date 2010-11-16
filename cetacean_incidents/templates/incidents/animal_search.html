@@ -69,19 +69,19 @@
 	    </td>
 	    <td>{{ animal.case_set.count }}</td>
 	    <td>{{ animal.observation_set.count }}</td>
-	    {% with animal.first_observation.observation_datetime as od %}
+	    {% with animal.first_observation.datetime_observed as od %}
 	    {% if od %}
 	    <td sorttable_customkey="{{ od.sortkey }}">
-	        {% observation_datetime_display od %}
+	        {% datetime_observed_display od %}
         </td>
         {% else %}
         <td></td>
         {% endif %}
         {% endwith %}
-	    {% with animal.last_observation.observation_datetime as od %}
+	    {% with animal.last_observation.datetime_observed as od %}
 	    {% if od %}
 	    <td sorttable_customkey="{{ od.sortkey }}">
-	        {% observation_datetime_display od %}
+	        {% datetime_observed_display od %}
         </td>
         {% else %}
         <td></td>

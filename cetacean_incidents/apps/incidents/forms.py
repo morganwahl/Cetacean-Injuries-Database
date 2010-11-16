@@ -125,8 +125,8 @@ class ObservationForm(forms.ModelForm):
 
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = Observation._meta.get_field('observation_datetime')
-    observation_datetime = ObservationDateField(
+    _f = Observation._meta.get_field('datetime_observed')
+    datetime_observed = ObservationDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
@@ -134,8 +134,8 @@ class ObservationForm(forms.ModelForm):
 
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = Observation._meta.get_field('report_datetime')
-    report_datetime = ObservationDateField(
+    _f = Observation._meta.get_field('datetime_reported')
+    datetime_reported = ObservationDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),

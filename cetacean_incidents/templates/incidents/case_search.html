@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load animal_extras %}
 {% load case_extras %}
-{% load uncertain_datetime_extras %}
+{% load observation_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -69,10 +69,10 @@
 	        {# these assume datetimes are sorted from less recent to more recent #}
 	        {% with case.observation_dates as obs_dates %}
 	        {% with obs_dates.0 as first_obs_date %}
-	        <td sorttable_customkey="{{ first_obs_date.sortkey }}">{{ first_obs_date }}</td>
+	        <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% datetime_observed_display first_obs_date %}</td>
 	        {% endwith %}
 	        {% with obs_dates.reverse.0 as last_obs_date %}
-	        <td sorttable_customkey="{{ last_obs_date.sortkey }}">{{ last_obs_date }}</td>
+	        <td sorttable_customkey="{{ last_obs_date.sortkey }}">{% datetime_observed_display last_obs_date %}</td>
 	        {% endwith %}
             {% endwith %}
     	    <td>{{ case.observation_set.count }}</td>
