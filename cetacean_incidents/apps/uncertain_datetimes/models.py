@@ -1,3 +1,5 @@
+import re
+
 from django.db import models
 
 from . import UncertainDateTime
@@ -38,6 +40,20 @@ class UncertainDateTimeField(models.Field):
         
         return value.sortkey()
 
+    @classmethod
+    def get_sametime_q(cls, udt, field_lookup):
+        '''
+        Given a field lookup (e.g. 'datetime_reported'), returns
+        a Q object that selects for objects there that UncertainDateTimeField
+        may represent the same time as this one. In other words, each of their
+        fields, if defined, are the same.
+        '''
+        
+        # TODO this assumes UncertainDateTime uses spaces to pad it's sortkey!
+        regex = udt.sortkey().replace(' ', '.')
+        regex = re.sub(r'(\d)', r'[\1 ]', regex)
+        return models.Q(**{field_lookup + '__regex': regex})
+
     # django lookup types:
     # exact, iexact, contains, icontains, gt, gte, lt, lte, in, startswith,
     # istartswith, endswith, iendswith, range, year, month, day, isnull, search,
@@ -45,6 +61,8 @@ class UncertainDateTimeField(models.Field):
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ('exact',):
             return self.get_prep_value(value)
+        elif lookup_type in ('regex',):
+            return value
         elif lookup_type in ('in',):
             return [self.get_prep_value(v) for v in value]
         else:

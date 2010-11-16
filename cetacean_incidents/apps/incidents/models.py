@@ -141,29 +141,14 @@ class CaseManager(models.Manager):
         given. Takes into account the potential vagueness of observation dates.
         '''
         
-        # Observation.observation__datetime only stores the _start_ of the
-        # observation, so use a 2-day fudge-factor for assumed observation
-        # length
-        assumed_max_obs_length = datetime.timedelta(days=2)
-
-        # cut down our query by year. the +-1 bits are to catch cases that fall
-        # within our fudge-factor (see below)
-        min_year = case.earliest_datetime().year - 1
-        max_year = case.latest_datetime().year + 1
-        same_year = self.filter(observation__observation_datetime__year__gte=min_year).filter(observation__observation_datetime__year__lte=max_year)
-        result = set()
-        for c in same_year:
-            # find overlapping observations. 
-            if not ( c.latest_datetime() + assumed_max_obs_length < case.earliest_datetime() 
-                   or c.earliest_datetime() > case.latest_datetime() + assumed_max_obs_length ):
-                result.add(c)
+        # collect all the observation dates
+        obs_dates = map(lambda o: o.datetime_observed, Observation.objects.filter(case=case))
+        sametime_q = models.Q()
+        for date in obs_dates:
+            sametime_q |= UncertainDateTimeField.get_sametime_q(date, 'observation__datetime_observed')
         
-        # be careful here since an Entanglement isn't considered equal to it's
-        # corresponding Case
-        result = set(filter(lambda c: c.id != case.id, result))
-
-        return result
-    
+        return Case.objects.filter(sametime_q)
+        
     def associated_cases(self, case):
         '''\
         Given a case, return a list of _other_ cases that may be relevant to it.
@@ -171,15 +156,12 @@ class CaseManager(models.Manager):
         animal or have nearby coordinates.
         '''
         
-        result = set()
-        
-        same_timeframe = self.same_timeframe(case)
-        same_timeframe_ids = map(lambda c: c.id, same_timeframe)
-        same_animal = self.filter(animal=case.animal, id__in=same_timeframe_ids)
-        
-        result |= set(same_animal)
-        
         # TODO nearby coords
+        
+        result = self.same_timeframe(case).filter(animal=case.animal).exclude(id=case.id)
+        
+        # oracle workaround
+        result = set(result)
         
         return result
 
