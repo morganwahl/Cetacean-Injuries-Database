@@ -40,7 +40,7 @@
                 </td>
                 <td class="layout" width="50%">
                     <div class="subform">
-                        {% with forms.gear_owner.date_gear_set as f %}
+                        {% with forms.gear_owner.datetime_set as f %}
                         {% include "labeled_field.html" %}
                         {% endwith %}
                     </div>
@@ -63,7 +63,7 @@
                         </div>
                     </div>
                     <div class="subform">
-                        {% with forms.gear_owner.date_gear_missing as f %}
+                        {% with forms.gear_owner.datetime_missing as f %}
                         {% include "labeled_field.html" %}
                         {% endwith %}
                     </div>

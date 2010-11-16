@@ -210,8 +210,8 @@ class GearOwnerForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = GearOwner._meta.get_field('date_gear_set')
-    date_gear_set = GearOwnerDateField(
+    _f = GearOwner._meta.get_field('datetime_set')
+    datetime_set = GearOwnerDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
@@ -219,8 +219,8 @@ class GearOwnerForm(forms.ModelForm):
 
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = GearOwner._meta.get_field('date_gear_missing')
-    date_gear_missing = GearOwnerDateField(
+    _f = GearOwner._meta.get_field('datetime_missing')
+    datetime_missing = GearOwnerDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),

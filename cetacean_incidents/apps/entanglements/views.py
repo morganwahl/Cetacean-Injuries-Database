@@ -105,16 +105,11 @@ def edit_gear_owner(request, entanglement_id):
 
     form_initials = {
         'gear_owner': {
-            'date_set_known': False,
-            'date_lost_known': False,
         }
     }
-    if gear_owner.date_gear_set:
-        form_initials['gear_owner']['date_set_known'] = True
+
     if gear_owner.location_gear_set:
         form_initials['gear_owner']['location_set_known'] = True
-    if gear_owner.date_gear_missing:
-        form_initials['gear_owner']['date_lost_known'] = True
 
     model_instances = {
         'gear_owner': gear_owner,
