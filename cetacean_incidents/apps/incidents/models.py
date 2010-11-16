@@ -724,6 +724,8 @@ class Observation(models.Model):
     )
     report_datetime = models.OneToOneField(
         DateTime,
+        blank= True,
+        null= True,
         help_text = 'when we first heard about the observation',
         related_name = 'report_date_for',
         verbose_name = 'report date and time',
