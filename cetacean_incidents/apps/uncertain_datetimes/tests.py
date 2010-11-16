@@ -34,6 +34,12 @@ class UncertainDateTimeTestCase(TestCase):
         UncertainDateTime(2008, 2, 29) # a leap-year
         self.assertRaises(ValueError, UncertainDateTime, 2010, 2, 30)
     
+    def test_anytime(self):
+        self.assertEquals(self.blank.anytime, True)
+        self.assertEquals(self.just_year.anytime, False)
+        self.assertEquals(self.just_day.anytime, False)
+        self.assertEquals(self.point.anytime, False)
+    
     def test_earliest(self):
         self.assertEquals(self.blank.earliest, datetime(MINYEAR, 1, 1, 0, 0, 0, 0))
         self.assertEquals(self.just_year.earliest, datetime(50, 1, 1, 0, 0, 0, 0))

@@ -225,6 +225,14 @@ class UncertainDateTime(object):
         
         return self.latest - self.earliest
     
+    @property
+    def anytime(self):
+        return reduce(
+            lambda so_far, this_one: so_far and this_one is None,
+            (self.year, self.month, self.day, self.hour, self.minute, self.second, self.microsecond),
+            True
+        )
+    
     def time_unicode(self, unknown_char='?', seconds=True, microseconds=True):
         format = u''
 
