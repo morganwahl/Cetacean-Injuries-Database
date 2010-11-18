@@ -2,7 +2,11 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+tooltips for ID-box (defining ids)
+shipstrike is two words
+striking vessel flag should default to unknown
 new affiliations on contact forms for a striking vessel
+add validity, mortality to case-search
 case lists, add 'last observed'
 'taxons' should be taxa
 put gear-analysis in seperate tabs
