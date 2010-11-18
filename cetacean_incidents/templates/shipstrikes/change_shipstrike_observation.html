@@ -1,45 +1,57 @@
 {% extends "incidents/change_observation.html" %}
 
+{% block other_tabs_js %}
+$('.link-to-observation-shipstrike').click(function() { // bind click event to link
+    $tabs.tabs('select', '#observation-shipstrike'); // switch to tab
+    return false;
+});
+{% endblock %}
+
 {% block case_title %}{{ case|default:"new shipstrike case" }}{% endblock %}
 
 {% block case_header %}{{ case|default:"<i>new shipstrike case</i>" }}{% endblock %}
 
-{% block incident_tab %}
-<li{% if forms.observation.non_field_errors or forms.observation.wounded.errors or forms.observation.wound_description.errors or forms.observation.striking_vessel_info.errors or forms.striking_vessel.errors or forms.striking_vessel_contact.errors or forms.striking_vessel_captain.errors %} class="ui-state-error"{% endif %}>
-    <a href="#incident">
+{% block other_observation_tabs %}
+<li{% if forms.observation.non_field_errors or  forms.observation.striking_vessel_info.errors or forms.striking_vessel.errors or forms.striking_vessel_contact.errors or forms.striking_vessel_captain.errors %} class="ui-state-error"{% endif %}>
+    <a href="#observation-shipstrike">
         <em>Observation</em>
-        <br>Incident
+        <br>Shipstrike
     </a>
 </li>
 {% endblock %}
 
-{% block incident_tab_body %}
-{{ block.super }}
-{% with forms.observation.striking_vessel_info as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-<script type="text/javascript">
-    $().ready(function(){
-        var checkbox_sel = "[name={{ forms.observation.striking_vessel_info.html_name }}]";
-        $(checkbox_sel).change(function(event){
-            if ( $(checkbox_sel + ":checked").val() ) {
-                $("#striking_vessel_info").show();
-            } else {
-                $("#striking_vessel_info").hide();
-            }
+{% block other_observation_tabs_next_link %}<a class="link-to-observation-shipstrike" href="#observation-shipstrike">{% endblock %}
+
+{% block other_observation_tabs_body %}
+<div id="observation-shipstrike">
+    {% with forms.observation.striking_vessel_info as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    <script type="text/javascript">
+        $().ready(function(){
+            var checkbox_sel = "[name={{ forms.observation.striking_vessel_info.html_name }}]";
+            $(checkbox_sel).change(function(event){
+                if ( $(checkbox_sel + ":checked").val() ) {
+                    $("#striking_vessel_info").show();
+                } else {
+                    $("#striking_vessel_info").hide();
+                }
+            });
+            $(checkbox_sel).change();
         });
-        $(checkbox_sel).change();
-    });
-</script>
-<div id="striking_vessel_info">
-    <h4>Striking Vessel</h4>
-    {% with forms.striking_vessel as v_form %}
-    {% with forms.striking_vessel_contact as c_form %}
-    {% with forms.stirking_vessel_captain as cap_form %}
-    {% include "shipstrikes/edit_striking_vessel_include.html" %}
-    {% endwith %}
-    {% endwith %}
-    {% endwith %}
-</div>
+    </script>
+    <div id="striking_vessel_info">
+        <h4>Striking Vessel</h4>
+        {% with forms.striking_vessel as v_form %}
+        {% with forms.striking_vessel_contact as c_form %}
+        {% with forms.stirking_vessel_captain as cap_form %}
+        {% include "shipstrikes/edit_striking_vessel_include.html" %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+    </div>
+</div> <!-- id="observation-shipstrike" -->
 {% endblock %}
+
+{% block other_observation_tabs_prev_link %}<a class="link-to-observation-shipstrike" href="#observation-shipstrike">{% endblock %}
 
