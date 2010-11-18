@@ -97,6 +97,18 @@ class UncertainDateTime(object):
     SORTKEY_MAX_LEN = len('YYYYMMDDHHMMSSuSSSSS')
     SORTS_BEFORE_DIGITS = ' '
     SORTS_AFTER_DIGITS = 'z'
+    
+    @classmethod
+    def from_date(cls, date):
+        return cls(date.year, date.month, date.day)
+
+    @classmethod
+    def from_time(cls, time):
+        return cls(None, None, None, time.hour, time.minute, time.second, dt.microsecond)
+        
+    @classmethod
+    def from_datetime(cls, dt):
+        return cls(dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second, dt.microsecond)
 
     def sortkey(self, unknown_is_later=False):
         '''\
@@ -153,6 +165,11 @@ class UncertainDateTime(object):
         args = map(string_converter, args)
         
         return cls(*args)
+    
+    @property
+    def known_fields(self):
+        fields = ('year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond')
+        return tuple(filter(lambda f: getattr(self, f) is not None, fields))
     
     @property
     def earliest(self):

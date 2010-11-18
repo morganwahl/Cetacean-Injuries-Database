@@ -34,6 +34,12 @@ class UncertainDateTimeTestCase(TestCase):
         UncertainDateTime(2008, 2, 29) # a leap-year
         self.assertRaises(ValueError, UncertainDateTime, 2010, 2, 30)
     
+    def test_known_fields(self):
+        self.assertEquals(self.blank.known_fields, tuple())
+        self.assertEquals(self.just_year.known_fields, ('year',))
+        self.assertEquals(self.just_day.known_fields, ('day',))
+        self.assertEquals(self.point.known_fields, ('year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond'))
+
     def test_anytime(self):
         self.assertEquals(self.blank.anytime, True)
         self.assertEquals(self.just_year.anytime, False)
