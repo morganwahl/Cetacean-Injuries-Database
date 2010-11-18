@@ -313,6 +313,7 @@ class CaseSearchForm(forms.Form):
             ('', '<any>'),
             ('e', 'Entanglement'),
             ('s', 'Shipstrike'),
+            ('t', 'Stranding'),
         ),
         required= False,
     )

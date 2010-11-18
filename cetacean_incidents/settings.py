@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.incidents',
     'cetacean_incidents.apps.entanglements',
     'cetacean_incidents.apps.shipstrikes',
+    'cetacean_incidents.apps.strandings',
     'cetacean_incidents.apps.generic_templates',
     'cetacean_incidents.apps.jquery_ui',
     'cetacean_incidents.apps.describe_fields',

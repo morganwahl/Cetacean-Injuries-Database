@@ -16,6 +16,8 @@ from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.entanglements.forms import EntanglementForm, AddEntanglementForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeForm, AddShipstrikeForm
+from cetacean_incidents.apps.strandings.models import Stranding
+from cetacean_incidents.apps.strandings.forms import StrandingForm, AddStrandingForm
 
 class CaseTypeFormMeta(forms.Form.__metaclass__):
     
@@ -45,11 +47,12 @@ class CaseTypeForm(forms.Form):
     # where <class> is a subclass of Case:
     
     # a tuple of doubles: <class>.__name__, <class>._meta.verbose_name
-    type_names = (('Entanglement', 'Entanglement'), ('Shipstrike', 'Shipstrike'))
+    type_names = (('Entanglement', 'Entanglement'), ('Shipstrike', 'Shipstrike'), ('Stranding', 'Stranding'))
     # keys are <class>.__name__, values are <class>
     type_models = {
         'Entanglement': Entanglement,
         'Shipstrike': Shipstrike,
+        'Stranding': Stranding
     }
 
     case_type = forms.ChoiceField(
@@ -63,10 +66,12 @@ class CaseTypeForm(forms.Form):
         'Case': CaseForm,
         'Entanglement': EntanglementForm,
         'Shipstrike': ShipstrikeForm,
+        'Stranding': StrandingForm,
     }
     addcase_form_classes = {
         'Entanglement': AddEntanglementForm,
         'Shipstrike': AddShipstrikeForm
+        'Stranding': AddStrandingForm,
     }
 
 class AnimalChoiceForm(forms.Form):

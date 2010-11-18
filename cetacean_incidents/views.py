@@ -25,6 +25,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalNM
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
+from cetacean_incidents.apps.strandings.views import add_strandingobservation
 
 from cetacean_incidents.apps.taxons.views import import_search as unsecured_import_taxon
 
@@ -341,6 +342,13 @@ def new_case(request, initial_animal_id=None):
                 shipstrike_id= None,
             )
         
+        if case_type == 'Stranding':
+            return add_strandingobservation(
+                request,
+                animal_id= animal_id,
+                stranding_id= None,
+            )
+
         return add_observation(
             request,
             animal_id= animal_id,
