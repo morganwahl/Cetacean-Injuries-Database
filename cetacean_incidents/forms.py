@@ -70,7 +70,7 @@ class CaseTypeForm(forms.Form):
     }
     addcase_form_classes = {
         'Entanglement': AddEntanglementForm,
-        'Shipstrike': AddShipstrikeForm
+        'Shipstrike': AddShipstrikeForm,
         'Stranding': AddStrandingForm,
     }
 
