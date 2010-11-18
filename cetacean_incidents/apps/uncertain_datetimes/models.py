@@ -1,4 +1,6 @@
 import re
+from copy import deepcopy
+from datetime import timedelta
 
 from django.db import models
 
@@ -39,6 +41,130 @@ class UncertainDateTimeField(models.Field):
             return None
         
         return value.sortkey()
+    
+
+    @classmethod
+    def get_after_q(cls, udt, field_lookup):
+        '''
+        Given a field lookup for an UncertainDateTimeField 
+        (e.g. 'datetime_reported'), returns a Q object that selects for 
+        UncertainDateTimeField values that _may_ represent a time the same as
+        or after this one.
+        '''
+        
+        # if year is unknown, any time could possibly be after this one
+        if udt.year is None:
+            return models.Q()
+        
+        # fill in the min-values for each unknown field
+        min_udt = UncertainDateTime.from_datetime(udt.earliest)
+        after_q = models.Q(**{field_lookup + '__gte': min_udt.sortkey()})
+        
+        # TODO these _really_ depend on the format of uncertain datetimes in
+        # the database
+        
+        # if passed 2001 3 28 ?:
+        #      ?   *    * *  startswith ____
+        #   2001   ?    * *  startswith 2001__
+        #   2001   3    ? *  startswith 200103__
+        #   2001   3   28 *         gte 20010328000000000000
+        #   2001   3  >28 *  
+        #   2001  >3    * *
+        #  >2001   *    * *
+        # are all potentially after it. (where ? indicates unknown, * is
+        # any value, and >= is obvious)
+        #
+        # 2001 ? 3
+        #      ?  *   *     startswith ____
+        #   2001  ?   *     startswith 2001__
+        #   2001  ?   ? *   startswith 2001____
+        #   2001  ?   3 *   startswith 2001__03
+        #   2001  1  >3            gte 20010103000000000000
+        #   2001 >1   *
+        #
+        # 2001 6 ?
+        #      ?  * *   startswith ____
+        #   2001  ? *   startswith 2001__
+        #   2001  6 *   startswith 200106
+        #   2001 >6 *          gte 20010601000000000000
+        #
+        # 2001 3 20 12 ?
+        #       ?  *   *   * *  startswith ____
+        #    2001  ?   *   * *  startswith 2001__
+        #    2001  3   ?   * *  startswith 200103__
+        #    2001  3  20   ? *  startswith 20010320__
+        #    2001  3  20  12 *  startswith 2001032012
+        #    2001  3  20 >12 *         gte 20010320120000000000
+        #    2001  3 >20   * *          
+        #    2001 >3   *   * *          
+        #   >2001  *   *   * *          
+        #
+        # 2001 ? 20 12 ?
+        #      ?  *   *   * *   startswith ____
+        #   2001  ?   *   * *   startswith 2001__
+        #   2001  ?   ?   * *   startswith 2001____
+        #   2001  ?  20   ? *   startswith 2001__20__
+        #   2001  ?  20  12 *   startswith 2001__2012
+        #   2001  1  20 >12 *          gte 20010120120000000000
+        #   2001  1 >20   * *
+        #   2001 >1   *   * *
+        #  >2001  *   *   * *
+        
+        unk_year = deepcopy(udt)
+        unk_year.year = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_year.sortkey()[0:4]})
+        
+        unk_month = deepcopy(udt)
+        unk_month.month = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_month.sortkey()[0:6]})
+
+        unk_day = deepcopy(udt)
+        unk_day.day = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_day.sortkey()[0:8]})
+
+        unk_hour = deepcopy(udt)
+        unk_hour.hour = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_hour.sortkey()[0:10]})
+        
+        unk_minute = deepcopy(udt)
+        unk_minute.minute = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_minute.sortkey()[0:12]})
+
+        unk_second = deepcopy(udt)
+        unk_second.second = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_second.sortkey()[0:14]})
+
+        unk_microsecond = deepcopy(udt)
+        unk_microsecond.microsecond = None
+        after_q |= models.Q(**{field_lookup + '__startswith': unk_microsecond.sortkey()[0:20]})
+        
+        # TODO some of these will probably be redundant
+        
+        return after_q
+
+    @classmethod
+    def get_before_q(cls, udt, field_lookup):
+        '''
+        Given a field lookup for an UncertainDateTimeField 
+        (e.g. 'datetime_reported'), returns a Q object that selects for 
+        UncertainDateTimeField values that _may_ represent a time the same as
+        or before this one.
+        '''
+        
+        # if year is unknown, any time could possibly be before this one
+        if udt.year is None:
+            return models.Q()
+        
+        # fill in the max-values for each unknown field
+        # since udt.latest returns the first point _not_ in the range of
+        # possible ones in the udt, subtract one usec from it
+        max_udt = UncertainDateTime.from_datetime(udt.latest - timedelta(microseconds=1))
+        after_q = models.Q(**{field_lookup + '__lte': max_udt.sortkey()})
+        
+        # we don't need catch all the cases with unknown fields, since those
+        # will be matched above
+        
+        return after_q
 
     @classmethod
     def get_sametime_q(cls, udt, field_lookup):
@@ -61,7 +187,7 @@ class UncertainDateTimeField(models.Field):
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ('exact',):
             return self.get_prep_value(value)
-        elif lookup_type in ('regex',):
+        elif lookup_type in ('regex','lte','gte','startswith'):
             return value
         elif lookup_type in ('in',):
             return [self.get_prep_value(v) for v in value]

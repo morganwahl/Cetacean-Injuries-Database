@@ -1,9 +1,10 @@
-from django.test import TestCase
+from datetime import datetime, timedelta, MINYEAR, MAXYEAR
 
+from django.test import TestCase
 import django.forms
 
-from datetime import datetime, timedelta, MINYEAR, MAXYEAR
-from models import UncertainDateTime
+from . import UncertainDateTime
+from models import UncertainDateTimeField as UncertainDateTimeModelField
 from forms import UncertainDateTimeField as UncertainDateTimeFormField
 
 class UncertainDateTimeTestCase(TestCase):
@@ -205,3 +206,31 @@ class UncertainDateTimeFormFieldTestCase(TestCase):
         self.assertEquals(form.is_valid(), True)
         self.assertEquals(unicode(form.cleaned_data['f']), u'2010-??-?? ??:??:??.??????')
     
+class UncertainDateTimeModelFieldTestCase(TestCase):
+
+    def setUp(self):
+        self.blank = UncertainDateTime()
+        self.just_year = UncertainDateTime(2010)
+        self.date = UncertainDateTime(2010, 3, 20)
+        self.time = UncertainDateTime(None, None, None, 11, 8, 26, 384938)
+        self.full = UncertainDateTime(1982, 3, 20, 12, 38, 2, 0)
+        self.leap_year = UncertainDateTime(2008, 2)
+
+    def test_after_q(self):
+        # just testing for exception-throwing for now
+        UncertainDateTimeModelField.get_after_q(self.blank, 'fieldname')
+        UncertainDateTimeModelField.get_after_q(self.just_year, 'fieldname')
+        UncertainDateTimeModelField.get_after_q(self.date, 'fieldname')
+        UncertainDateTimeModelField.get_after_q(self.time, 'fieldname')
+        UncertainDateTimeModelField.get_after_q(self.full, 'fieldname')
+        UncertainDateTimeModelField.get_after_q(self.leap_year, 'fieldname')
+    
+    def test_before_q(self):
+        # just testing for exception-throwing for now
+        UncertainDateTimeModelField.get_before_q(self.blank, 'fieldname')
+        UncertainDateTimeModelField.get_before_q(self.just_year, 'fieldname')
+        UncertainDateTimeModelField.get_before_q(self.date, 'fieldname')
+        UncertainDateTimeModelField.get_before_q(self.time, 'fieldname')
+        UncertainDateTimeModelField.get_before_q(self.full, 'fieldname')
+        UncertainDateTimeModelField.get_before_q(self.leap_year, 'fieldname')
+        
