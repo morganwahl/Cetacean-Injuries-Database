@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load case_extras %}
 {% load animal_extras %}
-{% load datetime_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -59,13 +58,12 @@
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>
-	    {# these assume datetimes are sorted from less recent to more recent #}
-	    {% with case.observation_dates as obs_dates %}
-	    {% with obs_dates.0 as first_obs_date %}
-	    <td sorttable_customkey="{% datetime_sort_key first_obs_date %}">{{ first_obs_date }}</td>
+	    {% with case.observation_set.all as obs %}
+	    {% with obs.0 as first_obs_date %}
+	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{{ first_obs_date }}</td>
 	    {% endwith %}
-	    {% with obs_dates.reverse.0 as last_obs_date %}
-	    <td sorttable_customkey="{% datetime_sort_key last_obs_date %}">{{ last_obs_date }}</td>
+	    {% with obs.reverse.0 as last_obs_date %}
+	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{{ last_obs_date }}</td>
 	    {% endwith %}
         {% endwith %}
 	    <td>{{ case.observation_set.count }}</td>

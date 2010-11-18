@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load contact_extras %}
-{% load datetime_extras %}
+{% load observation_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -46,16 +46,16 @@
                         </td>
                         {% if contact.observed.count %}
                         {% with contact.observed_ordered|first as first_o %}
-                        <td sorttable_customkey="{% datetime_sort_key first_o.observation_datetime %}">
+                        <td sorttable_customkey="{{ first_o.datetime_observed.sortkey }}">
                             <a href="{{ first_o.get_absolute_url }}">
-                                {{ first_o.observation_datetime }}
+                                {% datetime_observed_display first_o.datetime_observed %}
                             </a>
                         </td>
                         {% endwith %}
                         {% with contact.observed_ordered.reverse|first as last_o %}
-                        <td sorttable_customkey="{% datetime_sort_key last_o.observation_datetime %}">
+                        <td sorttable_customkey="{{ last_o.datetime_observed.sortkey }}">
                             <a href="{{ last_o.get_absolute_url }}">
-                                {{ last_o.observation_datetime }}
+                                {% datetime_observed_display last_o.datetime_observed %}
                             </a>
                         </td>
                         {% endwith %}
@@ -69,16 +69,16 @@
                         </td>
                         {% if contact.reported.count %}
                         {% with contact.reported_ordered|first as first_r %}
-                        <td sorttable_customkey="{% datetime_sort_key first_r.report_datetime %}">
+                        <td sorttable_customkey="{{ first_r.datetime_reported.sortkey }}">
                             <a href="{{ first_r.get_absolute_url }}">
-                                {{ first_r.report_datetime }}
+                                {% datetime_observed_display first_r.datetime_reported %}
                             </a>
                         </td>
                         {% endwith %}
                         {% with contact.reported_ordered.reverse|first as last_r %}
-                        <td sorttable_customkey="{% datetime_sort_key last_r.report_datetime %}">
+                        <td sorttable_customkey="{{ last_r.datetime_reported.sortkey }}">
                             <a href="{{ last_r.get_absolute_url }}">
-                                {{ last_r.report_datetime }}
+                                {% datetime_observed_display last_r.datetime_reported %}
                             </a>
                         </td>
                         {% endwith %}

@@ -13,7 +13,6 @@ from django.conf import settings
 from reversion import revision
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.datetime.forms import NiceDateTimeForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.forms import CaseTypeForm, AnimalChoiceForm, merge_source_form_factory
@@ -23,6 +22,8 @@ from cetacean_incidents import generic_views
 from models import Case, Animal, Observation, YearCaseNumber
 from forms import AnimalSearchForm, AnimalMergeForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
+from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
@@ -278,10 +279,8 @@ def add_observation(
         'animal': AnimalForm,
         'case': caseform_class,
         'observation': observationform_class,
-        'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
         'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
-        'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
         'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
@@ -337,9 +336,6 @@ def add_observation(
             observation = forms['observation'].save(commit=False)
             observation.case = case
 
-            _check('report_datetime')
-            observation.report_datetime = forms['report_datetime'].save()
-
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
                 _check('new_reporter_affiliations')
@@ -351,9 +347,6 @@ def add_observation(
                         continue
                     org = org_form.save()
                     observation.reporter.affiliations.add(org)
-            
-            _check('observation_datetime')
-            observation.observation_datetime = forms['observation_datetime'].save()
             
             _check('location')
             observation.location = forms['location'].save()
@@ -461,10 +454,8 @@ def edit_observation(
         'animal': AnimalForm,
         'case': caseform_class,
         'observation': observationform_class,
-        'report_datetime': NiceDateTimeForm,
         'new_reporter': ContactForm,
         'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
-        'observation_datetime': NiceDateTimeForm,
         'location': NiceLocationForm,
         'new_observer': ContactForm,
         'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
@@ -482,8 +473,6 @@ def edit_observation(
         'animal': observation.case.animal,
         'case': observation.case,
         'observation': observation,
-        'report_datetime': observation.report_datetime,
-        'observation_datetime': observation.observation_datetime,
         'location': observation.location,
         'observer_vessel': observation.observer_vessel,
     }
@@ -549,9 +538,6 @@ def edit_observation(
             _check('observation')
             observation = forms['observation'].save(commit=False)
 
-            _check('report_datetime')
-            observation.report_datetime = forms['report_datetime'].save()
-
             if forms['observation'].cleaned_data['new_reporter'] == 'new':
                 _check('new_reporter')
                 _check('new_reporter_affiliations')
@@ -563,9 +549,6 @@ def edit_observation(
                         continue
                     org = org_form.save()
                     observation.reporter.affiliations.add(org)
-            
-            _check('observation_datetime')
-            observation.observation_datetime = forms['observation_datetime'].save()
             
             _check('location')
             observation.location = forms['location'].save()
@@ -771,91 +754,34 @@ def case_search(request, after_date=None, before_date=None):
         
         query = Q()
     
-        if form.cleaned_data['after_date']:
-            # 'before_date' and 'after_date' really search the
-            # observation_datetime and report_datetime of observations
+        if form.cleaned_data['observed_after_date']:
             
-            # possible matches are:
-            #  <year>-null-null
-            #  <year>-<month>-null
-            #  <year>-<month>-day
-            #
-            # in other words, where o is observation_date and q is query_date:
-            #  (o.year >= q.year & o.month is null)
-            #  | (o.year >= q.year & o.month >= q.month & o.day is null)
-            #  | (o.year >= q.year & o.month >= q.month & o.day >= q.day)
-            #
-            # which equals:
-            #  o.year >= q.year 
-            #  & (o.month is null
-            #    | (o.month >= q.month & o.day is null)
-            #    | (o.month >= q.month & o.day >= q.day))
-            #
-            #  o.year >= q.year 
-            #  & (o.month is null
-            #    | (o.month >= q.month 
-            #      & (o.day is null
-            #        | o.day >= q.day)))
+            date = form.cleaned_data['observed_after_date']
+            date = UncertainDateTime.from_date(date)
             
-            date = form.cleaned_data['after_date']
+            query &= UncertainDateTimeField.get_after_q(date, 'observation__datetime_observed')
             
-            year_match = Q(observation__observation_datetime__year__gte=date.year)
-            month_null = Q(observation__observation_datetime__month__isnull=True)
-            month_match = Q(observation__observation_datetime__month__gte=date.month)
-            day_null = Q(observation__observation_datetime__day__isnull=True)
-            day_match = Q(observation__observation_datetime__day__gte=date.day)
-            
-            observation_date_match = (year_match 
-                & (month_null
-                    | (month_match
-                        & (day_null
-                            | day_match))))
-            
-            year_match = Q(observation__report_datetime__year__gte=date.year)
-            month_null = Q(observation__report_datetime__month__isnull=True)
-            month_match = Q(observation__report_datetime__month__gte=date.month)
-            day_null = Q(observation__report_datetime__day__isnull=True)
-            day_match = Q(observation__report_datetime__day__gte=date.day)
-            
-            report_date_match = (year_match 
-                & (month_null
-                    | (month_match
-                        & (day_null
-                            | day_match))))
-            
-            query &= (observation_date_match | report_date_match)
+        if form.cleaned_data['observed_before_date']:
 
-        if form.cleaned_data['before_date']:
-            # same as above, but with 'lte' instead of 'gte'
-
-            date = form.cleaned_data['before_date']
-
-            year_match = Q(observation__observation_datetime__year__lte=date.year)
-            month_null = Q(observation__observation_datetime__month__isnull=True)
-            month_match = Q(observation__observation_datetime__month__lte=date.month)
-            day_null = Q(observation__observation_datetime__day__isnull=True)
-            day_match = Q(observation__observation_datetime__day__lte=date.day)
+            date = form.cleaned_data['observed_before_date']
+            date = UncertainDateTime.from_date(date)
             
-            observation_date_match = (year_match 
-                & (month_null
-                    | (month_match
-                        & (day_null
-                            | day_match))))
-            
-            year_match = Q(observation__report_datetime__year__lte=date.year)
-            month_null = Q(observation__report_datetime__month__isnull=True)
-            month_match = Q(observation__report_datetime__month__lte=date.month)
-            day_null = Q(observation__report_datetime__day__isnull=True)
-            day_match = Q(observation__report_datetime__day__lte=date.day)
-            
-            report_date_match = (year_match 
-                & (month_null
-                    | (month_match
-                        & (day_null
-                            | day_match))))
-            
-            query &= (observation_date_match | report_date_match)
+            query &= UncertainDateTimeField.get_before_q(date, 'observation__datetime_observed')
         
+        if form.cleaned_data['reported_after_date']:
+        
+            date = form.cleaned_data['reported_after_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_after_q(date, 'observation__datetime_reported')
+            
+        if form.cleaned_data['reported_before_date']:
+
+            date = form.cleaned_data['reported_before_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_before_q(date, 'observation__datetime_reported')
+
         if form.cleaned_data['taxon']:
             t = form.cleaned_data['taxon']
             # TODO handle taxon uncertainty!

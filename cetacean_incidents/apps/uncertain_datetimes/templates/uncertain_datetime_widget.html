@@ -1,0 +1,21 @@
+<table>
+    {# TODO seconds? timezone? for now, assume U.S. Eastern time in the view #}
+    <tr>
+        {% for sub in subwidgets %}
+        {% if not sub.widget.is_hidden %}
+        <th>{{ sub.name|capfirst }}</th>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    <tr>
+        {% for sub in subwidgets %}
+        {% if not sub.widget.is_hidden %}
+        <td>{{ sub.rendering }}</td>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    <caption>
+        <i>please use 24-hour, colon-delimited, EST/EDT time. eg. &#x201c;15:30&#x201d;</i>
+    </caption>
+</table>
+

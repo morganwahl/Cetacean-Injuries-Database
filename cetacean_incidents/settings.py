@@ -81,7 +81,7 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
     'cetacean_incidents.apps.contacts',
-    'cetacean_incidents.apps.datetime',
+    'cetacean_incidents.apps.uncertain_datetimes',
     'cetacean_incidents.apps.vessels',
     'cetacean_incidents.apps.taxons',
     'cetacean_incidents.apps.incidents',

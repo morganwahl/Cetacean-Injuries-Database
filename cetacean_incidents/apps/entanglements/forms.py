@@ -8,6 +8,7 @@ from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
+from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
@@ -191,14 +192,14 @@ class EntanglementObservationForm(ObservationForm):
         # uses in intermediary model)
         exclude += ('gear_body_location',)
 
-class GearOwnerForm(forms.ModelForm):
+class GearOwnerDateField(UncertainDateTimeField):
     
-    date_set_known = forms.BooleanField(
-        initial= False,
-        required= False,
-        label= 'date gear was set is known',
-        help_text= "check even if just the year is known"
-    )
+    def __init__(self, *args, **kwargs):
+        return super(GearOwnerDateField, self).__init__(
+            hidden_subfields=('hour', 'minute', 'second', 'microsecond'),
+        )
+    
+class GearOwnerForm(forms.ModelForm):
     
     location_set_known = forms.BooleanField(
         initial= False,
@@ -207,14 +208,25 @@ class GearOwnerForm(forms.ModelForm):
         help_text= "check even if just a vague location is known",
     )
     
-    date_lost_known = forms.BooleanField(
-        initial= False,
-        required= False,
-        label= 'date gear went missing is known',
-        help_text= "check even if just the year is known"
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = GearOwner._meta.get_field('datetime_set')
+    datetime_set = GearOwnerDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
     )
-    
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = GearOwner._meta.get_field('datetime_missing')
+    datetime_missing = GearOwnerDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
     class Meta:
         model = GearOwner
-        exclude = ('case', 'date_gear_set', 'location_gear_set', 'date_gear_missing')
+        exclude = ('case', 'location_gear_set')
 

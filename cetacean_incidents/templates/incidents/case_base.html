@@ -4,7 +4,7 @@
 {% load contact_extras %}
 {% load generic_field_display %}
 {% load case_extras %}
-{% load datetime_extras %}
+{% load observation_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -43,8 +43,6 @@
 {% endblock %}
 
 {% block content %}
-{% comment %}
-{# commented out since it takes forever #}
 {% if case.associated_cases %}
 <i>other cases for this animal around the time of this one:</i>
 <ul>
@@ -53,7 +51,6 @@
     {% endfor %}
 </ul>
 {% endif %}
-{% endcomment %}
 <div class="section">
     {% block case_fields %}
     <div>
@@ -135,9 +132,9 @@
             {% endif %}
             <td>{% observation_link o %}</td>
             <td>{% contact_link o.observer %}</td>
-            <td sorttable_customkey="{% datetime_sort_key o.observation_datetime %}">{{ o.observation_datetime }}</td>
+            <td sorttable_customkey="{{ o.datetime_observed.sortkey }}">{% datetime_observed_display o.datetime_observed %}</td>
             <td>{% if o.firsthand %}<i>reported by the observer</i>{% else %}{% contact_link o.reporter %}{% endif %}</td>
-            <td sorttable_customkey="{% datetime_sort_key o.report_datetime %}">{{ o.report_datetime }}</td>
+            <td sorttable_customkey="{{ o.datetime_reported.sortkey }}">{% datetime_observed_display o.datetime_reported %}</td>
             <td>{% if o.narrative %}{{ o.narrative|truncatewords:9 }}{% else %}<i>nothing</i>{% endif %}</td>
         </tr>
         {% endfor %}

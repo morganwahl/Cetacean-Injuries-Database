@@ -2,6 +2,7 @@ import datetime
 from itertools import chain
 
 from django import forms
+from django.core.exceptions import ValidationError
 from django.forms import fields
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
@@ -15,6 +16,7 @@ from cetacean_incidents.apps.merge_form.forms import MergeForm
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
 class AnimalForm(forms.ModelForm):
     
@@ -72,6 +74,39 @@ class MergeCaseForm(forms.ModelForm):
     class Meta:
         model = Case
 
+class ObservationDateField(UncertainDateTimeField):
+    
+    def __init__(self, *args, **kwargs):
+        return super(ObservationDateField, self).__init__(
+            required_subfields= ('year',),
+            hidden_subfields=('hour', 'minute', 'second', 'microsecond'),
+        )
+    
+    def clean(self, value):
+        dt = super(ObservationDateField, self).clean(value)
+        
+        if not dt.month is None:
+            if dt.year is None:
+                raise ValidationError("can't give month without year")
+        
+        if not dt.day is None:
+            if dt.month is None:
+                raise ValidationError("can't give day without month")
+        
+        if not dt.minute is None:
+            if dt.hour is None:
+                raise ValidationError("can't give minute without hour")
+        
+        if not dt.second is None:
+            if dt.minute is None:
+                raise ValidationError("can't give second without minute")
+        
+        if not dt.microsecond is None:
+            if dt.second is None:
+                raise ValidationError("can't give microsecond without second")
+
+        return dt
+
 class ObservationForm(forms.ModelForm):
     '''\
     This class merely handles commonalities between the different observation
@@ -83,6 +118,24 @@ class ObservationForm(forms.ModelForm):
     # field
     _f = Observation._meta.get_field('taxon')
     taxon = TaxonField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = Observation._meta.get_field('datetime_observed')
+    datetime_observed = ObservationDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = Observation._meta.get_field('datetime_reported')
+    datetime_reported = ObservationDateField(
         required= _f.blank != True,
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
@@ -122,7 +175,7 @@ class ObservationForm(forms.ModelForm):
         model = Observation
         # the case for a new observation is set by the view. The one-to-one 
         # relations shouldn't be shown.
-        exclude = ('case', 'location', 'report_datetime', 'observation_datetime', 'observer_vessel')
+        exclude = ('case', 'location', 'observer_vessel')
 
 class SubmitDetectingForm(forms.Form):
     '''\
@@ -226,15 +279,30 @@ class AnimalSearchForm(forms.Form):
 
 class CaseSearchForm(forms.Form):
     
-    after_date = forms.DateTimeField(
+    observed_after_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day",
         widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or after"
     )
-    before_date = forms.DateTimeField(
+    observed_before_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day",
         widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or before"
+    )
+
+    reported_after_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or after"
+    )
+    reported_before_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or before"
     )
 
     # TODO check that after date is before before_date
