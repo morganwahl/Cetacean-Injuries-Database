@@ -1,0 +1,16 @@
+{% extends "incidents/observation_detail.html" %}
+{% load generic_field_display %}
+
+{% block case_ids %}
+{% with observation.case as c %}
+{% include "strandings/stranding_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block edit_url %}{% url edit_strandingobservation observation.id %}{% endblock %}
+
+{% block case_type_fields %}
+<h3>Stranding</h3>
+<table>
+</table>
+{% endblock %}

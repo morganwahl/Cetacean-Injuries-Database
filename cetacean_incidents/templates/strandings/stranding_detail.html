@@ -1,0 +1,18 @@
+{% extends "strandings/stranding_base.html" %}
+
+{# TODO is this needed ? will the case-edit view delegate accordingly? #}
+{% block edit_case_link %}
+{% if perms.strandings.change_stranding %}
+{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+<a href="{% url edit_stranding case.id %}#case">edit this stranding</a>
+{% endif %}
+{% endblock %}
+
+{# TODO is this needed ? will the add-observation view delegate accordingly? #}
+{% block add_observation_link %}
+{% if perms.strandings.change_stranding and perms.strandings.add_strandingobservation %}
+{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
+<a href="{% url add_strandingobservation case.id %}#reporting">add an observation</a>
+{% endif %}
+{% endblock %}
+

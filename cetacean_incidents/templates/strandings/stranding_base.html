@@ -1,0 +1,22 @@
+{% extends "incidents/case_base.html" %}
+{% load contact_extras %}
+{% load generic_field_display %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block case_ids %}
+{% with case as c %}
+{% include "strandings/stranding_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block case_fields %}
+{{ block.super }}
+{% endblock %}
+
+{% block extra_case_fields %}
+{% endblock %}
+

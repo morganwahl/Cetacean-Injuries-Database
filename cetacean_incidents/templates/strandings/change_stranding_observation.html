@@ -1,0 +1,83 @@
+{% extends "incidents/change_observation.html" %}
+
+{% block other_tabs_js %}
+$('.link-to-case-stranding').click(function() { // bind click event to link
+    $tabs.tabs('select', '#case-stranding'); // switch to tab
+    return false;
+});
+$('.link-to-observation-stranding').click(function() { // bind click event to link
+    $tabs.tabs('select', '#observation-stranding'); // switch to tab
+    return false;
+});
+{% endblock %}
+
+{% block case_title %}{{ case|default:"new stranding case" }}{% endblock %}
+
+{% block case_ids %}
+{% with case as c %}
+{% include "strandings/stranding_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block case_header %}{{ case|default:"<i>new stranding case</i>" }}{% endblock %}
+
+{% block other_case_tabs %}
+<li{% if forms.case.non_field_errors %} class="ui-state-error"{% endif %}>
+    <a href="#case-stranding">
+        <em>Case</em>
+        <br>Stranding
+    </a>
+</li>
+{% endblock %}
+
+{% block other_case_tabs_next_link %}<a class="link-to-case-stranding" href="#case-stranding">{% endblock %}
+
+{% block other_case_tabs_body %}
+<div id="case-stranding">
+    {% if case.observation_set.count > 1 %}
+    <div class="edit-warning">
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+        Note that this is the case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+        <img
+            src="{% url site-media path="icons/warning.png"%}"
+        >
+    </div>
+    {% endif %}
+    <div style="text-align:left; float: left;">
+        <a class="link-to-case" href="#case">&#x2190; previous tab</a>
+    </div>
+    <div style="text-align: right;">
+        <a class="link-to-case-sinmd" href="#case-sinmd">next tab &#x2192;</a>
+    </div>
+</div> <!-- id="case-stranding" -->
+{% endblock %}
+
+{% block other_case_tabs_prev_link %}<a class="link-to-case-stranding" href="#case-stranding">{% endblock %}
+
+
+{% block other_observation_tabs %}
+<li{% if forms.observation.non_field_errors %} class="ui-state-error"{% endif %}>
+    <a href="#observation-stranding">
+        <em>Observation</em>
+        <br>Entanglement
+    </a>
+</li>
+{% endblock %}
+
+{% block other_observation_tabs_next_link %}<a class="link-to-observation-stranding" href="#observation-stranding">{% endblock %}
+
+{% block other_observation_tabs_body %}
+<div id="observation-stranding">
+    <div style="text-align:left; float: left;">
+        <a class="link-to-incident" href="#incident">&#x2190; previous tab</a>
+    </div>
+    <div style="text-align: right;">
+        <a class="link-to-narrative" href="#narrative">next tab &#x2192;</a>
+    </div>
+</div> <!-- id="observation-stranding" -->
+{% endblock %}
+
+{% block other_observation_tabs_prev_link %}<a class="link-to-observation-stranding" href="#observation-stranding">{% endblock %}
+
