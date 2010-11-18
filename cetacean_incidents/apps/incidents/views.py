@@ -414,7 +414,8 @@ def add_observation(
         try:
             return redirect(_try_saving())
         except _SomeValidationFailed as (formname, form):
-            print "error in form %s: %s" % (formname, unicode(form.errors))
+            #print "error in form %s: %s" % (formname, unicode(form.errors))
+            pass
 
     template_media = Media(
         css= {'all': (settings.JQUERYUI_CSS_FILE,)},
