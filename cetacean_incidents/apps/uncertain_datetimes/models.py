@@ -169,10 +169,10 @@ class UncertainDateTimeField(models.Field):
     @classmethod
     def get_sametime_q(cls, udt, field_lookup):
         '''
-        Given a field lookup (e.g. 'datetime_reported'), returns
-        a Q object that selects for objects there that UncertainDateTimeField
-        may represent the same time as this one. In other words, each of their
-        fields, if defined, are the same.
+        Given a field lookup for an UncertainDateTimeField 
+        (e.g. 'datetime_reported'), returns a Q object that selects for 
+        UncertainDateTimeField values that _may_ represent the same time as this
+        one. In other words, each of their fields, if defined, are the same.
         '''
         
         # TODO this assumes UncertainDateTime uses spaces to pad it's sortkey!

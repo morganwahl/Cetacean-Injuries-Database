@@ -15,11 +15,11 @@
     <tr class="field">
         <th>contact</th>
         <td>
-        {% if v.contact %}
-        {% contact_link v.contact %}
-        {% else %}
-        <i>no contact info for this vessel</i>
-        {% endif %}
+            {% if v.contact %}
+            {% contact_link v.contact %}
+            {% else %}
+            <i>no contact info for this vessel</i>
+            {% endif %}
         </td>
     </tr>
     {% if v.description %}
