@@ -279,15 +279,30 @@ class AnimalSearchForm(forms.Form):
 
 class CaseSearchForm(forms.Form):
     
-    after_date = forms.DateTimeField(
+    observed_after_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day",
         widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or after"
     )
-    before_date = forms.DateTimeField(
+    observed_before_date = forms.DateTimeField(
         required= False,
-        help_text= "enter year-month-day",
         widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or before"
+    )
+
+    reported_after_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or after"
+    )
+    reported_before_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or before"
     )
 
     # TODO check that after date is before before_date
