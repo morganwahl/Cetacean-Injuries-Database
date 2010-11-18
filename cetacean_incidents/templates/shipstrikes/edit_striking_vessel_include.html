@@ -16,9 +16,9 @@
     {% endwith %}
     <div id="{{ v_form.prefix }}-vesselcaptain_new_contact" style="display:none;">
         {% if perms.contacts.add_contact %}
-        <table>
-        {{ cap_form.as_table }}
-        </table>
+        {% with cap_form as form %}
+        {% include "contacts/change_contact_include.html" %}
+        {% endwith %}
         {% else %}
         <div class="warning">you don't have permission to add a new contact</div>
         {% endif %}

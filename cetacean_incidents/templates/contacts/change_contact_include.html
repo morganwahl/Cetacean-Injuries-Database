@@ -35,6 +35,7 @@
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 {% if perms.contacts.add_organization %}
+                {% if new_affiliations %}
                 <div>
                     <span class="fieldname">add new organizations to be affiliated with:</span>
                     {{ new_affiliations.management_form }}
@@ -44,6 +45,7 @@
                         {% endfor %}
                     </div>
                 </div>
+                {% endif %}
                 {% endif %}
             </div>
         </td>
