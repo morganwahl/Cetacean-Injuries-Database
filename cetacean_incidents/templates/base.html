@@ -83,16 +83,20 @@
                         &#x2022;
                         <a href="{% url cases_this_year %}">this year</a>
                     </td>
-                    {% if user.is_staff %}
+                    {% if perms.taxons.add_taxon or user.is_staff %}
                     <td>
                         <div class="category">
                             administrative tools
                         </div>
                         {% if perms.taxons.add_taxon %}
                         <a class="action" href="{% url import_taxon %}">import taxa</a>
+                        {% endif %}
+                        {% if perms.taxons.add_taxon and user.is_staff %}
                         &#x2022;
                         {% endif %}
+                        {% if user.is_staff %}
                         <a href="{% url recent_revisions %}">recent revisions</a>
+                        {% endif %}
                     </td>
                     {% endif %}
                 </tr>

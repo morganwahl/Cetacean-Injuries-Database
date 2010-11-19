@@ -8,8 +8,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
@@ -366,7 +365,7 @@ def new_case(request, initial_animal_id=None):
         context_instance= RequestContext(request),
     )
 
-@user_passes_test(lambda u: u.is_staff)
+@permission_required('taxons.add_taxon')
 def import_taxon(request):
     
     return unsecured_import_taxon(request)
