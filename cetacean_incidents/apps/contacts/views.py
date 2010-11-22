@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms.formsets import formset_factory
@@ -15,23 +15,29 @@ def contact_detail(request, contact_id):
     
     contact = Contact.objects.get(id=contact_id)
     
-    merge_form = merge_source_form_factory(Contact, contact)()
     template_media = Media(
         js= (settings.JQUERY_FILE,),
     )
     
+    context = {
+        'contact': contact,
+        'media': template_media,
+    }
+
+    if request.user.has_perm('contacts.change_contact') and request.user.has_perm('contacts.delete_contact'):
+        merge_form = merge_source_form_factory(Contact, contact)()
+        context['media'] += merge_form.media
+        context['merge_form'] = merge_form
+    
     return render_to_response(
         'contacts/contact_detail.html',
-        {
-            'contact': contact,
-            'media': template_media + merge_form.media,
-            'merge_form': merge_form,
-        },
+        context,
         context_instance= RequestContext(request),
     )
 
 @login_required
 def _create_or_edit_contact(request, contact_id=None):
+    # assme user has contacts.add_contact and contacts.change_contact
     if not contact_id is None:
         # we're editing an existing contact
         contact = Contact.objects.get(id=contact_id)
@@ -40,45 +46,60 @@ def _create_or_edit_contact(request, contact_id=None):
         # we're creating a new contact
         contact = None # the default for ContactForm(instance=)
         template = 'contacts/create_contact.html'
+    
+    add_org = request.user.has_perm('contacts.add_organization')
+        
     # the exisintg affiliations will be in the widget in ContactForm. This is
     # only for adding new Organizations from within the same page
-    AffiliationsFormset = formset_factory(OrganizationForm, extra=2)
+    if add_org:
+        AffiliationsFormset = formset_factory(OrganizationForm, extra=2)
     
     if request.method == 'POST':
         form = ContactForm(request.POST, instance=contact)
-        new_affiliations_formset = AffiliationsFormset(request.POST)
-        if form.is_valid() and new_affiliations_formset.is_valid():
+        if add_org:
+            new_affiliations_formset = AffiliationsFormset(request.POST)
+        if form.is_valid() and (not add_org or new_affiliations_formset.is_valid()):
             contact = form.save()
-            # add the affiliations from the new_affs_formset
-            for org_form in new_affiliations_formset.forms:
-                # don't save orgs with blank names.
-                if not 'name' in org_form.cleaned_data:
-                    continue
-                org = org_form.save()
-                contact.affiliations.add(org)
+            if add_org:
+                # add the affiliations from the new_affs_formset
+                for org_form in new_affiliations_formset.forms:
+                    # don't save orgs with blank names.
+                    if not 'name' in org_form.cleaned_data:
+                        continue
+                    org = org_form.save()
+                    contact.affiliations.add(org)
             return redirect('contact_detail', contact.id)
     else:
         form = ContactForm(instance=contact)
-        new_affiliations_formset = AffiliationsFormset()
+        if add_org:
+            new_affiliations_formset = AffiliationsFormset()
+    
+    context = {
+        'contact': contact,
+        'form': form,
+    }
+    if add_org:
+        context['new_affiliations'] = new_affiliations_formset
+    
     return render_to_response(
         template,
-        {
-            'contact': contact,
-            'form': form,
-            'new_affiliations': new_affiliations_formset,
-        },
+        context,
         context_instance= RequestContext(request),
     )
 
 @login_required
+@permission_required('contacts.add_contact')
 def create_contact(*args, **kwargs):
     return _create_or_edit_contact(*args, **kwargs)
 
 @login_required
+@permission_required('contacts.change_contact')
 def edit_contact(*args, **kwargs):
     return _create_or_edit_contact(*args, **kwargs)
 
 @login_required
+@permission_required('contacts.change_contact')
+@permission_required('contacts.delete_contact')
 def merge_contact(request, destination_id, source_id=None):
     # the "source" contact will be deleted and references to it will be changed
     # to the "destination" contact
