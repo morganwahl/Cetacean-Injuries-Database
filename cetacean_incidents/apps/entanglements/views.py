@@ -26,6 +26,7 @@ from models import Entanglement, GearType, EntanglementObservation, BodyLocation
 from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
 
 @login_required
+@permission_required('entanglements.change_entanglement')
 def edit_entanglement(request, entanglement_id):
     return edit_case(
         request,
@@ -35,6 +36,9 @@ def edit_entanglement(request, entanglement_id):
     )
 
 @login_required
+@permission_required('entanglements.change_entanglement')
+@permission_required('entanglements.view_gear_owner')
+@permission_required('entanglements.add_gear_owner')
 def add_gear_owner(request, entanglement_id):
     # TODO merge in with edit_gear_owner
     entanglement = Entanglement.objects.get(id=entanglement_id)
@@ -96,6 +100,9 @@ def add_gear_owner(request, entanglement_id):
     )
 
 @login_required
+@permission_required('entanglements.change_entanglement')
+@permission_required('entanglements.view_gear_owner')
+@permission_required('entanglements.change_gear_owner')
 def edit_gear_owner(request, entanglement_id):
     entanglement = Entanglement.objects.get(id=entanglement_id)
     gear_owner = entanglement.gear_owner_info
@@ -200,6 +207,8 @@ def entanglementobservation_detail(request, entanglementobservation_id):
     )
 
 @login_required
+@permission_required('entanglements.change_entanglement')
+@permission_required('entanglements.add_entanglementobservation')
 def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     return add_observation(
         request,
@@ -212,6 +221,8 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     )
 
 @login_required
+@permission_required('entanglements.change_entanglement')
+@permission_required('entanglements.change_entanglementobservation')
 def edit_entanglementobservation(request, entanglementobservation_id):
     return edit_observation(
         request,
