@@ -303,7 +303,7 @@
                 <div id="reporter_new_contact" style="display:none;">
                     {% if perms.contacts.add_contact %}
                     {% with forms.new_reporter as form %}
-                    {% with forms.new_reporter_affiliations as  new_affiliations %}
+                    {% with forms.new_reporter_affiliations as new_affiliations %}
                     {% include "contacts/change_contact_include.html" %}
                     {% endwith %}
                     {% endwith %}
@@ -350,7 +350,7 @@
                 <div id="observer_new_contact" style="display:none;">
                     {% if perms.contacts.add_contact %}
                     {% with forms.new_observer as form %}
-                    {% with forms.new_observer_affiliations as  new_affiliations %}
+                    {% with forms.new_observer_affiliations as new_affiliations %}
                     {% include "contacts/change_contact_include.html" %}
                     {% endwith %}
                     {% endwith %}

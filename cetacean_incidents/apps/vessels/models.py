@@ -44,7 +44,7 @@ class VesselInfo(models.Model):
     name = models.CharField(
         max_length= 255,
         blank= True,
-        verbose_name= "Vessel Name",
+        verbose_name= "Vessel name",
     )
     home_port = models.CharField(
         max_length= 511,

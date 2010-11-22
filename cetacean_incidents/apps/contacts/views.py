@@ -25,7 +25,7 @@ def contact_detail(request, contact_id):
         'media': template_media,
     }
 
-    if request.user.has_perm('contacts.change_contact') and request.user.has_perm('contacts.delete_contact'):
+    if request.user.has_perms(('contacts.change_contact', 'contacts.delete_contact')):
         merge_form = merge_source_form_factory(Contact, contact)()
         context['media'] += merge_form.media
         context['merge_form'] = merge_form
