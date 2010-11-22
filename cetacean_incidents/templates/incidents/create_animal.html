@@ -15,6 +15,9 @@
 <form action="{% url create_animal %}" method="post">
     {% csrf_token %}
     <div class="section">
+        {% if form.non_field_errors %}
+        {{ form.non_field_errors }}
+        {% endif %}
         {% with form.name as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
@@ -24,26 +27,12 @@
         {% with form.determined_gender as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-        {% with form.dead as f %}
+        {% with form.determined_dead_before as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
-        <script type="text/javascript">
-            $().ready(function(){
-                CheckboxHider.init(
-                    {# TODO js-string-escaping #}
-                    "{{ form.dead.html_name }}",
-                    "if_dead"
-                );
-            });
-        </script>
-        <div id="if_dead">
-            {% with form.necropsy as f %}
-            {% include "labeled_field.html" %}
-            {% endwith %}
-            {% with form.determined_dead_before as f %}
-            {% include "labeled_field.html" %}
-            {% endwith %}
-        </div>
+        {% with form.necropsy as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
     </div>
 	<button type="submit">add this animal</button>
 </form>
