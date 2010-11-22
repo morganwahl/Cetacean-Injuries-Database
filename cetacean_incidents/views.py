@@ -17,7 +17,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from reversion.models import Revision, Version
 
-from forms import AnimalChoiceForm, CaseTypeForm
+from forms import AnimalChoiceForm_factory, CaseTypeForm_factory
 from decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
@@ -301,8 +301,8 @@ def new_case(request, initial_animal_id=None):
     '''
     
     form_classes = {
-        'animal_choice': AnimalChoiceForm,
-        'case_type': CaseTypeForm,
+        'animal_choice': AnimalChoiceForm_factory(request.user),
+        'case_type': CaseTypeForm_factory(request.user),
     }
 
     form_kwargs = {}

@@ -35,53 +35,84 @@ class CaseTypeFormMeta(forms.Form.__metaclass__):
         dict['type_models'] = type_models
         return super(CaseTypeFormMeta, self).__new__(self, name, bases, dict)
 
-class CaseTypeForm(forms.Form):
-    '''\
-    A form with the case-type field needed when creating new cases.
-    '''
-    
-    # TODO get this working
-    ## this form is almost entirely dynamically created
-    #__metaclass__ = CaseTypeFormMeta
-    
-    # where <class> is a subclass of Case:
+
+def CaseTypeForm_factory(user):
+    'Generates a CaseTypeForm based on what types a user can add.'
     
     # a tuple of doubles: <class>.__name__, <class>._meta.verbose_name
-    type_names = (('Entanglement', 'Entanglement'), ('Shipstrike', 'Shipstrike'), ('Stranding', 'Stranding'))
-    # keys are <class>.__name__, values are <class>
-    type_models = {
-        'Entanglement': Entanglement,
-        'Shipstrike': Shipstrike,
-        'Stranding': Stranding
-    }
-
-    case_type = forms.ChoiceField(
-        choices=(
-            ('', '<select a case type>'),
-        ) + type_names,
+    type_names = (
+        ('Entanglement', 'Entanglement'),
+        ('Shipstrike', 'Shipstrike'),
+        ('Stranding', 'Stranding'),
     )
-
-    # basically the same problem as above; we need a list of subclass of CaseForm
-    case_form_classes = {
-        'Case': CaseForm,
-        'Entanglement': EntanglementForm,
-        'Shipstrike': ShipstrikeForm,
-        'Stranding': StrandingForm,
-    }
-    addcase_form_classes = {
-        'Entanglement': AddEntanglementForm,
-        'Shipstrike': AddShipstrikeForm,
-        'Stranding': AddStrandingForm,
+    type_perms = {
+        'Entanglement': lambda u: u.has_perm('entanglements.add_entanglement'),
+        'Shipstrike': lambda u: u.has_perm('shipstrikes.add_shipstrike'),
+        'Stranding': lambda u: True,
     }
 
-class AnimalChoiceForm(forms.Form):
+    class _CaseTypeForm(forms.Form):
+        '''\
+        A form with the case-type field needed when creating new cases.
+        '''
+        
+        # TODO get this working
+        ## this form is almost entirely dynamically created
+        #__metaclass__ = CaseTypeFormMeta
+        
+        # where <class> is a subclass of Case:
+        
+        # keys are <class>.__name__, values are <class>
+        type_models = {
+            'Entanglement': Entanglement,
+            'Shipstrike': Shipstrike,
+            'Stranding': Stranding
+        }
+
+        case_type = forms.ChoiceField(
+            choices=(
+                ('', '<select a case type>'),
+            ) + filter(
+                lambda choice: type_perms[choice[0]](user),
+                type_names,
+            )
+        )
+
+        # basically the same problem as above; we need a list of subclass of CaseForm
+        case_form_classes = {
+            'Case': CaseForm,
+            'Entanglement': EntanglementForm,
+            'Shipstrike': ShipstrikeForm,
+            'Stranding': StrandingForm,
+        }
+        addcase_form_classes = {
+            'Entanglement': AddEntanglementForm,
+            'Shipstrike': AddShipstrikeForm,
+            'Stranding': AddStrandingForm,
+        }
     
-    animal = forms.ModelChoiceField(
-        queryset= Animal.objects.all(),
-        empty_label= '<new animal>',
-        required=False,
-        help_text= "choose an existing animal in the database, or to add a new one",
-    )
+    return _CaseTypeForm
+
+def AnimalChoiceForm_factory(user):
+    '''\
+    Generates an AnimalChoiceForm that depends on whether a user can add new 
+    animals.
+    '''
+
+    class _AnimalChoiceForm(forms.Form):
+        
+        help_text = "choose an existing animal in the database"
+        if user.has_perm('incidents.add_animal'):
+            help_text += ", or to add a new one"
+        
+        animal = forms.ModelChoiceField(
+            queryset= Animal.objects.all(),
+            empty_label= '<new animal>' if user.has_perm('incidents.add_animal') else '<select an animal>',
+            required= not user.has_perm('incidents.add_animal'),
+            help_text= help_text,
+        )
+    
+    return _AnimalChoiceForm
 
 def merge_source_form_factory(model, destination):
 

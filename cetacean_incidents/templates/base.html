@@ -74,11 +74,13 @@
                         <a class="action" href="{% url case_search %}">
                             search
                         </a>
-                        {% if perms.incidents.add_animal and perms.incidents.change_animal and perms.incidents.add_case and perms.incidents.add_observation %}
+                        {% if perms.incidents.add_animal or perms.incidents.change_animal %}
+                        {% if perms.incidents.add_case and perms.incidents.add_observation %}
                         &#x2022;
                         <a class="action" href="{% url new_case %}">
                             add
                         </a>
+                        {% endif %}
                         {% endif %}
                         &#x2022;
                         <a href="{% url cases_this_year %}">this year</a>
