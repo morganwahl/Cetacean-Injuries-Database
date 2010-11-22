@@ -249,6 +249,9 @@ ul.errorlist, span.errorlist {
 ul.errorlist {
     list-style-type: none;
 }
+ul.errorlist li {
+    margin: .2em;
+}
 
 span.invalid {
     text-decoration: line-through;
