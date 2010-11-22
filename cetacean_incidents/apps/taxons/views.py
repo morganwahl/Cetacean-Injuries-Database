@@ -23,10 +23,12 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 from cetacean_incidents.forms import merge_source_form_factory
+from cetacean_incidents.decorators import permission_required
 
 from models import Taxon
 from forms import TaxonMergeForm
 
+@login_required
 def taxon_tree(request, root_id=None):
     
     if root_id is None:
@@ -120,6 +122,8 @@ def taxon_detail(request, taxon_id):
     )
 
 @login_required
+@permission_required('taxons.change_taxon')
+@permission_required('taxons.delete_taxon')
 def taxon_merge(request, destination_id, source_id=None):
     # the "source" taxon will be deleted and references to it will be changed
     # to the "destination" taxon
