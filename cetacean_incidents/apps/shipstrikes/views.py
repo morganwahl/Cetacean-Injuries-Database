@@ -9,6 +9,8 @@ from django.conf import settings
 
 from reversion import revision
 
+from cetacean_incidents.decorators import permission_required
+
 from cetacean_incidents.apps.incidents.models import Case
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
@@ -21,6 +23,7 @@ from models import Shipstrike, ShipstrikeObservation
 from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
 
 @login_required
+@permission_required('shipstrikes.change_shipstrike')
 def edit_shipstrike(request, case_id):
     return edit_case(request, case_id=case_id, template='shipstrikes/edit_shipstrike.html', form_class=ShipstrikeForm)
 
@@ -36,17 +39,20 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
     )
 
 @login_required
+@permission_required('shipstrikes.change_shipstrike')
+@permission_required('shipstrikes.add_shipstrikeobservation')
 def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     def _try_saving(forms, check, observation):
         if forms['observation'].cleaned_data['striking_vessel_info'] == True:
             check('striking_vessel')
             striking_vessel = forms['striking_vessel'].save(commit=False)
-
+            
             contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
-            if contact_choice == 'new':
-                check('striking_vessel_contact')
-                striking_vessel.contact = forms['striking_vessel_contact'].save()
-            elif contact_choice == 'reporter':
+            if request.user.has_perm('contacts.add_contact'):
+                if contact_choice == 'new':
+                    check('striking_vessel_contact')
+                    striking_vessel.contact = forms['striking_vessel_contact'].save()
+            if contact_choice == 'reporter':
                 striking_vessel.contact = observation.reporter
             elif contact_choice == 'observer':
                 striking_vessel.contact = observation.observer
@@ -54,10 +60,11 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
                 striking_vessel.contact = forms['striking_vessel'].cleaned_data['existing_contact']
 
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
-            if captain_choice == 'new':
-                check('striking_vessel_captain')
-                striking_vessel.captain = forms['striking_vessel_captain'].save()
-            elif captain_choice == 'reporter':
+            if request.user.has_perm('contacts.add_contact'):
+                if captain_choice == 'new':
+                    check('striking_vessel_captain')
+                    striking_vessel.captain = forms['striking_vessel_captain'].save()
+            if captain_choice == 'reporter':
                 striking_vessel.captain = observation.reporter
             elif captain_choice == 'observer':
                 striking_vessel.captain = observation.observer
@@ -87,6 +94,8 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     )
 
 @login_required
+@permission_required('change_shipstrike')
+@permission_required('change_shipstrikeobservation')
 def edit_shipstrikeobservation(request, shipstrikeobservation_id):
     observation = ShipstrikeObservation.objects.get(id=shipstrikeobservation_id)
     form_initials = {
@@ -127,10 +136,11 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             observation.striking_vessel = forms['striking_vessel'].save()
             
             contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
-            if contact_choice == 'new':
-                check('striking_vessel_contact')
-                observation.striking_vessel.contact = forms['striking_vessel_contact'].save()
-            elif contact_choice == 'reporter':
+            if request.user.has_perm('contacts.add_contact'):
+                if contact_choice == 'new':
+                    check('striking_vessel_contact')
+                    observation.striking_vessel.contact = forms['striking_vessel_contact'].save()
+            if contact_choice == 'reporter':
                 observation.striking_vessel.contact = observation.reporter
             elif contact_choice == 'observer':
                 observation.striking_vessel.contact = observation.observer
@@ -140,10 +150,11 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
                 observation.striking_vessel.contact = None
             
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
-            if captain_choice == 'new':
-                check(forms['striking_vessel_captain'])
-                observation.striking_vessel.captain = forms['striking_vessel_captain'].save()
-            elif captain_choice == 'reporter':
+            if request.user.has_perm('contacts.add_contact'):
+                if captain_choice == 'new':
+                    check(forms['striking_vessel_captain'])
+                    observation.striking_vessel.captain = forms['striking_vessel_captain'].save()
+            if captain_choice == 'reporter':
                 observation.striking_vessel.captain = observation.reporter
             elif captain_choice == 'observer':
                 observation.striking_vessel.captain = observation.observer
