@@ -1,11 +1,12 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms.formsets import formset_factory
 from django.forms import Media
 
 from cetacean_incidents.forms import merge_source_form_factory
+from cetacean_incidents.decorators import permission_required
 
 from models import Contact
 from forms import ContactForm, OrganizationForm, ContactMergeForm

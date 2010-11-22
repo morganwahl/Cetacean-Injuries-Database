@@ -8,7 +8,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
-from django.contrib.auth.decorators import login_required, permission_required, user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms import Media
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import NoReverseMatch
@@ -18,6 +18,7 @@ from django.contrib.contenttypes.models import ContentType
 from reversion.models import Revision, Version
 
 from forms import AnimalChoiceForm, CaseTypeForm
+from decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
 from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm

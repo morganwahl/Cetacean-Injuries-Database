@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 from django.forms import Media
@@ -11,6 +11,8 @@ from django.db import models
 from django.conf import settings
 
 from reversion import revision
+
+from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Case
 

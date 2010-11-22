@@ -41,6 +41,10 @@ ADMIN_MEDIA_PREFIX = MEDIA_URL + 'admin/'
 LOGIN_URL = URL_PREFIX + 'login/' 
 LOGIN_REDIRECT_URL = URL_PREFIX
 
+# this is the URL users are redirected to when the permission_required decorator
+# fails
+BAD_PERMISSION_URL = URL_PREFIX + 'not_allowed/'
+
 CACHE_MIDDLEWARE_SECONDS = 15 * 60
 CACHE_MIDDLEWARE_KEY_PREFIX = ''
 

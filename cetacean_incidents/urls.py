@@ -24,6 +24,8 @@ urlpatterns = patterns('',
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+    # the permission_required decorator redirects on bad permissions
+    url(r'^not_allowed/$', direct_to_template, {'template': 'not_allowed.html'}, 'not_allowed'),
     
     (r'^$', home, {}, "home")
 )
