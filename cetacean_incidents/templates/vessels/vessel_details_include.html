@@ -9,7 +9,7 @@
     {% if v.imo_number %}
     {% display_row v 'imo_number' %}
     {% endif %}
-    {% if v.name or v.flag %}
+    {% if v.name or v.flag or v.home_port %}
     {% display_boatname_row v %}
     {% endif %}
     <tr class="field">

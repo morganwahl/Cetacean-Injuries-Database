@@ -1,10 +1,9 @@
 {% extends "generic_templates/display_row.html" %}
 
 {% block label_block %}
-{{ labels|join:" and " }}
+{{ label }}
 {% endblock %}
 
 {% block value_block %}
-{# U+2014: em dash #}
-{{ values|join:" &#x2014; " }}
+{{ value }}
 {% endblock %}

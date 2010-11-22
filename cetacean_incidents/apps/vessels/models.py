@@ -46,6 +46,10 @@ class VesselInfo(models.Model):
         blank= True,
         verbose_name= "Vessel Name",
     )
+    home_port = models.CharField(
+        max_length= 511,
+        blank= True,
+    )
     flag = models.ForeignKey(
         Country,
         blank= True,

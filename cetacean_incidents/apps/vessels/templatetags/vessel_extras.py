@@ -1,5 +1,6 @@
 from django import template
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.countries.utils.isoflag import iso_flag
 from cetacean_incidents.apps.generic_templates.templatetags.generic_field_display import display_row
@@ -20,18 +21,28 @@ def flag_icon(country):
 
 @register.inclusion_tag('vessels/display_boatname_row.html')
 def display_boatname_row(vessel):
-    labels = []
-    values = []
+    label = ''
+    value = ''
+    
     if vessel.name:
-        labels.append('name')
-        values.append(vessel.name)
+        label = 'name'
+        value = vessel.name
+    if vessel.name and (vessel.home_port or vessel.flag):
+        label += u' \u2014 '
+        value += u' \u2014 '
     if vessel.flag:
-        labels.append('flag')
+        label += 'flag'
         flag_html = render_to_string('flag_icon.html', flag_icon(vessel.flag))
-        values.append(flag_html)
+        value += flag_html
+    if vessel.flag and vessel.home_port:
+        label += ' and '
+        value += ' '
+    if vessel.home_port:
+        label += 'home port'
+        value += vessel.home_port
 
     return {
-        'labels': labels,
-        'values': values,
+        'label': label,
+        'value': mark_safe(value),
     }
 
