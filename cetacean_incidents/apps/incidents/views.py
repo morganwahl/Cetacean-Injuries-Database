@@ -30,7 +30,6 @@ from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-from cetacean_incidents.apps.strandings.models import Stranding
 
 @login_required
 def animal_detail(request, animal_id):
@@ -805,8 +804,8 @@ def case_search(request, after_date=None, before_date=None):
                 manager = Entanglement.objects
             if ct == 's':
                 manager = Shipstrike.objects
-            if ct == 't':
-                manager = Stranding.objects
+            if ct == 'c':
+                manager = Case.objects
         
         query = Q()
     
