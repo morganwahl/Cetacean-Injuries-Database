@@ -39,6 +39,13 @@ class Animal(models.Model):
         help_text= 'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
     )
     
+    field_number = models.CharField(
+        max_length= 255,
+        blank= True,
+        verbose_name= "stranding field number",
+        help_text= "the field number assigned to this animal by the stranding network",
+    )
+    
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
@@ -53,10 +60,23 @@ class Animal(models.Model):
     def dead(self):
         return (not self.determined_dead_before is None) and self.determined_dead_before <= datetime.date.today()
     
+    partial_necropsy = models.BooleanField(
+        default= False,
+        verbose_name= "partial necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
+        help_text= "if this animal is dead, has a partial necropsy been performed on it?",
+    )
+    
     necropsy = models.BooleanField(
         default= False,
         verbose_name= "necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
         help_text= "if this animal is dead, has a necropsy been performed on it?",
+    )
+    
+    cause_of_death = models.CharField(
+        max_length = 1023,
+        blank= True,
+        verbose_name= "probable cause of mortality",
+        help_text= "if this animal is dead, what (if any) probable cause of mortality has been determined?",
     )
     
     @property
@@ -693,6 +713,12 @@ class Observation(models.Model):
         related_name= "observation",
         help_text= 'the observer\'s location at the time of observation. (strictly, where did the observation begin)',
     )
+    
+    ashore = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "Was the animal ashore? Pick 'yes' even if it came ashore during the observation.",
+    )
 
     @property
     def firsthand(self):
@@ -766,6 +792,81 @@ class Observation(models.Model):
                               # database for now.
     )
     
+    age_class = models.CharField(
+        max_length= 2,
+        blank= True,
+        choices= (
+            ('ca', 'calf'),
+            ('ju', 'juvenile'),
+            ('ad', 'adult'),
+        ),
+        help_text= "Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, \u2018pup\u2019 is synonym for \u2018calf\u2019 and \u2018sub-adult\u2019 for \u2018juvenile\u2019.",
+    )
+    
+    # numeric codes (except 0) are from stranding spreadsheet. they're kept to
+    # allow sorting.
+    condition = models.IntegerField(
+        default= 0,
+        choices= (
+            (0, 'unknown'),
+            (1, 'alive'),
+            (6, 'dead, carcass condition unknown'),
+            (2, 'fresh dead'),
+            (3, 'moderate decomposition'),
+            (4, 'advanced decomposition'),
+            (5, 'skeletal'),
+        ),
+        help_text= '''\
+            carcass condition definitions: 
+            <dl>
+                <dt>fresh dead</dt>
+                <dd>
+                    The carcass was in good condition (fresh/edible). Normal 
+                    appearance, usually with little scavenger damage; fresh
+                    smell; minimal drying and wrinkling of skin, eyes and mucous
+                    membranes; eyes clear; carcass not bloated, tongue and penis
+                    not protruded; blubber firm and white; muscles firm, dark
+                    red, well-defined; blood cells intact, able to settle in a
+                    sample tube; serum unhemolyzed; viscera intact and well-
+                    defined, gut contains little or no gas; brain firm with no
+                    discoloration, surface features distinct, easily removed
+                    intact.
+                </dd>
+                <dt>moderate decomposition</dt>
+                <dd>
+                    The carcass was in fair condition (decomposed, but organs 
+                    basically intact). Carcass intact, bloating evident (tongue
+                    and penis protruded) and skin cracked and sloughing;
+                    possible scavenger damage; characteristic mild odor; mucous
+                    membranes dry, eyes sunken or missing; blubber blood-tinged
+                    and oily; muscles soft and poorly defined; blood hemolyzed,
+                    uniformly dark red; viscera soft, friable, mottled, but
+                    still intact; gut dilated by gas; brain soft, surface
+                    features distinct, dark reddish cast, fragile but can
+                    usually be moved intact.  
+                </dd>
+                <dt>advanced decomposition</dt>
+                <dd>
+                    The carcass was in poor condition (advanced decomposition).
+                    Carcass may be intact, but collapsed; skin sloughing;
+                    epidermis of cetaceans may be entirely missing; often severe
+                    scavenger damage; strong odor; blubber soft, often with
+                    pockets of gas and pooled oil; muscles nearly liquefied and
+                    easily torn, falling easily off bones; blood thin and black;
+                    viscera often identifiable but friable, easily torn, and
+                    difficult to dissect; gut gas-filled; brain soft, dark red,
+                    containing gas pockets, pudding-like consistency. 
+                </dd>
+                <dt>skeletal</dt>
+                <dd>
+                    Carcass was mummified or skeletal remains. Skin may be
+                    draped over skeletal remains; any remaining tissues are
+                    desiccated.
+                </dd>
+            </dl>
+        ''',
+    )
+    
     animal_description = models.TextField(
         blank= True,
         help_text= "Please note anything that would help identify the individual animal or it's species or gender, etc. Even if you've indicated those already, please indicate what that was on the basis of."
@@ -782,6 +883,13 @@ class Observation(models.Model):
         null= True,
         help_text= "were any biopsy samples taken?",
         verbose_name= "biopsy samples taken?",
+    )
+    
+    genetic_sample = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "were any genetic samples taken?",
+        verbose_name= "genetic samples taken?",
     )
     
     tagged = models.NullBooleanField(
