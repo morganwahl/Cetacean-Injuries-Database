@@ -687,6 +687,17 @@ class Observation(models.Model):
         # subclass of Observation
         return self.case.detailed.observation_model.objects.get(observation_ptr=self.id)
     
+    initial = models.BooleanField(
+        default= False,
+        verbose_name= "is this an \u2018initial observation\u2019 on a Level A?",
+        help_text= u"Check if this observation corresponds to the \u2018initial observation\u2019 on a Level A form. If it does, the obeservation date should correspond to the \"date of initial observation\" on the Level A, and the condition should correspond to the \"condition at initial observation\".",
+    )
+    exam = models.BooleanField(
+        default= False,
+        verbose_name= "is this a \u2018Level A Examination\u2019?"
+        help_text= u"Check if this observation corresponds to the \u2018level a examination\u2019 on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the codition should correspond to the \"condition at examination\", and the observer should correspond to the \"examiner\". Note that an observation can be both the \u2018initial observation\u2019 and the \u2018examination\u2019 (or neither).",
+    )
+    
     observer = models.ForeignKey(
         Contact,
         blank= True,
