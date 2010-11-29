@@ -958,7 +958,7 @@ class Observation(models.Model):
             ret += "at %s " % self.datetime_observed.__unicode__(unknown_char=None)
         if self.observer:
             ret += "by %s " % self.observer
-        ret += "(#%06d)" % self.id
+        ret += ( "(#%06d)" % self.id if self.id else "(unsaved!)" )
         return ret
     
     class Meta:
