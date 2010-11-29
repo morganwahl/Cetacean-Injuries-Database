@@ -5,7 +5,7 @@
 <table class="layout">
     <tr class="layout">
         {% if l.coordinates %}
-        <td class="layout">
+        <td class="layout" rowspan="2">
             <div>
             <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=200x150&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
             </div>
@@ -29,13 +29,66 @@
             </script>
         </td>
         {% endif %}
-        {% if l.description %}
         <td class="layout" style="vertical-align: middle;">
+            {% if l.waters or l.country or l.state %}
+            <div style="text-align: center; font-style: italic;">
+                {% if not l.waters %}
+                {% if l.country.iso = 'us' and l.state %}
+                in or nearest to {{ l.state }}
+                {% else %}
+                in or nearest to {{ l.country }}
+                {% endif %}
+                {% endif %}
+
+                {% if l.waters = 1 %}
+                on land
+                {% if l.country.iso = 'us' and l.state %}
+                in {{ l.state }}
+                {% else %}
+                in {{ l.country }}
+                {% endif %}
+                {% endif %}
+
+                {% if l.waters = 2 %}
+                in state waters
+                {% if l.state %}
+                of {{ l.get_state_display }}
+                {% else %}
+                in {{ l.country }}{% if l.country.iso != 'us' %}(?!){% endif %}
+                {% endif %}
+                {% endif %}
+
+                {% if l.waters = 3 %}
+                {% if l.country == 'us' %}
+                in federal waters{% if l.state %} nearest {{ l.get_state_display }}{% endif %}
+                {% else %}{# l.country != 'us' #}
+                in territorial waters{% if l.country %} of {{ l.country }}{% endif %}
+                {% endif %}
+                {% endif %}
+
+                {% if l.waters = 4 %}
+                {% if l.country == 'us' %}
+                in U.S. EEZ{% if l.state %} nearest {{ l.get_state_display }}{% endif %}
+                {% else %}{# l.country != 'us' #}
+                in {% if l.country %}the{% else %}an{% endif %} EEZ{% if l.country %} of {{ l.country }}{% endif %}
+                {% endif %}
+                {% endif %}
+
+                {% if l.waters = 5 %}
+                in international waters
+                {% endif %}
+            </div>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td class="layout" style="vertical-align: middle;">
+            {% if l.description %}
             <p style="margin: .25em;">
                 {{ l.description|linebreaksbr }}
             </p>
+            {% endif %}
         </td>
-        {% endif %}
     </tr>
 </table>
 {% else %}
