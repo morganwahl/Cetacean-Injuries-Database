@@ -240,7 +240,7 @@ class CaseMeta(models.Model.__metaclass__):
         if self.case_class is None and name == 'Case':
             the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
             self.case_class = the_class
-            self.case_class.detailed_classes = {}
+            self.case_class.detailed_classes = {name: the_class}
 
         elif self.case_class in bases:
             # modify the save method to set the case_type field
@@ -617,15 +617,11 @@ class Case(models.Model):
 
     case_type = models.CharField(
         max_length= 512,
+        default= 'Case',
         editable= False,
         null= False,
         help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
     )
-    
-    def save(self, *args, **kwargs):
-        if not self.case_type:
-            raise NotImplementedError("Can't save generic cases!")
-        super(Case, self).save(*args, **kwargs)
     
     def probable_taxon(self):
         return probable_taxon(self.observation_set)
