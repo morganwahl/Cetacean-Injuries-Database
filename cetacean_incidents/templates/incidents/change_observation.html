@@ -403,54 +403,41 @@
 
         <div id="animal-identification">
             {{ forms.observation.non_field_errors }}
-            <table>
-                <tr>
-                    <th>taxon</th>
-                    <td>
-                        {% if animal.id and animal.determined_taxon %}
-                        <div class="edit-warning">
-                            <img
-                                src="{% url site-media path="icons/warning.png"%}"
-                            >
-                            Note that this animal has been determined to be a <i>{{ animal.determined_taxon }}</i>.
-                            <img
-                                src="{% url site-media path="icons/warning.png"%}"
-                            >
-                        </div>
-                        {% endif %}
-                        {% with forms.observation.taxon as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>sex</th>
-                    <td>
-                        {% if animal.id and animal.determined_gender %}
-                        <div class="edit-warning">
-                            <img
-                                src="{% url site-media path="icons/warning.png"%}"
-                            >
-                            Note that this animal has been determined to be {{ animal.get_determined_gender_display }}.
-                            <img
-                                src="{% url site-media path="icons/warning.png"%}"
-                            >
-                        </div>
-                        {% endif %}
-                        {% with forms.observation.gender as f %}
-                        {% include "unlabeled_field.html" %}
-                        {% endwith %}
-                    </td>
-                </tr>
-                <tr>
-                    <th>description</th>
-                    <td>
-                        {% with forms.observation.animal_description as f %}
-                        {% include "bigtext_field.html" %}
-                        {% endwith %}
-                    </td>
-                </tr>
-            </table>
+            <div>
+                {% with forms.observation.taxon as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% if animal.id and animal.determined_taxon %}
+                <div class="edit-warning">
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                    Note that this animal has been determined to be a <i>{{ animal.determined_taxon }}</i>.
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                </div>
+                {% endif %}
+                {% with forms.observation.gender as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% if animal.id and animal.determined_gender %}
+                <div class="edit-warning">
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                    Note that this animal has been determined to be {{ animal.get_determined_gender_display }}.
+                    <img
+                        src="{% url site-media path="icons/warning.png"%}"
+                    >
+                </div>
+                {% endif %}
+            </div>
+            <div>
+                {% with forms.observation.animal_description as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </div>
             <div>
                 {% with forms.observation.biopsy as f %}
                 {% include "labeled_field.html" %}
