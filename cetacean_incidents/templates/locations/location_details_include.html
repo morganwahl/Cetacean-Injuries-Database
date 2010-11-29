@@ -1,7 +1,7 @@
 {# intended to be included in another template, with the Location as l #}
 {% load location_extras %}
 
-{% if l.coordinates or l.description %}
+{% if l.coordinates or l.description or l.country or l.state or l.waters%}
 <table class="layout">
     <tr class="layout">
         {% if l.coordinates %}

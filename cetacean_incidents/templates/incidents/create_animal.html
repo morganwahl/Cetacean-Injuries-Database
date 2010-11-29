@@ -21,6 +21,9 @@
         {% with form.name as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
+        {% with form.field_number as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
         {% with form.determined_taxon as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
@@ -30,7 +33,13 @@
         {% with form.determined_dead_before as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
+        {% with form.partial_necropsy as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
         {% with form.necropsy as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        {% with form.cause_of_death as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
     </div>

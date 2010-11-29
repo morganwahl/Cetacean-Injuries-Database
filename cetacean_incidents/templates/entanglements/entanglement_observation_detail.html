@@ -10,43 +10,45 @@
 {% block edit_url %}{% url edit_entanglementobservation observation.id %}{% endblock %}
 
 {% block case_type_fields %}
-<h3>Entanglement</h3>
-<table>
-    {% display_yesnounk_row observation "anchored" %}
-    <tr class="field">
-        <th>gear</th>
-        <td>
-            <p>
-                {{ observation.gear_description|default:"<i>undescribed</i>" }}
-            </p>
-            <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
-         </td>
-     </tr>
-     <tr class="field">
-        <th>gear locations on body</th>
-        <td>
-            <table>
-                {% for loc, gear_loc in gear_body_locations %}
-                <tr class="field">
-                    {# TODO this is abuse of the title attribute #}
-                    <th title="{{ loc.definition }}">{{ loc.name }}</th>
-                    <td>
-                        <i>
-                        {% if gear_loc %}
-                        {{ gear_loc.gear_seen_here|yesno }}
-                        {% else %}
-                        unknown
-                        {% endif %}
-                        </i>
-                    </td>
-                </tr>
-                {% endfor %}
-            </table>
-        </td>
-     </tr>
-     {% display_bigtext_row observation "entanglement_details" %}
-     {% if observation.disentanglement_outcome %}
-     {% display_chosen_row observation "disentanglement_outcome" %}
-     {% endif %}
-</table>
+<div class="section">
+    <h3>Entanglement</h3>
+    <table>
+        {% display_yesnounk_row observation "anchored" %}
+        <tr class="field">
+            <th>gear</th>
+            <td>
+                <p>
+                    {{ observation.gear_description|default:"<i>undescribed</i>" }}
+                </p>
+                <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
+             </td>
+         </tr>
+         <tr class="field">
+            <th>gear locations on body</th>
+            <td>
+                <table>
+                    {% for loc, gear_loc in gear_body_locations %}
+                    <tr class="field">
+                        {# TODO this is abuse of the title attribute #}
+                        <th title="{{ loc.definition }}">{{ loc.name }}</th>
+                        <td>
+                            <i>
+                            {% if gear_loc %}
+                            {{ gear_loc.gear_seen_here|yesno }}
+                            {% else %}
+                            unknown
+                            {% endif %}
+                            </i>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </td>
+         </tr>
+         {% display_bigtext_row observation "entanglement_details" %}
+         {% if observation.disentanglement_outcome %}
+         {% display_chosen_row observation "disentanglement_outcome" %}
+         {% endif %}
+    </table>
+</div>
 {% endblock %}

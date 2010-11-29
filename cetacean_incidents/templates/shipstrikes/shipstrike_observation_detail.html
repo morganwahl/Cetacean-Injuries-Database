@@ -3,12 +3,14 @@
 {% block edit_url %}{% url edit_shipstrikeobservation observation.id %}{% endblock %}
 
 {% block case_type_fields %}
-<h3>Striking Vessel</h3>
-{% if observation.striking_vessel %}
-{% with observation.striking_vessel as v %}
-{% include "shipstrikes/striking_vessel_details_include.html" %}
-{% endwith %}
-{% else %}
-<i>no info</i>
-{% endif %}
+<div class="section">
+    <h3>Striking Vessel</h3>
+    {% if observation.striking_vessel %}
+    {% with observation.striking_vessel as v %}
+    {% include "shipstrikes/striking_vessel_details_include.html" %}
+    {% endwith %}
+    {% else %}
+    <i>no info</i>
+    {% endif %}
+</div>
 {% endblock %}
