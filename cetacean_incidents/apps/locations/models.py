@@ -39,7 +39,7 @@ class Location(models.Model):
             (4, 'exclusive economic zone'),
             (5, 'international waters'),
         ),
-        help_text= u"\u2018land\u2019 is anyplace above mean-low-tide; \u2018state waters\u2019 typically extend 3 nm out from mean-low-tide or the baseline (the line marked as \"territorial sea\" on nautical charts). \u2018federal waters\u2019 extend from the state waters to 12 nm out from the baseline (which matches the international definition of territorial waters). The \u2018exclusive economic zone\u2019 is from 12 nm to 200 nm from the baseline. \u2018international waters\u2019 is anything not in the EEZ or territorial waters of a country. Use \u2018federal waters\u2019 for territorial waters of other countries.",
+        help_text= u"\u2018land\u2019 is anyplace above mean-low-tide; \u2018state waters\u2019 typically extend 3 nm out from mean-low-tide or the baseline (the line marked as \"territorial sea\" on NOAA charts). \u2018federal waters\u2019 extend from the state waters to 12 nm out from the baseline (which matches the international definition of territorial waters). The \u2018exclusive economic zone\u2019 is from 12 nm to 200 nm from the baseline. \u2018international waters\u2019 is anything not in the EEZ or territorial waters of a country. Use \u2018federal waters\u2019 for territorial waters of other countries.",
     )
     
     state = USStateField(

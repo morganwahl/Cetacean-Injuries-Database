@@ -35,7 +35,6 @@ from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 def animal_detail(request, animal_id):
     
     animal = Animal.objects.get(id=animal_id)
-    
         
     template_media = Media(
         js= (settings.JQUERY_FILE,),

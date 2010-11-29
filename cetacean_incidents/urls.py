@@ -19,7 +19,7 @@ urlpatterns = patterns('',
     (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
     (r'^entanglements/', include('cetacean_incidents.apps.entanglements.urls')),
     (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),
-
+ 
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),

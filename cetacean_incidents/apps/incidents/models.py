@@ -270,12 +270,13 @@ class Case(models.Model):
     
     __metaclass__ = CaseMeta
     
+    # TODO move this to Entanglement
     nmfs_id = models.CharField(
         max_length= 255,
         unique= False, # in case a NMFS case corresponds to multiple cases in
                        # our database
         blank= True,
-        verbose_name= "NMFS case number",
+        verbose_name= "NMFS entanglement case number",
     )
     
     animal = models.ForeignKey(
@@ -689,12 +690,12 @@ class Observation(models.Model):
     
     initial = models.BooleanField(
         default= False,
-        verbose_name= "is this an \u2018initial observation\u2019 on a Level A?",
+        verbose_name= u"is this an \u2018initial observation\u2019 on a Level A?",
         help_text= u"Check if this observation corresponds to the \u2018initial observation\u2019 on a Level A form. If it does, the obeservation date should correspond to the \"date of initial observation\" on the Level A, and the condition should correspond to the \"condition at initial observation\".",
     )
     exam = models.BooleanField(
         default= False,
-        verbose_name= "is this a \u2018Level A Examination\u2019?"
+        verbose_name= u"is this a \u2018Level A Examination\u2019?",
         help_text= u"Check if this observation corresponds to the \u2018level a examination\u2019 on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the codition should correspond to the \"condition at examination\", and the observer should correspond to the \"examiner\". Note that an observation can be both the \u2018initial observation\u2019 and the \u2018examination\u2019 (or neither).",
     )
     
@@ -811,7 +812,7 @@ class Observation(models.Model):
             ('ju', 'juvenile'),
             ('ad', 'adult'),
         ),
-        help_text= "Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, \u2018pup\u2019 is synonym for \u2018calf\u2019 and \u2018sub-adult\u2019 for \u2018juvenile\u2019.",
+        help_text= u"Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, \u2018pup\u2019 is a synonym for \u2018calf\u2019 and \u2018sub-adult\u2019 for \u2018juvenile\u2019.",
     )
     
     # numeric codes (except 0) are from stranding spreadsheet. they're kept to
@@ -827,52 +828,50 @@ class Observation(models.Model):
             (4, 'advanced decomposition'),
             (5, 'skeletal'),
         ),
+        verbose_name= "Condition (dead or alive?)",
         help_text= '''\
-            carcass condition definitions: 
+            <em>carcass condition definitions</em>:
             <dl>
                 <dt>fresh dead</dt>
                 <dd>
-                    The carcass was in good condition (fresh/edible). Normal 
-                    appearance, usually with little scavenger damage; fresh
-                    smell; minimal drying and wrinkling of skin, eyes and mucous
-                    membranes; eyes clear; carcass not bloated, tongue and penis
-                    not protruded; blubber firm and white; muscles firm, dark
-                    red, well-defined; blood cells intact, able to settle in a
-                    sample tube; serum unhemolyzed; viscera intact and well-
-                    defined, gut contains little or no gas; brain firm with no
-                    discoloration, surface features distinct, easily removed
-                    intact.
+                    The carcass was in good condition (fresh/edible). Normal
+                    appearance, usually with little scavenger damage; fresh smell;
+                    minimal drying and wrinkling of skin, eyes and mucous membranes;
+                    eyes clear; carcass not bloated, tongue and penis not protruded;
+                    blubber firm and white; muscles firm, dark red, well-defined;
+                    blood cells intact, able to settle in a sample tube; serum
+                    unhemolyzed; viscera intact and well-defined, gut contains
+                    little or no gas; brain firm with no discoloration, surface
+                    features distinct, easily removed intact.
                 </dd>
                 <dt>moderate decomposition</dt>
                 <dd>
-                    The carcass was in fair condition (decomposed, but organs 
-                    basically intact). Carcass intact, bloating evident (tongue
-                    and penis protruded) and skin cracked and sloughing;
-                    possible scavenger damage; characteristic mild odor; mucous
-                    membranes dry, eyes sunken or missing; blubber blood-tinged
-                    and oily; muscles soft and poorly defined; blood hemolyzed,
-                    uniformly dark red; viscera soft, friable, mottled, but
-                    still intact; gut dilated by gas; brain soft, surface
-                    features distinct, dark reddish cast, fragile but can
-                    usually be moved intact.  
+                    The carcass was in fair condition (decomposed, but organs
+                    basically intact). Carcass intact, bloating evident (tongue and
+                    penis protruded) and skin cracked and sloughing; possible
+                    scavenger damage; characteristic mild odor; mucous membranes
+                    dry, eyes sunken or missing; blubber blood-tinged and oily;
+                    muscles soft and poorly defined; blood hemolyzed, uniformly dark
+                    red; viscera soft, friable, mottled, but still intact; gut
+                    dilated by gas; brain soft, surface features distinct, dark
+                    reddish cast, fragile but can usually be moved intact.  
                 </dd>
                 <dt>advanced decomposition</dt>
                 <dd>
                     The carcass was in poor condition (advanced decomposition).
-                    Carcass may be intact, but collapsed; skin sloughing;
-                    epidermis of cetaceans may be entirely missing; often severe
-                    scavenger damage; strong odor; blubber soft, often with
-                    pockets of gas and pooled oil; muscles nearly liquefied and
-                    easily torn, falling easily off bones; blood thin and black;
-                    viscera often identifiable but friable, easily torn, and
-                    difficult to dissect; gut gas-filled; brain soft, dark red,
-                    containing gas pockets, pudding-like consistency. 
+                    Carcass may be intact, but collapsed; skin sloughing; epidermis
+                    of cetaceans may be entirely missing; often severe scavenger
+                    damage; strong odor; blubber soft, often with pockets of gas and
+                    pooled oil; muscles nearly liquefied and easily torn, falling
+                    easily off bones; blood thin and black; viscera often
+                    identifiable but friable, easily torn, and difficult to dissect;
+                    gut gas-filled; brain soft, dark red, containing gas pockets,
+                    pudding-like consistency.
                 </dd>
                 <dt>skeletal</dt>
                 <dd>
-                    Carcass was mummified or skeletal remains. Skin may be
-                    draped over skeletal remains; any remaining tissues are
-                    desiccated.
+                    Carcass was mummified or skeletal remains. Skin may be draped
+                    over skeletal remains; any remaining tissues are desiccated.
                 </dd>
             </dl>
         ''',

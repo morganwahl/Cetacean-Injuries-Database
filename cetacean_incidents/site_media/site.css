@@ -70,6 +70,10 @@ li {
     margin-left: 2em;
 }
 
+dt {
+    font-weight: 900;
+}
+
 table td,th {
     padding: .25em;
 }
