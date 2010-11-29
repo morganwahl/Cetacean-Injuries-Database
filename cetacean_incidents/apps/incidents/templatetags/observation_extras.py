@@ -1,5 +1,6 @@
 from django import template
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 register = template.Library()
 
@@ -10,7 +11,10 @@ def observation_link(observation):
     '''\
     Returns the link HTML for a observation.
     '''
-    return {'observation': observation}
+    return {
+        'observation': observation,
+        'media_url': settings.MEDIA_URL,
+    }
     
 @register.simple_tag
 def datetime_observed_display(dt):

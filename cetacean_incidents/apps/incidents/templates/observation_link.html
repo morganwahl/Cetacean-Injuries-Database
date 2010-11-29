@@ -1,4 +1,6 @@
 <a href="{{ observation.get_absolute_url }}">{{ observation }}</a>
+{% if observation.initial %}<img alt="Level A initial observation" title="this corresponds to the &#x2018;initial observation&#x2019; on a Level A" src="{{ media_url }}icons/Level-A_initial.png">{% endif %}
+{% if observation.exam %}<img alt="Level A examination" title="this observation corresponds to the &#x2018;examination&#x2019; on a Level A" src="{{ media_url }}icons/Level-A_exam.png">{% endif %}
 {% with observation.case.animal.determined_dead_before as dead %}
 {% with observation.earliest_datetime.date as start %}
 {% with observation.latest_datetime.date as end %}
