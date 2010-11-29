@@ -49,7 +49,7 @@ class Animal(models.Model):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        verbose_name= "dead on", # no, not really verbose, but it's easier to 
+        verbose_name= "dead on or before", # no, not really verbose, but it's easier to 
                                  # change this than to alter the fieldname in 
                                  # the schema
         help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
@@ -62,7 +62,7 @@ class Animal(models.Model):
     
     partial_necropsy = models.BooleanField(
         default= False,
-        verbose_name= "partial necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
+        verbose_name= "partially necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
         help_text= "if this animal is dead, has a partial necropsy been performed on it?",
     )
     
@@ -609,6 +609,8 @@ class Case(models.Model):
     @property
     def detailed(self):
         '''Get the more specific instance of this Case, if any.'''
+        if self.case_type == 'Case':
+            return self
         return self.detailed_classes[self.case_type].objects.get(id=self.id)
 
     @property
@@ -808,7 +810,12 @@ class Observation(models.Model):
             ('ju', 'juvenile'),
             ('ad', 'adult'),
         ),
-        help_text= u"Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, \u2018pup\u2019 is a synonym for \u2018calf\u2019 and \u2018sub-adult\u2019 for \u2018juvenile\u2019.",
+        help_text= u"""\
+            Note that these are somewhat subjective, and their definitions, if
+            any, certainly depend on the animal's species. In general,
+            \u2018pup\u2019 is a synonym for \u2018calf\u2019 and
+            \u2018sub-adult\u2019 for \u2018juvenile\u2019.
+        """,
     )
     
     # numeric codes (except 0) are from stranding spreadsheet. they're kept to
@@ -831,43 +838,46 @@ class Observation(models.Model):
                 <dt>fresh dead</dt>
                 <dd>
                     The carcass was in good condition (fresh/edible). Normal
-                    appearance, usually with little scavenger damage; fresh smell;
-                    minimal drying and wrinkling of skin, eyes and mucous membranes;
-                    eyes clear; carcass not bloated, tongue and penis not protruded;
-                    blubber firm and white; muscles firm, dark red, well-defined;
-                    blood cells intact, able to settle in a sample tube; serum
-                    unhemolyzed; viscera intact and well-defined, gut contains
-                    little or no gas; brain firm with no discoloration, surface
-                    features distinct, easily removed intact.
+                    appearance, usually with little scavenger damage; fresh
+                    smell; minimal drying and wrinkling of skin, eyes and mucous
+                    membranes; eyes clear; carcass not bloated, tongue and penis
+                    not protruded; blubber firm and white; muscles firm, dark
+                    red, well-defined; blood cells intact, able to settle in a
+                    sample tube; serum unhemolyzed; viscera intact and
+                    well-defined, gut contains little or no gas; brain firm with
+                    no discoloration, surface features distinct, easily removed
+                    intact.
                 </dd>
                 <dt>moderate decomposition</dt>
                 <dd>
                     The carcass was in fair condition (decomposed, but organs
-                    basically intact). Carcass intact, bloating evident (tongue and
-                    penis protruded) and skin cracked and sloughing; possible
-                    scavenger damage; characteristic mild odor; mucous membranes
-                    dry, eyes sunken or missing; blubber blood-tinged and oily;
-                    muscles soft and poorly defined; blood hemolyzed, uniformly dark
-                    red; viscera soft, friable, mottled, but still intact; gut
-                    dilated by gas; brain soft, surface features distinct, dark
-                    reddish cast, fragile but can usually be moved intact.  
+                    basically intact). Carcass intact, bloating evident (tongue
+                    and penis protruded) and skin cracked and sloughing;
+                    possible scavenger damage; characteristic mild odor; mucous
+                    membranes dry, eyes sunken or missing; blubber blood-tinged
+                    and oily; muscles soft and poorly defined; blood hemolyzed,
+                    uniformly dark red; viscera soft, friable, mottled, but
+                    still intact; gut dilated by gas; brain soft, surface
+                    features distinct, dark reddish cast, fragile but can
+                    usually be moved intact.  
                 </dd>
                 <dt>advanced decomposition</dt>
                 <dd>
                     The carcass was in poor condition (advanced decomposition).
-                    Carcass may be intact, but collapsed; skin sloughing; epidermis
-                    of cetaceans may be entirely missing; often severe scavenger
-                    damage; strong odor; blubber soft, often with pockets of gas and
-                    pooled oil; muscles nearly liquefied and easily torn, falling
-                    easily off bones; blood thin and black; viscera often
-                    identifiable but friable, easily torn, and difficult to dissect;
-                    gut gas-filled; brain soft, dark red, containing gas pockets,
-                    pudding-like consistency.
+                    Carcass may be intact, but collapsed; skin sloughing;
+                    epidermis of cetaceans may be entirely missing; often severe
+                    scavenger damage; strong odor; blubber soft, often with
+                    pockets of gas and pooled oil; muscles nearly liquefied and
+                    easily torn, falling easily off bones; blood thin and black;
+                    viscera often identifiable but friable, easily torn, and
+                    difficult to dissect; gut gas-filled; brain soft, dark red,
+                    containing gas pockets, pudding-like consistency.
                 </dd>
                 <dt>skeletal</dt>
                 <dd>
-                    Carcass was mummified or skeletal remains. Skin may be draped
-                    over skeletal remains; any remaining tissues are desiccated.
+                    Carcass was mummified or skeletal remains. Skin may be
+                    draped over skeletal remains; any remaining tissues are
+                    desiccated.
                 </dd>
             </dl>
         ''',
@@ -875,7 +885,11 @@ class Observation(models.Model):
     
     animal_description = models.TextField(
         blank= True,
-        help_text= "Please note anything that would help identify the individual animal or it's species or gender, etc. Even if you've indicated those already, please indicate what that was on the basis of."
+        help_text= """\
+            Please note anything that would help identify the individual animal
+            or it's species or gender, etc. Even if you've indicated those
+            already, please indicate what that was on the basis of.
+        """,
     )
     
     documentation = models.NullBooleanField(
@@ -952,9 +966,8 @@ class Observation(models.Model):
 
 Case.observation_model = Observation
     
-# since adding a new Observation whose case is this could change things like
-# case.date or even assign yearly_number, we need to listen for Observation
-# saves
+# since adding a new Observation to a case could change things like case.date or
+# even assign yearly_number, we need to listen for Observation saves
 def _observation_post_save(sender, **kwargs):
     observation = kwargs['instance']
     observation.case.clean()
