@@ -80,8 +80,8 @@
 	            <i>no contact info for observers</i>
 	            {% endfor %}
 	        </td>
+    	    <td>{{ obs.count }}</td>
             {% endwith %}
-    	    <td>{{ case.observation_set.count }}</td>
         </tr>
         {% endfor %}
     </tbody>

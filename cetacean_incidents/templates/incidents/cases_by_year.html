@@ -73,8 +73,8 @@
             {% contact_link c %}
             {% endfor %}
         </td>
+	    <td>{{ obs.count }}</td>
         {% endwith %}
-	    <td>{{ case.observation_set.count }}</td>
 	    {% endwith %}
         <td>
             {% if ycn.case.yearcasenumber_set.count > 1 %}

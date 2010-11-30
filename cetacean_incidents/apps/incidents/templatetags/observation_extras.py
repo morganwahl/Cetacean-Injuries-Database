@@ -23,3 +23,4 @@ def datetime_observed_display(dt):
     '''
     
     return dt.__unicode__(unknown_char=None, seconds=False)
+

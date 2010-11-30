@@ -10,3 +10,4 @@ def contact_link(contact):
     Returns the link HTML for a Contact.
     '''
     return {'contact': contact}
+
