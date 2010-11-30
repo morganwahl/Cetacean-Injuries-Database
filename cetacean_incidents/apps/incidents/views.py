@@ -530,17 +530,19 @@ def edit_observation(
     if model_instances['observation'].reporter:
         form_initials['observation']['new_reporter'] = 'other'
     if model_instances['observation'].observer:
-        if model_instances['observation'].observer == model_instances['observation'].reporter:
-            form_initials['observation']['new_observer'] = 'reporter'
-        else:
+        # This causes unexpected behaviour when one sets 'new_reporter' to 'none'
+        #if model_instances['observation'].observer == model_instances['observation'].reporter:
+        #    form_initials['observation']['new_observer'] = 'reporter'
+        #else:
             form_initials['observation']['new_observer'] = 'other'
 
     if model_instances['observer_vessel'] and model_instances['observer_vessel'].contact:
-        if model_instances['observer_vessel'].contact == model_instances['observation'].reporter:
-            form_initials['observer_vessel']['contact_choice'] = 'reporter'
-        if model_instances['observer_vessel'].contact == model_instances['observation'].observer:
-            form_initials['observer_vessel']['contact_choice'] = 'observer'
-        else:
+        # This causes unexpected behaviour when one sets 'new_reporter' to 'none'
+        #if model_instances['observer_vessel'].contact == model_instances['observation'].reporter:
+        #    form_initials['observer_vessel']['contact_choice'] = 'reporter'
+        #if model_instances['observer_vessel'].contact == model_instances['observation'].observer:
+        #    form_initials['observer_vessel']['contact_choice'] = 'observer'
+        #else:
             form_initials['observer_vessel']['contact_choice'] = 'other'
             form_initials['observer_vessel']['existing_contact'] = model_instances['observer_vessel'].contact.id
 
@@ -595,6 +597,8 @@ def edit_observation(
                                 continue
                             org = org_form.save()
                             observation.reporter.affiliations.add(org)
+            if forms['observation'].cleaned_data['new_reporter'] == 'none':
+                observation.reporter = None
             
             _check('location')
             observation.location = forms['location'].save()
@@ -623,6 +627,8 @@ def edit_observation(
                             observation.observer.affiliations.add(org)
             if forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
+            if forms['observation'].cleaned_data['new_observer'] == 'none':
+                observation.observer = None
             
             if forms['observation'].cleaned_data['observer_on_vessel'] == True:
                 _check('observer_vessel')
@@ -655,6 +661,8 @@ def edit_observation(
                     observer_vessel.contact = observation.observer
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'other':
                     observer_vessel.contact = forms['observer_vessel'].cleaned_data['existing_contact']
+                if forms['observer_vessel'].cleaned_data['contact_choice'] == 'none':
+                    observer_vessel.contact = None
                 observer_vessel.save()
                 forms['observer_vessel'].save_m2m()
                 observation.observer_vessel = observer_vessel
