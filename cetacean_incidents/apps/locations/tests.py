@@ -10,11 +10,17 @@ class UtilsTestCase(TestCase):
             32 + (19 / 60.0) + (24.04 / (60 * 60))
         )
 
+from models import Location
+
 from forms import NiceLocationForm
 
 class NiceLocationFormTestCase(TestCase):
     def testValidation(self):
-        form = NiceLocationForm({'coordinates_lat_input': '32 19 24.04 N', 'coordinates_lng_input': '71.5 W'})
+        form = NiceLocationForm({
+            'coordinates_lat_input': '32 19 24.04 N',
+            'coordinates_lng_input': '71.5 W',
+            'waters': Location._meta.get_field('waters').default,
+        })
         self.assertEquals(form.is_valid(), True)
         self.assertEquals(
             form.cleaned_data['coordinates_lat_input'],
@@ -26,7 +32,11 @@ class NiceLocationFormTestCase(TestCase):
             form.cleaned_data['coordinates_lng_input'],
             (True, float(71.5), 0.0, 0.0)
         )
-        form = NiceLocationForm({'coordinates_lat_input': '32 19 24.04', 'coordinates_lng_input': '-71.5 adfadbargha'})
+        form = NiceLocationForm({
+            'coordinates_lat_input': '32 19 24.04',
+            'coordinates_lng_input': '-71.5 adfadbargha',
+            'waters': Location._meta.get_field('waters').default,
+        })
         self.assertEquals(form.is_valid(), True)
         self.assertEquals(
             form.cleaned_data['coordinates_lat_input'],
@@ -40,6 +50,10 @@ class NiceLocationFormTestCase(TestCase):
         )
     
     def testSave(self):
-        form = NiceLocationForm({'coordinates_lat_input': '32 19 24.04 N', 'coordinates_lng_input': '-71.5'})
+        form = NiceLocationForm({
+            'coordinates_lat_input': '32 19 24.04 N',
+            'coordinates_lng_input': '-71.5',
+            'waters': Location._meta.get_field('waters').default,
+        })
         loc = form.save()
 
