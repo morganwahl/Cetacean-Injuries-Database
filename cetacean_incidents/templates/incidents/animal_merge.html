@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends "detail.html" %}
 {% load generic_field_display %}
 
 {% comment %}
@@ -14,6 +14,7 @@ This template is an amalgam of editing and viewing.
 
 {% block ids-dl %}
 <dt><b>animal</b> names</dt><dd>merging {{ source.name|default:"<i>no name</i>" }} into {{ destination.name|default:"<i>no name</i>" }}</dd>
+<dt><b>animal</b> field numbers</dt><dd>merging {{ source.field_number|default:"<i>none</i>" }} into {{ destination.field_number|default:"<i>none</i>" }}</dd>
 <dt><b>animal</b> local IDs</dt><dd>merging {{ source.id }} into {{ destination.id }}</dd>
 {% endblock %}
 
@@ -38,6 +39,15 @@ This template is an amalgam of editing and viewing.
                 {% endwith %}
             </td>
             {% display_cell source 'name' %}
+    	</tr>
+        <tr>
+            {% display_cell destination 'field_number' %}
+            <td>
+                {% with form.field_number as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </td>
+            {% display_cell source 'field_number' %}
     	</tr>
         <tr>
             <td>
@@ -91,6 +101,15 @@ This template is an amalgam of editing and viewing.
             {% display_cell source "determined_dead_before" %}
     	</tr>
         <tr>
+            {% display_yesunk_cell destination 'partial_necropsy' %}
+            <td>
+            {% with form.partial_necropsy as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            </td>
+            {% display_yesunk_cell source 'partial_necropsy' %}
+    	</tr>
+        <tr>
             {% display_yesunk_cell destination 'necropsy' %}
             <td>
             {% with form.necropsy as f %}
@@ -98,6 +117,15 @@ This template is an amalgam of editing and viewing.
             {% endwith %}
             </td>
             {% display_yesunk_cell source 'necropsy' %}
+    	</tr>
+        <tr>
+            {% display_cell destination 'cause_of_death' %}
+            <td>
+            {% with form.cause_of_death as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            </td>
+            {% display_cell source 'cause_of_death' %}
     	</tr>
     	<tr>
     	    <td>

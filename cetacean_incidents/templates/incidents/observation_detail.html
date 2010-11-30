@@ -49,6 +49,12 @@
         <td class="layout" width="50%"> <!-- for making columns -->
             <div class="section">
                 <h3>Observation</h3>
+                {% if observation.initial %}
+                <div class="note">This is the &#x2018;initial observation&#x2019; on a Level A form.</div>
+                {% endif %}
+                {% if observation.exam %}
+                <div class="note">This is the &#x2018;examination&#x2019; on a Level A form.</div>
+                {% endif %}
                 <table>
                     {% display_row observation "datetime_observed" %}
                     <tr class="field">
@@ -95,25 +101,28 @@
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
+                    {% if observation.age_class %}
+                    {% display_chosen_row observation "age_class" %}
+                    {% endif %}
                     {% display_row observation "animal_description" "description" %}
                     {% display_yesnounk_row observation "biopsy" %}
+                    {% display_yesnounk_row observation "genetic_sample" %}
                     {% display_yesnounk_row observation "tagged" %}
                 </table>
             </div>
             <div class="section">
                 <h3>Incident details</h3>
                 <table>
+                    {% display_chosen_row observation "condition" %}
+                    {% display_yesnounk_row observation "ashore" %}
                     {% display_yesnounk_row observation "wounded" %}
                     {% display_bigtext_row observation "wound_description" %}
                 </table>
             </div>
         </td>
         <td class="layout" width="50%">
-            <div class="section">
-                {% block case_type_fields %}
-                <h3>CASE SPECIFIC FIELDS HERE!</h3>
-                {% endblock %}
-            </div>
+            {% block case_type_fields %}
+            {% endblock %}
             <div class="section">
                 <h3>Narrative</h3>
                 {% display_unlabeled_bigtext_div observation "narrative" %}

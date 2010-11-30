@@ -30,27 +30,22 @@ from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-from cetacean_incidents.apps.strandings.models import Stranding
 
 @login_required
 def animal_detail(request, animal_id):
     
     animal = Animal.objects.get(id=animal_id)
-    
         
-    template_media = Media(
-        js= (settings.JQUERY_FILE,),
-    )
-    
     context = {
         'animal': animal,
-        'media': template_media,
+        'media': Media(),
     }
 
     if request.user.has_perms(('incidents.change_animal', 'incidents.delete_animal')):
         merge_form = merge_source_form_factory(Animal, animal)()
         context['merge_form'] = merge_form
         context['media'] += merge_form.media
+        context['media'] += Media(js=(settings.JQUERY_FILE,))
     
     return render_to_response(
         'incidents/animal_detail.html',
@@ -69,13 +64,13 @@ def create_animal(request):
     else:
         form = AnimalForm()
 
-    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
+    template_media = Media()
 
     return render_to_response(
         'incidents/create_animal.html',
         {
             'form': form,
-            'all_media': template_media + form.media
+            'media': template_media + form.media
         },
         context_instance= RequestContext(request),
     )
@@ -272,7 +267,10 @@ def add_observation(
         additional_form_saving= lambda forms, check, observation: None,
     ):
     '''\
-    The doomsday form-view. If case_id is not None, animal_id is ignored (the case's animal is used instead). If case_id is None, a new Case is created for the animal given in animal_id. If animal_id is None, a new Animal is added as well.
+    The doomsday form-view. If case_id is not None, animal_id is ignored (the
+    case's animal is used instead). If case_id is None, a new Case is created
+    for the animal given in animal_id. If animal_id is None, a new Animal is
+    added as well.
     
     observationform_class, if given, should be a subclass of ObservationForm.
     addcaseform_class should be the same as caseform_class, but without an
@@ -805,8 +803,8 @@ def case_search(request, after_date=None, before_date=None):
                 manager = Entanglement.objects
             if ct == 's':
                 manager = Shipstrike.objects
-            if ct == 't':
-                manager = Stranding.objects
+            if ct == 'c':
+                manager = Case.objects
         
         query = Q()
     

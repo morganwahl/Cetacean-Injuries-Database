@@ -3,17 +3,12 @@ General order to do thing in (and a timeframe):
 TODO in order of importance:
 
 contact types (see to be making generic contacts)
-strandings are Cases
 stranding fields:
-    Animal.partial_necropsy
     Animal.necropsied_by (Contact)
     Animal.necropsy_findings?
-    Animal.fieldnumber
     Case.valid
         more values between suspected and confirmed
     Observation.animal_description type (it's -> its)
-    Observation.animal_age (categories)
-    Observation.carcass_type
     Observation.confidence
 bug in case search by narrative
 Vessel.contact should have option for 'same as observer/reporter'

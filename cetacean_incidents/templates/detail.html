@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 {# used for either creation/update pages or view pages #}
 
+{% block head %}
+{{ block.super }}
+<style type="text/css">
+    /* TODO this is necessary since the ids_block isn't really a list of definitions ... */
+    div#ids_block dt {
+        font-weight: normal;
+    }
+</style>
+{% endblock %}
+
 {% block sidebar %}
 {{ block.super }}
 {% block ids %}

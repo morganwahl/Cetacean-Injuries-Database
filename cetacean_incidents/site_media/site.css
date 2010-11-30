@@ -70,6 +70,10 @@ li {
     margin-left: 2em;
 }
 
+dt {
+    font-weight: 900;
+}
+
 table td,th {
     padding: .25em;
 }
@@ -227,9 +231,17 @@ table th, .fieldname {
     color: #555753;
 }
 
+/*    chameleon	#8ae234 #73d216 #4e9a06 */
+div.note {
+    background-color: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
+    color: #274c03; /* chameleon 3, at half value (30% absolute val.) */
+    border: thin solid #73d216; /* chameleon 2 */
+    text-align: center;
+}
+
 div.warning, div.edit-warning {
     background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
-    color: #614f00;  /* butter 3 at half value (38% absolute val.) */
+    color: #614f00;  /* butter 3, at half value (38% absolute val.) */
     border: thin solid #edd400; /* butter 2 */
     text-align: center;
 }

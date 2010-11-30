@@ -130,20 +130,20 @@
             </li>
             {# TODO check for errors on forms.new_observer_affiliations #}
             {# TODO check for errors on forms.new_vesselcontact_affiliations #}
-            <li{% if forms.observation.non_field_errors or forms.observation.datetime_observed.errors or forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.observation_type.errors or forms.observation.datetime_observed.errors or forms.observation.new_observer.errors or forms.new_observer.errors or forms.observation.observer.errors or forms.location.errors or forms.observation.observer_on_vessel.errors or forms.observer_vessel.errors or forms.new_vesselcontact.errors %} class="ui-state-error"{% endif %}>
                 <a href="#observation">
                     <em>Observation</em>
                     <br>Observer
                 </a>
             </li>
-            <li{% if forms.observation.non_field_errors or forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_descriptions.errors or forms.observation.biopsy.errors or forms.observation.tagged.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.taxon.errors or forms.observation.gender.errors or forms.observation.animal_descriptions.errors or forms.observation.age_class.errors or forms.observation.condition.errors or forms.observation.biopsy.errors or forms.observation.genetic_sample.errors or forms.observation.tagged.errors %} class="ui-state-error"{% endif %}>
                 <a href="#animal-identification">
                     <em>Observation</em>
                     <br>Animal Identification
                 </a>
             </li>
             {% block incident_tab %}
-            <li{% if forms.observation.non_field_errors or forms.observation.documentation.errors or forms.observation.wounded.errors or forms.observation.wound_description.errors %} class="ui-state-error"{% endif %}>
+            <li{% if forms.observation.non_field_errors or forms.observation.documentation.errors or forms.observation.ashore.errors or forms.observation.wounded.errors or forms.observation.wound_description.errors %} class="ui-state-error"{% endif %}>
                 <a href="#incident">
                     <em>Observation</em>
                     <br>Incident
@@ -174,7 +174,12 @@
                 >
             </div>
             {% endif %}
-            {{ forms.animal.as_p }}
+            {% if forms.animal.non_field_errors %}
+            {{ forms.animal.non_field_errors }}
+            {% endif %}
+            {% for f in forms.animal %}
+            {% include "labeled_field.html" %}
+            {% endfor %}
             <div style="text-align: right;">
                 <a class="link-to-case" href="#case">next tab &#x2192;</a>
             </div>
@@ -328,6 +333,14 @@
         <div id="observation">
             {{ forms.observation.non_field_errors }}
             <div class="section">
+                {% with forms.observation.initial as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.observation.exam as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </div>
+            <div class="section">
                 <h4>observation date and time</h4>
                 {% with forms.observation.datetime_observed as f %}
                 {% include "unlabeled_field.html" %}
@@ -439,7 +452,16 @@
                 {% endwith %}
             </div>
             <div>
+                {% with forms.observation.age_class as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.observation.condition as f %}
+                {% include "labeled_field_defined.html" %}
+                {% endwith %}
                 {% with forms.observation.biopsy as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.observation.genetic_sample as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
                 {% with forms.observation.tagged as f %}
@@ -458,6 +480,9 @@
             {{ forms.observation.non_field_errors }}
             {% block incident_tab_body %}
             {% with forms.observation.documentation as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            {% with forms.observation.ashore as f %}
             {% include "labeled_field.html" %}
             {% endwith %}
             {% with forms.observation.wounded as f %}

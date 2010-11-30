@@ -1,6 +1,9 @@
 import re
 
 from django.db import models
+from django.contrib.localflavor.us.models import USStateField
+
+from cetacean_incidents.apps.countries.models import Country
 
 from utils import dec_to_dms, dms_to_dec
 
@@ -16,6 +19,36 @@ class Location(models.Model):
         
         # coordinates (and a large 'roughness') may be assigned later, for some 
         # simple mapping. 
+    )
+    
+    country = models.ForeignKey(
+        Country,
+        blank= True,
+        null= True,
+        help_text= u"leave blank if unknown or in international waters.",
+    )
+
+    # integers for sorting
+    waters = models.IntegerField(
+        default= 0,
+        choices= (
+            (0, 'unknown'),
+            (1, 'land'),
+            (2, 'state waters'),   # only defined in US waters
+            (3, 'federal waters'), # UNCLOS 'territorial waters'
+            #(4, 'archipelagic waters'), # UNCLOS definition we don't currently care about
+            #(5, 'continguous zone'),  # UNCLOS definition we don't currently care about. Note that Canada does have one.
+            (6, 'exclusive economic zone'),
+            #(7, 'continental shelf'), # UNCLOS definition we don't currently care about.
+            (8, 'international waters'),
+        ),
+        help_text= u"\u2018land\u2019 is anyplace above mean-low-tide; \u2018state waters\u2019 typically extend 3 nm out from mean-low-tide or the baseline (the line marked as \"territorial sea\" on NOAA charts). \u2018federal waters\u2019 extend from the state waters to 12 nm out from the baseline (which matches the international definition of territorial waters). The \u2018exclusive economic zone\u2019 is from 12 nm to 200 nm from the baseline. \u2018international waters\u2019 is anything not in the EEZ or territorial waters of a country. Use \u2018federal waters\u2019 for territorial waters of other countries.",
+    )
+    
+    state = USStateField(
+        blank= True,
+        null= True,
+        help_text= "If on land or in state waters, the state the observation was in. If in federal waters or the U.S. EEZ, give the nearest state. Leave blank if unknown or outside the U.S.",
     )
     
     # this one was tough to decide on. Using GeoDjango is overkill; my main

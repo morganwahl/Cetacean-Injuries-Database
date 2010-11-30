@@ -41,7 +41,7 @@ urlpatterns += patterns('',
     # TODO redirect to new_case? how do we get it's URL from within a URL conf?
     (r'^cases/create$', new_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'),
-    (r'^cases/(\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
+    (r'^cases/(?P<case_id>\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
     (r'^cases/search$', views.case_search, {}, 'case_search'),
     (r'^cases/by_year/now$', views.cases_by_year, {}, 'cases_this_year'),
     (r'^cases/by_year/(\d+)/$', views.cases_by_year, {}, 'cases_by_year'),

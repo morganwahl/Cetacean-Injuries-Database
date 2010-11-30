@@ -1,0 +1,24 @@
+{% if f.is_hidden %}
+{{ f }}
+{% else %}
+<div class="field_wrapper">
+    <table><tr><td>
+	    <div>
+		    <span class="fieldname">{{ f.label_tag }}</span> {{ f }}
+	    </div>
+    </td>
+    {% if f.help_text %}
+    <td>
+        {{ f.help_text|safe }}
+    </td>
+    {% endif %}
+    </tr></table>
+    {% if f.errors %}
+	<ul class="errorlist ui-state-error">
+		{% for e in f.errors %}
+		<li class="ui-state-error-text">{{ e }}</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+</div>
+{% endif %}

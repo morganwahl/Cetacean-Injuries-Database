@@ -54,6 +54,7 @@
     <h3>Info:</h3>
     <table>
         {% display_row animal 'name' %}
+        {% display_row animal "field_number" %}
         <tr class="field">
             <th style="text-align:right;">taxon</th>
             <td>
@@ -76,7 +77,11 @@
         </tr>
         {% if animal.determined_dead_before %}
         {% display_row animal "determined_dead_before" %}
+        {% display_yesunk_row animal 'partial_necropsy' %}
         {% display_yesunk_row animal 'necropsy' %}
+        {% if animal.cause_of_death %}
+        {% display_row animal "cause_of_death" %}
+        {% endif %}
         {% endif %}
     </table>
 </div>

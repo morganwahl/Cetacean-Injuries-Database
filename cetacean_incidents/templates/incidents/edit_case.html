@@ -89,7 +89,12 @@
                 >
             </div>
             {% endif %}
-            {{ forms.animal.as_p }}
+            {% if forms.animal.non_field_errors %}
+            {{ forms.animal.non_field_errors }}
+            {% endif %}
+            {% for f in forms.animal %}
+            {% include "labeled_field.html" %}
+            {% endfor %}
             <div style="text-align: right;">
                 <a class="link-to-case" href="#case">next tab &#x2192;</a>
             </div>

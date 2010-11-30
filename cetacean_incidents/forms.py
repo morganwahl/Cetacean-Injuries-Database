@@ -11,13 +11,11 @@ descendants: entanglements and shipstrikes.
 from django import forms
 
 from cetacean_incidents.apps.incidents.models import Case, Animal
-from cetacean_incidents.apps.incidents.forms import CaseForm
+from cetacean_incidents.apps.incidents.forms import CaseForm, AddCaseForm
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.entanglements.forms import EntanglementForm, AddEntanglementForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeForm, AddShipstrikeForm
-from cetacean_incidents.apps.strandings.models import Stranding
-from cetacean_incidents.apps.strandings.forms import StrandingForm, AddStrandingForm
 
 class CaseTypeFormMeta(forms.Form.__metaclass__):
     
@@ -43,12 +41,12 @@ def CaseTypeForm_factory(user):
     type_names = (
         ('Entanglement', 'Entanglement'),
         ('Shipstrike', 'Shipstrike'),
-        ('Stranding', 'Stranding'),
+        ('Case', 'Case'),
     )
     type_perms = {
         'Entanglement': lambda u: u.has_perm('entanglements.add_entanglement'),
         'Shipstrike': lambda u: u.has_perm('shipstrikes.add_shipstrike'),
-        'Stranding': lambda u: True,
+        'Case': lambda u: u.has_perm('incidents.add_case'),
     }
 
     class _CaseTypeForm(forms.Form):
@@ -66,7 +64,7 @@ def CaseTypeForm_factory(user):
         type_models = {
             'Entanglement': Entanglement,
             'Shipstrike': Shipstrike,
-            'Stranding': Stranding
+            'Case': Case,
         }
 
         case_type = forms.ChoiceField(
@@ -83,12 +81,11 @@ def CaseTypeForm_factory(user):
             'Case': CaseForm,
             'Entanglement': EntanglementForm,
             'Shipstrike': ShipstrikeForm,
-            'Stranding': StrandingForm,
         }
         addcase_form_classes = {
             'Entanglement': AddEntanglementForm,
             'Shipstrike': AddShipstrikeForm,
-            'Stranding': AddStrandingForm,
+            'Case': AddCaseForm,
         }
     
     return _CaseTypeForm

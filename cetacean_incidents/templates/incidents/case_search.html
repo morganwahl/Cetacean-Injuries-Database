@@ -40,10 +40,7 @@
 <table{% if case_list %} class="bordered sortable"{% endif %}>
     <thead>
         <tr>
-            {# the case-editing page can also change animals #}
-            {% if perms.incidents.change_animal and perms.incidents.change_case %}
             <th class="sorttable_nosort"><!-- case edit link --></th>
-            {% endif %}
             <th>case</th>
             <th class="sorttable_nosort">animal</th>
             <th>first observed</th>
