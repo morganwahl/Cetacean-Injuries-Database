@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load case_extras %}
 {% load animal_extras %}
+{% load observation_extras %}
+{% load contact_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -40,6 +42,7 @@
         <th class="sorttable_nosort">animal</th>
         <th>first observed</th>
         <th>last observed</th>
+        <th class="sorttable_nosort">observers</th>
         <th># obs.</th>
         <th class="sorttable_nosort">notes</th>
     </tr>
@@ -58,13 +61,18 @@
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>
-	    {% with case.observation_set.all as obs %}
-	    {% with obs.0 as first_obs_date %}
-	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{{ first_obs_date }}</td>
+	    {% with case.observation_set as obs %}
+	    {% with obs.all.0.datetime_observed as first_obs_date %}
+	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% datetime_observed_display first_obs_date %}</td>
 	    {% endwith %}
-	    {% with obs.reverse.0 as last_obs_date %}
-	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{{ last_obs_date }}</td>
+	    {% with obs.reverse.0.datetime_observed as last_obs_date %}
+	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{% datetime_observed_display last_obs_date %}</td>
 	    {% endwith %}
+        <td>
+            {% for c in obs.observer_set %}
+            {% contact_link c %}
+            {% endfor %}
+        </td>
         {% endwith %}
 	    <td>{{ case.observation_set.count }}</td>
 	    {% endwith %}

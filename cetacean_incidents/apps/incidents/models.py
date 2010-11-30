@@ -652,6 +652,19 @@ class Case(models.Model):
 
     class Meta:
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
+
+class ObservationManager(models.Manager):
+
+    def observer_set(self):
+        '''\
+        Returns a list of observers (Contact instances) for these observations.
+        '''
+        
+        observers = self.values_list('observer', flat=True)
+        observers = frozenset(observers)
+        observers = Contact.objects.filter(id__in=observers)
+        
+        return observers
     
 class Observation(models.Model):
     '''\
@@ -960,6 +973,8 @@ class Observation(models.Model):
             ret += "by %s " % self.observer
         ret += ( "(#%06d)" % self.id if self.id else "(unsaved!)" )
         return ret
+    
+    objects = ObservationManager()
     
     class Meta:
         ordering = ['datetime_observed', 'datetime_reported', 'id']
