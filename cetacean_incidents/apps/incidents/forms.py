@@ -22,7 +22,7 @@ class AnimalForm(forms.ModelForm):
     
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = Animal.determined_taxon.field
+    _f = Animal._meta.get_field('determined_taxon')
     determined_taxon = TaxonField(
         required= _f.blank != True,
         help_text= _f.help_text,
@@ -40,7 +40,7 @@ class AnimalMergeForm(MergeForm):
     
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field
-    _f = Animal.determined_taxon.field
+    _f = Animal._meta.get_field('determined_taxon')
     determined_taxon = TaxonField(
         required= _f.blank != True,
         help_text= _f.help_text,
