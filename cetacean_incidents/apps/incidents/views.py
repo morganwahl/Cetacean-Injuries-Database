@@ -245,6 +245,9 @@ def observation_detail(request, observation_id):
         object_id= observation_id,
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
+        extra_context= {
+            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
+        }
     )
     
 # TODO merge add_observation and change_observation
