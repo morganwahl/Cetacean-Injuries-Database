@@ -96,7 +96,7 @@ class NiceVesselInfoForm(VesselInfoForm):
     )
 
     contact_choice = forms.ChoiceField(
-        choices= contact_choices,
+        choices= tuple(),
         initial= 'none',
         widget= forms.RadioSelect,
         #help_text= "create a new contact for the vessel's contact?",
@@ -111,6 +111,10 @@ class NiceVesselInfoForm(VesselInfoForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
+    
+    def __init__(self, *args, **kwargs):
+        super(NiceVesselInfoForm, self).__init__(*args, **kwargs)
+        self['contact_choice'].field.choices = self.contact_choices
     
     class Meta:
         model = VesselInfo
