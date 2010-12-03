@@ -138,15 +138,15 @@ class Attachment(models.Model):
                 self.uploaded_file.delete(save=False)
     
     def __unicode__(self):
-        result = ''
         if self.storage_type == 2:
-            result += 'uploaded '
+            return u'upload {0.uploaded_file}'.format(self)
+
         if self.storage_type == 1:
-            result += 'repository '
+            return 'repository {0.repo}: {0.repo_path}'.format(self)
+
         if self.storage_type == 0:
-            result += 'hypothetical '
+            return 'hypothetical file'
         
-        result += 'file'
+        return 'file'
         
-        return result
 
