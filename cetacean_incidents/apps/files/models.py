@@ -148,5 +148,7 @@ class Attachment(models.Model):
             return 'hypothetical file'
         
         return 'file'
-        
+
+    class Meta:
+        ordering = ('attachment_type', 'storage_type', 'repo', 'repo_path', 'uploaded_file')
 
