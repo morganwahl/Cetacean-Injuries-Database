@@ -89,6 +89,7 @@ class Attachment(models.Model):
         max_length= 255,
         path= _repos_dir,
         blank= True,
+        verbose_name= 'repository',
     )
     
     # can't easily use a FilePathField, since the path depends on what 
@@ -96,6 +97,7 @@ class Attachment(models.Model):
     repo_path = models.CharField(
         max_length= 2048,
         blank= True,
+        verbose_name= 'path within repository',
     )
     
     uploaded_file = models.FileField(
