@@ -147,10 +147,10 @@ class Attachment(models.Model):
             return u'upload {0.uploaded_file}'.format(self)
 
         if self.storage_type == 1:
-            return 'repository {0.repo}: {0.repo_path}'.format(self)
+            return 'repository {1}: {0.repo_path}'.format(self, path.relpath(self.repo, _repos_dir))
 
         if self.storage_type == 0:
-            return 'hypothetical file'
+            return 'hypothetical file #{0.id:06}'.format(self)
         
         return 'file'
 
