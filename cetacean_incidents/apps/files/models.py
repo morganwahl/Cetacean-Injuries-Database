@@ -89,6 +89,7 @@ class Attachment(models.Model):
         max_length= 255,
         path= _repos_dir,
         blank= True,
+        null= True,
         verbose_name= 'repository',
     )
     
@@ -97,6 +98,7 @@ class Attachment(models.Model):
     repo_path = models.CharField(
         max_length= 2048,
         blank= True,
+        null= True,
         verbose_name= 'path within repository',
     )
     
@@ -117,14 +119,15 @@ class Attachment(models.Model):
             if not self.repo_path:
                 raise ValidationError("You must specify the path within the repository for files stored in repositories.")
             # check that repo_path actually exists
-            _repo_storage_factory(self.repo).exists(self.repo_path)
+            if not _repo_storage_factory(self.repo).exists(self.repo_path):
+                raise ValidationError("That file doesn't exist")
         
         # if storage_type is 2, uploaded_file is required
         if self.storage_type == 2:
             if not self.uploaded_file:
                 raise ValidationError("You must choose a file to upload (or pick a different storage type)")
         
-    def save(self):
+    def save(self, **kwargs):
         # assumes clean() has been called
 
         # if storage_type isn't 1, set the repo fields to None
@@ -136,6 +139,8 @@ class Attachment(models.Model):
         if self.storage_type != 2:
             if self.uploaded_file:
                 self.uploaded_file.delete(save=False)
+        
+        return super(Attachment, self).save(**kwargs)
     
     def __unicode__(self):
         if self.storage_type == 2:
