@@ -13,6 +13,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 
 from utils import rand_string
+import forms
 
 def _checkdir(p):
     if not path.isdir(p):
@@ -50,6 +51,23 @@ class AttachmentType(models.Model):
     def __unicode__(self):
         return self.name
 
+# based on FilePathField
+class DirectoryPathField(models.FilePathField):
+    description = "Directory path"
+    
+    def formfield(self, **kwargs):
+        defaults = {
+            'path': self.path,
+            'match': self.match,
+            'recursive': self.recursive,
+            'form_class': forms.DirectoryPathField,
+        }
+        defaults.update(kwargs)
+        return super(DirectoryPathField, self).formfield(**defaults)
+    
+    def get_internal_type(self):
+        return "FilePathField"
+
 class Attachment(models.Model):
     
     attachment_type = models.ForeignKey(
@@ -67,7 +85,7 @@ class Attachment(models.Model):
         default= 0,
     )
     
-    repo = models.FilePathField(
+    repo = DirectoryPathField(
         max_length= 255,
         path= _repos_dir,
         blank= True,
