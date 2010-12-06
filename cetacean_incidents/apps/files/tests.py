@@ -29,6 +29,8 @@ class AttachmentTestCase(TestCase):
         a = Attachment()
         a.clean()
         a.save()
+        
+        self.assertEqual(a.name, None)
 
     def test_repo(self):
         r = 'test-repo-' + rand_string()
@@ -45,6 +47,9 @@ class AttachmentTestCase(TestCase):
                 a = Attachment(storage_type=1, repo=r, repo_path=f)
                 a.clean()
                 a.save()
+                
+                self.assertEqual(a.name, f)
+                
             finally:
                 fh.close()
                 os.remove(f_path)
@@ -60,3 +65,5 @@ class AttachmentTestCase(TestCase):
         a.clean()
         a.save()
 
+        self.assertEqual(a.name, filename)
+        

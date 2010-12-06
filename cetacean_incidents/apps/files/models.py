@@ -85,6 +85,14 @@ class Attachment(models.Model):
         default= 0,
     )
     
+    # this is so we can store the original filename and use arbitrary names
+    # for the uploaded files
+    name = models.CharField(
+        max_length= 255,
+        blank= True,
+        null= True,
+    )
+    
     repo = DirectoryPathField(
         max_length= 255,
         path= _repos_dir,
