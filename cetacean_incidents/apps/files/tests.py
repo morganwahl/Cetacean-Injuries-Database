@@ -30,6 +30,7 @@ class AttachmentTestCase(TestCase):
         a.clean()
         a.save()
         
+        self.assertEqual(a.url, None)
         self.assertEqual(a.name, None)
 
     def test_repo(self):
@@ -48,6 +49,7 @@ class AttachmentTestCase(TestCase):
                 a.clean()
                 a.save()
                 
+                # TODO self.assertEqual(a.url,?)
                 self.assertEqual(a.name, f)
                 
             finally:
@@ -65,5 +67,6 @@ class AttachmentTestCase(TestCase):
         a.clean()
         a.save()
 
+        # TODO self.assertEqual(a.url,?)
         self.assertEqual(a.name, filename)
         

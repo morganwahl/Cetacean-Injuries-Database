@@ -118,6 +118,14 @@ class Attachment(models.Model):
         blank= True,
         null= True,
     )
+    
+    @property
+    def url(self):
+        if self.storage_type == 1:
+            return _repo_storage_factory(self.repo).url(self.repo_path)
+        if self.storage_type == 2:
+            return self.uploaded_file.url
+        return None
 
     def clean(self):
         # if storage_type is 1, repo and repo_path are required
