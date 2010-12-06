@@ -7,7 +7,7 @@ from os import path
 
 from utils import rand_string
 from models import upload_storage as fs
-from models import Attachment, _repos_dir
+from models import Attachment, RepositoryFile, UploadedFile, _repos_dir
 
 class UploadTestCase(TestCase):
     def test_fs(self):
@@ -25,7 +25,7 @@ class UploadTestCase(TestCase):
     
 class AttachmentTestCase(TestCase):
     
-    def test_blank(self):
+    def test(self):
         a = Attachment()
         a.clean()
         a.save()
@@ -33,7 +33,23 @@ class AttachmentTestCase(TestCase):
         self.assertEqual(a.url, None)
         self.assertEqual(a.name, None)
 
-    def test_repo(self):
+class UploadedFileTestCase(TestCase):
+
+    def test(self):
+        filename = 'up-' + rand_string()
+        contents = 'upladded contestsn'
+    
+        a = Attachment(storage_type=2)
+        a.uploaded_file.save(filename, ContentFile(contents))
+        a.clean()
+        a.save()
+
+        # TODO self.assertEqual(a.url,?)
+        self.assertEqual(a.name, filename)
+
+class RepositoryFileTestCase(TestCase):
+
+    def test(self):
         r = 'test-repo-' + rand_string()
         r_path = path.join(_repos_dir, r)
         f = 'rep-' + rand_string()
@@ -57,18 +73,4 @@ class AttachmentTestCase(TestCase):
                 os.remove(f_path)
         finally:
             os.rmdir(r_path)
-        
-        
 
-    def test_upload(self):
-        filename = 'up-' + rand_string()
-        contents = 'upladded contestsn'
-    
-        a = Attachment(storage_type=2)
-        a.uploaded_file.save(filename, ContentFile(contents))
-        a.clean()
-        a.save()
-
-        # TODO self.assertEqual(a.url,?)
-        self.assertEqual(a.name, filename)
-        
