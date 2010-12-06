@@ -2,6 +2,7 @@
 
 {% spaceless %}
 {% block value_block %}
-<div style="text-align: right;">{{ coord|floatformat:"4" }}</div>
+{# a precision of 6 roughly matches the DMS precision (.01 arcsec = 0.000002777... deg) #}
+<div style="text-align: right;">{{ coord|floatformat:"6" }}</div>
 {% endblock %}
 {% endspaceless %}
