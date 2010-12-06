@@ -24,23 +24,6 @@ _storage_dir_name = 'files'
 _storage_dir = path.join(settings.MEDIA_ROOT, _storage_dir_name)
 _checkdir(_storage_dir)
 
-_repos_dir_name = 'repositories'
-_repos_dir = path.join(_storage_dir, _repos_dir_name)
-_checkdir(_repos_dir)
-def _repo_storage_factory(repo):
-    return FileSystemStorage(
-        location= path.join(_repos_dir, repo),
-        base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _repos_dir_name + '/' + repo + '/',
-    )
-
-_uploads_dir_name = 'uploads'
-_uploads_dir = path.join(_storage_dir, _uploads_dir_name)
-_checkdir(_uploads_dir)
-upload_storage = FileSystemStorage(
-    location= _uploads_dir,
-    base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _uploads_dir_name + '/'
-)
-
 class AttachmentType(models.Model):
     name = models.CharField(
         max_length= 255,
@@ -51,6 +34,74 @@ class AttachmentType(models.Model):
     
     def __unicode__(self):
         return self.name
+
+class Attachment(models.Model):
+    
+    attachment_type = models.ForeignKey(
+        AttachmentType,
+        blank= True,
+        null= True,
+    )
+    
+    @property
+    def url(self):
+        return None
+    
+    @property
+    def path(self):
+        return None
+    
+    def __unicode__(self):
+        return 'hypothetical file #{0.id:06}'.format(self)
+
+    class Meta:
+        ordering = ('attachment_type', 'id')
+
+_uploads_dir_name = 'uploads'
+_uploads_dir = path.join(_storage_dir, _uploads_dir_name)
+_checkdir(_uploads_dir)
+upload_storage = FileSystemStorage(
+    location= _uploads_dir,
+    base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _uploads_dir_name + '/'
+)
+
+class UploadedFile(Attachment):
+
+    # this is so we can store the original filename and use arbitrary names
+    # for the uploaded files
+    name = models.CharField(
+        max_length= 255,
+    )
+
+    uploaded_file = models.FileField(
+        storage= upload_storage,
+        # add the date and 24 bits of randomness to make sure there aren't name
+        # collisions
+        upload_to= '%Y/%m/%d/' + rand_string(24),
+    )
+
+    @property
+    def url(self):
+        return self.uploaded_file.url
+
+    @property
+    def path(self):
+        return self.uploaded_file.path
+
+    def __unicode__(self):
+        return u'upload {0.uploaded_file}'.format(self)
+
+    class Meta:
+        ordering = ('attachment_type', 'name', 'id')
+
+_repos_dir_name = 'repositories'
+_repos_dir = path.join(_storage_dir, _repos_dir_name)
+_checkdir(_repos_dir)
+def _repo_storage_factory(repo):
+    return FileSystemStorage(
+        location= path.join(_repos_dir, repo),
+        base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _repos_dir_name + '/' + repo + '/',
+    )
 
 # based on FilePathField
 class DirectoryPathField(models.FilePathField):
@@ -69,36 +120,11 @@ class DirectoryPathField(models.FilePathField):
     def get_internal_type(self):
         return "FilePathField"
 
-class Attachment(models.Model):
-    
-    attachment_type = models.ForeignKey(
-        AttachmentType,
-        blank= True,
-        null= True,
-    )
-    
-    storage_type = models.PositiveIntegerField(
-        choices = (
-            (0, 'no file'),
-            (1, 'repository'),
-            (2, 'uploaded file'),
-        ),
-        default= 0,
-    )
-    
-    # this is so we can store the original filename and use arbitrary names
-    # for the uploaded files
-    name = models.CharField(
-        max_length= 255,
-        blank= True,
-        null= True,
-    )
-    
+class RepositoryFile(Attachment):
+
     repo = DirectoryPathField(
         max_length= 255,
         path= _repos_dir,
-        blank= True,
-        null= True,
         verbose_name= 'repository',
     )
     
@@ -106,71 +132,26 @@ class Attachment(models.Model):
     # 'repo' is set to
     repo_path = models.CharField(
         max_length= 2048,
-        blank= True,
-        null= True,
         verbose_name= 'path within repository',
-    )
-    
-    uploaded_file = models.FileField(
-        storage= upload_storage,
-        # add the date and 24 bits of randomness to make sure there aren't name
-        # collisions
-        upload_to= '%Y/%m/%d/' + rand_string(24),
-        blank= True,
-        null= True,
     )
     
     @property
     def url(self):
-        if self.storage_type == 1:
-            return _repo_storage_factory(self.repo).url(self.repo_path)
-        if self.storage_type == 2:
-            return self.uploaded_file.url
-        return None
+        return _repo_storage_factory(self.repo).url(self.repo_path)
+
+    @property
+    def path(self):
+        return _repo_storage_factory(self.repo).path(self.repo_path)
 
     def clean(self):
-        # if storage_type is 1, repo and repo_path are required
-        if self.storage_type == 1:
-            if not self.repo:
-                raise ValidationError("You must specify the repository for files stored in repositories.")
-            if not self.repo_path:
-                raise ValidationError("You must specify the path within the repository for files stored in repositories.")
-            # check that repo_path actually exists
-            if not _repo_storage_factory(self.repo).exists(self.repo_path):
-                raise ValidationError("That file doesn't exist")
-        
-        # if storage_type is 2, uploaded_file is required
-        if self.storage_type == 2:
-            if not self.uploaded_file:
-                raise ValidationError("You must choose a file to upload (or pick a different storage type)")
-        
-    def save(self, **kwargs):
-        # assumes clean() has been called
-        
-        # if storage_type isn't 1, set the repo fields to None
-        if self.storage_type != 1:
-            self.repo_path = None
-            self.repo = None
-        
-        # if storage_type isn't 2, delete any uploaded file
-        if self.storage_type != 2:
-            if self.uploaded_file:
-                self.uploaded_file.delete(save=False)
-        
-        return super(Attachment, self).save(**kwargs)
-    
+        # check that repo_path actually exists
+        if not _repo_storage_factory(self.repo).exists(self.repo_path):
+            raise ValidationError("That file doesn't exist")
+
     def __unicode__(self):
-        if self.storage_type == 2:
-            return u'upload {0.uploaded_file}'.format(self)
-
-        if self.storage_type == 1:
-            return 'repository {1}: {0.repo_path}'.format(self, path.relpath(self.repo, _repos_dir))
-
-        if self.storage_type == 0:
-            return 'hypothetical file #{0.id:06}'.format(self)
-        
-        return 'file'
+        return 'repository {1}: {0.repo_path}'.format(self, path.relpath(self.repo, _repos_dir))
 
     class Meta:
-        ordering = ('attachment_type', 'storage_type', 'repo', 'repo_path', 'uploaded_file')
+        ordering = ('attachment_type', 'repo', 'repo_path')
+        unique_together = ('repo', 'repo_path')
 
