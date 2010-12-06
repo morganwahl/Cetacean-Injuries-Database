@@ -20,7 +20,7 @@ def _checkdir(p):
     if not path.isdir(p):
         os.mkdir(p)
 
-_storage_dir_name = 'files'
+_storage_dir_name = 'attachments'
 _storage_dir = path.join(settings.MEDIA_ROOT, _storage_dir_name)
 _checkdir(_storage_dir)
 
