@@ -57,6 +57,8 @@ class AttachmentTestCase(TestCase):
                 os.remove(f_path)
         finally:
             os.rmdir(r_path)
+        
+        
 
     def test_upload(self):
         filename = 'up-' + rand_string()

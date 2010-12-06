@@ -1,7 +1,8 @@
 '''\
 Model to attach files to other Models. Attachments can use files that already
-exist on the filesystem, or uploaded files. Or they can merely indicate that
-such a file exists, but there's currently no copy available.
+exist on the filesystem ('repository' files), or uploaded files. Or they can
+merely indicate that such a file exists, but there's currently no copy
+available. Note that repository files include directories.
 '''
 
 import os
@@ -145,7 +146,7 @@ class Attachment(models.Model):
         
     def save(self, **kwargs):
         # assumes clean() has been called
-
+        
         # if storage_type isn't 1, set the repo fields to None
         if self.storage_type != 1:
             self.repo_path = None
