@@ -127,6 +127,20 @@
                 <h3>Narrative</h3>
                 {% display_unlabeled_bigtext_div observation "narrative" %}
             </div>
+            <!-- this is necessary since the div.section below's content width is the same as it's enclosing block, even though it has padding and margins and borders -->
+            <div style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
+                <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
+                <div class="section" style="overflow:hidden; width:100%;">
+                    <h3>Attachments</h3>
+                    {% for a in observation.observationfile_set.all %}
+                    <div style="float: left;">
+                    {% include "files/view_attachment_include.html" %}
+                    </div>
+                    {% empty %}
+                    <i>none</i>
+                    {% endfor %}
+                </div>
+            </div>
             {% if observation.import_notes %}
             <div class="section">
                 <h3>Import notes</h3>
