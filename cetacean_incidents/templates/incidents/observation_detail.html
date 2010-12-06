@@ -50,10 +50,10 @@
             <div class="section">
                 <h3>Observation</h3>
                 {% if observation.initial %}
-                <div class="note">This is the &#x2018;initial observation&#x2019; on a Level A form.</div>
+                <div class="note"><img src="{{ MEDIA_URL }}icons/Level-A_initial.png"> This is the &#x2018;initial observation&#x2019; on a Level A form. <img src="{{ MEDIA_URL }}icons/Level-A_initial.png"></div>
                 {% endif %}
                 {% if observation.exam %}
-                <div class="note">This is the &#x2018;examination&#x2019; on a Level A form.</div>
+                <div class="note"><img src="{{ MEDIA_URL }}icons/Level-A_exam.png"> This is the &#x2018;examination&#x2019; on a Level A form. <img src="{{ MEDIA_URL }}icons/Level-A_exam.png"></div>
                 {% endif %}
                 <table>
                     {% display_row observation "datetime_observed" %}
