@@ -13,6 +13,7 @@ from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
+from cetacean_incidents.apps.files.models import Attachment
 
 from utils import probable_gender
 
@@ -988,4 +989,7 @@ def _observation_post_save(sender, **kwargs):
     observation.case.clean()
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
+
+class ObservationFile(Attachment):
+    observation = models.ForeignKey(Observation)
 
