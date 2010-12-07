@@ -131,11 +131,11 @@
             <div style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
                 <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
                 <div class="section" style="overflow:hidden; width:100%;">
-                    <h3>Attachments</h3>
-                    {% for oa in observation.observationattachment_set.all %}
+                    <h3>Documents</h3>
+                    {% for oa in observation.observationdocument_set.all %}
                     <div style="float: left;">
-                    {% with oa.attachment.detailed_instance as a %}
-                    {% include "attachments/view_attachment_include.html" %}
+                    {% with oa.document.detailed_instance as a %}
+                    {% include "documents/view_document_include.html" %}
                     {% endwith %}
                     </div>
                     {% empty %}

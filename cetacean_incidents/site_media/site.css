@@ -314,19 +314,19 @@ div.confidential-box div.confidential-warning {
     padding-left: .2em;
 }
 
-div.attachment {
+div.document {
     width: 150px; /* our thumbnail size. TODO: get this dynamically? */
     border: 1px solid #729fcf; /* sky blue 1 */
     text-align:center;
     overflow: auto;
 }
-div.attachment table {
+div.document table {
     width: 150px;
     margin: 0;
     padding: 0;
     border-spacing: 0;
 }
-div.attachment td {
+div.document td {
     text-align: center;
     margin: 0;
 }

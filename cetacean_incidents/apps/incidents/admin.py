@@ -1,6 +1,6 @@
 from django.contrib import admin
 from reversion.admin import VersionAdmin
-from models import Animal, YearCaseNumber, Case, Observation, ObservationAttachment
+from models import Animal, YearCaseNumber, Case, Observation, ObservationDocument
 
 class AnimalAdmin(VersionAdmin):
     pass
@@ -14,9 +14,9 @@ class ObservationAdmin(VersionAdmin):
     pass
 admin.site.register(Observation, ObservationAdmin)
 
-class ObservationAttachmentAdmin(VersionAdmin):
+class ObservationDocumentAdmin(VersionAdmin):
     pass
-admin.site.register(ObservationAttachment, ObservationAttachmentAdmin)
+admin.site.register(ObservationDocument, ObservationDocumentAdmin)
 
 # YearCaseNumber doesn't really belong in the admin interface (it's
 # automatically maintained), but it's handy for fixing screw-ups. Also, the 

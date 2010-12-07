@@ -13,7 +13,7 @@ from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
-from cetacean_incidents.apps.attachments.models import Attachment
+from cetacean_incidents.apps.documents.models import Document
 
 from utils import probable_gender
 
@@ -990,9 +990,9 @@ def _observation_post_save(sender, **kwargs):
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
-class ObservationAttachment(models.Model):
-    attachment = models.ForeignKey(Attachment)
+class ObservationDocument(models.Model):
+    document = models.ForeignKey(Document)
     observation = models.ForeignKey(Observation)
     
     class Meta:
-        unique_together= ('attachment', 'observation')
+        unique_together= ('document', 'observation')

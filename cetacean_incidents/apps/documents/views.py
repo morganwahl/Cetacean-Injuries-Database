@@ -6,11 +6,11 @@ from os import path
 
 from django.core.files import File
 
-from models import Attachment, UploadedFile, RepositoryFile
+from models import Document, UploadedFile, RepositoryFile
 
-def view_attachment(request, a):
-    if not isinstance(a, Attachment):
-        a = Attachment.objects.get(id=a)
+def view_document(request, a):
+    if not isinstance(a, Document):
+        a = Document.objects.get(id=a)
     a = a.detailed_instance()
     
     if isinstance(a, UploadedFile):
@@ -19,7 +19,7 @@ def view_attachment(request, a):
         return redirect(view_repositoryfile, a.id, permanent=True)
     
     return render_to_response(
-        'attachments/view_attachment.html',
+        'documents/view_document.html',
         {
             'a': a,
         },
@@ -31,7 +31,7 @@ def view_uploadedfile(request, a):
         a = UploadedFile.objects.get(id=a)
     
     return render_to_response(
-        'attachments/view_uploadedfile.html',
+        'documents/view_uploadedfile.html',
         {
             'a': a,
         },
@@ -43,7 +43,7 @@ def view_repositoryfile(request, a):
         a = RepositoryFile.objects.get(id=a)
     
     return render_to_response(
-        'attachments/view_repositoryfile.html',
+        'documents/view_repositoryfile.html',
         {
             'a': a,
         },

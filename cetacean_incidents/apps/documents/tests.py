@@ -9,7 +9,7 @@ from os import path
 
 from utils import rand_string
 from models import upload_storage as fs
-from models import Attachment, UploadedFile, RepositoryFile, _repos_dir
+from models import Document, UploadedFile, RepositoryFile, _repos_dir
 
 class UploadTestCase(TestCase):
     def test_fs(self):
@@ -25,10 +25,10 @@ class UploadTestCase(TestCase):
         fs.delete(test_filename)
         self.assertEqual(fs.exists(test_filename), False)
     
-class AttachmentTestCase(TestCase):
+class DocumentTestCase(TestCase):
     
     def test(self):
-        a = Attachment()
+        a = Document()
         a.clean()
         a.save()
         
@@ -56,10 +56,10 @@ class UploadedFileTestCase(TestCase):
         # TODO self.assertEqual(a.url,?)
         # TODO self.assertEqual(a.path,?)
         self.assertEqual(a.detailed_instance(), a)
-        self.assertEqual(a.attachment_ptr.__class__, Attachment)
-        self.assertNotEqual(a.attachment_ptr.__class__, UploadedFile)
-        self.assertEqual(a.attachment_ptr.detailed_instance(), a)
-        self.assertEqual(a.attachment_ptr.detailed_instance().__class__, UploadedFile)
+        self.assertEqual(a.document_ptr.__class__, Document)
+        self.assertNotEqual(a.document_ptr.__class__, UploadedFile)
+        self.assertEqual(a.document_ptr.detailed_instance(), a)
+        self.assertEqual(a.document_ptr.detailed_instance().__class__, UploadedFile)
 
 class RepositoryFileTestCase(TestCase):
 
@@ -88,8 +88,8 @@ class RepositoryFileTestCase(TestCase):
             os.rmdir(r_path)
 
         self.assertEqual(a.detailed_instance(), a)
-        self.assertEqual(a.attachment_ptr.__class__, Attachment)
-        self.assertNotEqual(a.attachment_ptr.__class__, RepositoryFile)
-        self.assertEqual(a.attachment_ptr.detailed_instance(), a)
-        self.assertEqual(a.attachment_ptr.detailed_instance().__class__, RepositoryFile)
+        self.assertEqual(a.document_ptr.__class__, Document)
+        self.assertNotEqual(a.document_ptr.__class__, RepositoryFile)
+        self.assertEqual(a.document_ptr.detailed_instance(), a)
+        self.assertEqual(a.document_ptr.detailed_instance().__class__, RepositoryFile)
 

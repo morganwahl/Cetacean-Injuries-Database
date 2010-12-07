@@ -1,8 +1,5 @@
 '''\
-Model to attach files to other Models. Attachments can use files that already
-exist on the filesystem ('repository' files), or uploaded files. Or they can
-merely indicate that such a file exists, but there's currently no copy
-available. Note that repository files include directories.
+Model of 'physical' files, forms, photos, etc. They may very well be files on a computer.
 '''
 
 import os
@@ -22,11 +19,11 @@ def _checkdir(p):
     if not path.isdir(p):
         os.mkdir(p)
 
-_storage_dir_name = 'attachments'
+_storage_dir_name = 'documents'
 _storage_dir = path.join(settings.MEDIA_ROOT, _storage_dir_name)
 _checkdir(_storage_dir)
 
-class AttachmentType(models.Model):
+class DocumentType(models.Model):
     name = models.CharField(
         max_length= 255,
     )
@@ -37,10 +34,10 @@ class AttachmentType(models.Model):
     def __unicode__(self):
         return self.name
 
-class Attachment(models.Model):
+class Document(models.Model):
     
-    attachment_type = models.ForeignKey(
-        AttachmentType,
+    document_type = models.ForeignKey(
+        DocumentType,
         blank= True,
         null= True,
     )
@@ -55,13 +52,13 @@ class Attachment(models.Model):
     
     @models.permalink
     def get_absolute_url(self):
-        return ('view_attachment', (self.id,))
+        return ('view_document', (self.id,))
     
     def __unicode__(self):
-        return 'attachment #{0.id:06}'.format(self)
+        return 'document #{0.id:06}'.format(self)
 
     class Meta:
-        ordering = ('attachment_type', 'id')
+        ordering = ('document_type', 'id')
 
 _uploads_dir_name = 'uploads'
 _uploads_dir = path.join(_storage_dir, _uploads_dir_name)
@@ -71,7 +68,7 @@ upload_storage = FileSystemStorage(
     base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _uploads_dir_name + '/'
 )
 
-class UploadedFile(Attachment):
+class UploadedFile(Document):
 
     # this is so we can store the original filename and use arbitrary names
     # for the uploaded files
@@ -110,7 +107,7 @@ class UploadedFile(Attachment):
         return u'upload {0.uploaded_file}'.format(self)
 
     class Meta:
-        ordering = ('attachment_type', 'name', 'id')
+        ordering = ('document_type', 'name', 'id')
 
 _repos_dir_name = 'repositories'
 _repos_dir = path.join(_storage_dir, _repos_dir_name)
@@ -138,7 +135,7 @@ class DirectoryPathField(models.FilePathField):
     def get_internal_type(self):
         return "FilePathField"
 
-class RepositoryFile(Attachment):
+class RepositoryFile(Document):
 
     repo = DirectoryPathField(
         max_length= 255,
@@ -185,15 +182,15 @@ class RepositoryFile(Attachment):
     def __unicode__(self):
         return u'repository file: {0.repo_name} \u2018{0.repo_path}\u2019'.format(self)
     class Meta:
-        ordering = ('attachment_type', 'repo', 'repo_path')
+        ordering = ('document_type', 'repo', 'repo_path')
         unique_together = ('repo', 'repo_path')
 
-def _get_detailed_attachment_instance(attachment_instance):
+def _get_detailed_document_instance(document_instance):
     for subclass in (UploadedFile, RepositoryFile):
         try:
             # TODO 'id' or 'pk'?
-            return subclass.objects.get(attachment_ptr=attachment_instance.id)
+            return subclass.objects.get(document_ptr=document_instance.id)
         except subclass.DoesNotExist:
             pass
-    return attachment_instance
-Attachment.detailed_instance = _get_detailed_attachment_instance
+    return document_instance
+Document.detailed_instance = _get_detailed_document_instance
