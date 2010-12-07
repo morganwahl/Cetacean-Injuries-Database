@@ -30,8 +30,6 @@ class AttachmentTestCase(TestCase):
         a.clean()
         a.save()
         
-        self.assertEqual(a.url, None)
-        self.assertEqual(a.name, None)
 
 class UploadedFileTestCase(TestCase):
 
@@ -39,13 +37,15 @@ class UploadedFileTestCase(TestCase):
         filename = 'up-' + rand_string()
         contents = 'upladded contestsn'
     
-        a = Attachment(storage_type=2)
+        a = UploadedFile(
+            name = filename,
+        )
         a.uploaded_file.save(filename, ContentFile(contents))
         a.clean()
         a.save()
 
         # TODO self.assertEqual(a.url,?)
-        self.assertEqual(a.name, filename)
+        # TODO self.assertEqual(a.path,?)
 
 class RepositoryFileTestCase(TestCase):
 
@@ -61,12 +61,11 @@ class RepositoryFileTestCase(TestCase):
             fh = open(f_path, 'wb')
             try:
                 fh.write(c)
-                a = Attachment(storage_type=1, repo=r, repo_path=f)
+                a = RepositoryFile(repo=r, repo_path=f)
                 a.clean()
                 a.save()
                 
                 # TODO self.assertEqual(a.url,?)
-                self.assertEqual(a.name, f)
                 
             finally:
                 fh.close()
