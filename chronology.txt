@@ -2,6 +2,15 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+poster of database structure, with definitions. also of workflow.
+OBSERVATIONS CAN BE FOR MORE THAN ONE CASE!
+per-case human-interaction: (yes, no, cbd, unk)
+'needs review' by a particular user field
+'case type' for ones that don't have fields specifc to them
+case.valid codes from national stranding database
+remove nmfs_id from case-ids-box
+use 'unknown' option throughout site
+'indication of entanglement/shipstrike' can be on any observation (not necessarily ones for entanglemnts)
 taxon merge doesn't work when Taxon.tsn is unique
 contact types (see to be making generic contacts)
 stranding fields:
