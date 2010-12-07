@@ -92,6 +92,10 @@ class UploadedFile(Attachment):
     def path(self):
         return self.uploaded_file.path
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('view_uploadedfile', (self.id,))
+
     def __unicode__(self):
         return u'upload {0.uploaded_file}'.format(self)
 
@@ -159,3 +163,12 @@ class RepositoryFile(Attachment):
         ordering = ('attachment_type', 'repo', 'repo_path')
         unique_together = ('repo', 'repo_path')
 
+def _get_detailed_attachment_instance(attachment_instance):
+    for subclass in (UploadedFile, RepositoryFile):
+        try:
+            # TODO 'id' or 'pk'?
+            return subclass.objects.get(attachment_ptr=attachment_instance.id)
+        except subclass.DoesNotExist:
+            pass
+    return attachment_instance
+Attachment.detailed_instance = _get_detailed_attachment_instance

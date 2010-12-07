@@ -30,6 +30,7 @@ class AttachmentTestCase(TestCase):
         a.clean()
         a.save()
         
+        self.assertEqual(a.detailed_instance(), a)
 
 class UploadedFileTestCase(TestCase):
 
@@ -46,6 +47,11 @@ class UploadedFileTestCase(TestCase):
 
         # TODO self.assertEqual(a.url,?)
         # TODO self.assertEqual(a.path,?)
+        self.assertEqual(a.detailed_instance(), a)
+        self.assertEqual(a.attachment_ptr.__class__, Attachment)
+        self.assertNotEqual(a.attachment_ptr.__class__, UploadedFile)
+        self.assertEqual(a.attachment_ptr.detailed_instance(), a)
+        self.assertEqual(a.attachment_ptr.detailed_instance().__class__, UploadedFile)
 
 class RepositoryFileTestCase(TestCase):
 
@@ -72,4 +78,10 @@ class RepositoryFileTestCase(TestCase):
                 os.remove(f_path)
         finally:
             os.rmdir(r_path)
+
+        self.assertEqual(a.detailed_instance(), a)
+        self.assertEqual(a.attachment_ptr.__class__, Attachment)
+        self.assertNotEqual(a.attachment_ptr.__class__, RepositoryFile)
+        self.assertEqual(a.attachment_ptr.detailed_instance(), a)
+        self.assertEqual(a.attachment_ptr.detailed_instance().__class__, RepositoryFile)
 
