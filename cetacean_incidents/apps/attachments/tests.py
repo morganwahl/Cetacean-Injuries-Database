@@ -2,6 +2,8 @@ from django.test import TestCase
 
 from django.core.files.base import ContentFile
 
+from django.contrib.auth.models import User
+
 import os
 from os import path
 
@@ -34,11 +36,17 @@ class AttachmentTestCase(TestCase):
 
 class UploadedFileTestCase(TestCase):
 
+    def setUp(self):
+        self.test_user = User.objects.create(
+            username='test_user',
+        )
+
     def test(self):
         filename = 'up-' + rand_string()
         contents = 'upladded contestsn'
     
         a = UploadedFile(
+            uploader = self.test_user,
             name = filename,
         )
         a.uploaded_file.save(filename, ContentFile(contents))

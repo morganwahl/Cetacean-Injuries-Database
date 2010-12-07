@@ -13,6 +13,8 @@ from django.core.files.storage import FileSystemStorage
 from django.core.exceptions import ValidationError
 from django.conf import settings
 
+from django.contrib.auth.models import User
+
 from utils import rand_string
 import forms
 
@@ -82,6 +84,14 @@ class UploadedFile(Attachment):
         # add the date and 24 bits of randomness to make sure there aren't name
         # collisions
         upload_to= '%Y/%m/%d/' + rand_string(24),
+    )
+    
+    uploader = models.ForeignKey(
+        User,
+    )
+    
+    datetime_uploaded = models.DateTimeField(
+        auto_now_add=True,
     )
 
     @property
