@@ -4,32 +4,30 @@
         <tr>
             <th>kind:</th>
             <td>
-                {% if a.storage_type == 0 %}
+                {% if a.repo %}
+                <img src="{{ MEDIA_URL }}icons/file_repo.png" title="this file is in a repository" alt="file in a repository">
+                {% else %}
+                {% if a.uploaded_file %}
+                <img src="{{ MEDIA_URL }}icons/file_upload.png" title="this file was uploaded to the database" alt="uploaded file">
+                {% else %}
                 <img src="{{ MEDIA_URL }}icons/file_none.png" title="this file exists, somewhere...">
                 {% endif %}
-                {% if a.storage_type == 1 %}
-                <img src="{{ MEDIA_URL }}icons/file_repo.png" title="this file is in a repository" alt="file in a repository">
-                {% endif %}
-                {% if a.storage_type == 2 %}
-                <img src="{{ MEDIA_URL }}icons/file_upload.png" title="this file was uploaded to the database" alt="uploaded file">
                 {% endif %}
                 {% if a.attachment_type %}<b>{{ a.attachment_type }}</b>{% endif %}
             </td>
         </tr>
+        {% if a.name %}
         <tr>
             <th>name:</th>
             <td>
-                {% if a.name %}
                 <span class="filename">{{ a.name }}</span>
-                {% else %}
-                <i>none</i>
-                {% endif %}
             </td>
         </tr>
+        {% endif %}
         <tr>
             <td colspan="2">
-                <a href="{% url view_attachment a.id %}">details</a>
-                {% if a.storage_type %}<a href="{{ a.url }}">download</a>{% endif %}
+                <a href="{{ a.get_absolute_url }}">details</a>
+                {% if a.uploaded_file %}<a href="{{ a.url }}">download</a>{% endif %}
             </td>
         </tr>
     </table>

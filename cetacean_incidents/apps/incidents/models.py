@@ -990,6 +990,9 @@ def _observation_post_save(sender, **kwargs):
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
-class ObservationAttachment(Attachment):
+class ObservationAttachment(models.Model):
+    attachment = models.ForeignKey(Attachment)
     observation = models.ForeignKey(Observation)
-
+    
+    class Meta:
+        unique_together= ('attachment', 'observation')

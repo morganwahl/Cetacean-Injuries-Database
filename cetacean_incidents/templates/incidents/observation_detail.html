@@ -132,9 +132,11 @@
                 <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
                 <div class="section" style="overflow:hidden; width:100%;">
                     <h3>Attachments</h3>
-                    {% for a in observation.observationfile_set.all %}
+                    {% for oa in observation.observationattachment_set.all %}
                     <div style="float: left;">
-                    {% include "files/view_attachment_include.html" %}
+                    {% with oa.attachment.detailed_instance as a %}
+                    {% include "attachments/view_attachment_include.html" %}
+                    {% endwith %}
                     </div>
                     {% empty %}
                     <i>none</i>

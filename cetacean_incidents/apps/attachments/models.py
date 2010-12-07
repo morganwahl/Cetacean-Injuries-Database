@@ -51,6 +51,10 @@ class Attachment(models.Model):
     def path(self):
         return None
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('view_attachment', (self.id,))
+    
     def __unicode__(self):
         return 'hypothetical file #{0.id:06}'.format(self)
 
