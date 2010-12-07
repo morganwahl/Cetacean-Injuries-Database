@@ -1,1 +1,9 @@
 {% extends "attachments/view_attachment.html" %}
+{% load generic_field_display %}
+
+{% block field_rows %}
+{{ block.super }}
+<tr class="field"><th>repository</th><td>{{ a.repo_name }}</th></tr>
+<tr class="field"><th>path within repository</th><td><span class="filename">{{ a.repo_path }}</span></th></tr>
+{% endblock %}
+

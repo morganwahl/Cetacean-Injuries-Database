@@ -1,14 +1,14 @@
 {% extends "detail.html" %}
 
 {% block header %}
-<h2>file <span class="filename">{{ a.name }}<span></h2>
+<h2>{{ a }}</h2>
 {% endblock %}
 
 {% block content %}
-
-<div class="attachment">
-{{ a }}
-</div>
-
+<table>
+    {% block field_rows %}
+    <tr class="field"><th>attachment type:</th><td>{{ a.attachment_type }}{% if a.attachment_type.description %}: {{ a.attachment_type.description }}{% endif %}</td></tr>
+    {% endblock %}
+</table>
 {% endblock %}
 

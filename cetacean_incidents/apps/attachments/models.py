@@ -58,7 +58,7 @@ class Attachment(models.Model):
         return ('view_attachment', (self.id,))
     
     def __unicode__(self):
-        return 'hypothetical file #{0.id:06}'.format(self)
+        return 'attachment #{0.id:06}'.format(self)
 
     class Meta:
         ordering = ('attachment_type', 'id')
