@@ -318,14 +318,21 @@ div.attachment {
     width: 150px; /* our thumbnail size. TODO: get this dynamically? */
     border: 1px solid #729fcf; /* sky blue 1 */
     text-align:center;
+    overflow: auto;
 }
-div.attachment th {
-    text-align: right;
+div.attachment table {
+    width: 150px;
+    margin: 0;
+    padding: 0;
+    border-spacing: 0;
 }
 div.attachment td {
-    text-align: left;
+    text-align: center;
+    margin: 0;
 }
 
 span.filename {
     font-family: monospace;
+    white-space: pre-wrap;
 }
+

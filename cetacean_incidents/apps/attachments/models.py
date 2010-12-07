@@ -164,6 +164,10 @@ class RepositoryFile(Attachment):
     @property
     def path(self):
         return _repo_storage_factory(self.repo).path(self.repo_path)
+    
+    @property
+    def name(self):
+        return self.repo_path
 
     @property
     def is_dir(self):
