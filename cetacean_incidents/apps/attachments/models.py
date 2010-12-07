@@ -174,6 +174,10 @@ class RepositoryFile(Attachment):
         if not _repo_storage_factory(self.repo).exists(self.repo_path):
             raise ValidationError("That file doesn't exist")
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('view_repositoryfile', (self.id,))
+
     def __unicode__(self):
         return u'repository file: {0.repo_name} \u2018{0.repo_path}\u2019'.format(self)
     class Meta:

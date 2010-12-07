@@ -15,6 +15,8 @@ def view_attachment(request, a):
     
     if isinstance(a, UploadedFile):
         return redirect(view_uploadedfile, a.id, permanent=True)
+    if isinstance(a, RepositoryFile):
+        return redirect(view_repositoryfile, a.id, permanent=True)
     
     return render_to_response(
         'attachments/view_attachment.html',
@@ -30,6 +32,18 @@ def view_uploadedfile(request, a):
     
     return render_to_response(
         'attachments/view_uploadedfile.html',
+        {
+            'a': a,
+        },
+        context_instance= RequestContext(request),
+    )
+
+def view_repositoryfile(request, a):
+    if not isinstance(a, RepositoryFile):
+        a = RepositoryFile.objects.get(id=a)
+    
+    return render_to_response(
+        'attachments/view_repositoryfile.html',
         {
             'a': a,
         },
