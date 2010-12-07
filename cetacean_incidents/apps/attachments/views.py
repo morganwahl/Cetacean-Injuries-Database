@@ -21,7 +21,7 @@ def view_attachment(request, a):
         {
             'a': a,
         },
-        context_instance= RequestContext(request)
+        context_instance= RequestContext(request),
     )
 
 def view_uploadedfile(request, a):

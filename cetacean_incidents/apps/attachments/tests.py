@@ -9,7 +9,7 @@ from os import path
 
 from utils import rand_string
 from models import upload_storage as fs
-from models import Attachment, RepositoryFile, UploadedFile, _repos_dir
+from models import Attachment, UploadedFile, RepositoryFile, _repos_dir
 
 class UploadTestCase(TestCase):
     def test_fs(self):
