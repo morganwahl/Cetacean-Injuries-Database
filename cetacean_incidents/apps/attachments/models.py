@@ -146,6 +146,10 @@ class RepositoryFile(Attachment):
         verbose_name= 'repository',
     )
     
+    @property
+    def repo_name(self):
+        return path.relpath(self.repo, _repos_dir)
+    
     # can't easily use a FilePathField, since the path depends on what 
     # 'repo' is set to
     repo_path = models.CharField(
@@ -161,14 +165,17 @@ class RepositoryFile(Attachment):
     def path(self):
         return _repo_storage_factory(self.repo).path(self.repo_path)
 
+    @property
+    def is_dir(self):
+        return path.isdir(self.path)
+    
     def clean(self):
         # check that repo_path actually exists
         if not _repo_storage_factory(self.repo).exists(self.repo_path):
             raise ValidationError("That file doesn't exist")
 
     def __unicode__(self):
-        return 'repository {1}: {0.repo_path}'.format(self, path.relpath(self.repo, _repos_dir))
-
+        return u'repository file: {0.repo_name} \u2018{0.repo_path}\u2019'.format(self)
     class Meta:
         ordering = ('attachment_type', 'repo', 'repo_path')
         unique_together = ('repo', 'repo_path')
