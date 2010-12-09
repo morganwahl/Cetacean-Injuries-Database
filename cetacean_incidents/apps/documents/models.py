@@ -13,7 +13,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 
 from utils import rand_string
-import forms
+from form_fields import DirectoryPathField as DirectoryPathFormField
 
 def _checkdir(p):
     if not path.isdir(p):
@@ -127,7 +127,7 @@ class DirectoryPathField(models.FilePathField):
             'path': self.path,
             'match': self.match,
             'recursive': self.recursive,
-            'form_class': forms.DirectoryPathField,
+            'form_class': DirectoryPathFormField,
         }
         defaults.update(kwargs)
         return super(DirectoryPathField, self).formfield(**defaults)
