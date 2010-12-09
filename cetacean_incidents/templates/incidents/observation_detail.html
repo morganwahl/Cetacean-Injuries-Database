@@ -128,10 +128,10 @@
                 {% display_unlabeled_bigtext_div observation "narrative" %}
             </div>
             <!-- this is necessary since the div.section below's content width is the same as it's enclosing block, even though it has padding and margins and borders -->
-            <div style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
+            <div class="section" style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
+                <h3>Documents</h3>
                 <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
-                <div class="section" style="overflow:hidden; width:100%;">
-                    <h3>Documents</h3>
+                <div style="overflow:hidden; width:100%;">
                     {% for oa in observation.observationdocument_set.all %}
                     <div style="float: left;">
                     {% with oa.document.detailed_instance as a %}
@@ -141,6 +141,9 @@
                     {% empty %}
                     <i>none</i>
                     {% endfor %}
+                </div>
+                <div style="margin: .25em;">
+                    <a href="{% url add_observationdocument observation.id %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>
                 </div>
             </div>
             {% if observation.import_notes %}

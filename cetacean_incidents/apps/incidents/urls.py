@@ -48,5 +48,6 @@ urlpatterns += patterns('',
 
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
+    (r'^observations/(\d+)/add_document$', views.add_observationdocument, {}, 'add_observationdocument'),
 )
 

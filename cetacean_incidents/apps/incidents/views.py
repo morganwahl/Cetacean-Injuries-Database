@@ -15,18 +15,20 @@ from reversion import revision
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
+from cetacean_incidents.apps.documents.forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
 from cetacean_incidents.forms import merge_source_form_factory
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
-from models import Case, Animal, Observation, YearCaseNumber
+from models import Case, Animal, Observation, YearCaseNumber, ObservationDocument
 from forms import AnimalSearchForm, AnimalMergeForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
+from cetacean_incidents.apps.documents.models import Document, UploadedFile, RepositoryFile
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
@@ -691,6 +693,70 @@ def edit_observation(
             'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+@permission_required('documents.add_document')
+@permission_required('incidents.add_observationdocument')
+def add_observationdocument(request, observation_id):
+    
+    o = Observation.objects.get(id=observation_id)
+    
+    form_classes = {
+        'model': DocumentModelForm,
+        'document': DocumentForm,
+        'uploaded_file': UploadedFileForm,
+        'repository_file': RepositoryFileForm,
+    }
+    
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+    
+    if request.method == 'POST':
+        for name in form_classes.keys():
+            form_kwargs[name]['data'] = request.POST
+        form_kwargs['uploaded_file']['files'] = request.FILES
+    
+    forms = {}
+    for name, cls in form_classes.items():
+        forms[name] = cls(**form_kwargs[name])
+    
+    if request.method == 'POST':
+        if forms['model'].is_valid():
+            docform = {
+                'Document': forms['document'],
+                'UploadedFile': forms['uploaded_file'],
+                'RepositoryFile': forms['repository_file'],
+            }[forms['model'].cleaned_data['storage_type']]
+            
+            if docform.is_valid():
+                doc = docform.save(commit=False)
+                if forms['model'].cleaned_data['storage_type'] == 'UploadedFile':
+                    doc.uploader = request.user
+                doc.save()
+                docform.save_m2m()
+                observation_document = ObservationDocument.objects.create(
+                    document = doc,
+                    observation = o,
+                )
+                return redirect(o)
+    
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
+    )
+    media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
+    
+    return render_to_response(
+        'incidents/add_observationdocument.html',
+        {
+            'observation': o,
+            'forms': forms,
+            'media': media,
         },
         context_instance= RequestContext(request),
     )
