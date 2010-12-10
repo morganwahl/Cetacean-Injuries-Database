@@ -1,0 +1,21 @@
+{# assumes an iterable of objects each with a 'document' attribute has been passed in as 'attachments' #}
+<!-- this is necessary since the div.section below's content width is the same as it's enclosing block, even though it has padding and margins and borders -->
+<div class="section" style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
+    <h3>Documents</h3>
+    <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
+    <div style="overflow:hidden; width:100%;">
+        {% for a in attachments %}
+        <div style="float: left;">
+        {% with a.document.detailed_instance as d %}
+        {% include "documents/view_document_include.html" %}
+        {% endwith %}
+        </div>
+        {% empty %}
+        <i>none</i>
+        {% endfor %}
+    </div>
+    <div style="margin: .25em;">
+        <a href="{% block add_url %}NOWHERE!{% endblock %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>
+    </div>
+</div>
+

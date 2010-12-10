@@ -155,5 +155,8 @@
     {% endif %}
     {% endblock %}
 </div>
+{% with case.casedocument_set.all as attachments %}
+{% include "incidents/view_casedocuments_include.html" %}
+{% endwith %}
 {% endblock %}
 

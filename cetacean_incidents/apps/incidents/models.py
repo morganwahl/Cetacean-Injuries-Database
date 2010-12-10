@@ -654,6 +654,13 @@ class Case(models.Model):
     class Meta:
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
 
+class CaseDocument(models.Model):
+    document = models.ForeignKey(Document)
+    case = models.ForeignKey(Case)
+    
+    class Meta:
+        unique_together= ('document', 'case')
+    
 class ObservationManager(models.Manager):
 
     def observer_set(self):

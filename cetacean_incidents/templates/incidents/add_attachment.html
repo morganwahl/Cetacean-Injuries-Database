@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block content %}
+{# this enctype is need since we're including a UploadedFileForm #}
+<form class="section" action="" enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    <script type="text/javascript">
+        $().ready(function(){
+            RadioHider.init('{{ forms.model.storage_type.html_name }}', {
+                {# TODO get keys from the form #}
+                'Document': 'document_form',
+                'UploadedFile': 'upload_form',
+                'RepositoryFile': 'repo_form'
+            });
+        });
+    </script>
+    {{ forms.model }}
+    <div class="subform" id="document_form">
+        {{ forms.document.as_p }}
+    </div>
+    <div class="subform" id="upload_form">
+        {{ forms.uploaded_file.as_p }}
+    </div>
+    <div class="subform" id="repo_form">
+        {{ forms.repository_file.as_p }}
+    </div>
+    <button type="submit">add document</button>
+</form>
+{% endblock %}

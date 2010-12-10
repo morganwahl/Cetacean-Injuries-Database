@@ -5,7 +5,9 @@ import os
 from os import path
 
 from django.contrib.auth.decorators import login_required
+
 from django.core.files import File
+from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
 
 from models import Document, UploadedFile, RepositoryFile
 
@@ -53,4 +55,47 @@ def view_repositoryfile(request, a):
         },
         context_instance= RequestContext(request),
     )
+
+# utility methods for use with Document forms
+def _get_documentforms(request):
+    form_classes = {
+        'model': DocumentModelForm,
+        'document': DocumentForm,
+        'uploaded_file': UploadedFileForm,
+        'repository_file': RepositoryFileForm,
+    }
+    
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+    
+    if request.method == 'POST':
+        for name in form_classes.keys():
+            form_kwargs[name]['data'] = request.POST
+        form_kwargs['uploaded_file']['files'] = request.FILES
+    
+    forms = {}
+    for name, cls in form_classes.items():
+        forms[name] = cls(**form_kwargs[name])
+    
+    return forms
+
+def _save_documentforms(request, forms):
+    if forms['model'].is_valid():
+        docform = {
+            'Document': forms['document'],
+            'UploadedFile': forms['uploaded_file'],
+            'RepositoryFile': forms['repository_file'],
+        }[forms['model'].cleaned_data['storage_type']]
+        
+        if docform.is_valid():
+            doc = docform.save(commit=False)
+            if forms['model'].cleaned_data['storage_type'] == 'UploadedFile':
+                doc.uploader = request.user
+            doc.save()
+            docform.save_m2m()
+            
+            return doc
 

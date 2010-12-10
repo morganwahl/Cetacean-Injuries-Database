@@ -1,0 +1,4 @@
+{# assumes an iterable of objects each with a 'document' attribute has been passed in as 'attachments' and a Case as 'case' #}
+{% extends "incidents/view_attached_documents_include.html" %}
+
+{% block add_url %}{% url add_casedocument case.id %}{% endblock %}
