@@ -11,8 +11,11 @@ case.valid codes from national stranding database
 remove nmfs_id from case-ids-box
 use 'unknown' option throughout site
 'indication of entanglement/shipstrike' can be on any observation (not necessarily ones for entanglemnts)
+add 'needs verification by <user>' mechanism
 taxon merge doesn't work when Taxon.tsn is unique
 contact types (see to be making generic contacts)
+numeric codes for carcass condition
+contact info for documentation
 stranding fields:
     Animal.necropsied_by (Contact)
     Animal.necropsy_findings?
