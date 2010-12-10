@@ -1,3 +1,4 @@
+from django.core.files import File
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
@@ -6,7 +7,6 @@ from os import path
 
 from django.contrib.auth.decorators import login_required
 
-from django.core.files import File
 from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
 
 from models import Document, UploadedFile, RepositoryFile

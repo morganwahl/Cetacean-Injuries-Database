@@ -194,3 +194,4 @@ def _get_detailed_document_instance(document_instance):
             pass
     return document_instance
 Document.detailed_instance = _get_detailed_document_instance
+
