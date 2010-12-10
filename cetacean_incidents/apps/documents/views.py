@@ -4,10 +4,12 @@ from django.template import RequestContext
 import os
 from os import path
 
+from django.contrib.auth.decorators import login_required
 from django.core.files import File
 
 from models import Document, UploadedFile, RepositoryFile
 
+@login_required
 def view_document(request, a):
     if not isinstance(a, Document):
         a = Document.objects.get(id=a)
@@ -26,6 +28,7 @@ def view_document(request, a):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def view_uploadedfile(request, a):
     if not isinstance(a, UploadedFile):
         a = UploadedFile.objects.get(id=a)
@@ -38,6 +41,7 @@ def view_uploadedfile(request, a):
         context_instance= RequestContext(request),
     )
 
+@login_required
 def view_repositoryfile(request, a):
     if not isinstance(a, RepositoryFile):
         a = RepositoryFile.objects.get(id=a)
