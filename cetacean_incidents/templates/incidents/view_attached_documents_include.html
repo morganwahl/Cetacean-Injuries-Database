@@ -14,8 +14,7 @@
         <i>none</i>
         {% endfor %}
     </div>
-    <div style="margin: .25em;">
-        <a href="{% block add_url %}NOWHERE!{% endblock %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>
-    </div>
+    {% block add_link %}
+    {% endblock %}
 </div>
 
