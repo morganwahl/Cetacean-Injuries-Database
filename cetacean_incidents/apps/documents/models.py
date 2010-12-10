@@ -78,9 +78,8 @@ class UploadedFile(Document):
 
     uploaded_file = models.FileField(
         storage= upload_storage,
-        # add the date and 24 bits of randomness to make sure there aren't name
-        # collisions
-        upload_to= '%Y/%m/%d/' + rand_string(24),
+        upload_to= '%Y/%m%d/', # note that duplicates will have _<number> 
+                               # appended by default so nothing gets overwritten
     )
     
     uploader = models.ForeignKey(
