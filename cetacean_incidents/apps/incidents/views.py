@@ -233,7 +233,6 @@ def case_detail(request, case_id, extra_context={}):
 
 @login_required
 @permission_required('documents.add_document')
-@permission_required('incidents.add_casedocument')
 def add_casedocument(request, case_id):
     
     c = Case.objects.get(id=case_id)
@@ -733,7 +732,6 @@ def edit_observation(
 
 @login_required
 @permission_required('documents.add_document')
-@permission_required('incidents.add_observationdocument')
 def add_observationdocument(request, observation_id):
     
     o = Observation.objects.get(id=observation_id)
