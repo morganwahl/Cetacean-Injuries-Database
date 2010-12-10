@@ -134,7 +134,7 @@
                 <div style="overflow:hidden; width:100%;">
                     {% for oa in observation.observationdocument_set.all %}
                     <div style="float: left;">
-                    {% with oa.document.detailed_instance as a %}
+                    {% with oa.document.detailed_instance as d %}
                     {% include "documents/view_document_include.html" %}
                     {% endwith %}
                     </div>

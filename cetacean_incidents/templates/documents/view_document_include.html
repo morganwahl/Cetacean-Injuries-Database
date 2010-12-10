@@ -1,31 +1,31 @@
-{# assumes the document was passed in as a #}
+{# assumes the document was passed in as d #}
 <div class="document">
     <table>
         <tr>
             <td>
-                {% if a.repo %}
+                {% if d.repo %}
                 <img src="{{ MEDIA_URL }}icons/file_repo.png" title="this document is a file in a repository" alt="file in a repository">
                 {% else %}
-                {% if a.uploaded_file %}
+                {% if d.uploaded_file %}
                 <img src="{{ MEDIA_URL }}icons/file_upload.png" title="this document is a file that was uploaded to the database" alt="uploaded file">
                 {% else %}
                 <img src="{{ MEDIA_URL }}icons/file_none.png" title="this document exists, somewhere...">
                 {% endif %}
                 {% endif %}
-                {% if a.document_type %}<b>{{ a.document_type }}</b>{% endif %}
+                {% if d.document_type %}<b>{{ d.document_type }}</b>{% endif %}
             </td>
         </tr>
-        {% if a.name %}
+        {% if d.name %}
         <tr>
             <td style="font-size:8pt;">
-                <span class="filename">{{ a.name }}</span>
+                <span class="filename">{{ d.name }}</span>
             </td>
         </tr>
         {% endif %}
         <tr>
             <td style="text-align: center;">
-                <a href="{{ a.get_absolute_url }}">details</a>
-                {% if a.url and not a.is_dir %}<a href="{{ a.url }}">download</a>{% endif %}
+                <a href="{{ d.get_absolute_url }}">details</a>
+                {% if d.url and not d.is_dir %}<a href="{{ d.url }}">download</a>{% endif %}
             </td>
         </tr>
     </table>
