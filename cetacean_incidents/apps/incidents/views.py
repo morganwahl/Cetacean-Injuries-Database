@@ -244,7 +244,7 @@ def add_casedocument(request, case_id):
         if doc:
             case_doc = CaseDocument.objects.create(
                 document= doc,
-                case= c,
+                attached_to= c,
             )
             return redirect(c)
     
@@ -743,7 +743,7 @@ def add_observationdocument(request, observation_id):
         if doc:
             obs_doc = ObservationDocument.objects.create(
                 document= doc,
-                observation= o,
+                attached_to= o,
             )
             return redirect(o)
     

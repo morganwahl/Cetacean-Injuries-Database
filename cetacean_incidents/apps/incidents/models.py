@@ -22,6 +22,16 @@ GENDERS = (
     ("m", "male"),
 )
 
+class AttachedDocument(models.Model):
+    
+    document = models.OneToOneField(Document, primary_key=True)
+    @property
+    def attached_to(self):
+        raise NotImplementedError("subclasses of Attachment must implement 'attached_to'")
+        
+    class Meta:
+        abstract = True
+    
 class AnimalManager(models.Manager):
     
     def animals_under_taxon(self, taxon):
@@ -654,13 +664,10 @@ class Case(models.Model):
     class Meta:
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
 
-class CaseDocument(models.Model):
-    document = models.ForeignKey(Document)
-    case = models.ForeignKey(Case)
+class CaseDocument(AttachedDocument):
     
-    class Meta:
-        unique_together= ('document', 'case')
-    
+    attached_to = models.ForeignKey(Case)
+
 class ObservationManager(models.Manager):
 
     def observer_set(self):
@@ -997,9 +1004,7 @@ def _observation_post_save(sender, **kwargs):
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
-class ObservationDocument(models.Model):
-    document = models.ForeignKey(Document)
-    observation = models.ForeignKey(Observation)
+class ObservationDocument(AttachedDocument):
+
+    attached_to = models.ForeignKey(Observation)
     
-    class Meta:
-        unique_together= ('document', 'observation')
