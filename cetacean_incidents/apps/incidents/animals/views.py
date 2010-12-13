@@ -1,0 +1,238 @@
+import operator
+
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.db.models import Q
+from django.forms import Media
+from django.http import HttpResponse
+from django.shortcuts import render_to_response, redirect
+from django.template import RequestContext
+
+from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.forms import merge_source_form_factory
+
+from cetacean_incidents.apps.taxons.models import Taxon
+
+from ..models import Animal
+from ..forms import AnimalForm, AnimalSearchForm, AnimalMergeForm
+
+@login_required
+def animal_detail(request, animal_id):
+    
+    animal = Animal.objects.get(id=animal_id)
+        
+    context = {
+        'animal': animal,
+        'media': Media(),
+    }
+
+    if request.user.has_perms(('incidents.change_animal', 'incidents.delete_animal')):
+        merge_form = merge_source_form_factory(Animal, animal)()
+        context['merge_form'] = merge_form
+        context['media'] += merge_form.media
+        context['media'] += Media(js=(settings.JQUERY_FILE,))
+    
+    return render_to_response(
+        'incidents/animal_detail.html',
+        context,
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def animal_search(request):
+    # prefix should be the same as the on used on the homepage
+    prefix = 'animal_search'
+    form_kwargs = {
+        'prefix': 'animal_search',
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    form = AnimalSearchForm(**form_kwargs)
+    
+    animal_list = tuple()
+    
+    if form.is_valid():
+        animal_order_args = ('id',)
+        #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        animals = Animal.objects.all().order_by(*animal_order_args)
+        
+        if form.cleaned_data['taxon']:
+            t = form.cleaned_data['taxon']
+            descendants = Taxon.objects.with_descendants(t)
+            animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
+        
+        # empty string for name is same as None
+        if form.cleaned_data['name']:
+            name = form.cleaned_data['name']
+            animals = animals.filter(name__icontains=name)
+
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        animal_list = list()
+        for a in animals:
+            if not a in seen:
+                seen.add(a)
+                animal_list.append(a)
+
+    return render_to_response(
+        "incidents/animal_search.html",
+        {
+            'form': form,
+            'animal_list': animal_list,
+            'animal_count': len(animal_list),
+        },
+        context_instance= RequestContext(request),
+    )
+
+# TODO how to secure this view?
+def animal_search_json(request):
+    '''\
+    Given a request with a query in the 'q' key of the GET string, returns a 
+    JSON list of Animals.
+    '''
+    
+    query = u''
+    if 'q' in request.GET:
+        query = request.GET['q']
+    
+    words = query.split()
+    if words:
+        firstword = words[0]
+        q = Q(name__icontains=firstword)
+        try:
+            q |= Q(id__exact=int(firstword))
+        except ValueError:
+            pass
+        results = Animal.objects.filter(q).order_by('-id')
+    else:
+        results = tuple()
+    
+    # since we wont have access to the handy properties and functions of the
+    # Animal objects, we have to call them now and include their output
+    # in the JSON
+    animals = []
+    for result in results:
+        animals.append({
+            'id': result.id,
+            'name': result.name,
+            'display_name': unicode(result),
+            'determined_taxon': unicode(result.determined_taxon),
+        })
+    # TODO return 304 when not changed?
+    
+    return HttpResponse(json.dumps(animals))
+
+@login_required
+@permission_required('incidents.add_animal')
+def create_animal(request):
+    if request.method == 'POST':
+        form = AnimalForm(request.POST)
+        if form.is_valid():
+            new_animal = form.save()
+            return redirect(new_animal)
+    else:
+        form = AnimalForm()
+
+    template_media = Media()
+
+    return render_to_response(
+        'incidents/create_animal.html',
+        {
+            'form': form,
+            'media': template_media + form.media
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+@permission_required('incidents.change_animal')
+def edit_animal(request, animal_id):
+    animal = Animal.objects.get(id=animal_id)
+    form_kwargs = {
+        'instance': animal,
+    }
+    if animal.determined_dead_before or animal.necropsy:
+        form_kwargs['initial'] = {
+            'dead': True,
+        }
+    
+    if request.method == 'POST':
+        form = AnimalForm(request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('animal_detail', animal.id)
+    else:
+        form = AnimalForm(**form_kwargs)
+
+    template_media = Media(js=(settings.JQUERY_FILE, 'checkboxhider.js'))
+
+    return render_to_response(
+        'incidents/edit_animal.html',
+        {
+            'animal': animal,
+            'form': form,
+            'all_media': template_media + form.media
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+@permission_required('incidents.change_animal')
+@permission_required('incidents.delete_animal')
+def animal_merge(request, destination_id, source_id=None):
+    # the "source" animal will be deleted and references to it will be change to
+    # the "destination" animal
+    
+    destination = Animal.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = merge_source_form_factory(Animal, destination)(request.GET)
+        if not merge_form.is_valid():
+            return redirect('animal_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Animal.objects.get(id=source_id)
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = AnimalMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('animal_detail', destination.id)
+    else:
+        form = AnimalMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/animal_merge.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
+        },
+        context_instance= RequestContext(request),
+    )
+
