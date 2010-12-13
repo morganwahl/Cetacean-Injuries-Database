@@ -1,0 +1,11 @@
+{% extends "documents/view_document.html" %}
+{% load generic_field_display %}
+
+{% block field_rows %}
+{{ block.super }}
+<tr class="field"><th>name</th><td><span class="filename">{{ a.name }}</span></td></tr>
+{% display_row a "uploaded_file" %}
+{% display_row a "uploader" %}
+{% display_row a "datetime_uploaded" %}
+{% endblock %}
+

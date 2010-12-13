@@ -127,6 +127,9 @@
                 <h3>Narrative</h3>
                 {% display_unlabeled_bigtext_div observation "narrative" %}
             </div>
+            {% with observation.observationdocument_set.all as attachments %}
+            {% include "incidents/view_observationdocuments_include.html" %}
+            {% endwith %}
             {% if observation.import_notes %}
             <div class="section">
                 <h3>Import notes</h3>

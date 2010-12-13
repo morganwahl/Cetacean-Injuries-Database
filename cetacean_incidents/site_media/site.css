@@ -99,13 +99,13 @@ table.bordered td,table.bordered th {
 }
 
 .section {
-    border: 2px solid #729fcf; /* sky blue 1 */
+    border: .125em solid #729fcf; /* sky blue 1 */
     margin: .25em;
     padding: .25em;
 }
 
 .subsection, .subform {
-    border: 1px solid #729fcf; /* sky blue 1 */
+    border: .0625em solid #729fcf; /* sky blue 1 */
     margin: .125em;
     padding: .125em;
 }
@@ -312,5 +312,27 @@ div.confidential-box div.confidential-warning {
     font-size: 85%;
     line-height: 95%;
     padding-left: .2em;
+}
+
+div.document {
+    width: 150px; /* our thumbnail size. TODO: get this dynamically? */
+    border: 1px solid #729fcf; /* sky blue 1 */
+    text-align:center;
+    overflow: auto;
+}
+div.document table {
+    width: 150px;
+    margin: 0;
+    padding: 0;
+    border-spacing: 0;
+}
+div.document td {
+    text-align: center;
+    margin: 0;
+}
+
+span.filename {
+    font-family: monospace;
+    white-space: pre-wrap;
 }
 

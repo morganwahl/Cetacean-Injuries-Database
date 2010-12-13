@@ -1,0 +1,11 @@
+{% extends "incidents/add_attachment.html" %}
+
+{% block title %}
+{{ block.super }}: add document to {{ case }}
+{% endblock %}
+
+{% block header %}
+<h2>{{ case.animal }}</h2>
+<h2 style="margin-left: 2em;">{{ case }}</h2>
+{% endblock %}
+

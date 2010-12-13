@@ -20,13 +20,16 @@ from cetacean_incidents.forms import merge_source_form_factory
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
-from models import Case, Animal, Observation, YearCaseNumber
+from cetacean_incidents.apps.documents.views import _get_documentforms, _save_documentforms
+
+from models import Case, CaseDocument, Animal, Observation, YearCaseNumber, ObservationDocument
 from forms import AnimalSearchForm, AnimalMergeForm, CaseForm, AddCaseForm, MergeCaseForm, AnimalForm, ObservationForm, CaseSearchForm
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.contacts.models import Organization
 from cetacean_incidents.apps.taxons.models import Taxon
+from cetacean_incidents.apps.documents.models import Document, UploadedFile, RepositoryFile
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.forms import StrikingVesselInfoForm
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
@@ -226,6 +229,38 @@ def case_detail(request, case_id, extra_context={}):
         queryset= case_class.objects.select_related().all(),
         template_object_name= 'case',
         extra_context= extra_context,
+    )
+
+@login_required
+@permission_required('documents.add_document')
+def add_casedocument(request, case_id):
+    
+    c = Case.objects.get(id=case_id)
+    
+    forms = _get_documentforms(request)
+    
+    if request.method == 'POST':
+        doc = _save_documentforms(request, forms)
+        if doc:
+            case_doc = CaseDocument.objects.create(
+                document= doc,
+                attached_to= c,
+            )
+            return redirect(c)
+    
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
+    )
+    media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
+    
+    return render_to_response(
+        'incidents/add_casedocument.html',
+        {
+            'case': c,
+            'forms': forms,
+            'media': media,
+        },
+        context_instance= RequestContext(request),
     )
 
 @login_required
@@ -691,6 +726,38 @@ def edit_observation(
             'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+@permission_required('documents.add_document')
+def add_observationdocument(request, observation_id):
+    
+    o = Observation.objects.get(id=observation_id)
+    
+    forms = _get_documentforms(request)
+    
+    if request.method == 'POST':
+        doc = _save_documentforms(request, forms)
+        if doc:
+            obs_doc = ObservationDocument.objects.create(
+                document= doc,
+                attached_to= o,
+            )
+            return redirect(o)
+    
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
+    )
+    media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
+    
+    return render_to_response(
+        'incidents/add_observationdocument.html',
+        {
+            'observation': o,
+            'forms': forms,
+            'media': media,
         },
         context_instance= RequestContext(request),
     )

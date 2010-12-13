@@ -16,6 +16,7 @@ urlpatterns = patterns('',
     
     (r'^contacts/', include('cetacean_incidents.apps.contacts.urls')),
     (r'^taxons/', include('cetacean_incidents.apps.taxons.urls')),
+    (r'^documents/', include('cetacean_incidents.apps.documents.urls')),
     (r'^incidents/', include('cetacean_incidents.apps.incidents.urls')),
     (r'^entanglements/', include('cetacean_incidents.apps.entanglements.urls')),
     (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),

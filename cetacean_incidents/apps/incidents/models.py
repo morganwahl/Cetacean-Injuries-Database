@@ -13,6 +13,7 @@ from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
+from cetacean_incidents.apps.documents.models import Document
 
 from utils import probable_gender
 
@@ -21,12 +22,22 @@ GENDERS = (
     ("m", "male"),
 )
 
+class AttachedDocument(models.Model):
+    
+    document = models.OneToOneField(Document, primary_key=True)
+    @property
+    def attached_to(self):
+        raise NotImplementedError("subclasses of Attachment must implement 'attached_to'")
+        
+    class Meta:
+        abstract = True
+    
 class AnimalManager(models.Manager):
     
     def animals_under_taxon(self, taxon):
         '''\
-        Returns a queryset of animals determined to be eith taxon of a subtaxon 
-        of it.
+        Returns a queryset of animals determined to be either in the taxon given
+        or in a subtaxon of it.
         '''
         return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
 
@@ -52,7 +63,14 @@ class Animal(models.Model):
         verbose_name= "dead on or before", # no, not really verbose, but it's easier to 
                                  # change this than to alter the fieldname in 
                                  # the schema
-        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
+        help_text= '''\
+            A date when the animal was certainly dead, as determined from the
+            observations of this animal. If you're unsure of an exact date, just
+            put something certainly after it; e.g. if you know it was dead
+            sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
+            you're totally unsure, just put the current date. Any animal with a
+            date before today is considered currently dead.
+        '''
     )
     
     # TODO timezone?
@@ -653,6 +671,10 @@ class Case(models.Model):
     class Meta:
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
 
+class CaseDocument(AttachedDocument):
+    
+    attached_to = models.ForeignKey(Case)
+
 class ObservationManager(models.Manager):
 
     def observer_set(self):
@@ -989,3 +1011,7 @@ def _observation_post_save(sender, **kwargs):
     observation.case.save()
 models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
+class ObservationDocument(AttachedDocument):
+
+    attached_to = models.ForeignKey(Observation)
+    

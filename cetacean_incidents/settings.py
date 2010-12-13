@@ -94,5 +94,6 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.generic_templates',
     'cetacean_incidents.apps.jquery_ui',
     'cetacean_incidents.apps.describe_fields',
+    'cetacean_incidents.apps.documents',
 )
 

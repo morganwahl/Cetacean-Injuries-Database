@@ -1,0 +1,14 @@
+{% extends "detail.html" %}
+
+{% block header %}
+<h2>{{ a }}</h2>
+{% endblock %}
+
+{% block content %}
+<table>
+    {% block field_rows %}
+    <tr class="field"><th>document type:</th><td>{{ a.document_type }}{% if a.document_type.description %}: {{ a.document_type.description }}{% endif %}</td></tr>
+    {% endblock %}
+</table>
+{% endblock %}
+
