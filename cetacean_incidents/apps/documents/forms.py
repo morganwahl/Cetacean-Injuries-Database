@@ -31,7 +31,6 @@ class UploadedFileForm(DocumentForm):
     
     class Meta(DocumentForm.Meta):
         model = UploadedFile
-        exclude = getattr(DocumentForm.Meta, 'exclude', tuple()) + ('uploader',)
 
 class RepositoryFileForm(DocumentForm):
     

@@ -84,6 +84,7 @@ class UploadedFile(Document):
     
     uploader = models.ForeignKey(
         User,
+        editable= False,
     )
     
     datetime_uploaded = models.DateTimeField(
