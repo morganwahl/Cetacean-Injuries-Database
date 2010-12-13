@@ -47,7 +47,6 @@ class UploadedFileTestCase(TestCase):
     
         a = UploadedFile(
             uploader = self.test_user,
-            name = filename,
         )
         a.uploaded_file.save(filename, ContentFile(contents))
         a.clean()

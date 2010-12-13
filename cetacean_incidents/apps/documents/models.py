@@ -74,6 +74,8 @@ class UploadedFile(Document):
     # for the uploaded files
     name = models.CharField(
         max_length= 255,
+        blank= True,
+        help_text= 'if left blank, the name of the uploaded file will be filled in',
     )
 
     uploaded_file = models.FileField(
@@ -98,6 +100,12 @@ class UploadedFile(Document):
     @property
     def path(self):
         return self.uploaded_file.path
+
+    def clean(self):
+        # it'd be nice if forms did this via JS, but that's just not do-able
+        # in HTML.
+        if self.name == '':
+            self.name = path.basename(self.uploaded_file.name)
 
     @models.permalink
     def get_absolute_url(self):
