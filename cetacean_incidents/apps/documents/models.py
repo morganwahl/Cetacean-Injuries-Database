@@ -92,7 +92,7 @@ class UploadedFile(Document):
     datetime_uploaded = models.DateTimeField(
         auto_now_add=True,
     )
-
+    
     @property
     def url(self):
         return self.uploaded_file.url

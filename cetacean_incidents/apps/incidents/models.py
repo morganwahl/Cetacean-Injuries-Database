@@ -36,8 +36,8 @@ class AnimalManager(models.Manager):
     
     def animals_under_taxon(self, taxon):
         '''\
-        Returns a queryset of animals determined to be eith taxon of a subtaxon 
-        of it.
+        Returns a queryset of animals determined to be either in the taxon given
+        or in a subtaxon of it.
         '''
         return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
 
@@ -63,7 +63,14 @@ class Animal(models.Model):
         verbose_name= "dead on or before", # no, not really verbose, but it's easier to 
                                  # change this than to alter the fieldname in 
                                  # the schema
-        help_text= "A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead. This field is useful for error-checking; e.g. if an animal is described as not dead in an observation after this date, something's not right."
+        help_text= '''\
+            A date when the animal was certainly dead, as determined from the
+            observations of this animal. If you're unsure of an exact date, just
+            put something certainly after it; e.g. if you know it was dead
+            sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
+            you're totally unsure, just put the current date. Any animal with a
+            date before today is considered currently dead.
+        '''
     )
     
     # TODO timezone?
