@@ -191,7 +191,6 @@ class RepositoryFile(Document):
         return u'repository file: {0.repo_name} \u2018{0.repo_path}\u2019'.format(self)
     class Meta:
         ordering = ('document_type', 'repo', 'repo_path')
-        unique_together = ('repo', 'repo_path')
 
 def _get_detailed_document_instance(document_instance):
     for subclass in (UploadedFile, RepositoryFile):
