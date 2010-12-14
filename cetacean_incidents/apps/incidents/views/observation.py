@@ -17,12 +17,10 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 
-from cetacean_incidents.apps.documents.views import _get_documentforms, _save_documentforms
-
 from ..models import Animal, Case
 from ..forms import AnimalForm, AddCaseForm, CaseForm
 
-from ..models import Observation, ObservationDocument
+from ..models import Observation
 from ..forms import ObservationForm
 
 @login_required
@@ -488,38 +486,6 @@ def edit_observation(
             'observation': observation,
             'forms': forms,
             'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
-        },
-        context_instance= RequestContext(request),
-    )
-
-@login_required
-@permission_required('documents.add_document')
-def add_observationdocument(request, observation_id):
-    
-    o = Observation.objects.get(id=observation_id)
-    
-    forms = _get_documentforms(request)
-    
-    if request.method == 'POST':
-        doc = _save_documentforms(request, forms)
-        if doc:
-            obs_doc = ObservationDocument.objects.create(
-                document= doc,
-                attached_to= o,
-            )
-            return redirect(o)
-    
-    template_media = Media(
-        js= (settings.JQUERY_FILE, 'radiohider.js'),
-    )
-    media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
-    
-    return render_to_response(
-        'incidents/add_observationdocument.html',
-        {
-            'observation': o,
-            'forms': forms,
-            'media': media,
         },
         context_instance= RequestContext(request),
     )
