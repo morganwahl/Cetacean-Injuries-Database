@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from django.conf import settings
 from django.core.files.base import ContentFile
 
 from django.contrib.auth.models import User
@@ -9,7 +10,8 @@ from os import path
 
 from utils import rand_string
 from models import upload_storage as fs
-from models import Document, UploadedFile, RepositoryFile, _repos_dir
+from models import _repos_url, _repos_dir
+from models import Document, UploadedFile, RepositoryFile
 
 class UploadTestCase(TestCase):
     def test_fs(self):
@@ -78,7 +80,10 @@ class RepositoryFileTestCase(TestCase):
                 a.clean()
                 a.save()
                 
-                # TODO self.assertEqual(a.url,?)
+                import pdb; pdb.set_trace()
+                
+                self.assertEqual(a.path, path.join(_repos_dir, r, f))
+                self.assertEqual(a.url, _repos_url + r + '/' + f)
                 
             finally:
                 fh.close()

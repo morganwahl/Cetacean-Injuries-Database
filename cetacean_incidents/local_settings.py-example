@@ -16,7 +16,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 # make absolute paths relative to this file
-PROJECT_PATH = path.dirname(__file__)
+PROJECT_PATH = path.realpath(path.dirname(__file__))
 
 DATABASES = {
     'default': {

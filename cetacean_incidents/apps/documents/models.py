@@ -63,9 +63,10 @@ class Document(models.Model):
 _uploads_dir_name = 'uploads'
 _uploads_dir = path.join(_storage_dir, _uploads_dir_name)
 _checkdir(_uploads_dir)
+_uploads_url = settings.MEDIA_URL + '{0}/{1}/'.format(_storage_dir_name, _uploads_dir_name)
 upload_storage = FileSystemStorage(
     location= _uploads_dir,
-    base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _uploads_dir_name + '/'
+    base_url= _uploads_url,
 )
 
 class UploadedFile(Document):
@@ -120,10 +121,11 @@ class UploadedFile(Document):
 _repos_dir_name = 'repositories'
 _repos_dir = path.join(_storage_dir, _repos_dir_name)
 _checkdir(_repos_dir)
+_repos_url = settings.MEDIA_URL + _storage_dir_name + _repos_dir_name + '/'
 def _repo_storage_factory(repo):
     return FileSystemStorage(
         location= path.join(_repos_dir, repo),
-        base_url= settings.MEDIA_URL + _storage_dir_name + '/' + _repos_dir_name + '/' + repo + '/',
+        base_url= _repos_url + repo + '/',
     )
 
 # based on FilePathField
