@@ -55,8 +55,10 @@ class Document(models.Model):
         return ('view_document', (self.id,))
     
     def __unicode__(self):
-        return 'document #{0.id:06}'.format(self)
-
+        if self.id:
+            return 'document #{0.id:06}'.format(self)
+        return 'document (no ID)'
+    
     class Meta:
         ordering = ('document_type', 'id')
 
@@ -121,7 +123,7 @@ class UploadedFile(Document):
 _repos_dir_name = 'repositories'
 _repos_dir = path.join(_storage_dir, _repos_dir_name)
 _checkdir(_repos_dir)
-_repos_url = settings.MEDIA_URL + _storage_dir_name + _repos_dir_name + '/'
+_repos_url = settings.MEDIA_URL + _storage_dir_name + '/' + _repos_dir_name + '/'
 def _repo_storage_factory(repo):
     return FileSystemStorage(
         location= path.join(_repos_dir, repo),
