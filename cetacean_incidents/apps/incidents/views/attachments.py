@@ -6,9 +6,49 @@ from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required
 
-from cetacean_incidents.apps.documents.views import _get_documentforms, _save_documentforms
-
 from ..models import Case, CaseDocument, Observation, ObservationDocument
+
+def _get_documentforms(request):
+    form_classes = {
+        'model': DocumentModelForm,
+        'document': DocumentForm,
+        'uploaded_file': UploadedFileForm,
+        'repository_file': RepositoryFileForm,
+    }
+    
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+    
+    if request.method == 'POST':
+        for name in form_classes.keys():
+            form_kwargs[name]['data'] = request.POST
+        form_kwargs['uploaded_file']['files'] = request.FILES
+    
+    forms = {}
+    for name, cls in form_classes.items():
+        forms[name] = cls(**form_kwargs[name])
+    
+    return forms
+
+def _save_documentforms(request, forms):
+    if forms['model'].is_valid():
+        docform = {
+            'Document': forms['document'],
+            'UploadedFile': forms['uploaded_file'],
+            'RepositoryFile': forms['repository_file'],
+        }[forms['model'].cleaned_data['storage_type']]
+        
+        if docform.is_valid():
+            doc = docform.save(commit=False)
+            if forms['model'].cleaned_data['storage_type'] == 'UploadedFile':
+                doc.uploader = request.user
+            doc.save()
+            docform.save_m2m()
+            
+            return doc
 
 @login_required
 @permission_required('documents.add_document')
