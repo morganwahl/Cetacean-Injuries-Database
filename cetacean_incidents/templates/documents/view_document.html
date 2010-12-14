@@ -1,5 +1,10 @@
 {% extends "detail.html" %}
 
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
 {% block header %}
 <h2>{{ a }}</h2>
 {% endblock %}
@@ -13,6 +18,26 @@
 <div>
     {% if perms.documents.change_document %}
     <a href="{% url edit_document a.id %}">edit this document's info</a>
+    {% endif %}
+    {% if perms.documents.delete_document %}
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+	        $('.accordion .header').click(function() {
+		        $(this).next().toggle('fast');
+		        return false;
+	        }).next().hide();
+        });
+    </script>
+    <div class="accordion">
+        <div class="header">
+            <a href="#">delete this document...</a>
+        </div>
+        <form action="{% url delete_document a.id %}" method="post">
+            {% csrf_token %}
+            <span class="warning"><img src="{{ MEDIA_URL }}icons/warning.png"> are you sure? <img src="{{ MEDIA_URL }}icons/warning.png"></span>
+            <button type="submit">yes</button>
+        </form>
+    </div>
     {% endif %}
 </div>
 {% endblock %}

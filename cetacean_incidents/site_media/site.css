@@ -245,6 +245,11 @@ div.warning, div.edit-warning {
     border: thin solid #edd400; /* butter 2 */
     text-align: center;
 }
+span.warning {
+    background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
+    color: #614f00;  /* butter 3, at half value (38% absolute val.) */
+    border: thin solid #edd400; /* butter 2 */
+}
 
 .error {
     background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */

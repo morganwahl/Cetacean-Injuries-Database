@@ -1,6 +1,8 @@
 from django.core.files import File
 from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
+from django.forms import Media
+from django.conf import settings
 
 import os
 from os import path
@@ -28,6 +30,7 @@ def view_document(request, a):
         'documents/view_document.html',
         {
             'a': a,
+            'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
     )
@@ -41,6 +44,7 @@ def view_uploadedfile(request, a):
         'documents/view_uploadedfile.html',
         {
             'a': a,
+            'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
     )
@@ -54,6 +58,7 @@ def view_repositoryfile(request, a):
         'documents/view_repositoryfile.html',
         {
             'a': a,
+            'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
     )
@@ -86,3 +91,23 @@ def edit_document(request, document_id):
         },
         context_instance = RequestContext(request),
     )
+    
+@login_required
+@permission_required('documents.delete_document')
+def delete_document(request, document_id):
+    
+    d = Document.objects.get(id=document_id)
+    
+    # requests that alter data must be posts
+    if request.method == 'POST':
+        # for now, don't delete the uploaded file
+        d.delete()
+        
+        return render_to_response(
+            'documents/document_deleted.html',
+            {'d': d},
+            context_instance= RequestContext(request),
+        )
+
+    return redirect(d)
+
