@@ -56,6 +56,7 @@ class UploadedFileTestCase(TestCase):
 
         # TODO self.assertEqual(a.url,?)
         # TODO self.assertEqual(a.path,?)
+
         self.assertEqual(a.detailed_instance(), a)
         self.assertEqual(a.document_ptr.__class__, Document)
         self.assertNotEqual(a.document_ptr.__class__, UploadedFile)
@@ -79,8 +80,6 @@ class RepositoryFileTestCase(TestCase):
                 a = RepositoryFile(repo=r, repo_path=f)
                 a.clean()
                 a.save()
-                
-                import pdb; pdb.set_trace()
                 
                 self.assertEqual(a.path, path.join(_repos_dir, r, f))
                 self.assertEqual(a.url, _repos_url + r + '/' + f)
