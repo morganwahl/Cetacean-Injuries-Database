@@ -12,6 +12,7 @@ from django.conf import settings
 
 from reversion import revision
 
+from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Case
@@ -24,6 +25,16 @@ from cetacean_incidents.apps.incidents.views import case_detail, edit_case, add_
 
 from models import Entanglement, GearType, EntanglementObservation, BodyLocation, GearBodyLocation
 from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
+
+@login_required
+def entanglement_detail(request, case_id, extra_context):
+    return generic_views.object_detail(
+        request,
+        object_id= case_id,
+        queryset= Entanglement.objects.select_related().all(),
+        template_object_name= 'case',
+        extra_context= extra_context,
+    )
 
 @login_required
 @permission_required('entanglements.change_entanglement')
