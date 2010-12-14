@@ -12,7 +12,6 @@ from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
-from cetacean_incidents.apps.documents.views import _get_documentforms, _save_documentforms
 
 from ..models import Case, YearCaseNumber, CaseDocument
 from ..forms import AnimalForm, CaseForm, CaseSearchForm
