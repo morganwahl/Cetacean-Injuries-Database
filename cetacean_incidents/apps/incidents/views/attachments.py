@@ -6,7 +6,7 @@ from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required
 
-from cetacean_incidents.documents.forms import (
+from cetacean_incidents.apps.documents.forms import (
     DocumentModelForm,
     DocumentForm,
     UploadedFileForm,
@@ -15,7 +15,7 @@ from cetacean_incidents.documents.forms import (
 
 from ..models import Case, CaseDocument, Observation, ObservationDocument
 
-def _add_attachment(attachment_class, obj, template='incidents/add_attachment.html', obj_name = 'object'):
+def _add_attachment(request, attachment_class, obj, template='incidents/add_attachment.html'):
     
     form_classes = {
         'model': DocumentModelForm,
@@ -69,7 +69,7 @@ def _add_attachment(attachment_class, obj, template='incidents/add_attachment.ht
                 return redirect(obj)
                 
     else: # request.method != 'POST'
-        for name in forms_classes.keys():
+        for name in form_classes.keys():
             forms[name] = form_classes[name](**form_kwargs[name])
     
     # the default template uses the radiohider script with forms['models']
@@ -83,7 +83,7 @@ def _add_attachment(attachment_class, obj, template='incidents/add_attachment.ht
     return render_to_response(
         template,
         {
-            obj_name: obj,
+            'object': obj,
             'forms': forms,
             'media': media,
         },
@@ -96,7 +96,12 @@ def add_casedocument(request, case_id):
     
     c = Case.objects.get(id=case_id)
     
-    return _add_attachment(CaseDocument, c)
+    return _add_attachment(
+        request,
+        CaseDocument,
+        c,
+        'incidents/add_casedocument.html'
+    )
     
 @login_required
 @permission_required('documents.add_document')
@@ -104,5 +109,10 @@ def add_observationdocument(request, observation_id):
     
     o = Observation.objects.get(id=observation_id)
     
-    return _add_attachment(ObservationDocument, o)
+    return _add_attachment(
+        request, 
+        ObservationDocument, 
+        o, 
+        'incidents/add_observationdocument.html'
+    )
 
