@@ -10,7 +10,9 @@ class DocumentModelForm(forms.Form):
     # TODO get types from models?
     model_choices = []
     model_classes = {}
-    for cls in (Document, UploadedFile, RepositoryFile):
+    # TODO disable RepositoryFile for now (until RepositoryFile.url is fixed)
+    #for cls in (Document, UploadedFile, RepositoryFile):
+    for cls in (Document, UploadedFile):
         model_choices.append( (cls.__name__, cls._meta.verbose_name) )
         model_classes[cls.__name__] = cls
     model_choices = tuple(model_choices)
