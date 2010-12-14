@@ -5,6 +5,15 @@
 {{ media }}
 {% endblock %}
 
+{% block title %}
+{{ block.super }}: add document to {{ obj }}
+{% endblock %}
+
+{% block header %}
+<h2>{{ obj }}</h2>
+<h2>[adding a document ]</h2>
+{% endblock %}
+
 {% block content %}
 {# this enctype is need since we're including a UploadedFileForm #}
 <form class="section" action="" enctype="multipart/form-data" method="post">

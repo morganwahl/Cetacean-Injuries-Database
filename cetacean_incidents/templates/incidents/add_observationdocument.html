@@ -1,12 +1,9 @@
 {% extends "incidents/add_attachment.html" %}
 
-{% block title %}
-{{ block.super }}: add document to {{ observation }}
-{% endblock %}
-
 {% block header %}
 <h2>{{ observation.case.animal }}</h2>
 <h2 style="margin-left: 2em;">{{ observation.case }}</h2>
 <h2 style="margin-left: 4em;">{{ observation }}</h2>
+<h2 style="margin-left: 4em;">[adding a document]</h2>
 {% endblock %}
 
