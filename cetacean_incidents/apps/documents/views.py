@@ -7,6 +7,8 @@ from os import path
 
 from django.contrib.auth.decorators import login_required
 
+from cetacean_incidents.decorators import permission_required
+
 from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
 
 from models import Document, UploadedFile, RepositoryFile
@@ -56,3 +58,31 @@ def view_repositoryfile(request, a):
         context_instance= RequestContext(request),
     )
 
+@login_required
+@permission_required('documents.change_document')
+def edit_document(request, document_id):
+    
+    d = Document.objects.get(id=document_id).detailed_instance()
+    
+    form_class = {
+        Document: DocumentForm,
+        UploadedFile: UploadedFileForm,
+        RepositoryFile: RepositoryFileForm,
+    }[d.__class__]
+    
+    if request.method == 'POST':
+        form = form_class(data=request.POST, instance=d)
+        if form.is_valid():
+            return redirect(form.save())
+    else:
+        form = form_class(instance=d)
+    
+    return render_to_response(
+        'documents/edit_document.html',
+        {
+            'd': d,
+            'form': form,
+            'media': form.media,
+        },
+        context_instance = RequestContext(request),
+    )

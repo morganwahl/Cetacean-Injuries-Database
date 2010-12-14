@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+{{ media }}
+{% endblock %}
+
+{% block title %}
+{{ block.super }}: editing {{ d }}
+{% endblock %}
+
+{% block header %}
+<h2>editing {{ d }}</h2>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <button type="submit">save changes to {{ d }}</button>
+</form>
+{% endblock %}
+

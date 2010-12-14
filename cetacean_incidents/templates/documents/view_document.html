@@ -10,5 +10,10 @@
     <tr class="field"><th>document type:</th><td>{{ a.document_type }}{% if a.document_type.description %}: {{ a.document_type.description }}{% endif %}</td></tr>
     {% endblock %}
 </table>
+<div>
+    {% if perms.documents.change_document %}
+    <a href="{% url edit_document a.id %}">edit this document's info</a>
+    {% endif %}
+</div>
 {% endblock %}
 
