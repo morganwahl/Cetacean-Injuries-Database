@@ -84,51 +84,11 @@ class CaseMeta(models.Model.__metaclass__):
 
         return the_class
 
-class Case(models.Model):
+class SeriousInjuryAndMortality(models.Model):
     '''\
-    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep much of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
+    Abstract class to collect together all the Serious Injury and Mortality
+    fields.
     '''
-    
-    __metaclass__ = CaseMeta
-    
-    # TODO move this to Entanglement
-    nmfs_id = models.CharField(
-        max_length= 255,
-        unique= False, # in case a NMFS case corresponds to multiple cases in
-                       # our database
-        blank= True,
-        verbose_name= "NMFS entanglement case number",
-    )
-    
-    animal = models.ForeignKey(
-        Animal,
-    )
-    
-    valid = models.IntegerField(
-        choices= (
-            (0, 'invalid'),
-            (1, 'suspected'),
-            (2, 'confirmed'),
-        ),
-        default= 1,
-        verbose_name= 'Validity',
-        help_text= "Invalid cases don't count towards year-totals."
-    )
-    
-    happened_after = models.DateField(
-        blank= True,
-        null= True,
-        help_text= "Please use '<year>-<month>-<day>'. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put '2009-07-01'.",
-        verbose_name= 'incident was on or after',
-    )
-    
-    ole_investigation = models.NullBooleanField(
-        blank= True,
-        null= True,
-        default= False,
-        verbose_name= "OLE Investigation",
-        help_text= "Is there a corresponding Office of Law Enforcement investigation?",
-    )
     
     ## serious injury and mortality determination ##
     si_n_m_fieldnames = []
@@ -258,6 +218,55 @@ class Case(models.Model):
                 
         return reduce(lambda so_far, fieldname: so_far or not is_default(fieldname), self.si_n_m_fieldnames, False)
 
+    class Meta:
+        abstract = True
+
+class Case(SeriousInjuryAndMortality):
+    '''\
+    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep much of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
+    '''
+    
+    __metaclass__ = CaseMeta
+    
+    # TODO move this to Entanglement
+    nmfs_id = models.CharField(
+        max_length= 255,
+        unique= False, # in case a NMFS case corresponds to multiple cases in
+                       # our database
+        blank= True,
+        verbose_name= "NMFS entanglement case number",
+    )
+    
+    animal = models.ForeignKey(
+        Animal,
+    )
+    
+    valid = models.IntegerField(
+        choices= (
+            (0, 'invalid'),
+            (1, 'suspected'),
+            (2, 'confirmed'),
+        ),
+        default= 1,
+        verbose_name= 'Validity',
+        help_text= "Invalid cases don't count towards year-totals."
+    )
+    
+    happened_after = models.DateField(
+        blank= True,
+        null= True,
+        help_text= "Please use '<year>-<month>-<day>'. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put '2009-07-01'.",
+        verbose_name= 'incident was on or after',
+    )
+    
+    ole_investigation = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= False,
+        verbose_name= "OLE Investigation",
+        help_text= "Is there a corresponding Office of Law Enforcement investigation?",
+    )
+    
     # this should always be the YearCaseNumber with case matching self.id and
     # year matching self.date.year . But, it's here so we can order by it in
     # the database.
