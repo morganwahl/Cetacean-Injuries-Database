@@ -359,7 +359,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
     
     def past_names_list(self):
         return filter(lambda name: name != self.current_name(), self.names_list)
-
+    
     def date(self, obs=None):
         '''\
         obs is a queryset of observations. it defaults to this case's
