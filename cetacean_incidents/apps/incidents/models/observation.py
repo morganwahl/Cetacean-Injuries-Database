@@ -7,11 +7,16 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
+
 from cetacean_incidents.apps.documents.models import Documentable
+
 from cetacean_incidents.apps.locations.models import Location
+
 from cetacean_incidents.apps.taxons.models import Taxon
+
 from cetacean_incidents.apps.vessels.models import VesselInfo
+
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
 from animal import GENDERS
 
@@ -29,7 +34,7 @@ class ObservationManager(models.Manager):
         observers = Contact.objects.filter(id__in=observers)
         
         return observers
-    
+
 class Observation(Documentable):
     '''\
     The heart of the database: observations. 
@@ -42,7 +47,7 @@ class Observation(Documentable):
     location) are one-to-one relationships; the other tables exist just to make
     programming easier, since they are logical sets of fields.
     '''
-
+    
     @property
     def relevant_observation(self):
         return self
@@ -54,7 +59,7 @@ class Observation(Documentable):
     @property
     def relevant_case(self):
         return self.case
-
+    
     @property
     def detailed(self):
         if self.case.detailed.observation_model.__name__ == self.__class__.__name__:
