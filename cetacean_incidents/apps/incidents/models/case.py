@@ -400,6 +400,10 @@ class Case(Documentable, SeriousInjuryAndMortality):
                 cases = cases.exclude(id=self.id)
             if cases.count() > 0:
                 raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
+
+    def save(self, *args, **kwargs):
+        
+        super(Case, self).save(*args, **kwargs)
         
         date = self.date()
         if date:
