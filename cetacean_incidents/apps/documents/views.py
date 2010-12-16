@@ -16,48 +16,48 @@ from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryF
 from models import Document, UploadedFile, RepositoryFile
 
 @login_required
-def view_document(request, a):
-    if not isinstance(a, Document):
-        a = Document.objects.get(id=a)
-    a = a.detailed_instance()
+def view_document(request, d):
+    if not isinstance(d, Document):
+        d = Document.objects.get(id=d)
+    d = d.detailed_instance()
     
-    if isinstance(a, UploadedFile):
-        return redirect(view_uploadedfile, a.id, permanent=True)
-    if isinstance(a, RepositoryFile):
-        return redirect(view_repositoryfile, a.id, permanent=True)
+    if isinstance(d, UploadedFile):
+        return redirect(view_uploadedfile, d.id, permanent=True)
+    if isinstance(d, RepositoryFile):
+        return redirect(view_repositoryfile, d.id, permanent=True)
     
     return render_to_response(
         'documents/view_document.html',
         {
-            'a': a,
+            'd': d,
             'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
     )
 
 @login_required
-def view_uploadedfile(request, a):
-    if not isinstance(a, UploadedFile):
-        a = UploadedFile.objects.get(id=a)
+def view_uploadedfile(request, d):
+    if not isinstance(d, UploadedFile):
+        d = UploadedFile.objects.get(id=d)
     
     return render_to_response(
         'documents/view_uploadedfile.html',
         {
-            'a': a,
+            'd': d,
             'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
     )
 
 @login_required
-def view_repositoryfile(request, a):
-    if not isinstance(a, RepositoryFile):
-        a = RepositoryFile.objects.get(id=a)
+def view_repositoryfile(request, d):
+    if not isinstance(d, RepositoryFile):
+        d = RepositoryFile.objects.get(id=d)
     
     return render_to_response(
         'documents/view_repositoryfile.html',
         {
-            'a': a,
+            'd': d,
             'media': Media(js=(settings.JQUERY_FILE,)),
         },
         context_instance= RequestContext(request),
