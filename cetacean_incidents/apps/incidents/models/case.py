@@ -322,7 +322,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
         # if there's a NMFS ID use that
         if self.nmfs_id:
             s['id'] = self.nmfs_id
-        else:
+        if self.current_yearnumber:
         # otherwise use our YearCaseNumber IDs
             s['year'] = unicode(self.current_yearnumber.year)
             s['yearly_number'] = self.current_yearnumber.number
@@ -330,6 +330,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
                 s['yearly_number'] = -1
             
             s['id'] = "%(year)s#%(yearly_number)d" % s
+        else:
+            s['id'] = "#%06d" % self.id
         
         # trim off anything beyond a day
         s['date'] = "%04d" % date.year
