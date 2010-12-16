@@ -155,8 +155,8 @@
     {% endif %}
     {% endblock observations %}
 </div>
-{% with case.casedocument_set.all as attachments %}
-{% include "incidents/view_casedocuments_include.html" %}
+{% with case as documentable %}
+{% include "documents/view_attachments_include.html" %}
 {% endwith %}
 {% endblock %}
 

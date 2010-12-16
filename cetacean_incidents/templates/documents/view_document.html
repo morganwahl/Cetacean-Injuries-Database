@@ -12,6 +12,9 @@
 {% block content %}
 <table>
     {% block field_rows %}
+    {% if d.attached_to %}
+    <tr class="field"><th>attached to:</th><td><a href="{{ d.attached_to.get_absolute_url }}">{{ d.attached_to }}</a></td>
+    {% endif %}
     <tr class="field"><th>document type:</th><td>{{ d.document_type }}{% if d.document_type.description %}: {{ d.document_type.description }}{% endif %}</td></tr>
     {% endblock %}
 </table>
