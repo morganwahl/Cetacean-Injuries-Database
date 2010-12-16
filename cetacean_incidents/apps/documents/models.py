@@ -175,7 +175,7 @@ class RepositoryFile(Document):
     # can't easily use a FilePathField, since the path depends on what 
     # 'repo' is set to
     repo_path = models.CharField(
-        max_length= 2048,
+        max_length= 2000,
         verbose_name= 'path within repository',
     )
     
