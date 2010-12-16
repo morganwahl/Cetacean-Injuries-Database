@@ -80,7 +80,7 @@ class Command(AppCommand):
                 
                 if f.help_text:
                     print "\thelp text:"
-                    print "\t\t%s" % unicode(f.help_text.decode('utf-8')).encode('utf-8')
+                    print "\t\t%s" % f.help_text
                     
                 print
             
