@@ -20,7 +20,3 @@ from observation import (
     edit_observation,
 )
 
-from attachments import (
-    add_casedocument,
-    add_observationdocument,
-)

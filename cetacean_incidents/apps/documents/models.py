@@ -34,6 +34,12 @@ class DocumentType(models.Model):
     def __unicode__(self):
         return self.name
 
+class Documentable(models.Model):
+    '''\
+    Any class you want to attach documents to should inherit from this one.
+    '''
+    pass
+
 class Document(models.Model):
     
     document_type = models.ForeignKey(
@@ -42,6 +48,13 @@ class Document(models.Model):
         null= True,
     )
     
+    attached_to = models.ForeignKey(
+        Documentable,
+        related_name= 'documents',
+        blank= True,
+        null= True,
+    )
+
     @property
     def url(self):
         return None

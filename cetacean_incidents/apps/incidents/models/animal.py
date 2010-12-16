@@ -5,6 +5,8 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from cetacean_incidents.apps.documents.models import Documentable
+
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 
@@ -24,7 +26,7 @@ class AnimalManager(models.Manager):
         '''
         return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
 
-class Animal(models.Model):
+class Animal(Documentable):
     name = models.CharField(
         blank= True,
         unique= False, # Names aren't assigned by us, so leave open the

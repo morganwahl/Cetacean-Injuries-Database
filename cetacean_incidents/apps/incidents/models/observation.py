@@ -8,6 +8,7 @@ from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
+from cetacean_incidents.apps.documents.models import Documentable
 from cetacean_incidents.apps.locations.models import Location
 from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.vessels.models import VesselInfo
@@ -29,7 +30,7 @@ class ObservationManager(models.Manager):
         
         return observers
     
-class Observation(models.Model):
+class Observation(Documentable):
     '''\
     The heart of the database: observations. 
     

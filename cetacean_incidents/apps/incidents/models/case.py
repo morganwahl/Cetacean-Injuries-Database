@@ -6,6 +6,8 @@ from django.db import models
 
 from cetacean_incidents.apps.taxons.utils import probable_taxon
 
+from cetacean_incidents.apps.documents.models import Documentable
+
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
 from ..utils import probable_gender
@@ -221,7 +223,7 @@ class SeriousInjuryAndMortality(models.Model):
     class Meta:
         abstract = True
 
-class Case(SeriousInjuryAndMortality):
+class Case(Documentable, SeriousInjuryAndMortality):
     '''\
     A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep much of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
     '''
