@@ -13,7 +13,7 @@ from cetacean_incidents.decorators import permission_required
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-from ..models import Case, YearCaseNumber, CaseDocument
+from ..models import Case, YearCaseNumber
 from ..forms import AnimalForm, CaseForm, CaseSearchForm
 
 from cetacean_incidents.apps.entanglements.models import Entanglement
