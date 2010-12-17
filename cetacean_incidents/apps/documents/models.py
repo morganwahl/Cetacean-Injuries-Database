@@ -76,6 +76,7 @@ class Document(Specificable):
         related_name= 'documents',
         blank= True,
         null= True,
+        editable= False,
     )
 
     @property

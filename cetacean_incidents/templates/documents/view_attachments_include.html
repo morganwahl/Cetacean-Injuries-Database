@@ -14,12 +14,10 @@
         <i>none</i>
         {% endfor %}
     </div>
-    {% comment %}
     {% if perms.documents.add_document %}
     <div style="margin: .25em;">
-        <a href="{% block add_url %}{% endblock %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>
+        <a href="{% url add_document documentable.id %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>
     </div>
     {% endif %}
-    {% endcomment %}
 </div>
 

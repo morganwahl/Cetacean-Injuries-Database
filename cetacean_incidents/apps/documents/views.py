@@ -13,7 +13,7 @@ from cetacean_incidents.decorators import permission_required
 
 from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
 
-from models import Document, UploadedFile, RepositoryFile
+from models import Documentable, Document, UploadedFile, RepositoryFile
 
 @login_required
 def view_document(request, d):
@@ -59,6 +59,82 @@ def view_repositoryfile(request, d):
         {
             'd': d,
             'media': Media(js=(settings.JQUERY_FILE,)),
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+@permission_required('documents.create_document')
+def add_document(request, documentable_id):
+    
+    obj = Documentable.objects.get(id=documentable_id).specific_instance()
+    
+    form_classes = {
+        'model': DocumentModelForm,
+        'document': DocumentForm,
+        'uploaded_file': UploadedFileForm,
+        'repository_file': RepositoryFileForm,
+    }
+
+    form_kwargs = {}
+    for name in form_classes.keys():
+        form_kwargs[name] = {
+            'prefix': name,
+        }
+    
+    forms = {}
+    
+    if request.method == 'POST':
+        # we have to instantiate the 'model' form in order to know which other
+        # forms to bind
+        form_kwargs['model']['data'] = request.POST
+        forms['model'] = form_classes['model'](**form_kwargs['model'])
+        # we only want to bind the forms the user acutally filled in
+        if forms['model'].is_valid():
+            st = forms['model'].cleaned_data['storage_type']
+            if st == 'Document':
+                submitted_name = 'document'
+            if st == 'UploadedFile':
+                submitted_name = 'uploaded_file'
+                form_kwargs['uploaded_file']['files'] = request.FILES
+            if st == 'RepositoryFile':
+                submitted_name = 'repository_file'
+            form_kwargs[submitted_name]['data'] = request.POST
+            
+            # instantiate all the forms in case there's an error in the one that
+            # was submitted
+            for name in ('document', 'uploaded_file', 'repository_file'):
+                forms[name] = form_classes[name](**form_kwargs[name])
+                
+            # now check the submitted one 
+            if forms[submitted_name].is_valid():
+                document = forms[submitted_name].save(commit=False)
+                document.attached_to = obj
+                if submitted_name == 'uploaded_file':
+                    document.uploader = request.user
+                document.save()
+                forms[submitted_name].save_m2m()
+                
+                return redirect(obj)
+                
+    else: # request.method != 'POST'
+        for name in form_classes.keys():
+            forms[name] = form_classes[name](**form_kwargs[name])
+    
+    # the default template uses the radiohider script with forms['models']
+    # select widget. TODO currently no way to pass in a custom Media to go with 
+    # a custom template.
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js'),
+    )
+    media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
+
+    return render_to_response(
+        'documents/add_attachment.html',
+        {
+            'object': obj,
+            'forms': forms,
+            'media': media,
         },
         context_instance= RequestContext(request),
     )

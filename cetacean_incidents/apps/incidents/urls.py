@@ -42,13 +42,11 @@ urlpatterns += patterns('',
     (r'^cases/create$', new_case, {}, 'create_case'),
     (r'^cases/(\d+)/edit$', views.edit_case, {}, 'edit_case'),
     (r'^cases/(?P<case_id>\d+)/add_observation$', views.add_observation, {}, 'add_observation'),
-    (r'^cases/(\d+)/add_document$', views.add_casedocument, {}, 'add_casedocument'),
     (r'^cases/search$', views.case_search, {}, 'case_search'),
     (r'^cases/by_year/now$', views.cases_by_year, {}, 'cases_this_year'),
     (r'^cases/by_year/(\d+)/$', views.cases_by_year, {}, 'cases_by_year'),
 
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
-    (r'^observations/(\d+)/add_document$', views.add_observationdocument, {}, 'add_observationdocument'),
 )
 
