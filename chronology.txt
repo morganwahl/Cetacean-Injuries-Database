@@ -2,6 +2,9 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+deleting a document should send you back to it's attach_to page
+add settings for Documents
+make contacts that are in-use not delete-able
 add handy selectors for U.S. and Canada
 'federal waters' should include both territorial and EEZ
 add observation to shipstrike is adding a generic obs.
