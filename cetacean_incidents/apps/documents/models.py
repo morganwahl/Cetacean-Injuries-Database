@@ -34,13 +34,36 @@ class DocumentType(models.Model):
     def __unicode__(self):
         return self.name
 
-class Documentable(models.Model):
+class Specificable(models.Model):
+
+    def specific_class(self):
+        return self.specific_instance().__class__
+
+    def specific_instance(self):
+        '''\
+        Returns the equivalent instance of the most-specific subclass of this
+        instance's class.
+        '''
+        inst = None
+        for subclass in self.__class__.__subclasses__():
+            if subclass.objects.filter(pk=self.pk).exists():
+                inst = subclass.objects.get(pk=self.pk)
+                break
+        if inst is None:
+            return self
+        return inst.specific_instance()
+    
+    class Meta:
+        abstract = True
+
+class Documentable(Specificable):
     '''\
     Any class you want to attach documents to should inherit from this one.
     '''
+    
     pass
 
-class Document(models.Model):
+class Document(Specificable):
     
     document_type = models.ForeignKey(
         DocumentType,
@@ -208,14 +231,4 @@ class RepositoryFile(Document):
         return u'repository file: {0.repo_name} \u2018{0.repo_path}\u2019'.format(self)
     class Meta:
         ordering = ('document_type', 'repo', 'repo_path')
-
-def _get_detailed_document_instance(document_instance):
-    for subclass in (UploadedFile, RepositoryFile):
-        try:
-            # TODO 'id' or 'pk'?
-            return subclass.objects.get(document_ptr=document_instance.id)
-        except subclass.DoesNotExist:
-            pass
-    return document_instance
-Document.detailed_instance = _get_detailed_document_instance
 

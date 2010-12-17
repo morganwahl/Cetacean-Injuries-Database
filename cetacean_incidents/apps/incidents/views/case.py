@@ -21,11 +21,9 @@ from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
-    case_class = Case
-    for detailed_class in Case.detailed_classes.values():
-        if detailed_class.objects.filter(id=case_id).exists():
-            case_class = detailed_class
-            break
+    # TODO this is quite inefficient
+    case = Case.objects.get(id=case_id)
+    case_class = case.specific_class()
     return generic_views.object_detail(
         request,
         object_id= case_id,
@@ -158,7 +156,7 @@ def case_search(request, after_date=None, before_date=None):
 @permission_required('incidents.change_case')
 @permission_required('incidents.change_animal')
 def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):
-    case = Case.objects.get(id=case_id).detailed
+    case = Case.objects.get(id=case_id).specific_instance()
     if request.method == 'POST':
         animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
         form = form_class(request.POST, prefix='case', instance=case)

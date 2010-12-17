@@ -34,7 +34,7 @@ class DocumentTestCase(TestCase):
         a.clean()
         a.save()
         
-        self.assertEqual(a.detailed_instance(), a)
+        self.assertEqual(a.specific_instance(), a)
 
 class UploadedFileTestCase(TestCase):
 
@@ -57,11 +57,11 @@ class UploadedFileTestCase(TestCase):
         # TODO self.assertEqual(a.url,?)
         # TODO self.assertEqual(a.path,?)
 
-        self.assertEqual(a.detailed_instance(), a)
+        self.assertEqual(a.specific_instance(), a)
         self.assertEqual(a.document_ptr.__class__, Document)
         self.assertNotEqual(a.document_ptr.__class__, UploadedFile)
-        self.assertEqual(a.document_ptr.detailed_instance(), a)
-        self.assertEqual(a.document_ptr.detailed_instance().__class__, UploadedFile)
+        self.assertEqual(a.document_ptr.specific_instance(), a)
+        self.assertEqual(a.document_ptr.specific_instance().__class__, UploadedFile)
 
 class RepositoryFileTestCase(TestCase):
 
@@ -90,9 +90,9 @@ class RepositoryFileTestCase(TestCase):
         finally:
             os.rmdir(r_path)
 
-        self.assertEqual(a.detailed_instance(), a)
+        self.assertEqual(a.specific_instance(), a)
         self.assertEqual(a.document_ptr.__class__, Document)
         self.assertNotEqual(a.document_ptr.__class__, RepositoryFile)
-        self.assertEqual(a.document_ptr.detailed_instance(), a)
-        self.assertEqual(a.document_ptr.detailed_instance().__class__, RepositoryFile)
+        self.assertEqual(a.document_ptr.specific_instance(), a)
+        self.assertEqual(a.document_ptr.specific_instance().__class__, RepositoryFile)
 

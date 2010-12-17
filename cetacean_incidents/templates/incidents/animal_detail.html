@@ -94,7 +94,7 @@
         <li>
             {# don't forget the case-editing page can also change animals #}
             {% if perms.incidents.change_animal and perms.incidents.change_case %}
-            <a href="{{ case.detailed.get_edit_url }}#case">
+            <a href="{{ case.specific_instance.get_edit_url }}#case">
                 <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
             </a>
             {% endif %}
@@ -137,7 +137,7 @@
             <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
             {# don't forget the observation-editing page can also change animals and cases #}
             {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
-            <td><a href="{{ o.detailed.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
+            <td><a href="{{ o.specific_instance.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
             {% endif %}
             <td>{% observation_link o %}</td>
             <td sorttable_customkey="{{ o.observer.sort_name }}">{% contact_link o.observer %}</td>

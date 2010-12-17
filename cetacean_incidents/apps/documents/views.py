@@ -19,7 +19,7 @@ from models import Document, UploadedFile, RepositoryFile
 def view_document(request, d):
     if not isinstance(d, Document):
         d = Document.objects.get(id=d)
-    d = d.detailed_instance()
+    d = d.specific_instance()
     
     if isinstance(d, UploadedFile):
         return redirect(view_uploadedfile, d.id, permanent=True)
@@ -67,7 +67,7 @@ def view_repositoryfile(request, d):
 @permission_required('documents.change_document')
 def edit_document(request, document_id):
     
-    d = Document.objects.get(id=document_id).detailed_instance()
+    d = Document.objects.get(id=document_id).specific_instance()
     
     form_class = {
         Document: DocumentForm,

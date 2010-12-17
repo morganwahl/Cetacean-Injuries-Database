@@ -6,7 +6,7 @@
     <div style="overflow:hidden; width:100%;">
         {% for d in documentable.documents.all %}
         <div style="float: left;">
-        {% with d.detailed_instance as d %}
+        {% with d.specific_instance as d %}
         {% include "documents/view_document_include.html" %}
         {% endwith %}
         </div>

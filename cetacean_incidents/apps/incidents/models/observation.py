@@ -60,14 +60,6 @@ class Observation(Documentable):
     def relevant_case(self):
         return self.case
     
-    @property
-    def detailed(self):
-        if self.case.detailed.observation_model.__name__ == self.__class__.__name__:
-            return self
-        # TODO this assumes the case's observation model is always a direct
-        # subclass of Observation
-        return self.case.detailed.observation_model.objects.get(observation_ptr=self.id)
-    
     initial = models.BooleanField(
         default= False,
         verbose_name= u"is this an \u2018initial observation\u2019 on a Level A?",

@@ -125,7 +125,7 @@
             {# the observation-editing page can also change animals and cases #}
             {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
             <td>
-                <a href="{{ o.detailed.get_edit_url }}#reporting">
+                <a href="{{ o.specific_instance.get_edit_url }}#reporting">
                     <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation">
                 </a>
             </td>

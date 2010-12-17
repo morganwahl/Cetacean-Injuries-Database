@@ -56,7 +56,7 @@
             {# the case-editing page can also change animals #}
             {% if perms.incidents.change_animal and perms.incidents.change_case %}
             <td>
-                <a href="{{ case.detailed.get_edit_url }}#case">
+                <a href="{{ case.specific_instance.get_edit_url }}#case">
                     <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
                 </a>
             </td>

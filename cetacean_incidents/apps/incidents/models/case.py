@@ -439,24 +439,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
     
-    def detailed_queryset(self):
-        '''\
-        Returns a Case-subclass queryset that contains only the case returned by
-        detailed().
-        '''
-        return self.detailed_classes[self.case_type].objects.filter(id=self.id)
-    
-    @property
-    def detailed(self):
-        '''Get the more specific instance of this Case, if any.'''
-        if self.case_type == 'Case':
-            return self
-        return self.detailed_classes[self.case_type].objects.get(id=self.id)
-
-    @property
-    def detailed_class_name(self):
-        return self.case_type
-
     case_type = models.CharField(
         max_length= 512,
         default= 'Case',
@@ -474,7 +456,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
     def __unicode__(self):
         current_name = self.current_name()
         if current_name is None:
-            self = self.detailed
             if self.id:
                 return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:

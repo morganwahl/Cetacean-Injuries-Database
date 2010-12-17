@@ -25,7 +25,7 @@ from ..forms import ObservationForm
 
 @login_required
 def observation_detail(request, observation_id):
-    observation = Observation.objects.get(id=observation_id).detailed
+    observation = Observation.objects.get(id=observation_id).specific_instance()
     if not observation.__class__ is Observation:
         # avoid redirect loops!
         # TODO is this the best way to detect that? what if middleware is 
@@ -77,7 +77,7 @@ def add_observation(
     
     case = None
     if not case_id is None:
-        case = Case.objects.get(id=case_id).detailed
+        case = Case.objects.get(id=case_id).specific_instance()
         animal_id = case.animal.id
     animal = None
     if not animal_id is None:
@@ -303,8 +303,8 @@ def edit_observation(
             })
     form_classes.update(additional_form_classes)
     
-    observation = Observation.objects.get(id=observation_id).detailed
-    case = observation.case.detailed
+    observation = Observation.objects.get(id=observation_id).specific_instance()
+    case = observation.case.specific_instance()
     animal = case.animal
 
     model_instances = {
