@@ -17,23 +17,6 @@ from cetacean_incidents.apps.entanglements.forms import EntanglementForm, AddEnt
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeForm, AddShipstrikeForm
 
-class CaseTypeFormMeta(forms.Form.__metaclass__):
-    
-    def __new__(self, name, bases, dict):
-        type_names = []
-        type_models = {}
-        for c in Case.detailed_classes.values():
-            type_names.append( (c.__name__, c._meta.verbose_name) )
-            # type_models's keys should be values of the case_type field
-            type_models[c.__name__] = c
-        type_names = tuple(type_names)
-        
-        dict['type_names'] = type_names
-        dict['case_type'] = forms.ChoiceField(choices=(('','<select a case type>'),) + type_names)
-        dict['type_models'] = type_models
-        return super(CaseTypeFormMeta, self).__new__(self, name, bases, dict)
-
-
 def CaseTypeForm_factory(user):
     'Generates a CaseTypeForm based on what types a user can add.'
     
@@ -54,9 +37,7 @@ def CaseTypeForm_factory(user):
         A form with the case-type field needed when creating new cases.
         '''
         
-        # TODO get this working
-        ## this form is almost entirely dynamically created
-        #__metaclass__ = CaseTypeFormMeta
+        # TODO port to documents.Specificable's API
         
         # where <class> is a subclass of Case:
         
