@@ -52,6 +52,7 @@
     </thead>
     <tbody>
         {% for case in case_list %}
+        {% with case.specific_instance as case %}
         <tr>
             {# the case-editing page can also change animals #}
             {% if perms.incidents.change_animal and perms.incidents.change_case %}
@@ -83,6 +84,7 @@
     	    <td>{{ obs.count }}</td>
             {% endwith %}
         </tr>
+        {% endwith %}
         {% endfor %}
     </tbody>
 </table>

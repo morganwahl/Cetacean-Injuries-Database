@@ -317,7 +317,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
         # if there's a NMFS ID use that
         if self.nmfs_id:
             s['id'] = self.nmfs_id
-        if self.current_yearnumber:
+        elif self.current_yearnumber:
         # otherwise use our YearCaseNumber IDs
             s['year'] = unicode(self.current_yearnumber.year)
             s['yearly_number'] = self.current_yearnumber.number
