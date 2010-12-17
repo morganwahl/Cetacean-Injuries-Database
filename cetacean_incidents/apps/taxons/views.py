@@ -93,8 +93,8 @@ def taxon_search(request):
     for result in results:
         taxa.append({
             'id': result.id,
-            'name': result.name,
-            'display_name': unicode(result),
+            'plain_name': result.scientific_name(),
+            'html_name': render_to_string('taxon_display.html', { 'taxon': result }),
             'common_names': result.common_names,
         })
     # TODO return 304 when not changed?

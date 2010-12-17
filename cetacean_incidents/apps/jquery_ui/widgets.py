@@ -73,6 +73,9 @@ class ModelAutocomplete(Autocomplete):
     def id_to_display(self, id):
         return self.model.objects.get(id=id).__unicode__()
     
+    def id_to_html_display(self, id):
+        return self.id_to_display(id)
+    
     def render(self, name, value, attrs=None, custom_html= None, extra_js= None):
     
         # TODO should render take object IDs or objects them selves as values?
@@ -91,11 +94,13 @@ class ModelAutocomplete(Autocomplete):
         autocomplete_attrs['id'] = value_attrs['id'] + '-display_name'
 
         # treat non-integers as no value
+        initial_display = None
         try:
             value = int(value)
             autocomplete_attrs['value'] = self.id_to_display(value)
             autocomplete_attrs['style'] = 'display: none;'
             value_attrs['value'] = force_unicode(value)
+            initial_display = self.id_to_html_display(value)
         except ValueError:
             pass
         except TypeError:
@@ -122,6 +127,7 @@ class ModelAutocomplete(Autocomplete):
         return render_to_string('model_autocomplete.html', {
             'autocomplete_attrs': autocomplete_attrs,
             'flat_autocomplete_attrs': forms.util.flatatt(autocomplete_attrs),
+            'initial_display': initial_display,
             'value_attrs': value_attrs,
             'flat_value_attrs': forms.util.flatatt(value_attrs),
             'source': self.source,

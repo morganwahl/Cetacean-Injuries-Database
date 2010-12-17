@@ -13,7 +13,8 @@ var taxon_autocomplete_source = function (request, response) {
             var suggests  = []
             for(var i = 0; i < taxa.length; i++) {
                 suggests[i] = {};
-                suggests[i].label = taxa[i].display_name;
+                suggests[i].label = taxa[i].plain_name;
+                suggests[i].html_label = taxa[i].html_name;
                 suggests[i].value = taxa[i].id;
                 suggests[i].common_names = taxa[i].common_names;
             }
@@ -24,7 +25,7 @@ var taxon_autocomplete_source = function (request, response) {
 }
 
 var taxon_autocomplete_entry = function(item) {
-    var e = '<span class="taxon_name">' + item.label + '</span>'
+    var e = '<span class="taxon_name">' + item.html_label + '</span>'
     if (item.common_names) {
         e += '<span class="common_names">' + item.common_names + '</span>'
     }

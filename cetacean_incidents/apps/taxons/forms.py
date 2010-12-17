@@ -3,6 +3,7 @@ from django.template.loader import render_to_string
 from django.core.validators import EMPTY_VALUES
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.template.loader import render_to_string
 
 from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
 from cetacean_incidents.apps.merge_form.forms import MergeForm
@@ -22,6 +23,13 @@ class TaxonAutocomplete(ModelAutocomplete):
             },
         )
     
+    def id_to_display(self, id):
+        return self.model.objects.get(id=id).scientific_name()
+    
+    def id_to_html_display(self, id):
+        taxon = Taxon.objects.get(id=id)
+        return render_to_string('taxon_display.html', { 'taxon': taxon })
+
     def render(self, name, value, attrs=None):
         return super(TaxonAutocomplete, self).render(
             name=name,
