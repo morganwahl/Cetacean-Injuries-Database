@@ -49,7 +49,7 @@ class Taxon(models.Model):
     '''
     
     tsn = models.IntegerField(
-        unique=True,
+        #unique=True,
         blank=True,
         null=True,
         verbose_name= 'ITIS TSN',

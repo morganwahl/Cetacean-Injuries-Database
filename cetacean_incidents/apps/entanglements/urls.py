@@ -4,17 +4,12 @@ from django.conf import settings
 
 import views
 
-urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
-    # entanglements use the location_details include template, which needs 
-    # RadioHider
-    (r'^(\d+)/$', 'case_detail', {
+urlpatterns = patterns('',
+    (r'^(\d+)/$', views.entanglement_detail, {
         'extra_context': {
             'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js',)),
          },
     }, 'entanglement_detail'),
-)
-
-urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_entanglement, {}, 'edit_entanglement'),
     (r'^(?P<entanglement_id>\d+)/add_observation$', views.add_entanglementobservation, {}, 'add_entanglementobservation'),
 
