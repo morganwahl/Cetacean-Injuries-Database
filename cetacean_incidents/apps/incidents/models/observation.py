@@ -20,8 +20,6 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 
 from animal import GENDERS
 
-from case import Case
-
 class ObservationManager(models.Manager):
 
     def observer_set(self):
@@ -340,14 +338,4 @@ class Observation(Documentable):
     class Meta:
         app_label = 'incidents'
         ordering = ['datetime_observed', 'datetime_reported', 'id']
-
-Case.observation_model = Observation
-    
-# since adding a new Observation to a case could change things like case.date or
-# even assign yearly_number, we need to listen for Observation saves
-def _observation_post_save(sender, **kwargs):
-    observation = kwargs['instance']
-    observation.case.clean()
-    observation.case.save()
-models.signals.post_save.connect(_observation_post_save, sender=Observation)
 

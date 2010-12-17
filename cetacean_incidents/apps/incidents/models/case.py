@@ -13,6 +13,7 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from ..utils import probable_gender
 
 from animal import Animal
+from observation import Observation
 
 class CaseManager(models.Manager):
     def same_timeframe(self, case):
@@ -20,9 +21,6 @@ class CaseManager(models.Manager):
         Returns cases that _may_ have been happening at the same time as the one
         given. Takes into account the potential vagueness of observation dates.
         '''
-        
-        # TODO avoid circular imports more elegantly?
-        from observation import Observation
         
         # collect all the observation dates
         obs_dates = map(lambda o: o.datetime_observed, Observation.objects.filter(case=case))
@@ -308,9 +306,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
 
     def current_name(self):
         
-        # TODO more elegant way to avoid circular imports?
-        from observation import Observation
-        self = self.detailed_queryset().select_related('current_yearnumber')[0]
         obs = Observation.objects.filter(case__id=self.id)
         # Cases with no obs yet don't get names
         if not obs.exists():
@@ -474,6 +469,16 @@ class Case(Documentable, SeriousInjuryAndMortality):
     class Meta:
         app_label = 'incidents'
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
+
+Case.observation_model = Observation
+    
+# since adding a new Observation to a case could change things like case.date or
+# even assign yearly_number, we need to listen for Observation saves
+def _observation_post_save(sender, **kwargs):
+    observation = kwargs['instance']
+    observation.case.clean()
+    observation.case.save()
+models.signals.post_save.connect(_observation_post_save, sender=Observation)
 
 class YearCaseNumber(models.Model):
     '''\
