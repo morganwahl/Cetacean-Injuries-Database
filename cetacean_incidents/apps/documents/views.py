@@ -64,7 +64,7 @@ def view_repositoryfile(request, d):
     )
 
 @login_required
-@permission_required('documents.create_document')
+@permission_required('documents.add_document')
 def add_document(request, documentable_id):
     
     obj = Documentable.objects.get(id=documentable_id).specific_instance()
