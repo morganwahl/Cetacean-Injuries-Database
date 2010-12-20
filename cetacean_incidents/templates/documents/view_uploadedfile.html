@@ -4,7 +4,7 @@
 {% block field_rows %}
 {{ block.super }}
 <tr class="field"><th>name</th><td><span class="filename">{{ d.name }}</span></td></tr>
-{% display_row d "uploaded_file" %}
+<tr class="field"><th>uploaded file</th><td><a href="{{ d.url }}"><span class="filename">{{ d.uploaded_file }}</span></a></td></tr>
 {% display_row d "uploader" %}
 {% display_row d "datetime_uploaded" %}
 {% endblock %}

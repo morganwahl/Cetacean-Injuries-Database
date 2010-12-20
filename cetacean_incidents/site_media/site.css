@@ -311,7 +311,6 @@ div.confidential-box div.confidential-warning {
 div.document {
     width: 150px; /* our thumbnail size. TODO: get this dynamically? */
     border: 1px solid #729fcf; /* sky blue 1 */
-    text-align:center;
     overflow: auto;
 }
 div.document table {
@@ -321,7 +320,6 @@ div.document table {
     border-spacing: 0;
 }
 div.document td {
-    text-align: center;
     margin: 0;
 }
 

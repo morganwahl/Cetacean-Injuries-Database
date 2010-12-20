@@ -23,7 +23,7 @@
         </tr>
         {% endif %}
         <tr>
-            <td style="text-align: center;">
+            <td>
                 <a href="{{ d.get_absolute_url }}">details</a>
                 {% if d.url and not d.is_dir %}<a href="{{ d.url }}">download</a>{% endif %}
             </td>
