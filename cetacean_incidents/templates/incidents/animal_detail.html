@@ -155,5 +155,8 @@
     {% endif %}
     {% endblock %}
 </div>
+{% with animal as documentable %}
+{% include "documents/view_attachments_include.html" %}
+{% endwith %}
 {% endblock %}
 
