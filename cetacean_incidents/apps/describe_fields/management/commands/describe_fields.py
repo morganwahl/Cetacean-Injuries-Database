@@ -20,7 +20,6 @@ class Command(AppCommand):
 
     def handle_app(self, app, **options):
         for c in models.get_models(app):
-            #import pdb; pdb.set_trace()
             m = c._meta
             
             if m.abstract:
