@@ -1,0 +1,8 @@
+all fonts are Droid sans normal unless otherwise stated
+
+model rects: border .05in solid black quarter-inch curve
+Model names: 28pt bold 125% line-spacing
+model sections: 18pt bold
+field names: 18pt italic
+field descriptions: 16pt 120% line-spacing
+
