@@ -21,6 +21,7 @@ class AbstractContact(models.Model):
         max_length= 1023,
         blank= True,
         null= True,
+        help_text= "The contact's name. Appears in lists of contacts."
     )
     person = models.NullBooleanField(
         blank= True,
@@ -110,7 +111,7 @@ class Contact(AbstractContact):
         related_name = 'contacts',
         blank= True,
         null= True,
-        help_text= "The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (I.e. 'Coast Guard'). The idea is to track indivdual people or orgs (whichever makes more sense as a contact for a particular observation), but still group them into sets. I.e. a contact might be for the Boston Coast Guard office, but it would have an affiliation to simple 'Coast Guard', so that one could easily answer questions like \"How many reports did we get from the Coast Guard last year?\"",
+        help_text= "The organization(s) that this contact is affilitated with, if any. For contacts that are themselves organizations, give a more general org. that they're part of, if any. (e.g. 'Coast Guard'). The idea is to track indivdual people or orgs (whichever makes more sense as a contact for a particular observation), but still group them into sets. For example, a contact might be for the Boston Coast Guard office, but it would have a 'Coast Guard' affiliation, so that one could easily answer questions like \"How many reports did we get from the Coast Guard last year?\"",
     )
 
     def clean(self):

@@ -223,7 +223,9 @@ class SeriousInjuryAndMortality(models.Model):
 
 class Case(Documentable, SeriousInjuryAndMortality):
     '''\
-    A Case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known. Cases keep much of their information in the form of a list of observations. They also serve to connect individual observations to animal entries.
+    A case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known.
+    
+    Much of the information on a case is in the set of observations marked as relevant to it. Cases also serve to connect observations with the animals they're of.
     '''
     
     __metaclass__ = CaseMeta
@@ -234,11 +236,13 @@ class Case(Documentable, SeriousInjuryAndMortality):
         unique= False, # in case a NMFS case corresponds to multiple cases in
                        # our database
         blank= True,
-        verbose_name= "NMFS entanglement case number",
+        verbose_name= "entanglement NMFS ID",
+        help_text= "An entanglement-specific case ID.",
     )
     
     animal = models.ForeignKey(
         Animal,
+        help_text= "The animal this case concerns."
     )
     
     valid = models.IntegerField(

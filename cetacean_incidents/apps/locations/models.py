@@ -15,7 +15,7 @@ class Location(models.Model):
     
     description = models.TextField(
         blank= True,
-        help_text= "a prose description of the location. If no coordinates were known at the time, this is all the location info we have. Even if we have coordinates, the method by which they were obtained ought to be noted."
+        help_text= "A prose description of the location. If no coordinates were known at the time, this is all the location info we have. Even if we have coordinates, the method by which they were obtained ought to be noted."
         
         # coordinates (and a large 'roughness') may be assigned later, for some 
         # simple mapping. 
@@ -35,14 +35,14 @@ class Location(models.Model):
             (0, 'unknown'),
             (1, 'land'),
             (2, 'state waters'),   # only defined in US waters
-            (3, 'federal waters'), # UNCLOS 'territorial waters'
+            (3, 'federal waters'), # UNCLOS 'territorial waters' + archipelagic waters + continguous zone, + EEZ - state waters
             #(4, 'archipelagic waters'), # UNCLOS definition we don't currently care about
-            #(5, 'continguous zone'),  # UNCLOS definition we don't currently care about. Note that Canada does have one.
-            (6, 'exclusive economic zone'),
+            #(5, 'continguous zone'),  # UNCLOS definition we don't currently care about. Note that Canada and the U.S. do have them.
+            #(6, 'exclusive economic zone'), # UNCLOS definition we don't currently care about. Note that Canada and the U.S. do have them.
             #(7, 'continental shelf'), # UNCLOS definition we don't currently care about.
             (8, 'international waters'),
         ),
-        help_text= u"\u2018land\u2019 is anyplace above mean-low-tide; \u2018state waters\u2019 typically extend 3 nm out from mean-low-tide or the baseline (the line marked as \"territorial sea\" on NOAA charts). \u2018federal waters\u2019 extend from the state waters to 12 nm out from the baseline (which matches the international definition of territorial waters). The \u2018exclusive economic zone\u2019 is from 12 nm to 200 nm from the baseline. \u2018international waters\u2019 is anything not in the EEZ or territorial waters of a country. Use \u2018federal waters\u2019 for territorial waters of other countries.",
+        help_text= u"""‘land’ is anyplace above mean-low-tide. ‘state waters’ are defined by the Submerged Lands Act (and numerous relevant court cases). Mostly, they extend 3 nm out from shore. The big exceptions are in FL, TX, and PR, and small exceptions are all over the place. ‘federal waters’ includes all the non-state waters within the 'territorial waters' and 'exclusive economic zone' of the U.S., which extends out 200 nm from shore. For the 'territorial waters' and EEZ of other countries, use 'federal waters'.""",
     )
     
     state = USStateField(

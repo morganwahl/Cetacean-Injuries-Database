@@ -48,14 +48,14 @@ class Animal(Documentable):
         verbose_name= "dead on or before", # no, not really verbose, but it's easier to 
                                  # change this than to alter the fieldname in 
                                  # the schema
-        help_text= '''\
+        help_text= u"""\
             A date when the animal was certainly dead, as determined from the
             observations of this animal. If you're unsure of an exact date, just
             put something certainly after it; e.g. if you know it was dead
             sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
             you're totally unsure, just put the current date. Any animal with a
             date before today is considered currently dead.
-        '''
+        """
     )
     
     # TODO timezone?
@@ -66,20 +66,20 @@ class Animal(Documentable):
     partial_necropsy = models.BooleanField(
         default= False,
         verbose_name= "partially necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
-        help_text= "if this animal is dead, has a partial necropsy been performed on it?",
+        help_text= "If this animal is dead, has a partial necropsy ever been performed on it?",
     )
     
     necropsy = models.BooleanField(
         default= False,
-        verbose_name= "necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
-        help_text= "if this animal is dead, has a necropsy been performed on it?",
+        verbose_name= "fully necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
+        help_text= "If this animal is dead, has a full necropsy ever been performed on it?",
     )
     
     cause_of_death = models.CharField(
         max_length = 1023,
         blank= True,
         verbose_name= "probable cause of mortality",
-        help_text= "if this animal is dead, what (if any) probable cause of mortality has been determined?",
+        help_text= "If this animal is dead, what (if any) probable cause of mortality has been determined?",
     )
     
     @property
@@ -115,7 +115,8 @@ class Animal(Documentable):
         max_length= 1,
         blank= True,
         choices= GENDERS,
-        help_text= 'as determined from the genders indicated in specific observations',
+        verbose_name= 'sex'
+        help_text= u"If the sex of this animal is known, fill it in here and it will then be the default for new observations of this animal.",
     )
 
     def gender(self):
@@ -132,7 +133,7 @@ class Animal(Documentable):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'as determined from the taxa indicated in specific observations',
+        help_text= 'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
     )
     
     def taxon(self):

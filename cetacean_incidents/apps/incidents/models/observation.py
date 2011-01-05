@@ -37,8 +37,8 @@ class Observation(Documentable):
     '''\
     The heart of the database: observations. 
     
-    An Obsevation is a source of data for an Animal. It has an observer and
-    and date/time and details of how the observations were taken. Note that the
+    An Observation is a source of data for an Animal. It has an observer and
+    date/time and details of how the observations were taken. Note that the
     observer data may be scanty if this isn't a firsthand report.
 
     Many of the references to other tables (specifically, observer_vessel, and
@@ -60,13 +60,13 @@ class Observation(Documentable):
     
     initial = models.BooleanField(
         default= False,
-        verbose_name= u"is this an \u2018initial observation\u2019 on a Level A?",
-        help_text= u"Check if this observation corresponds to the \u2018initial observation\u2019 on a Level A form. If it does, the obeservation date should correspond to the \"date of initial observation\" on the Level A, and the condition should correspond to the \"condition at initial observation\".",
+        verbose_name= u"is this an ‘initial observation’ on a Level A?",
+        help_text= u"""Check if this observation corresponds to the ‘initial observation’ on a Level A form. If it does, the observation date should correspond to the "date of initial observation" on the Level A, and the condition should correspond to the "condition at initial observation".""",
     )
     exam = models.BooleanField(
         default= False,
-        verbose_name= u"is this a \u2018Level A Examination\u2019?",
-        help_text= u"Check if this observation corresponds to the \u2018level a examination\u2019 on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the codition should correspond to the \"condition at examination\", and the observer should correspond to the \"examiner\". Note that an observation can be both the \u2018initial observation\u2019 and the \u2018examination\u2019 (or neither).",
+        verbose_name= u"is this a ‘Level A Examination’?",
+        help_text= u"""Check if this observation corresponds to the ‘level a examination’ on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the condition should correspond to the "condition at examination", and the observer should correspond to the "examiner". Note that an observation can be both the ‘initial observation’ and the ‘examination’ (or neither).""",
     )
     
     observer = models.ForeignKey(
@@ -74,7 +74,7 @@ class Observation(Documentable):
         blank= True,
         null= True,
         related_name= 'observed',
-        help_text= 'who actually saw the animal'
+        help_text= 'Whoever actually saw the animal.', 
     )
     observer_vessel = models.OneToOneField(
         VesselInfo,
@@ -84,7 +84,7 @@ class Observation(Documentable):
         help_text= 'the vessel the observer was on, if any',
     )
     datetime_observed = UncertainDateTimeField(
-        help_text= "When did the observer see it? (Strictly, when did the observation start?) This earliest datetime_observed for a case's observations  is the one used for the case itself, e.g. when assigning a case to a year.",
+        help_text= "When did the observer see it? (Strictly, when did the observation start?) The earliest observation date for a case's observations is the date used for the case itself, e.g. when assigning a case to a year.",
         verbose_name= 'observation date and time',
     )
     # TODO duration?
@@ -116,7 +116,7 @@ class Observation(Documentable):
         help_text= "This is who informed us of the observation. Same as observer if this is a firsthand report.",
     )
     datetime_reported = UncertainDateTimeField(
-        help_text = 'when we first heard about the observation',
+        help_text = 'When did we first heard about the observation?',
         verbose_name = 'report date and time',
     )
         
@@ -161,14 +161,14 @@ class Observation(Documentable):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'The most specific taxon (e.g. a species) the animal is described as.',
+        help_text= u"""The most specific taxon (e.g. a species) the animal is described as. Can be a vauge as an order or as specific as a subspecies or just unknown. Taxa are taken from the "Integrated Taxonomic Information System" (see itis.gov).""",
     )
 
     gender = models.CharField(
         max_length= 1,
         choices= GENDERS,
         blank= True,
-        help_text= 'The gender of this animal, if known.',
+        help_text= 'The sex of this animal, if known.',
         verbose_name = 'sex', # yes, it's not really verbose, but this is easier
                               # than changing the name of the column in the 
                               # database for now.
@@ -182,12 +182,7 @@ class Observation(Documentable):
             ('ju', 'juvenile'),
             ('ad', 'adult'),
         ),
-        help_text= u"""\
-            Note that these are somewhat subjective, and their definitions, if
-            any, certainly depend on the animal's species. In general,
-            \u2018pup\u2019 is a synonym for \u2018calf\u2019 and
-            \u2018sub-adult\u2019 for \u2018juvenile\u2019.
-        """,
+        help_text= u"""Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, ‘pup’ is a synonym for ‘calf’ and ‘sub-adult’ for ‘juvenile’.""",
     )
     
     # numeric codes (except 0) are from stranding spreadsheet. they're kept to
@@ -257,37 +252,34 @@ class Observation(Documentable):
     
     animal_description = models.TextField(
         blank= True,
-        help_text= """\
-            Please note anything that would help identify the individual animal
-            or it's species or gender, etc. Even if you've indicated those
-            already, please indicate what that was on the basis of.
-        """,
+        help_text= u"""Anything that would help identify the individual animal or it's species or age or sex, etc. Even if those are specified above, please note what that was on the basis of.""",
     )
     
     documentation = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "were any photos or videos taken?",
+        verbose_name= 'documentation?'
+        help_text= "Were any photos or videos taken?",
     )
     
     biopsy = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "were any biopsy samples taken?",
+        help_text= "Were any biopsy samples taken?",
         verbose_name= "biopsy samples taken?",
     )
     
     genetic_sample = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "were any genetic samples taken?",
+        help_text= "Were any genetic samples taken?",
         verbose_name= "genetic samples taken?",
     )
     
     tagged = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "were any tags put on the animal?",
+        help_text= "Were any tags put on the animal? If so, please note the tag ID's in the narrative.",
         verbose_name= "was a tag put on the animal?",
     )
     
@@ -308,7 +300,7 @@ class Observation(Documentable):
     
     narrative = models.TextField(
         blank= True,
-        help_text= "complete description of the observation."
+        help_text= "A complete description of the observation. No limit as to length. Ideally, all the other fields for an observation could be filled in after reading this."
     )
     
     import_notes = models.TextField(

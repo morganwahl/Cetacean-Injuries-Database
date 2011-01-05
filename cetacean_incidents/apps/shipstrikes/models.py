@@ -9,12 +9,12 @@ class StrikingVesselInfo(VesselInfo):
     length = models.FloatField(
         blank= True,
         null= True,
-        help_text= "length of the vessel, in meters.",
+        help_text= "Length of the vessel, in meters.",
     )
     draft = models.FloatField(
         blank= True,
         null= True,
-        help_text= "maximum draft, in meters.",
+        help_text= "Maximum draft, in meters.",
     )
     tonnage = models.FloatField(
         blank= True,

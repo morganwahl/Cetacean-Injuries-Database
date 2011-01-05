@@ -46,7 +46,7 @@ class GearOwner(AbstractContact):
 
     missing_gear = models.TextField(
         blank= True,
-        help_text= u"the owner's description of what gear they're missing",
+        help_text= u"The owner's description of what gear they're missing.",
         verbose_name= "missing gear description",
     )
     
@@ -62,7 +62,7 @@ class Entanglement(Case):
         blank= True,
         null= True,
         verbose_name= "Gear Field No.",
-        help_text= "the gear-analysis-specific field no.",
+        help_text= "The gear-analysis-specific case ID.",
     )
     
     @classmethod
@@ -95,12 +95,12 @@ class Entanglement(Case):
         default= False,
         blank= True,
         null= True,
-        verbose_name= "was gear analyzed?",
+        verbose_name= "Was the gear analyzed?",
     )
     analyzed_date = models.DateField(
         blank= True,
         null= True,
-        help_text= "please use YYYY-MM-DD",
+        help_text= "Date the gear was analyzed. Please use YYYY-MM-DD",
     )
     analyzed_by = models.ForeignKey(
         Contact,
@@ -112,6 +112,7 @@ class Entanglement(Case):
         'GearType',
         blank= True,
         null= True,
+        help_text= "All the applicable gear types in the set of gear from this entanglement.",
     )
     
     gear_owner_info = models.OneToOneField(
@@ -140,27 +141,29 @@ class EntanglementObservation(Observation):
     anchored = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "was the animal anchored?",
+        verbose_name= 'anchored?'
+        help_text= "Was the animal anchored?",
     )
     gear_description = models.TextField(
         blank= True,
-        help_text= "describe physical characteristics of gear",
+        help_text= """Unambiguous description of the physical characteristics of gear. E.g. "a green line over attached to a buoy with a black stripe". Avoid trying to guess the gear's function e.g. "6-inch mesh" is better than "fishing net". Describe the way the gear is on the animal in the 'entanglement details' field.""",
     )
     gear_body_location = models.ManyToManyField(
         'BodyLocation',
         through= 'GearBodyLocation',
         blank= True,
         null= True,
-        help_text= "where on the animal's body was gear seen or not seen"
+        help_text= "Where on the animal's body was gear seen or not seen?"
     )
     entanglement_details = models.TextField(
         blank= True,
-        help_text= "details of how the animal was entangled",
+        help_text= "Detailed description of how the animal was entangled.",
     )
     gear_retrieved = models.NullBooleanField(
         blank= True,
         null= True,
-        help_text= "was gear removed from the animal for later analysis?"
+        verbose_name= 'gear retrieved?'
+        help_text= "Was gear removed from the animal for later analysis?"
     )
     disentanglement_outcome = models.CharField(
         max_length= 4,
