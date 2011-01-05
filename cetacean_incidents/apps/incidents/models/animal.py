@@ -115,7 +115,7 @@ class Animal(Documentable):
         max_length= 1,
         blank= True,
         choices= GENDERS,
-        verbose_name= 'sex'
+        verbose_name= 'sex',
         help_text= u"If the sex of this animal is known, fill it in here and it will then be the default for new observations of this animal.",
     )
 

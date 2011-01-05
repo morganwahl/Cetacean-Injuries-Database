@@ -258,7 +258,7 @@ class Observation(Documentable):
     documentation = models.NullBooleanField(
         blank= True,
         null= True,
-        verbose_name= 'documentation?'
+        verbose_name= 'documentation?',
         help_text= "Were any photos or videos taken?",
     )
     

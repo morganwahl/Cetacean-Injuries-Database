@@ -141,7 +141,7 @@ class EntanglementObservation(Observation):
     anchored = models.NullBooleanField(
         blank= True,
         null= True,
-        verbose_name= 'anchored?'
+        verbose_name= 'anchored?',
         help_text= "Was the animal anchored?",
     )
     gear_description = models.TextField(
@@ -162,7 +162,7 @@ class EntanglementObservation(Observation):
     gear_retrieved = models.NullBooleanField(
         blank= True,
         null= True,
-        verbose_name= 'gear retrieved?'
+        verbose_name= 'gear retrieved?',
         help_text= "Was gear removed from the animal for later analysis?"
     )
     disentanglement_outcome = models.CharField(
