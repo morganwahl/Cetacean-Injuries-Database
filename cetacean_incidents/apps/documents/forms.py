@@ -39,3 +39,24 @@ class RepositoryFileForm(DocumentForm):
     class Meta(DocumentForm.Meta):
         model = RepositoryFile
 
+class NewDocumentForm(forms.ModelForm):
+    
+    is_uploadedfile = forms.BooleanField(
+        required= False,
+        initial= False,
+        label= "Is it an uploaded file?",
+        help_text= "Do you want to upload a copy of this document?",
+    )
+    
+    class Meta:
+        model = Document
+    
+class NewUploadedFileForm(forms.ModelForm):
+    """
+    A form for UploadedFiles intended to be used along with NewDocumentForm.
+    """
+    
+    class Meta:
+        model = UploadedFile
+        exclude = NewDocumentForm.base_fields.keys()
+

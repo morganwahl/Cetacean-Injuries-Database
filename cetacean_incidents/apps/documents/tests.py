@@ -11,7 +11,7 @@ from os import path
 from utils import rand_string
 from models import upload_storage as fs
 from models import _repos_url, _repos_dir
-from models import Document, UploadedFile, RepositoryFile
+from models import DocumentType, Document, UploadedFile, RepositoryFile
 
 class UploadTestCase(TestCase):
     def test_fs(self):
@@ -62,6 +62,25 @@ class UploadedFileTestCase(TestCase):
         self.assertNotEqual(a.document_ptr.__class__, UploadedFile)
         self.assertEqual(a.document_ptr.specific_instance(), a)
         self.assertEqual(a.document_ptr.specific_instance().__class__, UploadedFile)
+    
+    def test_transmute(self):
+        
+        doctype = DocumentType.objects.create(name='transmuted')
+        doc = Document(
+            document_type = doctype,
+        )
+        doc.save()
+        uf = UploadedFile.transmute_document(
+            doc,
+            uploader=self.test_user,
+        )
+        uf.save()
+        self.assertEqual(uf.document_ptr_id, doc.id)
+        self.assertEqual(uf.document_ptr, doc)
+        self.assertEqual(uf.document_type, doc.document_type)
+        self.assertEqual(doc.uploadedfile, uf)
+        
+        self.assertRaises(ValueError, UploadedFile.transmute_document, doc, uploader=self.test_user)
 
 class RepositoryFileTestCase(TestCase):
 

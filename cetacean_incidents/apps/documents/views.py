@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
-from forms import DocumentModelForm, DocumentForm, UploadedFileForm, RepositoryFileForm
+from forms import DocumentForm, UploadedFileForm, RepositoryFileForm, NewDocumentForm, NewUploadedFileForm
 
 from models import Documentable, Document, UploadedFile, RepositoryFile
 
@@ -69,11 +69,11 @@ def add_document(request, documentable_id):
     
     obj = Documentable.objects.get(id=documentable_id).specific_instance()
     
+    # even though only one subclass of Document is listed here, this view is
+    # written with adding new ones in mind
     form_classes = {
-        'model': DocumentModelForm,
-        'document': DocumentForm,
-        'uploaded_file': UploadedFileForm,
-        'repository_file': RepositoryFileForm,
+        'document': NewDocumentForm,
+        'uploaded_file': NewUploadedFileForm,
     }
 
     form_kwargs = {}
@@ -85,38 +85,36 @@ def add_document(request, documentable_id):
     forms = {}
     
     if request.method == 'POST':
-        # we have to instantiate the 'model' form in order to know which other
+        # we have to instantiate the 'document' form in order to know which other
         # forms to bind
-        form_kwargs['model']['data'] = request.POST
-        forms['model'] = form_classes['model'](**form_kwargs['model'])
+        form_kwargs['document']['data'] = request.POST
+        forms['document'] = form_classes['document'](**form_kwargs['document'])
         # we only want to bind the forms the user acutally filled in
-        if forms['model'].is_valid():
-            st = forms['model'].cleaned_data['storage_type']
-            if st == 'Document':
-                submitted_name = 'document'
-            if st == 'UploadedFile':
-                submitted_name = 'uploaded_file'
+        if forms['document'].is_valid():
+            is_upload = forms['document'].cleaned_data['is_uploadedfile']
+            if is_upload:
+                form_kwargs['uploaded_file']['data'] = request.POST
                 form_kwargs['uploaded_file']['files'] = request.FILES
-            if st == 'RepositoryFile':
-                submitted_name = 'repository_file'
-            form_kwargs[submitted_name]['data'] = request.POST
-            
-            # instantiate all the forms in case there's an error in the one that
-            # was submitted
-            for name in ('document', 'uploaded_file', 'repository_file'):
-                forms[name] = form_classes[name](**form_kwargs[name])
+        
+        
+        # now instantiate the forms besides the 'document' form
+        for name in filter(lambda fn: fn != 'document', form_classes.keys()):
+            forms[name] = form_classes[name](**form_kwargs[name])
+        
+        if forms['document'].is_valid() and (not is_upload or (is_upload and forms['uploaded_file'].is_valid())):
+
+            document = forms['document'].save(commit=False)
+            document.attached_to = obj
+            document.save()
+            forms['document'].save_m2m()
+
+            if is_upload:
+                uploaded_file = UploadedFile.transmute_document(document, **forms['uploaded_file'].cleaned_data)
+                uploaded_file.uploader = request.user
+                uploaded_file.clean()
+                uploaded_file.save()
                 
-            # now check the submitted one 
-            if forms[submitted_name].is_valid():
-                document = forms[submitted_name].save(commit=False)
-                document.attached_to = obj
-                if submitted_name == 'uploaded_file':
-                    document.uploader = request.user
-                document.save()
-                forms[submitted_name].save_m2m()
-                
-                return redirect(obj)
-                
+            return redirect(obj)
     else: # request.method != 'POST'
         for name in form_classes.keys():
             forms[name] = form_classes[name](**form_kwargs[name])
@@ -125,7 +123,7 @@ def add_document(request, documentable_id):
     # select widget. TODO currently no way to pass in a custom Media to go with 
     # a custom template.
     template_media = Media(
-        js= (settings.JQUERY_FILE, 'radiohider.js'),
+        js= (settings.JQUERY_FILE, 'checkboxhider.js'),
     )
     media = reduce( lambda m, f: m + f.media, forms.values(), template_media)
 

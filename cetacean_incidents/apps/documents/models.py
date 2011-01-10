@@ -109,7 +109,30 @@ upload_storage = FileSystemStorage(
 )
 
 class UploadedFile(Document):
-
+    
+    # TODO this could be moved to Document itself
+    @classmethod
+    def transmute_document(cls, doc, **kwargs):
+        '''
+        Turns a Document instance that isn't already an instance of one of
+        Document's subclasses into an UploadedFile instance. Note that the given
+        document's fields are copied into the returned UploadedFile, so any
+        changes to the Document given will be overwritten when the UploadedFile
+        is saved.
+        '''
+        
+        if doc.specific_class() != Document:
+            raise ValueError
+        
+        new_args = {}
+        # TODO is this the correct Meta field to use? It doesn't include 
+        # ManyToMany fields, but that's actually what we want here.
+        for f in doc._meta.fields:
+            new_args[f.attname] = getattr(doc, f.attname)
+        new_args.update(kwargs)
+        
+        return UploadedFile(**new_args)
+    
     # this is so we can store the original filename and use arbitrary names
     # for the uploaded files
     name = models.CharField(
