@@ -39,7 +39,7 @@ class Animal(Documentable):
         unique= False, # Names aren't assigned by us, so leave open the
                        # posibility for duplicates
         max_length= 255,
-        help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
+        help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”. Separate multiple names with commas. This field is intended as a catch-all for animal identifiers besides the field number (which is stored separately).'
     )
     
     determined_dead_before = models.DateField(
