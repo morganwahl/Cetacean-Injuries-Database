@@ -35,6 +35,9 @@ class DocumentType(models.Model):
         return self.name
 
 class Specificable(models.Model):
+    
+    # TODO see InheritanceManager in 
+    # https://github.com/carljm/django-model-utils#readme
 
     def specific_class(self):
         return self.specific_instance().__class__

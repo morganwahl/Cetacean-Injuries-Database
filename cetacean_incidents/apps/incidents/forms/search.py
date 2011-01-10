@@ -139,9 +139,9 @@ class CaseSearchForm(forms.Form):
     case_type = forms.ChoiceField(
         choices= (
             ('', '<any>'),
+            ('c', 'Case'),
             ('e', 'Entanglement'),
             ('s', 'Shipstrike'),
-            ('c', 'Case'),
         ),
         required= False,
     )
