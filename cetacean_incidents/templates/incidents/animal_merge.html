@@ -7,11 +7,6 @@ This template is an amalgam of editing and viewing.
 
 {% block title %}{{ block.super }}: {{ destination }} [merging with {{ source }}] {% endblock %}
 
-{% block head %}
-{{ block.super }}
-{{ form.media }}
-{% endblock %}
-
 {% block ids-dl %}
 <dt><b>animal</b> names</dt><dd>merging {{ source.name|default:"<i>no name</i>" }} into {{ destination.name|default:"<i>no name</i>" }}</dd>
 <dt><b>animal</b> field numbers</dt><dd>merging {{ source.field_number|default:"<i>none</i>" }} into {{ destination.field_number|default:"<i>none</i>" }}</dd>

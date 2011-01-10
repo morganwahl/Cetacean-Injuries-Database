@@ -2,11 +2,6 @@
 
 {% block title %}{{ block.super }}: {{ animal }} [editing] {% endblock %}
 
-{% block head %}
-{{ block.super }}
-{{ all_media }}
-{% endblock %}
-
 {% block ids-dl %}
 {% with animal as a %}
 {% include "incidents/animal_ids_include.html" %}

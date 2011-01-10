@@ -82,6 +82,7 @@ def animal_search(request):
         "incidents/animal_search.html",
         {
             'form': form,
+            'media': form.media,
             'animal_list': animal_list,
             'animal_count': len(animal_list),
         },
@@ -175,7 +176,7 @@ def edit_animal(request, animal_id):
         {
             'animal': animal,
             'form': form,
-            'all_media': template_media + form.media
+            'media': template_media + form.media
         },
         context_instance= RequestContext(request),
     )
@@ -216,6 +217,7 @@ def animal_merge(request, destination_id, source_id=None):
             'destination': destination,
             'source': source,
             'form': form,
+            'media': form.media,
             'destination_fk_refs': map(
                 lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
                 form.destination_fk_refs

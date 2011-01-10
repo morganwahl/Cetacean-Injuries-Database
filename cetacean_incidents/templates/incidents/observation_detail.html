@@ -5,11 +5,6 @@
 {% load generic_field_display %}
 {% load taxon_extras %}
 
-{% block head %}
-{{ block.super }}
-{{ media }}
-{% endblock %}
-
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
 {% block header %}

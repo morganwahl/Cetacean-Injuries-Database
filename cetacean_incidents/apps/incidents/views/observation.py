@@ -256,7 +256,7 @@ def add_observation(
             'animal': animal,
             'case': case,
             'forms': forms,
-            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
         context_instance= RequestContext(request),
     )
@@ -485,7 +485,7 @@ def edit_observation(
             'case': case,
             'observation': observation,
             'forms': forms,
-            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
         context_instance= RequestContext(request),
     )

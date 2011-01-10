@@ -75,9 +75,14 @@ def _create_or_edit_contact(request, contact_id=None):
         if add_org:
             new_affiliations_formset = AffiliationsFormset()
     
+    media = form.media
+    if add_org:
+        media += new_affiliations_formset.media
+    
     context = {
         'contact': contact,
         'form': form,
+        'media': media,
     }
     if add_org:
         context['new_affiliations'] = new_affiliations_formset
@@ -135,6 +140,7 @@ def merge_contact(request, destination_id, source_id=None):
             'destination': destination,
             'source': source,
             'form': form,
+            'media': form.media,
             'destination_fk_refs': map(
                 lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
                 form.destination_fk_refs

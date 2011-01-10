@@ -1,11 +1,6 @@
 {% extends "base.html" %}
 {% load humanize %}
 
-{% block head %}
-{{ block.super }}
-{{ media }}
-{% endblock %}
-
 {% block header %}
 <div style="text-align:center;">{{ observations.count|intcomma }} observations in {{ cases.count|intcomma }} cases for {{ animals.count|intcomma }} animals</div>
 {% endblock %}

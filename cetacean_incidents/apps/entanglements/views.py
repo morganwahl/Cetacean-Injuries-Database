@@ -105,7 +105,7 @@ def add_gear_owner(request, entanglement_id):
         {
             'case': entanglement,
             'forms': forms,
-            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
         context_instance= RequestContext(request),
     )
@@ -192,7 +192,7 @@ def edit_gear_owner(request, entanglement_id):
         {
             'case': entanglement,
             'forms': forms,
-            'all_media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
         },
         context_instance= RequestContext(request),
     )

@@ -7,11 +7,6 @@ This template is an amalgam of editing and viewing.
 
 {% block title %}{{ block.super }}: {{ destination }} [merging with {{ source }}] {% endblock %}
 
-{% block head %}
-{{ block.super }}
-{{ form.media }}
-{% endblock %}
-
 {% block ids-dl %}
 <dt><b>contact</b> names</dt><dd>merging {{ source.name|default:"<i>no name</i>" }} into {{ destination.name|default:"<i>no name</i>" }}</dd>
 <dt><b>contact</b> local IDs</dt><dd>merging {{ source.id }} into {{ destination.id }}</dd>

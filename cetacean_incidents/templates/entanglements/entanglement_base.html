@@ -2,11 +2,6 @@
 {% load contact_extras %}
 {% load generic_field_display %}
 
-{% block head %}
-{{ block.super }}
-{{ media }}
-{% endblock %}
-
 {% block case_ids %}
 {% with case as c %}
 {% include "entanglements/entanglement_ids_include.html" %}

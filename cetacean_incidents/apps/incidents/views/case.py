@@ -146,6 +146,7 @@ def case_search(request, after_date=None, before_date=None):
         "incidents/case_search.html",
         {
             'form': form,
+            'media': form.media,
             'case_list': case_list,
             'case_count': len(case_list),
         },
