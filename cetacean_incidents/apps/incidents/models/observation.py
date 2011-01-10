@@ -46,17 +46,10 @@ class Observation(Documentable):
     programming easier, since they are logical sets of fields.
     '''
     
-    @property
-    def relevant_observation(self):
-        return self
-
     case = models.ForeignKey(
         'Case',
         help_text= 'the case that this observation is part of',
     )
-    @property
-    def relevant_case(self):
-        return self.case
     
     initial = models.BooleanField(
         default= False,
