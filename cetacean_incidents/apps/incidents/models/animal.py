@@ -41,7 +41,47 @@ class Animal(Documentable):
         max_length= 255,
         help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”. Separate multiple names with commas. This field is intended as a catch-all for animal identifiers besides the field number (which is stored separately).'
     )
+
+    def probable_taxon(self):
+        return probable_taxon(self.observation_set)
+    determined_taxon = models.ForeignKey(
+        Taxon,
+        blank= True,
+        null= True,
+        help_text= 'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
+    )
     
+    def taxon(self):
+        if self.determined_taxon:
+            return self.determined_taxon
+        probable_taxon = self.probable_taxon()
+        if probable_taxon:
+            return probable_taxon
+        return None
+    
+    def probable_gender(self):
+        return probable_gender(self.observation_set)
+    def get_probable_gender_display(self):
+        gender = self.probable_gender()
+        if gender is None:
+            return None
+        return [g[1] for g in GENDERS if g[0] == gender][0]
+    determined_gender = models.CharField(
+        max_length= 1,
+        blank= True,
+        choices= GENDERS,
+        verbose_name= 'determined sex',
+        help_text= u"If the sex of this animal is known, fill it in here and it will then be the default for new observations of this animal.",
+    )
+
+    def gender(self):
+        if self.determined_gender:
+            return self.determined_gender
+        probable_gender = self.probable_gender()
+        if probable_gender:
+            return probable_gender
+        return None
+
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
@@ -104,46 +144,6 @@ class Animal(Documentable):
             '-datetime_reported',
         )[0]
 
-    def probable_gender(self):
-        return probable_gender(self.observation_set)
-    def get_probable_gender_display(self):
-        gender = self.probable_gender()
-        if gender is None:
-            return None
-        return [g[1] for g in GENDERS if g[0] == gender][0]
-    determined_gender = models.CharField(
-        max_length= 1,
-        blank= True,
-        choices= GENDERS,
-        verbose_name= 'sex',
-        help_text= u"If the sex of this animal is known, fill it in here and it will then be the default for new observations of this animal.",
-    )
-
-    def gender(self):
-        if self.determined_gender:
-            return self.determined_gender
-        probable_gender = self.probable_gender()
-        if probable_gender:
-            return probable_gender
-        return None
-
-    def probable_taxon(self):
-        return probable_taxon(self.observation_set)
-    determined_taxon = models.ForeignKey(
-        Taxon,
-        blank= True,
-        null= True,
-        help_text= 'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
-    )
-    
-    def taxon(self):
-        if self.determined_taxon:
-            return self.determined_taxon
-        probable_taxon = self.probable_taxon()
-        if probable_taxon:
-            return probable_taxon
-        return None
-    
     def clean(self):
         if not self.field_number is None and self.field_number != '':
             # check that an existing animal doesn't already have this field_number

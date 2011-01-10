@@ -69,6 +69,11 @@ class Observation(Documentable):
         help_text= u"""Check if this observation corresponds to the ‘level a examination’ on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the condition should correspond to the "condition at examination", and the observer should correspond to the "examiner". Note that an observation can be both the ‘initial observation’ and the ‘examination’ (or neither).""",
     )
     
+    narrative = models.TextField(
+        blank= True,
+        help_text= "A complete description of the observation. No limit as to length. Ideally, all the other fields for an observation could be filled in after reading this."
+    )
+    
     observer = models.ForeignKey(
         Contact,
         blank= True,
@@ -96,12 +101,6 @@ class Observation(Documentable):
         help_text= 'the observer\'s location at the time of observation. (strictly, where did the observation begin)',
     )
     
-    ashore = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "Was the animal ashore? Pick 'yes' even if it came ashore during the observation.",
-    )
-
     @property
     def firsthand(self):
         if self.reporter is None and self.observer is None:
@@ -164,16 +163,6 @@ class Observation(Documentable):
         help_text= u"""The most specific taxon (e.g. a species) the animal is described as. Can be a vauge as an order or as specific as a subspecies or just unknown. Taxa are taken from the "Integrated Taxonomic Information System" (see itis.gov).""",
     )
 
-    gender = models.CharField(
-        max_length= 1,
-        choices= GENDERS,
-        blank= True,
-        help_text= 'The sex of this animal, if known.',
-        verbose_name = 'sex', # yes, it's not really verbose, but this is easier
-                              # than changing the name of the column in the 
-                              # database for now.
-    )
-    
     age_class = models.CharField(
         max_length= 2,
         blank= True,
@@ -185,6 +174,28 @@ class Observation(Documentable):
         help_text= u"""Note that these are somewhat subjective, and their definitions, if any, certainly depend on the animal's species. In general, ‘pup’ is a synonym for ‘calf’ and ‘sub-adult’ for ‘juvenile’.""",
     )
     
+    gender = models.CharField(
+        max_length= 1,
+        choices= GENDERS,
+        blank= True,
+        help_text= 'The sex of this animal, if known.',
+        verbose_name = 'sex', # yes, it's not really verbose, but this is easier
+                              # than changing the name of the column in the 
+                              # database for now.
+    )
+    
+    animal_description = models.TextField(
+        blank= True,
+        help_text= u"""Anything that would help identify the individual animal or it's species or age or sex, etc. Even if those are specified above, please note what that was on the basis of.""",
+    )
+    
+    ashore = models.NullBooleanField(
+        blank= True,
+        null= True,
+        verbose_name= "ashore?",
+        help_text= "Was the animal ashore? Pick 'yes' even if it came ashore during the observation.",
+    )
+
     # numeric codes (except 0) are from stranding spreadsheet. they're kept to
     # allow sorting.
     condition = models.IntegerField(
@@ -250,16 +261,34 @@ class Observation(Documentable):
         ''',
     )
     
-    animal_description = models.TextField(
+    # note that wounded is for injuries, 'wound_description' is for maladies in
+    # general
+    wounded = models.NullBooleanField(
         blank= True,
-        help_text= u"""Anything that would help identify the individual animal or it's species or age or sex, etc. Even if those are specified above, please note what that was on the basis of.""",
+        null= True,
+        default= None,
+        help_text= "were there any wounds? No means none were observered, Yes means they were, Unknown means we don't know whether any were observed or not.",
+        verbose_name= "wounds observed?",
     )
-    
+
+    wound_description = models.TextField(
+        blank= True,
+        verbose_name= 'body condition and wounds description',
+        help_text= "Note the general condition of the animal: is it emaciated, robust, where are there visible parasites, etc. Describe wounds, noting severity and location on the animal.",
+    )
+
     documentation = models.NullBooleanField(
         blank= True,
         null= True,
         verbose_name= 'documentation?',
         help_text= "Were any photos or videos taken?",
+    )
+    
+    tagged = models.NullBooleanField(
+        blank= True,
+        null= True,
+        help_text= "Were any tags put on the animal? If so, please note the tag ID's in the narrative.",
+        verbose_name= "was a tag put on the animal?",
     )
     
     biopsy = models.NullBooleanField(
@@ -274,33 +303,6 @@ class Observation(Documentable):
         null= True,
         help_text= "Were any genetic samples taken?",
         verbose_name= "genetic samples taken?",
-    )
-    
-    tagged = models.NullBooleanField(
-        blank= True,
-        null= True,
-        help_text= "Were any tags put on the animal? If so, please note the tag ID's in the narrative.",
-        verbose_name= "was a tag put on the animal?",
-    )
-    
-    # note that wounded is for injuries, 'wound_description' is for maladies in
-    # general
-    wounded = models.NullBooleanField(
-        blank= True,
-        null= True,
-        default= None,
-        help_text= "were there any wounds? No means none were observered, Yes means they were, Unknown means we don't know whether any were observed or not.",
-        verbose_name= "wounds observed?",
-    )
-    wound_description = models.TextField(
-        blank= True,
-        verbose_name= 'body condition and wounds description',
-        help_text= "Note the general condition of the animal: is it emaciated, robust, where are there visible parasites, etc. Describe wounds, noting severity and location on the animal.",
-    )
-    
-    narrative = models.TextField(
-        blank= True,
-        help_text= "A complete description of the observation. No limit as to length. Ideally, all the other fields for an observation could be filled in after reading this."
     )
     
     import_notes = models.TextField(
