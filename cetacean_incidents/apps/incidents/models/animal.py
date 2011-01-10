@@ -27,19 +27,19 @@ class AnimalManager(models.Manager):
         return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
 
 class Animal(Documentable):
+    field_number = models.CharField(
+        max_length= 255,
+        blank= True,
+        verbose_name= "stranding field number",
+        help_text= "The field number assigned to this animal by the stranding network. Left blank for animals with no number. If not blank, the field number must be unique to this animal.",
+    )
+
     name = models.CharField(
         blank= True,
         unique= False, # Names aren't assigned by us, so leave open the
                        # posibility for duplicates
         max_length= 255,
         help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”.'
-    )
-    
-    field_number = models.CharField(
-        max_length= 255,
-        blank= True,
-        verbose_name= "stranding field number",
-        help_text= "the field number assigned to this animal by the stranding network",
     )
     
     determined_dead_before = models.DateField(
@@ -145,21 +145,25 @@ class Animal(Documentable):
         return None
     
     def clean(self):
-        if not self.name is None and self.name != '':
-            # check that an existing animal doesn't already have this name
-            animals = Animal.objects.filter(name=self.name)
+        if not self.field_number is None and self.field_number != '':
+            # check that an existing animal doesn't already have this field_number
+            animals = Animal.objects.filter(field_number=self.field_number)
             if self.id:
                 animals = animals.exclude(id=self.id)
             if animals.count() > 0:
-                raise ValidationError("name '%s' is already in use by animal '%s'" % (self.name, unicode(animals[0])))
+                raise ValidationError("field number '%s' is already in use by animal '%s'" % (self.field_number, unicode(animals[0])))
 
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
 
     def __unicode__(self):
+        if self.field_number:
+            return self.field_number
         if self.name:
             return self.name
-        return "unnamed animal #%06d" % self.id
+        if self.id:
+            return "unnamed animal #%06d" % self.id
+        return "unnamed, unsaved animal"
     
     @models.permalink
     def get_absolute_url(self):
