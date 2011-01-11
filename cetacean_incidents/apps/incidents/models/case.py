@@ -304,6 +304,12 @@ class Case(Documentable, SeriousInjuryAndMortality):
         self.names = ','.join(new_names)
     names_list = property(_get_names_list,_put_names_iter)
 
+    def _get_name(self):
+        if self.names:
+            return self.names_list[-1]
+        return None
+    name = property(_get_name)
+
     def _get_names_set(self):
         return frozenset(self._get_names_list())
     names_set = property(_get_names_set,_put_names_iter)
@@ -453,13 +459,12 @@ class Case(Documentable, SeriousInjuryAndMortality):
         return probable_gender(self.observation_set)
     
     def __unicode__(self):
-        current_name = self.current_name()
-        if current_name is None:
+        if not self.name:
             if self.id:
                 return u"%s #%06d" % (self._meta.verbose_name.capitalize(), self.id)
             else:
                 return u"<new %s>" % (self._meta.verbose_name,)
-        return current_name
+        return self.name
 
     @models.permalink
     def get_absolute_url(self):
