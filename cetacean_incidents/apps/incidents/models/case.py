@@ -306,7 +306,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
     names_list = property(_get_names_list,_put_names_iter)
 
     def _get_name(self):
-        if self.names:
+        if self.names_list:
             return self.names_list[-1]
         return None
     def _set_name(self, new_name):
