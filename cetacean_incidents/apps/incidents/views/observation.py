@@ -206,8 +206,11 @@ def _change_incident(
             if not forms[form_name].is_valid():
                 raise _SomeValidationFailed(form_name, forms[form_name])
         
-        # don't worry about saving some models and not others. The transaction
-        # middleware will rollback any changes if an exception occurs
+        # Revisions should always correspond to transactions!
+        # Note that the TransactionMiddleware won't help us here, because the
+        # view doesn't throw an exception if there's an error.
+        @transaction.commit_on_success
+        @revision.create_on_success
         def _try_saving():
             _check('animal')
             if not 'animal' in model_instances:
@@ -342,10 +345,11 @@ def _change_incident(
                     observation.observer_vessel.save()
 
             additional_form_saving(forms, model_instances, _check, observation)
+            
+            return observation
 
         try:
-            _try_saving()
-            return redirect(observation)
+            return redirect(_try_saving())
         except _SomeValidationFailed as (formname, form):
             #print "error in form %s: %s" % (formname, unicode(form.errors))
             pass
