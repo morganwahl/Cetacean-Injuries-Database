@@ -309,7 +309,10 @@ class Case(Documentable, SeriousInjuryAndMortality):
         if self.names:
             return self.names_list[-1]
         return None
-    name = property(_get_name)
+    def _set_name(self, new_name):
+        if new_name != self.name:
+            self.names_list += [new_name]
+    name = property(_get_name, _set_name)
 
     def _get_names_set(self):
         return frozenset(self._get_names_list())
