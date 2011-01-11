@@ -331,28 +331,15 @@ def new_case(request, initial_animal_id=None):
             return add_entanglementobservation(
                 request,
                 animal_id= animal_id,
-                entanglement_id= None,
             )
 
         if case_type == 'Shipstrike':
             return add_shipstrikeobservation(
                 request,
                 animal_id= animal_id,
-                shipstrike_id= None,
             )
         
-        if case_type == 'Stranding':
-            return add_strandingobservation(
-                request,
-                animal_id= animal_id,
-                stranding_id= None,
-            )
-
-        return add_observation(
-            request,
-            animal_id= animal_id,
-            case_id= None,
-        )
+        return add_observation(request, animal_id=animal_id)
         
     template_media = Media()
     

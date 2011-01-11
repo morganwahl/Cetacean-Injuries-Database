@@ -38,14 +38,18 @@ def shipstrikeobservation_detail(request, shipstrikeobservation_id):
         context_instance= RequestContext(request),
     )
 
+# TODO merge with edit_shipstrikeobservation
 @login_required
 @permission_required('shipstrikes.change_shipstrike')
 @permission_required('shipstrikes.add_shipstrikeobservation')
 def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
-    def _try_saving(forms, check, observation):
-        if forms['observation'].cleaned_data['striking_vessel_info'] == True:
+    def _try_saving(forms, instances, check, observation):
+        if forms['observation'].cleaned_data['striking_vessel_info'] == False:
+            observation.striking_vessel = None
+            observation.save()
+        else: # there's striking_vessel data
             check('striking_vessel')
-            striking_vessel = forms['striking_vessel'].save(commit=False)
+            striking_vessel = forms['striking_vessel'].save()
             
             contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
             if request.user.has_perm('contacts.add_contact'):
@@ -74,10 +78,9 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
                 striking_vessel.captain = forms['striking_vessel'].cleaned_data['existing_captain']
             
             striking_vessel.save()
-            forms['striking_vessel'].save_m2m()
             observation.striking_vessel = striking_vessel
 
-    return add_observation(
+    return _change_incident(
         request,
         animal_id= animal_id,
         case_id= shipstrike_id,

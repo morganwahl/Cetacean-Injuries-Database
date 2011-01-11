@@ -221,25 +221,25 @@ def entanglementobservation_detail(request, entanglementobservation_id):
 @permission_required('entanglements.change_entanglement')
 @permission_required('entanglements.add_entanglementobservation')
 def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
-    return add_observation(
+    return _change_incident(
         request,
         animal_id= animal_id,
         case_id= entanglement_id,
         template= 'entanglements/add_entanglement_observation.html',
-        observationform_class= EntanglementObservationForm,
         caseform_class= EntanglementForm,
         addcaseform_class= AddEntanglementForm,
+        observationform_class= EntanglementObservationForm,
     )
 
 @login_required
 @permission_required('entanglements.change_entanglement')
 @permission_required('entanglements.change_entanglementobservation')
 def edit_entanglementobservation(request, entanglementobservation_id):
-    return edit_observation(
+    return _change_incident(
         request,
         observation_id = entanglementobservation_id,
         template= 'entanglements/edit_entanglement_observation.html',
-        observationform_class= EntanglementObservationForm,
         caseform_class= EntanglementForm,
+        observationform_class= EntanglementObservationForm,
     )
 
