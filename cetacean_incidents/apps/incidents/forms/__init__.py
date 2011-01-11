@@ -14,3 +14,5 @@ from search import (
     CaseSearchForm,
 )
 
+import tests
+
