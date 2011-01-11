@@ -22,6 +22,7 @@ class CaseManager(models.Manager):
         given. Takes into account the potential vagueness of observation dates.
         '''
         
+        raise NotImplementedError("CaseManager.same_timeframe not ported to multi-case observations")
         # collect all the observation dates
         obs_dates = map(lambda o: o.datetime_observed, Observation.objects.filter(case=case))
         sametime_q = models.Q()
@@ -316,6 +317,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
 
     def current_name(self):
         
+        raise NotImplementedError("Case.current_name not ported to multi-case observations")
         obs = Observation.objects.filter(case__id=self.id)
         # Cases with no obs yet don't get names
         if not obs.exists():
@@ -452,12 +454,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
         help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
     )
     
-    def probable_taxon(self):
-        return probable_taxon(self.observation_set)
-    
-    def probable_gender(self):
-        return probable_gender(self.observation_set)
-    
     def __unicode__(self):
         if not self.name:
             if self.id:
@@ -484,6 +480,7 @@ Case.observation_model = Observation
 # since adding a new Observation to a case could change things like case.date or
 # even assign yearly_number, we need to listen for Observation saves
 def _observation_post_save(sender, **kwargs):
+    raise NotImplementedError("_observation_post_save not ported to multicase")
     observation = kwargs['instance']
     observation.case.clean()
     observation.case.save()

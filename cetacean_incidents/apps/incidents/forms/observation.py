@@ -105,8 +105,8 @@ class ObservationForm(forms.ModelForm):
 
     class Meta:
         model = Observation
-        # the case for a new observation is set by the view. The one-to-one 
-        # relations shouldn't be shown.
-        exclude = ('case', 'location', 'observer_vessel')
+        # the animal and case(s) for a new observation is set by the view. The
+        # one-to-one relations shouldn't be shown.
+        exclude = ('animal', 'cases', 'location', 'observer_vessel')
 
 

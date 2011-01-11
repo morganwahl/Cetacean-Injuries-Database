@@ -42,8 +42,6 @@ class Animal(Documentable):
         help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”. Separate multiple names with commas. This field is intended as a catch-all for animal identifiers besides the field number (which is stored separately).'
     )
 
-    def probable_taxon(self):
-        return probable_taxon(self.observation_set)
     determined_taxon = models.ForeignKey(
         Taxon,
         blank= True,
@@ -51,6 +49,12 @@ class Animal(Documentable):
         help_text= 'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
     )
     
+    # observation_set is added to this class once Observation is initialized
+    # TODO still not the ideal way of doing this
+    def probable_taxon(self):
+        if hasattr(self, 'observation_set'):
+            return probable_taxon(self.observation_set)
+        return None
     def taxon(self):
         if self.determined_taxon:
             return self.determined_taxon
@@ -59,13 +63,6 @@ class Animal(Documentable):
             return probable_taxon
         return None
     
-    def probable_gender(self):
-        return probable_gender(self.observation_set)
-    def get_probable_gender_display(self):
-        gender = self.probable_gender()
-        if gender is None:
-            return None
-        return [g[1] for g in GENDERS if g[0] == gender][0]
     determined_gender = models.CharField(
         max_length= 1,
         blank= True,
@@ -74,6 +71,15 @@ class Animal(Documentable):
         help_text= u"If the sex of this animal is known, fill it in here and it will then be the default for new observations of this animal.",
     )
 
+    def probable_gender(self):
+        if hasattr(self, 'observation_set'):
+            return probable_gender(self.observation_set)
+        return None
+    def get_probable_gender_display(self):
+        gender = self.probable_gender()
+        if gender is None:
+            return None
+        return [g[1] for g in GENDERS if g[0] == gender][0]
     def gender(self):
         if self.determined_gender:
             return self.determined_gender
@@ -122,28 +128,6 @@ class Animal(Documentable):
         help_text= "If this animal is dead, what (if any) probable cause of mortality has been determined?",
     )
     
-    @property
-    def observation_set(self):
-        # TODO more elegant way to avoid circular imports here
-        from observation import Observation
-        return Observation.objects.filter(case__animal=self)
-    
-    def first_observation(self):
-        if not self.observation_set.count():
-            return None
-        return self.observation_set.order_by(
-            'datetime_observed',
-            'datetime_reported',
-        )[0]
-    
-    def last_observation(self):
-        if not self.observation_set.count():
-            return None
-        return self.observation_set.order_by(
-            '-datetime_observed',
-            '-datetime_reported',
-        )[0]
-
     def clean(self):
         if not self.field_number is None and self.field_number != '':
             # check that an existing animal doesn't already have this field_number

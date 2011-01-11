@@ -18,7 +18,7 @@ from cetacean_incidents.apps.vessels.models import VesselInfo
 
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-from animal import GENDERS
+from animal import GENDERS, Animal
 
 class ObservationManager(models.Manager):
 
@@ -46,9 +46,14 @@ class Observation(Documentable):
     programming easier, since they are logical sets of fields.
     '''
     
-    case = models.ForeignKey(
+    animal = models.ForeignKey(
+        'Animal',
+        help_text= 'The animal observed.',
+    )
+    
+    cases = models.ManyToManyField(
         'Case',
-        help_text= 'the case that this observation is part of',
+        help_text= 'The cases that this observation is relevant to.',
     )
     
     initial = models.BooleanField(
@@ -325,4 +330,38 @@ class Observation(Documentable):
     class Meta:
         app_label = 'incidents'
         ordering = ['datetime_observed', 'datetime_reported', 'id']
+
+# formerly on Animal:
+#
+#    @property
+#    def observation_set(self):
+#        # TODO more elegant way to avoid circular imports here
+#        from observation import Observation
+#        return Observation.objects.filter(case__animal=self)
+#
+#    def first_observation(self):
+#        if not self.observation_set.count():
+#            return None
+#        return self.observation_set.order_by(
+#            'datetime_observed',
+#            'datetime_reported',
+#        )[0]
+#   
+#    def last_observation(self):
+#        if not self.observation_set.count():
+#            return None
+#        return self.observation_set.order_by(
+#            '-datetime_observed',
+#            '-datetime_reported',
+#        )[0]
+
+def _get_obs_for_animal(a):
+    raise NotImplementedError("Animal.observation_set hasn't been ported to multicases yet.")
+Animal.observation_set = property(_get_obs_for_animal)
+def _get_first_observation_for_animal(a):
+    raise NotImplementedError("Animal.first_observation hasn't been ported to multicases yet.")
+Animal.first_observation = property(_get_first_observation_for_animal)
+def _get_last_observation_for_animal(a):
+    raise NotImplementedError("Animal.last_observation hasn't been ported to multicases yet.")
+Animal.last_observation = property(_get_last_observation_for_animal)
 
