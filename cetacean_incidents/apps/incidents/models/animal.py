@@ -85,9 +85,9 @@ class Animal(Documentable):
     determined_dead_before = models.DateField(
         blank= True,
         null= True,
-        verbose_name= "dead on or before", # no, not really verbose, but it's easier to 
-                                 # change this than to alter the fieldname in 
-                                 # the schema
+        verbose_name= "dead on or before", # no, not really verbose, but it's 
+                                           # easier to change this than to alter 
+                                           # the fieldname in the schema
         help_text= u"""\
             A date when the animal was certainly dead, as determined from the
             observations of this animal. If you're unsure of an exact date, just
