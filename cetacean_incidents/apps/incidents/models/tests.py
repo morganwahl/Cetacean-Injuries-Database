@@ -1,7 +1,11 @@
 from django.test import TestCase
 
+from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
+from cetacean_incidents.apps.taxons.models import Taxon
+
 from animal import Animal
 from case import Case
+from observation import Observation
 
 class CaseTestCase(TestCase):
     def setUp(self):
@@ -50,4 +54,31 @@ class CaseTestCase(TestCase):
         self.assertEquals(c.name, 'two')
         self.assertEquals(c.names_list, ['one', 'two', 'two', 'three', 'two'])
         self.assertEquals(c.names_set, set(['one', 'two', 'three']))
+        
+        self.assertEquals(c._current_name(), None)
+        
+        obs = Observation.objects.create(
+            animal = c.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        obs.cases.add(c)
+        
+        self.assertEquals(c._current_name(), '#%06d Case of Unknown taxon' % c.id)
+        
+        c.nmfs_id = 'NFMS 234'
+        self.assertEquals(c._current_name(), 'NFMS 234 Case of Unknown taxon')
+        
+        c.case_type = 'Balh'
+        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of Unknown taxon')
+        
+        t = Taxon.objects.create(
+            rank= 0,
+            name= 'Gensusis',
+        )
+        c.animal.determined_taxon = t
+        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of %s' % t.scientific_name())
+        
+        c.animal.field_number = '2008 E45RW'
+        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of %s 2008 E45RW' % t.scientific_name())
         
