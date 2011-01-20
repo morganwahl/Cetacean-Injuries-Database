@@ -22,6 +22,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
 from cetacean_incidents.apps.incidents.views import case_detail, edit_case, add_observation, edit_observation
+from cetacean_incidents.apps.incidents.views.observation import _change_incident
 
 from models import Entanglement, GearType, EntanglementObservation, BodyLocation, GearBodyLocation
 from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm

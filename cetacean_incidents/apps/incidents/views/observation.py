@@ -160,8 +160,8 @@ def _change_incident(
                 form_kwargs['observation']['initial'] = {}
         if taxon:
             form_kwargs['observation']['initial']['taxon'] = taxon
-        if gender:
-            form_kwargs['observation']['initial']['gender'] = gender
+        if sex:
+            form_kwargs['observation']['initial']['gender'] = sex
     if observation:
         if not 'initial' in form_kwargs['observation']:
             form_kwargs['observation']['initial'] = {}
