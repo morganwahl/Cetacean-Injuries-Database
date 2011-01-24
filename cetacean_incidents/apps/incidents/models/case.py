@@ -364,125 +364,156 @@ class Case(Documentable, SeriousInjuryAndMortality):
             self.name = new_name
             self.save()
     
-    # Case.name dependencies:
-    # Case.observation_set <- Observation.cases
-    # Case.date <- Case.observation_set <- Observation.cases
-    # "         <- Observation.datetime_observed
+    # Taxon fields that can affect Case._current_name
+    # Taxon.name -> Taxon.scientific_name -> Animal.taxon.scientific_name
+    # Taxon.rank -> Taxon.scientific_name -> "
+    # Taxon.supertaxon -> Taxon.scientific_name -> "
+    # Taxon.supertaxon -> Animal.probable_taxon -> Animal.taxon
+    @classmethod
+    def _taxon_post_save_update_name_handler(cls, sender, **kwargs):
+        # sender should be Taxon
+        
+        if kwargs['created']:
+            # a newly-created taxon can't have any references to it, so we don't
+            # need to update anything
+            return
+        
+        # any other change may have altered the taxon tree, which could change 
+        # Animal.probable_taxon, which could change Animal.taxon. Since we don't 
+        # know what the saved taxon's old supertaxon value was, we can't
+        # determine what cases need to have their names updated. Thus, check all
+        # cases for name updates
+        
+        for c in Case.objects.all():
+            c._update_name()
+    
+    @classmethod
+    def _taxon_post_delete_update_name_handler(cls, sender, **kwargs):
+        # sender should be Taxon
+        
+        # same problem detecting changes to the taxon tree as in taxon saves.
+        # just have to check every case
+        
+        for c in Case.objects.all():
+            c._update_name()
+    
+    # Animal fields that can affect Case._current_name
+    # Animal.determined_taxon
+    # Animal.field_number
+    @classmethod
+    def _animal_post_save_update_name_handler(cls, sender, **kwargs):
+        # sender should be Animal
+        
+        if kwargs['created']:
+            # a newly-created animal can't have any references to it, so we
+            # don't need to update anything
+            return
+        
+        # an animal's determined_taxon may have changed, which could change
+        # Animal.taxon, which would change Case.animal.taxon for all cases
+        # in Animal.case_set
+        a = kwargs['instance']
+        for c in a.case_set.all():
+            c._update_name()
+        
+    # Case fields that can affect Case._current_name
     # Case.nmfs_id
     # Case.current_yearnumber
-    # Case.current_yearnumber.year <- YearCaseNumber.year
-    # Case.current_yearnumber.number <- YearCaseNumber.number
-    # Case.yearly_number <- Case.current_yearnumber
-    # "                  <- Case.current_yearnumber.number <- YearCaseNumber.number
     # Case.id
     # Case.case_type
     # Case.animal
-    # Case.animal.taxon <- Animal.taxon <- Animal.determined_taxon
-    # "                 <- "            <- Animal.probable_taxon <- Animal.observation_set <- Observation.animal
-    # "                 <- "            <- "                     <- "                      <- Observation.taxon
-    # Case.animal.taxon.scientific_name <- Taxon.scientific_name <- Taxon.is_binomial
-    # "                                 <- "                     <- Taxon.supertaxon
-    # "                                 <- "                     <- Taxon.name
-    # "                                 <- "                     <- Taxon.rank
-    # Case.animal.field_number
+    @classmethod
+    def _case_post_save_update_name_handler(cls, sender, **kwargs):
+        # sender should be Case
+        
+        c = kwargs['instance']
+        c._update_name()
+
+    # YearCaseNumber fields that can affect Case._current_name
+    # YearCaseNumber.year -> Case.current_yearnumber.year
+    # YearCaseNumber.number -> Case.current_yearnumber.number
+    @classmethod
+    def _yearcasenumber_post_save_update_name_handler(cls, sender, **kwargs):
+        # sender should be YearCaseNumber
+
+        if kwargs['created']:
+            # a newly-created animal can't have any references to it, so we
+            # don't need to update anything
+            return
+        
+        ycn = kwargs['instance']
+        ycn.current._update_name()
     
-    # Connections:
-    # Taxon
-    #   animal_set
-    #   observation_set
-    #   supertaxon
-    #   suptaxa
-    # Animal
-    #   case_set
-    #   determined_taxon
-    #   observation_set
-    # Case
-    #   animal
-    #   current_yearnumber
-    #   observation_set
-    # YearCaseNumber
-    #   current
-    # Observation
-    #   animal
-    #   cases
-    #   taxon
+    # Observation fields that can affect Case._current_name
+    # Observation.case  # ManyToManyField!
+    # Observation.animal -> Animal.observation_set -> Animal.probable_taxon
+    # Observation.taxon -> Observation.animal.probable_taxon
+    # Observation.datetime_observed -> Case.date
+    @classmethod
+    def _observation_post_save_update_name_handler(cls, sender, **kwargs):
+        # sender should be Observation
+        
+        if kwargs['created']:
+        
+            cases = set()
+            
+            # the probable_taxon of the observation's animal may have changed,
+            # which could change the name of any case for the animal
+            
+            cases.update(observation.animal.case_set.all())
+            
+            # the Case.date of any cases this observation is associated with
+            # may have changed
+            cases.update(observation.case_set.all())
+            
+            for c in cases:
+                c._update_name()
+            
+        else:
+            # since the observation may previously been for any animal,
+            # and we don't know which one, any animal's probable_taxon may
+            # have changed, and we have to check every case
+            for c in Case.objects.all():
+                c._update_name()
+
+    @classmethod
+    def _observation_post_delete_update_name_handler(cls, sender, **kwargs):
+        # sender should be Observation
+        
+        # the probable_taxon of the observation's animal may have changed,
+        # which could change the name of any case for the animal
+        
+        cases.update(observation.animal.case_set.all())
+        
+        # the Case.date of any cases this observation is associated with
+        # may have changed
+        cases.update(observation.case_set.all())
+
+        for c in cases:
+            c._update_name()
     
     @classmethod
-    # see below for what this handler is connected to
-    def _update_name_signal_handler(cls, sender, **kwargs):
-        
-        # A Case's name can depend on _many_ other objects in the database.
-        
-        # we could use a more fine-grained approach, but this is easier to
-        # figure out.
-        
-        # TODO how to test?
+    def _observation_cases_m2m_changed_update_name_handler(cls, sender, **kwargs):  
+        # sender should be Observation.cases.through
+        action, reverse = kwargs['action'], kwargs['reverse']
+        if action in ('post_add', 'post_remove') and not reverse:
+            # cases were added to or removed from an observation
+            case_ids = kwargs['pk_set']
+            for c in Case.objects.filter(id__in=case_ids):
+                c._update_name()
+        if action == 'post_clear' and not reverse:
+            # an observation's cases were cleared
+            # we don't know what the cases used to be, so we just have to update
+            # everything
+            for c in Case.objects.all():
+                c._update_name()
 
-        # We're traversing many references and may come across the same 
-        # objects multiple time, so keep track of what all we've already seen
-        # here.
-        seen = set()
-        def _seen_check(process_func):
-            def wrapped_func(obj):
-                if obj is None:
-                    return
-                if obj in seen:
-                    return
-                seen.add(obj)
-                print "%s: %s" % (process_func.__name__, obj)
-                process_func(obj)
-            return wrapped_func
-        
-        @_seen_check
-        def _process_taxon(t):
-            for a in t.animal_set.all():
-                _process_animal(a)
-            for o in t.observation_set.all():
-                _process_observation(o)
-            _process_taxon(t.supertaxon)
-            for sub_t in t.subtaxa.all():
-                _process_taxon(sub_t)
-            
-        @_seen_check
-        def _process_animal(a):
-            for c in a.case_set.all():
-                _process_case(c)
-            _process_taxon(a.determined_taxon)
-            for o in a.observation_set.all():
-                _process_observation(o)
-        
-        @_seen_check
-        def _process_case(c):
-            _process_animal(c.animal)
-            _process_yearcasenumber(c.current_yearnumber)
-            for o in c.observation_set.all():
-                _process_observation(o)
+        if action in ('post_add', 'post_remove', 'post_clear') and reverse:
+            # observations were added to or removed from a case or a case's
+            # observations were cleared
+            case = kwargs['instance']
+            case._update_name()
 
-        @_seen_check
-        def _process_yearcasenumber(n):
-            for c in n.current.all():
-                _process_case(c)
-
-        @_seen_check
-        def _process_observation(o):
-            _process_animal(o.animal)
-            for c in o.cases.all():
-                _process_case(c)
-            _process_taxon(o.taxon)
-
-        {
-            Taxon: _process_taxon,
-            Animal: _process_animal,
-            Case: _process_case,
-            YearCaseNumber: _process_yearcasenumber,
-            Observation: _process_observation,
-        }[sender](kwargs['instance'])
-
-        for o in seen:
-            if isinstance(o, Case):
-                print "- checking %s" % o
-                o._update_name()
-        
     def _get_names_set(self):
         return frozenset(self._get_names_list())
     names_set = property(_get_names_set,_put_names_iter)
@@ -638,22 +669,47 @@ class YearCaseNumber(models.Model):
         app_label = 'incidents'
         ordering = ('year', 'number')
 
-# since adding a new Observation to a case could change things like 
-# case.current_name or even assign yearly_number, we need to listen for
-# Observation saves
-for sender in (Taxon, Animal, Case, YearCaseNumber, Observation):
-    models.signals.post_save.connect(
-        receiver= Case._update_name_signal_handler,
-        sender= sender,
-        dispatch_uid= 'case__update_name__%s__post_save' % sender,
-    )
-    models.signals.post_save.connect(
-        receiver= Case._update_name_signal_handler,
-        sender= sender,
-        dispatch_uid= 'case__update_name__%s__post_delete' % sender,
-    )
-    # TODO m2m_changed
-
 def _observation_post_save(sender, **kwargs):
     pass
+
+models.signals.post_save.connect(
+    sender= Taxon,
+    receiver= Case._taxon_post_save_update_name_handler,
+    dispatch_uid= 'case__update_name__taxon__post_save',
+)
+models.signals.post_delete.connect(
+    sender= Taxon,
+    receiver= Case._taxon_post_delete_update_name_handler,
+    dispatch_uid= 'case__update_name__taxon__post_delete',
+)
+models.signals.post_save.connect(
+    sender= Animal,
+    receiver= Case._animal_post_save_update_name_handler,
+    dispatch_uid= 'case__update_name__animal__post_save',
+)
+models.signals.post_save.connect(
+    sender= Case,
+    receiver= Case._case_post_save_update_name_handler,
+    dispatch_uid= 'case__update_name__case__post_save',
+)
+models.signals.post_save.connect(
+    sender= YearCaseNumber,
+    receiver= Case._yearcasenumber_post_save_update_name_handler,
+    dispatch_uid= 'case__update_name__yearcasenumber__post_save',
+)
+models.signals.post_save.connect(
+    sender= Observation,
+    receiver= Case._observation_post_save_update_name_handler,
+    dispatch_uid= 'case__update_name__observation__post_save',
+)
+models.signals.post_delete.connect(
+    sender= Observation,
+    receiver= Case._observation_post_delete_update_name_handler,
+    dispatch_uid= 'case__update_name__observation__post_delete',
+)
+models.signals.m2m_changed.connect(
+    sender= Observation.cases.through,
+    receiver= Case._observation_cases_m2m_changed_update_name_handler,
+    dispatch_uid= 'case__update_name__observation__m2m_changed',
+)
 
