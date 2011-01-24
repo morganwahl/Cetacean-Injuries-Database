@@ -18,5 +18,6 @@ from observation import (
     observation_detail,
     add_observation,
     edit_observation,
+    _change_incident,
 )
 

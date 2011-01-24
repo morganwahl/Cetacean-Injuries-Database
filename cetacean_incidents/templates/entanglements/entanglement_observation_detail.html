@@ -2,9 +2,9 @@
 {% load generic_field_display %}
 
 {% block case_ids %}
-{% with observation.case as c %}
+{% for c in observation.cases.all %}
 {% include "entanglements/entanglement_ids_include.html" %}
-{% endwith %}
+{% endfor %}
 {% endblock %}
 
 {% block edit_url %}{% url edit_entanglementobservation observation.id %}{% endblock %}

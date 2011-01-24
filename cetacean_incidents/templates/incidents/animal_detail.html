@@ -118,7 +118,6 @@
     <table class="sortable bordered">
         <thead>
             <tr>
-                <th>case</th>
                 <td class="sorttable_nosort"></td>
                 {# don't forget the observation-editing page can also change animals and cases #}
                 {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
@@ -133,7 +132,6 @@
         </thead>
         {% for o in animal.observation_set.all %}
         <tr>
-            <td sorttable_customkey="{{ o.case.date.year|default:9999 }}{{ o.case.yearly_number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">{% case_link o.case %}</td>
             {# don't forget the observation-editing page can also change animals and cases #}
             {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
             <td><a href="{{ o.specific_instance.get_edit_url }}#reporting"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>

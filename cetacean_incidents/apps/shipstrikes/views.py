@@ -17,7 +17,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
-from cetacean_incidents.apps.incidents.views import edit_case, add_observation, edit_observation
+from cetacean_incidents.apps.incidents.views import edit_case, _change_incident
 
 from models import Shipstrike, ShipstrikeObservation
 from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
