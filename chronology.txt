@@ -7,6 +7,7 @@ deleting a document should send you back to it's attach_to page
 add settings for Documents
 use graphviz to show relationships between Animals, Cases, and Observations
 make contacts that are in-use not delete-able
+use pre_delete signal to set refernces to a model to None
 add handy selectors for U.S. and Canada
 'federal waters' should include both territorial and EEZ
 add observation to shipstrike is adding a generic obs.
