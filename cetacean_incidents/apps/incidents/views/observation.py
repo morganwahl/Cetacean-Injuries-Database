@@ -85,7 +85,8 @@ def _change_incident(
     animal = None
     if not observation_id is None: # not a new observation
         observation = Observation.objects.get(id=observation_id).specific_instance()
-        case = observation.case.specific_instance()
+        # TODO some way of picking the case?
+        case = observation.cases.all()[0].specific_instance()
         animal = observation.animal
     elif not case_id is None:
         case = Case.objects.get(id=case_id).specific_instance()
@@ -176,7 +177,7 @@ def _change_incident(
             #else:
                 form_kwargs['observation']['initial']['new_observer'] = 'other'
         
-        if model_instances['observer_vessel'] and model_instances['observer_vessel'].contact:
+        if 'observer_vessel' in model_instances and model_instances['observer_vessel'].contact:
             # This causes unexpected behaviour when one sets 'new_reporter' to 
             # 'none'
             #if model_instances['observer_vessel'].contact == observation.reporter:
@@ -216,7 +217,7 @@ def _change_incident(
             if not 'animal' in model_instances:
                 animal = forms['animal'].save()
             else:
-                forms['animal'].save()
+                animal = forms['animal'].save()
             
             _check('case')
             if not 'case' in model_instances:
@@ -226,17 +227,20 @@ def _change_incident(
                 case.save()
                 forms['case'].save_m2m()
             else:
-                forms['case'].save()
+                case = forms['case'].save()
             
             _check('observation')
             if not 'observation' in model_instances: # if this is a new obs.
                 observation = forms['observation'].save(commit=False)
                 # TODO move this to ObservationForm.save?
-                observation.case = case
+                observation.animal = case.animal
                 observation.save()
                 forms['observation'].save_m2m()
+                observation.cases.add(case)
             else: # we're just editing this obs
                 observation = forms['observation'].save()
+                observation.animal = case.animal # in case case.animal changed
+                observation.save()
             
             if request.user.has_perm('contacts.add_contact'):
                 if forms['observation'].cleaned_data['new_reporter'] == 'new':

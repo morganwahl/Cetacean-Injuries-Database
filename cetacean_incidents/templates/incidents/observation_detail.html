@@ -8,11 +8,15 @@
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
 {% block header %}
-{% if observation.case.ole_investigation %}
+{% for c in observation.cases.all %}
+{% if c.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}
-<h2>{% animal_link observation.case.animal %}</h2>
-<h2 style="margin-left:1em;">{% case_link observation.case %}</h2>
+{% endfor %}
+<h2>{% animal_link observation.animal %}</h2>
+{% for c in observation.cases.all %}
+<h2 style="margin-left:1em;">{% case_link c %}</h2>
+{% endfor %}
 <h2 style="margin-left:2em;">{{ observation }}</h2>
 {# the observation-editing page change also change animals and cases #}
 {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
@@ -23,14 +27,18 @@
 {% endblock %}
 
 {% block ids-dl %}
-{% with observation.case.animal as a %}
+{% with observation.animal as a %}
 {% include "incidents/animal_ids_include.html" %}
 {% endwith %}
 <hr>
 {% block case_ids %}
-{% with observation.case as c %}
-{% include "incidents/case_ids_include.html" %}
-{% endwith %}
+<table class="layout">
+  <tr>
+    {% for c in observation.cases.all %}
+    <td>{% include "incidents/case_ids_include.html" %}</td>
+    {% endfor %}
+  </tr>
+</table>
 {% endblock %}
 <hr>
 {% with observation as o %}

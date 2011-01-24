@@ -25,7 +25,7 @@ class CaseManager(models.Manager):
         
         raise NotImplementedError("CaseManager.same_timeframe not ported to multi-case observations")
         # collect all the observation dates
-        obs_dates = map(lambda o: o.datetime_observed, Observation.objects.filter(case=case))
+        obs_dates = map(lambda o: o.datetime_observed, case.observation_set)
         sametime_q = models.Q()
         for date in obs_dates:
             sametime_q |= UncertainDateTimeField.get_sametime_q(date, 'observation__datetime_observed')
@@ -456,15 +456,16 @@ class Case(Documentable, SeriousInjuryAndMortality):
         if kwargs['created']:
         
             cases = set()
+            o = kwargs['instance']
             
             # the probable_taxon of the observation's animal may have changed,
             # which could change the name of any case for the animal
             
-            cases.update(observation.animal.case_set.all())
+            cases.update(o.animal.case_set.all())
             
             # the Case.date of any cases this observation is associated with
             # may have changed
-            cases.update(observation.case_set.all())
+            cases.update(o.cases.all())
             
             for c in cases:
                 c._update_name()
@@ -483,11 +484,14 @@ class Case(Documentable, SeriousInjuryAndMortality):
         # the probable_taxon of the observation's animal may have changed,
         # which could change the name of any case for the animal
         
-        cases.update(observation.animal.case_set.all())
+        cases = set()
+        o = kwargs['instance']
+        
+        cases.update(o.animal.case_set.all())
         
         # the Case.date of any cases this observation is associated with
         # may have changed
-        cases.update(observation.case_set.all())
+        cases.update(o.cases.all())
 
         for c in cases:
             c._update_name()
