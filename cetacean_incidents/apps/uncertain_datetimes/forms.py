@@ -78,8 +78,22 @@ class UncertainDateTimeWidget(forms.Widget):
             value[widget_name] = widget.value_from_datadict(data, files, name + '_%s' % widget_name)
         return value
     
-    def _has_changed(self, intial, data):
-        raise NotImplementedError("UncertainDateTimeWidget._has_changed")
+    def _has_changed(self, initial, data):
+        if initial.year != data['year']:
+            return True
+        if initial.month != data['month']:
+            return True
+        if initial.day != data['day']:
+            return True
+        if initial.hour != data['hour']:
+            return True
+        if initial.minute != data['minute']:
+            return True
+        if initial.second != data['second']:
+            return True
+        if initial.microsecond != data['microsecond']:
+            return True
+        return False
 
     def decompress(self, value):
         if not value:
