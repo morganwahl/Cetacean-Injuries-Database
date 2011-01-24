@@ -16,38 +16,6 @@ from ..utils import probable_gender
 from animal import Animal
 from observation import Observation
 
-class CaseManager(models.Manager):
-    def same_timeframe(self, case):
-        '''\
-        Returns cases that _may_ have been happening at the same time as the one
-        given. Takes into account the potential vagueness of observation dates.
-        '''
-        
-        raise NotImplementedError("CaseManager.same_timeframe not ported to multi-case observations")
-        # collect all the observation dates
-        obs_dates = map(lambda o: o.datetime_observed, case.observation_set)
-        sametime_q = models.Q()
-        for date in obs_dates:
-            sametime_q |= UncertainDateTimeField.get_sametime_q(date, 'observation__datetime_observed')
-        
-        return Case.objects.filter(sametime_q)
-        
-    def associated_cases(self, case):
-        '''\
-        Given a case, return a list of _other_ cases that may be relevant to it.
-        This includes cases in the same timeframe that are either for the same
-        animal or have nearby coordinates.
-        '''
-        
-        # TODO nearby coords
-        
-        result = self.same_timeframe(case).filter(animal=case.animal).exclude(id=case.id)
-        
-        # oracle workaround
-        result = set(result)
-        
-        return result
-
 # TODO there's probably a way to get a list of all the subclasses,
 # but for now we'll just collected them ourselves.
 class CaseMeta(models.Model.__metaclass__):
@@ -633,8 +601,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
     
     def get_edit_url(self):
         return reverse('edit_case', args=[self.id])
-
-    objects = CaseManager()
 
     class Meta:
         app_label = 'incidents'
