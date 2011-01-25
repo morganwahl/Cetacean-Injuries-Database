@@ -97,25 +97,29 @@ class EntanglementTestCase(TestCase):
         )
 
     def test_gear_recovered(self):
-        e = Entanglement.objects.create(animal=Animal.objects.create())
+        a = Animal.objects.create()
+        e = Entanglement.objects.create(animal=a)
         true_obv = EntanglementObservation.objects.create(
-            case= e,
+            animal= a,
             datetime_observed= UncertainDateTime(year=2000),
             datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= True,
         )
+        true_obv.cases.add(e)
         false_obv = EntanglementObservation.objects.create(
-            case= e,
+            animal= a,
             datetime_observed= UncertainDateTime(year=2000),
             datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= False,
         )
+        false_obv.cases.add(e)
         none_obv = EntanglementObservation.objects.create(
-            case= e,
+            animal= a,
             datetime_observed= UncertainDateTime(year=2000),
             datetime_reported= UncertainDateTime(year=2000),
             gear_retrieved= None,
         )
+        none_obv.cases.add(e)
         self.assertEqual(
             e.gear_retrieved,
             True,
