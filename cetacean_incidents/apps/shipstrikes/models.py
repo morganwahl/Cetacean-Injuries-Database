@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
+from cetacean_incidents.apps.incidents.models import Case, Observation
 
 class StrikingVesselInfo(VesselInfo):
     length = models.FloatField(
@@ -70,7 +70,4 @@ class ShipstrikeObservation(Observation):
         return reverse('edit_shipstrikeobservation', args=[self.id])
 
 Shipstrike.observation_model = ShipstrikeObservation
-
-# TODO how to inherit signal handlers?
-models.signals.post_save.connect(_observation_post_save, sender=ShipstrikeObservation)
 

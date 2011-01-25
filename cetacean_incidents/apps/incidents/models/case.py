@@ -639,9 +639,6 @@ class YearCaseNumber(models.Model):
         app_label = 'incidents'
         ordering = ('year', 'number')
 
-def _observation_post_save(sender, **kwargs):
-    pass
-
 models.signals.post_save.connect(
     sender= Taxon,
     receiver= Case._taxon_post_save_update_name_handler,

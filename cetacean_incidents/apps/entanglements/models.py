@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.locations.models import Location
-from cetacean_incidents.apps.incidents.models import Case, Observation, _observation_post_save
+from cetacean_incidents.apps.incidents.models import Case, Observation
 from cetacean_incidents.apps.dag.models import DAGEdge_factory, DAGNode_factory
 
 class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
@@ -186,9 +186,6 @@ class EntanglementObservation(Observation):
         return reverse('edit_entanglementobservation', args=[self.id])
 
 Entanglement.observation_model = EntanglementObservation
-
-# TODO how to inherit signal handlers?
-models.signals.post_save.connect(_observation_post_save, sender=EntanglementObservation)
 
 class BodyLocation(models.Model):
     '''\
