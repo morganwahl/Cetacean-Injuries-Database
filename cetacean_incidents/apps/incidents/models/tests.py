@@ -55,7 +55,17 @@ class CaseTestCase(TestCase):
         self.assertEquals(c.names_list, ['one', 'two', 'two', 'three', 'two'])
         self.assertEquals(c.names_set, set(['one', 'two', 'three']))
         
+        c.name = '5'
+        self.assertEquals(c.name, '5')
+        self.assertEquals(c.names_list, ['one', 'two', 'two', 'three', 'two', '5'])
+        self.assertEquals(c.names_set, set(['one', 'two', 'three', '5']))
+        
+        c.names = ''
+
         self.assertEquals(c._current_name(), None)
+        
+        c.save()
+        self.assertEquals(c.name, c._current_name())
         
         obs = Observation.objects.create(
             animal = c.animal,
@@ -63,22 +73,41 @@ class CaseTestCase(TestCase):
             datetime_reported= UncertainDateTime(2011),
         )
         obs.cases.add(c)
+        # update c
+        c = Case.objects.get(id=c.id)
         
-        self.assertEquals(c._current_name(), '#%06d Case of Unknown taxon' % c.id)
+        self.assertEquals(c._current_name(), '2011#%d (2011) Case of Unknown taxon' % c.current_yearnumber.number)
+        self.assertEquals(c.name, c._current_name())
+        
+        obs.datetime_observed = UncertainDateTime(2011, 7)
+        obs.save()
+        c = Case.objects.get(id=c.id)
+        self.assertEquals(c._current_name(), '2011#%d (2011-07) Case of Unknown taxon' % c.current_yearnumber.number)
+        self.assertEquals(c.name, c._current_name())
         
         c.nmfs_id = 'NFMS 234'
-        self.assertEquals(c._current_name(), 'NFMS 234 Case of Unknown taxon')
+        self.assertEquals(c._current_name(), 'NFMS 234 (2011-07) Case of Unknown taxon')
+        c.save()
+        self.assertEquals(c.name, c._current_name())
         
         c.case_type = 'Balh'
-        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of Unknown taxon')
+        self.assertEquals(c._current_name(), 'NFMS 234 (2011-07) Case (Balh) of Unknown taxon')
+        c.save()
+        self.assertEquals(c.name, c._current_name())
         
         t = Taxon.objects.create(
             rank= 0,
             name= 'Gensusis',
         )
         c.animal.determined_taxon = t
-        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of %s' % t.scientific_name())
+        self.assertEquals(c._current_name(), 'NFMS 234 (2011-07) Case (Balh) of %s' % t.scientific_name())
+        c.animal.save()
+        c = Case.objects.get(id=c.id)
+        self.assertEquals(c.name, c._current_name())
         
         c.animal.field_number = '2008 E45RW'
-        self.assertEquals(c._current_name(), 'NFMS 234 Case (Balh) of %s 2008 E45RW' % t.scientific_name())
+        self.assertEquals(c._current_name(), 'NFMS 234 (2011-07) Case (Balh) of %s 2008 E45RW' % t.scientific_name())
+        c.animal.save()
+        c = Case.objects.get(id=c.id)
+        self.assertEquals(c.name, c._current_name())
         

@@ -273,6 +273,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
             return None
 
         date = self.date(obs)
+
         s = {}
         
         # if there's a NMFS ID use that
@@ -289,6 +290,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
         else:
             s['case_id'] = "#%06d" % self.id
         
+        s['date'] = date.to_unicode(unknown_char=None, time=False)
+        
         s['case_type'] = 'Case'
         if self.case_type != 'Case':
             s['case_type'] += ' (%s)' % self.case_type
@@ -299,23 +302,23 @@ class Case(Documentable, SeriousInjuryAndMortality):
         else:
             s['taxon'] = u'Unknown taxon'
             
-        name = u"%(case_id)s %(case_type)s of %(taxon)s" % s
+        name = u"%(case_id)s (%(date)s) %(case_type)s of %(taxon)s" % s
         
         if self.animal.field_number:
             name += ' %s' % self.animal.field_number
+        
+        # ensure the name doesn't contain commas
+        name = name.replace(',',';')
 
         return name
-
+    
+    # names_list is intentially read-only, so that it can only be modified via
+    # _set_name
     def _get_names_list(self):
         if self.names is None:
             return []
         return filter(lambda x: x != '', self.names.split(','))
-    def _put_names_iter(self, new_names):
-        # TODO should the names-set be the union of the one passed and the
-        # current one? This makes sense because once assigned, names should
-        # never be removed. But, do we want to enforce that at this level?
-        self.names = ','.join(new_names)
-    names_list = property(_get_names_list,_put_names_iter)
+    names_list = property(_get_names_list)
 
     def _get_name(self):
         if self.names_list:
@@ -323,15 +326,23 @@ class Case(Documentable, SeriousInjuryAndMortality):
         return None
     def _set_name(self, new_name):
         if new_name != self.name:
-            self.names_list += [new_name]
+            if self.names is None or self.names == '':
+                self.names = new_name
+            else:
+                self.names += ',' + new_name
 
     name = property(_get_name, _set_name)
     
+    # names_set is intentially read-only, so that it can only be modified via
+    # _set_name
+    def _get_names_set(self):
+        return frozenset(self._get_names_list())
+    names_set = property(_get_names_set)
+    
     def _update_name(self):
-        new_name = self._current_name()
-        if new_name != self.name:
-            self.name = new_name
-            self.save()
+        # TODO is this the best way to do this?
+        self.save()
+        return
     
     # Taxon fields that can affect Case._current_name
     # Taxon.name -> Taxon.scientific_name -> Animal.taxon.scientific_name
@@ -391,12 +402,14 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # Case.id
     # Case.case_type
     # Case.animal
-    @staticmethod
-    def _case_post_save_update_name_handler(sender, **kwargs):
-        # sender should be Case
-        
-        c = kwargs['instance']
-        c._update_name()
+    # updating a Case's name on save is handled in Case.save()
+    
+    #@staticmethod
+    #def _case_post_save_update_name_handler(sender, **kwargs):
+    #    # sender should be Case
+    #    
+    #    c = kwargs['instance']
+    #    c._update_name()
 
     # YearCaseNumber fields that can affect Case._current_name
     # YearCaseNumber.year -> Case.current_yearnumber.year
@@ -490,16 +503,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
             case = kwargs['instance']
             case._update_name()
 
-    def _get_names_set(self):
-        return frozenset(self._get_names_list())
-    names_set = property(_get_names_set,_put_names_iter)
-    
-    def past_names_set(self):
-        return self.names_set - set([self.current_name()])
-    
-    def past_names_list(self):
-        return filter(lambda name: name != self.current_name(), self.names_list)
-    
     def date(self, obs=None):
         '''\
         obs is a queryset of observations. it defaults to this case's
@@ -581,6 +584,11 @@ class Case(Documentable, SeriousInjuryAndMortality):
                 self.current_yearnumber = _new_yearcasenumber()
                 super(Case, self).save(*args, **kwargs)
         
+        new_name = self._current_name()
+        if new_name != self.name:
+            self.name = new_name
+            super(Case, self).save(*args, **kwargs)
+
     case_type = models.CharField(
         max_length= 512,
         default= 'Case',
@@ -659,11 +667,6 @@ models.signals.post_save.connect(
     sender= Animal,
     receiver= Case._animal_post_save_update_name_handler,
     dispatch_uid= 'case__update_name__animal__post_save',
-)
-models.signals.post_save.connect(
-    sender= Case,
-    receiver= Case._case_post_save_update_name_handler,
-    dispatch_uid= 'case__update_name__case__post_save',
 )
 models.signals.post_save.connect(
     sender= YearCaseNumber,
