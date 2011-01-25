@@ -259,7 +259,7 @@ def itis_search(request):
         
         common_names = []
         for name in o.commonNameList.commonNames:
-            if name:
+            if len(name):
                 if name.language == 'English':
                     common_names.append(unicode(name.commonName))
         taxon.common_names = ', '.join(common_names)
@@ -393,7 +393,7 @@ def add_taxon(tsn):
     common_names = []
     for name in common_names_elements:
         name = objectify.fromstring(etree.tostring(name))
-        if not name:
+        if not len(name):
             continue
         if name.language != "English":
             continue
