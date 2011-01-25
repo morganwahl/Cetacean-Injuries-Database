@@ -307,6 +307,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
         return name
 
     def _get_names_list(self):
+        if self.names is None:
+            return []
         return filter(lambda x: x != '', self.names.split(','))
     def _put_names_iter(self, new_names):
         # TODO should the names-set be the union of the one passed and the
