@@ -1,11 +1,11 @@
 {# assumes a case has is 'c' and outputs a series of <dt><dd> pairs #}
 {% if c.names %}
-<dt><b>case</b> current name</dt><dd>{{ c.current_name|default:"<i>none</i>" }}</dd>
-{% if c.past_names_set %}
-<dt><b>case</b> past names</dt>
+<dt><b>case</b> current name</dt><dd>{{ c.name|default:"<i>none</i>" }}</dd>
+{% if c.names %}
+<dt><b>case</b> names_list</dt>
 <dd>
-    {% for past_name in c.past_names_set %}
-    {{ past_name }}<br>
+    {% for name in c.names_list %}
+    {{ name }}<br>
     {% endfor %}
 </dd>
 {% endif %}
