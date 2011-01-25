@@ -132,11 +132,11 @@ class EntanglementObservationForm(ObservationForm):
             subform_kwargs = {}
 
             initial_data = {}
-            initial_data['location'] = loc.pk
-            obs_pk = self.initial.get('pk', None)
-            if not obs_pk is None:
-                initial_data['observation'] = obs_pk
-                instance = GearBodyLocation.objects.filter(observation=obs_pk, location=loc.pk)
+            initial_data['location'] = loc.id
+            obs_id = self.initial.get('id', None)
+            if not obs_id is None:
+                initial_data['observation'] = obs_id
+                instance = GearBodyLocation.objects.filter(observation__id=obs_id, location__id=loc.id)
                 if instance.exists():
                     instance = instance[0]
                     subform_kwargs['instance'] = instance
