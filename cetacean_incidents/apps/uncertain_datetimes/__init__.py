@@ -273,7 +273,7 @@ class UncertainDateTime(object):
 
         return format.format(self)
     
-    def __unicode__(self, unknown_char='?', seconds=True, microseconds=True):
+    def to_unicode(self, unknown_char='?', time=True, seconds=True, microseconds=True):
         format = u''
 
         if unknown_char is not None:
@@ -291,6 +291,14 @@ class UncertainDateTime(object):
             
             if not (format == '' or self.hour is None):
                 format += ' '
-            
-        return format.format(self) + self.time_unicode(unknown_char, seconds, microseconds)
-
+        
+        result = format.format(self)
+        
+        if time:
+            result += self.time_unicode(unknown_char, seconds, microseconds)
+        
+        return result
+    
+    def __unicode__(self):
+        return self.to_unicode(unknown_char=None)
+        

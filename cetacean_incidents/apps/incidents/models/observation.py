@@ -319,7 +319,7 @@ class Observation(Documentable):
     def __unicode__(self):
         ret = 'observation '
         if self.datetime_observed:
-            ret += "at %s " % self.datetime_observed.__unicode__(unknown_char=None)
+            ret += "at %s " % self.datetime_observed.to_unicode(unknown_char=None)
         if self.observer:
             ret += "by %s " % self.observer
         ret += ( "(#%06d)" % self.id if self.id else "(unsaved!)" )

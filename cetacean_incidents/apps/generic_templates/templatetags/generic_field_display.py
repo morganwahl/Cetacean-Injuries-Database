@@ -73,7 +73,7 @@ def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
             template_name = 'bigtext_row'
         if isinstance(field, UncertainDateTimeField):
             template_name = 'uncertain_datetime_row'
-            context['value'] = context['value'].__unicode__(unknown_char=None, seconds=False)
+            context['value'] = context['value'].to_unicode(unknown_char=None, seconds=False)
     
     context.update(kwargs)
     

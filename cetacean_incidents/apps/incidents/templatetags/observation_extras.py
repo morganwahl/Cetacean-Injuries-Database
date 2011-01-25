@@ -23,6 +23,6 @@ def datetime_observed_display(dt):
     '''
     
     if dt:
-        return dt.__unicode__(unknown_char=None, seconds=False)
+        return dt.to_unicode(unknown_char=None, seconds=False)
     return ''
 
