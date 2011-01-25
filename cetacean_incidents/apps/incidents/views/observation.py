@@ -189,11 +189,12 @@ def _change_incident(
                 form_kwargs['observer_vessel']['initial']['existing_contact'] = model_instances['observer_vessel'].contact.id
     
     for name, initials in additional_form_initials.items():
-        if name in form_kwargs and 'initial' in form_kwargs[name]:
-            form_kwargs[form_name]['initial'].update(initials)
-        else:
-            form_kwargs[form_name]['initial'] = initials
-    
+        if not name in form_kwargs:
+            form_kwargs[name] = {}
+        if not 'initial' in form_kwargs[name]:
+            form_kwargs[name]['initial'] = {}
+        form_kwargs[name]['initial'].update(initials)
+        
     ### Finally, we instantiate the forms
     forms = {}
     for name, cls in form_classes.items():
