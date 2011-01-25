@@ -170,7 +170,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
 
             observation.striking_vessel.save()
     
-    return edit_observation(
+    return _change_incident(
         request,
         observation_id= shipstrikeobservation_id,
         template= 'shipstrikes/edit_shipstrike_observation.html',
