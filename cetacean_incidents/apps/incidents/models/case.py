@@ -410,7 +410,10 @@ class Case(Documentable, SeriousInjuryAndMortality):
             return
         
         ycn = kwargs['instance']
-        ycn.current._update_name()
+        # ycn.current should only have one case in it, but we'll loop over it
+        # just in case
+        for c in ycn.current.all():
+            c._update_name()
     
     # Observation fields that can affect Case._current_name
     # Observation.case  # ManyToManyField!
@@ -571,10 +574,12 @@ class Case(Documentable, SeriousInjuryAndMortality):
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
                     self.current_yearnumber = new_year_case_number
+                    super(Case, self).save(*args, **kwargs)
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-    
+                super(Case, self).save(*args, **kwargs)
+        
     case_type = models.CharField(
         max_length= 512,
         default= 'Case',
