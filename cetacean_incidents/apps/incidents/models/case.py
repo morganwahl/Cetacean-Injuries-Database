@@ -337,8 +337,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # Taxon.rank -> Taxon.scientific_name -> "
     # Taxon.supertaxon -> Taxon.scientific_name -> "
     # Taxon.supertaxon -> Animal.probable_taxon -> Animal.taxon
-    @classmethod
-    def _taxon_post_save_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _taxon_post_save_update_name_handler(sender, **kwargs):
         # sender should be Taxon
         
         if kwargs['created']:
@@ -355,8 +355,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
         for c in Case.objects.all():
             c._update_name()
     
-    @classmethod
-    def _taxon_post_delete_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _taxon_post_delete_update_name_handler(sender, **kwargs):
         # sender should be Taxon
         
         # same problem detecting changes to the taxon tree as in taxon saves.
@@ -368,8 +368,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # Animal fields that can affect Case._current_name
     # Animal.determined_taxon
     # Animal.field_number
-    @classmethod
-    def _animal_post_save_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _animal_post_save_update_name_handler(sender, **kwargs):
         # sender should be Animal
         
         if kwargs['created']:
@@ -390,8 +390,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # Case.id
     # Case.case_type
     # Case.animal
-    @classmethod
-    def _case_post_save_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _case_post_save_update_name_handler(sender, **kwargs):
         # sender should be Case
         
         c = kwargs['instance']
@@ -400,8 +400,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # YearCaseNumber fields that can affect Case._current_name
     # YearCaseNumber.year -> Case.current_yearnumber.year
     # YearCaseNumber.number -> Case.current_yearnumber.number
-    @classmethod
-    def _yearcasenumber_post_save_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _yearcasenumber_post_save_update_name_handler(sender, **kwargs):
         # sender should be YearCaseNumber
 
         if kwargs['created']:
@@ -417,8 +417,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
     # Observation.animal -> Animal.observation_set -> Animal.probable_taxon
     # Observation.taxon -> Observation.animal.probable_taxon
     # Observation.datetime_observed -> Case.date
-    @classmethod
-    def _observation_post_save_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _observation_post_save_update_name_handler(sender, **kwargs):
         # sender should be Observation
         
         if kwargs['created']:
@@ -445,8 +445,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
             for c in Case.objects.all():
                 c._update_name()
 
-    @classmethod
-    def _observation_post_delete_update_name_handler(cls, sender, **kwargs):
+    @staticmethod
+    def _observation_post_delete_update_name_handler(sender, **kwargs):
         # sender should be Observation
         
         # the probable_taxon of the observation's animal may have changed,
@@ -464,8 +464,8 @@ class Case(Documentable, SeriousInjuryAndMortality):
         for c in cases:
             c._update_name()
     
-    @classmethod
-    def _observation_cases_m2m_changed_update_name_handler(cls, sender, **kwargs):  
+    @staticmethod
+    def _observation_cases_m2m_changed_update_name_handler(sender, **kwargs):  
         # sender should be Observation.cases.through
         action, reverse = kwargs['action'], kwargs['reverse']
         if action in ('post_add', 'post_remove') and not reverse:
