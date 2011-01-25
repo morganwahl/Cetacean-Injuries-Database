@@ -22,5 +22,7 @@ def datetime_observed_display(dt):
     Returns the HTML for displaying a UncertainDateTime from an Observation
     '''
     
-    return dt.__unicode__(unknown_char=None, seconds=False)
+    if dt:
+        return dt.__unicode__(unknown_char=None, seconds=False)
+    return ''
 

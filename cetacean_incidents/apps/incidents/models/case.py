@@ -328,7 +328,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
     def _update_name(self):
         new_name = self._current_name()
         if new_name != self.name:
-            print "! print changing %s to %s" % (self.name, new_name)
             self.name = new_name
             self.save()
     

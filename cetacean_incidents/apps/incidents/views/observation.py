@@ -118,7 +118,7 @@ def _change_incident(
     }
     
     # if we're adding a new case, there's no point in having an animal field
-    # for it. that would also makes the page non-functional if we're adding a
+    # for it. that would also make the page non-functional if we're adding a
     # new animal.
     if case is None:
         form_classes['case'] = addcaseform_class
