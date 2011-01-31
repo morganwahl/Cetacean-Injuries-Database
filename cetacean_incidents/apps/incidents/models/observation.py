@@ -331,3 +331,30 @@ class Observation(Documentable):
         app_label = 'incidents'
         ordering = ['datetime_observed', 'datetime_reported', 'id']
 
+class ObservationExtension(models.Model):
+    '''\
+    Classes that want to add sets of fields to Observations can subclass this.
+    E.g. entanglement-specific fields (which will only be needed if an
+    Observation is relevant to an Entanglement Case) can be put in a subclass of
+    this. It doesn't make sense to subclass Observation for that, since an
+    Observation instance may have multiple ObservationExtensions that go with
+    it.
+    '''
+    
+    # EntanglementObservation and ShipstrikeObservation used to be subclasses of 
+    # Observation, but now that Observations can be for multiple cases, an
+    # Observation could be for both an Entanglement and a Shipstrike. But we
+    # keep the field Django generated for multitable inheritance so the database
+    # schema doesn't change.
+    observation_ptr = models.OneToOneField(
+        Observation,
+        primary_key= True,
+        editable= False,
+        related_name= '%(app_label)s_%(class)s',
+    )
+    
+    _extra_context = {}
+    
+    class Meta:
+        abstract = True
+

@@ -620,8 +620,6 @@ class Case(Documentable, SeriousInjuryAndMortality):
         app_label = 'incidents'
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
 
-Case.observation_model = Observation
-
 class YearCaseNumber(models.Model):
     '''\
     A little table to do the bookkeeping when assigning yearly-numbers to cases.

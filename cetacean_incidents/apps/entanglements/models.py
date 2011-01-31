@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.locations.models import Location
-from cetacean_incidents.apps.incidents.models import Case, Observation
+from cetacean_incidents.apps.incidents.models import Case, ObservationExtension
 from cetacean_incidents.apps.dag.models import DAGEdge_factory, DAGNode_factory
 
 class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
@@ -137,7 +137,39 @@ class Entanglement(Case):
     def get_edit_url(self):
         return reverse('edit_entanglement', args=[self.id])
 
-class EntanglementObservation(Observation):
+class BodyLocation(models.Model):
+    '''\
+    Model for customizable/extensible classification of location on/in an
+    animal's body.
+    '''
+    
+    # future developement: add a reference to a Taxon field (or fields) whose
+    # animals this location is defined for
+    
+    name = models.CharField(
+        max_length= 512,
+        unique=True,
+    )
+    
+    definition = models.TextField(
+        blank= True,
+        null= True,
+    )
+    
+    ordering = models.DecimalField(
+        max_digits= 5,
+        decimal_places = 5,
+        default = '.5',
+    )
+    
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('ordering', 'name')
+
+class EntanglementObservation(ObservationExtension):
+    
     anchored = models.NullBooleanField(
         blank= True,
         null= True,
@@ -178,45 +210,26 @@ class EntanglementObservation(Observation):
         help_text= "If there was a disentanglement attempted, what was the outcome?"
     )
     
-    @models.permalink
-    def get_absolute_url(self):
-        return('entanglementobservation_detail', [str(self.id)])
-    
-    def get_edit_url(self):
-        return reverse('edit_entanglementobservation', args=[self.id])
+    def get_gear_body_locations(self):
+        body_locations = []
+        for loc in BodyLocation.objects.all():
+            gear_loc = GearBodyLocation.objects.filter(observation=self, location=loc)
+            if gear_loc.exists():
+                body_locations.append((loc, gear_loc[0]))
+            else:
+                body_locations.append((loc, None))
 
-Entanglement.observation_model = EntanglementObservation
+        return body_locations
 
-class BodyLocation(models.Model):
-    '''\
-    Model for customizable/extensible classification of location on/in an
-    animal's body.
-    '''
-    
-    # future developement: add a reference to a Taxon field (or fields) whose
-    # animals this location is defined for
-    
-    name = models.CharField(
-        max_length= 512,
-        unique=True,
-    )
-    
-    definition = models.TextField(
-        blank= True,
-        null= True,
-    )
-    
-    ordering = models.DecimalField(
-        max_digits= 5,
-        decimal_places = 5,
-        default = '.5',
-    )
-    
-    def __unicode__(self):
-        return self.name
+    @property
+    def _extra_context(self):
+        return {
+            'gear_body_locations': self.get_gear_body_locations(),
+        }
 
     class Meta:
-        ordering = ('ordering', 'name')
+        verbose_name = "Observation entanglement-data"
+        verbose_name_plural = verbose_name
 
 class GearBodyLocation(models.Model):
     observation = models.ForeignKey(EntanglementObservation)

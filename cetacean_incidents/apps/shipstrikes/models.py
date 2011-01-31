@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.incidents.models import Case, Observation
+from cetacean_incidents.apps.incidents.models import Case, ObservationExtension
 
 class StrikingVesselInfo(VesselInfo):
     length = models.FloatField(
@@ -55,19 +55,15 @@ class Shipstrike(Case):
     def get_edit_url(self):
         return reverse('edit_shipstrike', args=[self.id])
 
-class ShipstrikeObservation(Observation):
+class ShipstrikeObservation(ObservationExtension):
+
     striking_vessel = models.OneToOneField(
         StrikingVesselInfo,
         blank= True,
         null= True,
     )
 
-    @models.permalink
-    def get_absolute_url(self):
-        return('shipstrikeobservation_detail', [str(self.id)])
-
-    def get_edit_url(self):
-        return reverse('edit_shipstrikeobservation', args=[self.id])
-
-Shipstrike.observation_model = ShipstrikeObservation
+    class Meta:
+        verbose_name = "Observation shipstrike-data"
+        verbose_name_plural = verbose_name
 

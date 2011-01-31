@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
-from cetacean_incidents.apps.incidents.models import Animal
+from cetacean_incidents.apps.incidents.models import Animal, Observation
 
 from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
 from forms import GearOwnerForm
@@ -100,26 +100,32 @@ class EntanglementTestCase(TestCase):
         a = Animal.objects.create()
         e = Entanglement.objects.create(animal=a)
         true_obv = EntanglementObservation.objects.create(
-            animal= a,
-            datetime_observed= UncertainDateTime(year=2000),
-            datetime_reported= UncertainDateTime(year=2000),
+            observation_ptr= Observation.objects.create(
+                animal= a,
+                datetime_observed= UncertainDateTime(year=2000),
+                datetime_reported= UncertainDateTime(year=2000),
+            ),
             gear_retrieved= True,
         )
-        true_obv.cases.add(e)
+        true_obv.observation_ptr.cases.add(e)
         false_obv = EntanglementObservation.objects.create(
-            animal= a,
-            datetime_observed= UncertainDateTime(year=2000),
-            datetime_reported= UncertainDateTime(year=2000),
+            observation_ptr= Observation.objects.create(
+                animal= a,
+                datetime_observed= UncertainDateTime(year=2000),
+                datetime_reported= UncertainDateTime(year=2000),
+            ),
             gear_retrieved= False,
         )
-        false_obv.cases.add(e)
+        false_obv.observation_ptr.cases.add(e)
         none_obv = EntanglementObservation.objects.create(
-            animal= a,
-            datetime_observed= UncertainDateTime(year=2000),
-            datetime_reported= UncertainDateTime(year=2000),
+            observation_ptr= Observation.objects.create(
+                animal= a,
+                datetime_observed= UncertainDateTime(year=2000),
+                datetime_reported= UncertainDateTime(year=2000),
+            ),
             gear_retrieved= None,
         )
-        none_obv.cases.add(e)
+        none_obv.observation_ptr.cases.add(e)
         self.assertEqual(
             e.gear_retrieved,
             True,
@@ -142,4 +148,23 @@ class GearOwnerFormTestCase(TestCase):
     def test_blank(self):
         form = GearOwnerForm({})
         self.assertEquals(form.is_valid(), True)
+
+class EntanglementObservationTestCase(TestCase):
+    
+    def setUp(self):
+        self.o = Observation.objects.create(
+            animal= Animal.objects.create(),
+            datetime_observed= UncertainDateTime(2010),
+            datetime_reported= UncertainDateTime(2010),
+        )
         
+    def test_basics(self):
+        
+        self.assertRaises(EntanglementObservation.DoesNotExist, getattr, self.o, 'entanglementobservation')
+        
+        eo = EntanglementObservation.objects.create(
+            observation_ptr= self.o,
+        )
+        
+        self.assertEqual(self.o.entanglementobservation, eo)
+
