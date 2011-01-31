@@ -32,13 +32,9 @@
 {% endwith %}
 <hr>
 {% block case_ids %}
-<table class="layout">
-  <tr>
-    {% for c in observation.cases.all %}
-    <td>{% include "incidents/case_ids_include.html" %}</td>
-    {% endfor %}
-  </tr>
-</table>
+{% for c in observation.cases.all %}
+{% include "incidents/case_ids_include.html" %}
+{% endfor %}
 {% endblock %}
 <hr>
 {% with observation as o %}
@@ -51,7 +47,7 @@
     <tr class="layout">
         <td class="layout" width="50%"> <!-- for making columns -->
             <div class="section">
-                <h3>Observation</h3>
+                <h3>Observing</h3>
                 {% if observation.initial %}
                 <div class="note"><img src="{{ MEDIA_URL }}icons/Level-A_initial.png"> This is the &#x2018;initial observation&#x2019; on a Level A form. <img src="{{ MEDIA_URL }}icons/Level-A_initial.png"></div>
                 {% endif %}
@@ -124,8 +120,18 @@
             </div>
         </td>
         <td class="layout" width="50%">
-            {% block case_type_fields %}
-            {% endblock %}
+            {# TODO generify #}
+            {% with observation.entanglements_entanglementobservation as eo %}
+            {% if eo %}
+            {% include "entanglements/entanglement_observation_detail_include.html" %}
+            {% endif %}
+            {% endwith %}
+
+            {% with observation.shipstrikes_shipstrikeobservation as so %}
+            {% if so %}
+            {% include "shipstrikes/shipstrike_observation_detail_include.html" %}
+            {% endif %}
+            {% endwith %}
             <div class="section">
                 <h3>Narrative</h3>
                 {% display_unlabeled_bigtext_div observation "narrative" %}

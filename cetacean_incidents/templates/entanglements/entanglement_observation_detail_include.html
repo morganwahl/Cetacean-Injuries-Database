@@ -1,26 +1,16 @@
-{% extends "incidents/observation_detail.html" %}
+{# assumes an EntanglementObservation was passed in as eo #}
 {% load generic_field_display %}
-
-{% block case_ids %}
-{% for c in observation.cases.all %}
-{% include "entanglements/entanglement_ids_include.html" %}
-{% endfor %}
-{% endblock %}
-
-{% block edit_url %}{% url edit_entanglementobservation observation.id %}{% endblock %}
-
-{% block case_type_fields %}
 <div class="section">
     <h3>Entanglement</h3>
     <table>
-        {% display_yesnounk_row observation "anchored" %}
+        {% display_yesnounk_row eo "anchored" %}
         <tr class="field">
             <th>gear</th>
             <td>
                 <p>
-                    {{ observation.gear_description|default:"<i>undescribed</i>" }}
+                    {{ eo.gear_description|default:"<i>undescribed</i>" }}
                 </p>
-                <p><i>{{ observation.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
+                <p><i>{{ eo.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
              </td>
          </tr>
          <tr class="field">
@@ -45,10 +35,10 @@
                 </table>
             </td>
          </tr>
-         {% display_bigtext_row observation "entanglement_details" %}
-         {% if observation.disentanglement_outcome %}
-         {% display_chosen_row observation "disentanglement_outcome" %}
+         {% display_bigtext_row eo "entanglement_details" %}
+         {% if eo.disentanglement_outcome %}
+         {% display_chosen_row eo "disentanglement_outcome" %}
          {% endif %}
     </table>
 </div>
-{% endblock %}
+

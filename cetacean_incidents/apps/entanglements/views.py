@@ -199,24 +199,9 @@ def edit_gear_owner(request, entanglement_id):
     )
 
 @login_required
-def entanglementobservation_detail(request, entanglementobservation_id):
-    entanglementobservation = EntanglementObservation.objects.get(id=entanglementobservation_id)
-    body_locations = []
-    for loc in BodyLocation.objects.all():
-        gear_loc = GearBodyLocation.objects.filter(observation=entanglementobservation, location=loc)
-        if gear_loc.exists():
-            body_locations.append((loc, gear_loc[0]))
-        else:
-            body_locations.append((loc, None))
-    return render_to_response(
-        'entanglements/entanglement_observation_detail.html',
-        {
-            'observation': entanglementobservation,
-            'gear_body_locations': body_locations,
-            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
-        },
-        context_instance= RequestContext(request),
-    )
+def entanglementobservation_detail(request, obs_id):
+    obs = EntanglementObservation.objects.get(pk=obs_id)
+    return redirect(obs.observation_ptr, permanent=True)
 
 @login_required
 @permission_required('entanglements.change_entanglement')

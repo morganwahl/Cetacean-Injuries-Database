@@ -20,29 +20,28 @@ from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
 from ..models import Animal, Case
 from ..forms import AnimalForm, AddCaseForm, CaseForm
 
-from ..models import Observation
+from ..models import Observation, ObservationExtension
 from ..forms import ObservationForm
 
 @login_required
 def observation_detail(request, observation_id):
-    observation = Observation.objects.get(id=observation_id).specific_instance()
-    if not observation.__class__ is Observation:
-        # avoid redirect loops!
-        # TODO is this the best way to detect that? what if middleware is 
-        # altering the URLs?
-        # TODO the best would be a decorator function for views that checks if
-        # a view's return value is a redirect that will resolve back to the 
-        # same view, with the same args
-        if observation.get_absolute_url() != request.path:
-            return redirect(observation)
+    observation = Observation.objects.get(id=observation_id)
+    extra_context = {
+        'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
+    }
+    # TODO generify
+    for oe_attr in (
+        'entanglements_entanglementobservation', 
+        'shipstrikes_shipstrikeobservation',
+    ):
+        if hasattr(observation, oe_attr):
+            extra_context.update(getattr(observation, oe_attr)._extra_context)
     return generic_views.object_detail(
         request,
         object_id= observation_id,
         queryset= Observation.objects.all(),
         template_object_name= 'observation',
-        extra_context= {
-            'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
-        }
+        extra_context= extra_context,
     )
 
 # what this view does depends on a few things:

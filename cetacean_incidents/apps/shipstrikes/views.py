@@ -27,16 +27,10 @@ from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, 
 def edit_shipstrike(request, case_id):
     return edit_case(request, case_id=case_id, template='shipstrikes/edit_shipstrike.html', form_class=ShipstrikeForm)
 
-def shipstrikeobservation_detail(request, shipstrikeobservation_id):
-    shipstrikeobservation = ShipstrikeObservation.objects.get(id=shipstrikeobservation_id)
-    return render_to_response(
-        'shipstrikes/shipstrike_observation_detail.html',
-        {
-            'observation': shipstrikeobservation,
-            'media': Media(js=(settings.JQUERY_FILE , 'radiohider.js')),
-        },
-        context_instance= RequestContext(request),
-    )
+@login_required
+def shipstrikeobservation_detail(request, obs_id):
+    obs = ShipstrikeObservation.objects.get(pk=obs_id)
+    return redirect(obs.observation_ptr, permanent=True)
 
 # TODO merge with edit_shipstrikeobservation
 @login_required
