@@ -1,0 +1,25 @@
+<script type="text/javascript">
+    {# TODO autoescape off? #}
+    $(function(){
+        var $tabs = $('#tabs').tabs();
+        
+        {% for tab in tabs %}
+        {{ tab.render_js }}
+        {% endfor %}
+    });
+</script>
+<div id="tabs">
+    <ul>
+        {% for tab in tabs %}
+        {{ tab.render_tab }}
+        {% endfor %}
+    </ul>
+    
+    {% for tab in tabs %}
+    <div id="{{ tab.html_id }}">
+        {{ tab.render_body }}
+    </div> <!-- id="{{ tab.html_id }}" -->
+
+    {% endfor %}
+</div> <!-- id="tabs" -->
+
