@@ -12,8 +12,8 @@ from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeF
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
-from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm
+from cetacean_incidents.apps.incidents.models import Animal, Case
+from cetacean_incidents.apps.incidents.forms import CaseForm
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 from cetacean_incidents.apps.dag.forms import DAGField
 
@@ -122,7 +122,7 @@ class AddEntanglementForm(EntanglementForm):
     class Meta(EntanglementForm.Meta):
         exclude = ('gear_owner_info', 'animal')
 
-class EntanglementObservationForm(ObservationForm):
+class EntanglementObservationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(EntanglementObservationForm, self).__init__(*args, **kwargs)
@@ -184,13 +184,11 @@ class EntanglementObservationForm(ObservationForm):
         
         return result
     
-    class Meta(ObservationForm.Meta):
+    class Meta:
         model = EntanglementObservation
-        # TODO how to access superclasses attrs here?
-        exclude = getattr(ObservationForm.Meta, 'exclude', tuple())
         # form submission fails if we even include this m2m field (since it 
-        # uses in intermediary model)
-        exclude += ('gear_body_location',)
+        # uses an intermediary model)
+        exclude = ('gear_body_location',)
 
 class GearOwnerDateField(UncertainDateTimeField):
     

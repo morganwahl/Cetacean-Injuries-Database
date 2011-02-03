@@ -12,8 +12,8 @@ from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
 
-from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
-from cetacean_incidents.apps.incidents.forms import ObservationForm, CaseForm
+from cetacean_incidents.apps.incidents.models import Animal, Case
+from cetacean_incidents.apps.incidents.forms import CaseForm
 
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
@@ -84,13 +84,13 @@ class AddShipstrikeForm(ShipstrikeForm):
     class Meta(ShipstrikeForm.Meta):
         exclude = ('animal',)
 
-class ShipstrikeObservationForm(ObservationForm):
+class ShipstrikeObservationForm(forms.ModelForm):
 
     striking_vessel_info = forms.BooleanField(
         required= False,
         help_text= "Is there any info about the striking vessel?"
     )
 
-    class Meta(ObservationForm.Meta):
+    class Meta:
         model = ShipstrikeObservation
 
