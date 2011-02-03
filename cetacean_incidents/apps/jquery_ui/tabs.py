@@ -49,6 +49,15 @@ class Tabs(object):
     def __init__(self, tabs=tuple()):
         # TODO check that tabs is an iterable of Tab instances
         # TODO check that all the html_names differ
+        
+        # add the prev and next IDs
+        prev = None
+        for tab in tabs:
+            if prev:
+                prev.next_id = tab.html_id
+                tab.prev_id = prev.html_id
+            prev = tab
+            
         self.tabs = tabs
     
     def render(self):
