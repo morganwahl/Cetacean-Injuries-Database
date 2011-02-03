@@ -1,5 +1,6 @@
 from django.forms.widgets import MediaDefiningClass
 from django.conf import settings
+from django.template import Context
 from django.template.loader import render_to_string
 
 class Tab(object):
@@ -7,7 +8,7 @@ class Tab(object):
     A Tab has a html_name, a display name, a template and a context.
     '''
     
-    def __init__(self, html_id, template, context={}, html_display=None, error_func=None):
+    def __init__(self, html_id, template, context=Context(), html_display=None, error_func=None):
         '''\
         If display_name is none is defaults to the html_name with '_'s replaced
         by spaces and titlecased.
@@ -31,7 +32,7 @@ class Tab(object):
         return render_to_string("tab_li.html", {'tab': self})
 
     def render_body(self):
-        return render_to_string(template, context)
+        return self.template.render(self.context)
 
 class Tabs(object):
     '''\

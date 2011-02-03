@@ -15,10 +15,11 @@
         {% endfor %}
     </ul>
     
-    {% tab in tabs %}
+    {% for tab in tabs %}
     <div id="{{ tab.html_id }}">
         {{ tab.render_body }}
     </div> <!-- id="{{ tab.html_id }}" -->
 
+    {% endfor %}
 </div> <!-- id="tabs" -->
 
