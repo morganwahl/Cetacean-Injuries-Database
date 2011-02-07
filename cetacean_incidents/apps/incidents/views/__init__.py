@@ -12,6 +12,7 @@ from case import (
     case_search,
     cases_by_year,
     edit_case,
+    _change_case,
 )
 
 from observation import (

@@ -65,8 +65,8 @@ class Entanglement(Case):
         help_text= "The gear-analysis-specific case ID.",
     )
     
-    @classmethod
-    def _yes_no_unk_reduce(cls, thing1, thing2):
+    @staticmethod
+    def _yes_no_unk_reduce(thing1, thing2):
         '''\
         Given two items,
             - if either of them is True, return True

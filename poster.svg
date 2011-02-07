@@ -21,28 +21,86 @@
     <marker
        inkscape:stockid="Arrow1Mstart"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Mstart"
        style="overflow:visible">
       <path
          id="path7872"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
-         transform="scale(0.4) translate(10,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Lstart"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Lstart"
        style="overflow:visible">
       <path
          id="path7866"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;marker-start:none"
-         transform="scale(0.8) translate(12.5,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-1"
+       style="overflow:visible">
+      <path
+         id="path7872-0"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-7"
+       style="overflow:visible">
+      <path
+         id="path7872-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-2"
+       style="overflow:visible">
+      <path
+         id="path7872-38"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mstart"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mstart-5"
+       style="overflow:visible">
+      <path
+         id="path7872-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt;marker-start:none"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
     </marker>
   </defs>
   <sodipodi:namedview
@@ -52,9 +110,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="566.24468"
-     inkscape:cy="515.50882"
+     inkscape:zoom="1"
+     inkscape:cx="1765.8731"
+     inkscape:cy="3123.7922"
      inkscape:document-units="in"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -73,10 +131,12 @@
        type="xygrid"
        id="grid3914"
        units="in"
-       empspacing="4"
+       empspacing="8"
        visible="true"
        enabled="true"
-       snapvisiblegridlinesonly="true" />
+       snapvisiblegridlinesonly="true"
+       spacingx="0.125in"
+       spacingy="0.125in" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -94,7 +154,25 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,2187.6403)">
+     transform="translate(0,2187.64)">
+    <rect
+       ry="22.443752"
+       rx="20.19375"
+       y="-1130.14"
+       x="137.4375"
+       height="1530"
+       width="897.5625"
+       id="rect4436-2-2"
+       style="fill:#efb4ae;fill-opacity:1;stroke:#000000;stroke-width:4.48812485000000017;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;" />
+    <rect
+       ry="22.443752"
+       rx="20.19375"
+       y="-1141.39"
+       x="126.1875"
+       height="1530"
+       width="897.5625"
+       id="rect4436-2"
+       style="fill:#efb4ae;fill-opacity:1;stroke:#000000;stroke-width:4.48812485000000017;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;" />
     <text
        xml:space="preserve"
        style="font-size:48px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:center;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
@@ -134,53 +212,41 @@
            x="1817"
            y="23"
            style="font-size:12px;font-weight:normal;text-align:end;text-anchor:end;-inkscape-font-specification:Sans" /></flowRegion><flowPara
-         id="flowPara5599">version 0.2</flowPara><flowPara
-         id="flowPara5601">2011-01-06</flowPara></flowRoot>    <path
+         id="flowPara5599">version 0.4</flowPara><flowPara
+         id="flowPara5601">2011-02-03</flowPara></flowRoot>    <path
        style="fill:none;stroke:#2d5aff;stroke-width:2.24406242;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.24406245, 2.24406245;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
        d="m 90,-1175.1403 c 0,90 -67.250002,315 22.5,315"
        id="case__animal__animal"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);marker-end:none"
-       d="m 202.5,512.3597 c -90,0 -180,-697.5 -90,-697.5"
-       id="case_entanglement__analyzed_by__contact"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;stroke:#ff604f;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
-       d="m 1012.5,1080 c 90,0 22.5,-742.5 112.5,-742.5"
+       style="fill:none;stroke:#ff604f;stroke-width:2.25000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25000000000000000, 2.25000000000000000;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);"
+       d="m 1023.75,1091.2503 c 90,0 11.25,-753.7503 101.25,-753.7503"
        id="observation__cases__case"
        inkscape:connector-curvature="0"
        transform="translate(0,-2187.6403)"
        sodipodi:nodetypes="cc" />
-    <path
-       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
-       d="m 945,512.3597 c 89.75,0 90.25,-2002.5 180,-2002.5"
-       id="observation__observer__contact"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
-       d="m 945,512.3597 c 90,0 90,-1327.5 180,-1327.5"
-       id="observation__reporter__contact"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
-       d="M 944.99996,512.35966 C 1035,512.35966 1034.9999,489.8597 1125,489.8597"
-       id="observation_shipstrike__contact__contact"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:#000000;fill-opacity:0;stroke:#007678;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
-       d="m 945,512.3597 c 90,0 90,450 180,450"
-       id="observation_shipstrike__captain__contact"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
     <g
        id="contacts"
        transform="matrix(0.95893465,0,0,0.980953,166.87826,2441.8124)">
+      <rect
+         ry="22.936724"
+         y="-1989.853"
+         x="60.610756"
+         height="550.48492"
+         width="774.29675"
+         id="rect3015-9"
+         style="fill:#96cece;fill-opacity:1;stroke:#000000;stroke-width:4.63974237;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         rx="23.46356" />
+      <rect
+         ry="22.936724"
+         y="-2001.3215"
+         x="48.878986"
+         height="550.48492"
+         width="774.29675"
+         id="rect3015-7"
+         style="fill:#96cece;fill-opacity:1;stroke:#000000;stroke-width:4.63974237;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         rx="23.46356" />
       <rect
          ry="22.936724"
          y="-2012.7902"
@@ -402,7 +468,7 @@
            sodipodi:role="line">name</tspan></text>
       <flowRoot
          transform="translate(69.75,-2174.7003)"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="flowRoot4095"
          xml:space="preserve"><flowRegion
            id="flowRegion4097"><rect
@@ -425,7 +491,7 @@
            sodipodi:role="line">field number</tspan></text>
       <flowRoot
          transform="translate(24.75,-2176.2003)"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000476999998966%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="flowRoot4132"
          xml:space="preserve"><flowRegion
            id="flowRegion4134"><rect
@@ -435,17 +501,16 @@
              width="630"
              id="rect4136"
              style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
-           id="flowPara4138">The field number assigned to this animal by the stranding network. Left blank for animals with no number. If not blank, the field number must be unique to this animal.</flowPara></flowRoot>
-    <textArea
-        transform="translate(24.75,-2176.2003)"
-        x="225"
-        y="718"
-        height="60.31004"
-        width="630"
-        style="color:blue;font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans">
+           id="flowPara4138">The field number assigned to this animal by the stranding network. Left blank for animals with no number. If not blank, the field number must be unique to this animal.</flowPara></flowRoot>      <textArea
+         transform="translate(24.75,-2176.2003)"
+         x="225"
+         y="718"
+         height="60.31004"
+         width="630"
+         id="textArea99">
         The field number assigned to this animal by the stranding network. Left blank for animals with no number. If not blank, the field number must be unique to this animal.
     </textArea>
-    <text
+      <text
          sodipodi:linespacing="100%"
          id="text4140"
          y="-1172.8903"
@@ -481,7 +546,7 @@
            sodipodi:role="line">determined sex</tspan></text>
       <flowRoot
          transform="translate(-22.25,-2297.7003)"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="flowRoot4215"
          xml:space="preserve"><flowRegion
            id="flowRegion4217"><rect
@@ -505,7 +570,7 @@
       <flowRoot
          xml:space="preserve"
          id="flowRoot4322"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          transform="translate(0.75,-2297.7003)"><flowRegion
            id="flowRegion4324"><rect
              id="rect4326"
@@ -593,7 +658,7 @@
              height="30"
              x="319"
              y="1189"
-             style="-inkscape-font-specification:Sans;font-family:Sans;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal" /></flowRegion><flowPara
+             style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
            id="flowPara4382" /></flowRoot>      <flowRoot
          xml:space="preserve"
          id="flowRoot4384"
@@ -618,13 +683,13 @@
          height="1526.1749"
          width="897.5625"
          id="rect4436"
-         style="fill:#ea9b92;fill-opacity:0.74509804;stroke:#000000;stroke-width:4.48812485;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
+         style="fill:#efb4ae;fill-opacity:1;stroke:#000000;stroke-width:4.48812485;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
       <text
          sodipodi:linespacing="100%"
          id="text4438"
          y="-1354.8591"
          x="112.4375"
-         style="font-size:27.92611121999999924px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         style="font-size:27.92611122px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
          xml:space="preserve"><tspan
            y="-1354.8591"
            x="112.4375"
@@ -655,7 +720,7 @@
          id="text4462"
          y="-1130.4215"
          x="112.5"
-         style="font-size:17.95249966px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         style="font-size:17.95249939px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
          xml:space="preserve"><tspan
            y="-1130.4215"
            x="112.5"
@@ -790,7 +855,7 @@
            y="-726.43408">Shipstrikes</tspan></text>
       <text
          xml:space="preserve"
-         style="font-size:17.95249938999999983px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         style="font-size:17.95249939px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
          x="112.51566"
          y="-614.12982"
          id="text4596"
@@ -874,7 +939,7 @@
            y="-524.36743">Was the gear analyzed?</tspan></text>
       <text
          xml:space="preserve"
-         style="font-size:17.95249938999999983px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
+         style="font-size:17.95249939px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
          x="112.51566"
          y="-322.4017"
          id="text4652"
@@ -976,7 +1041,7 @@
       <flowRoot
          xml:space="preserve"
          id="flowRoot4767"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          transform="matrix(0.99722224,0,0,0.99749997,-87.941667,-2571.0692)"><flowRegion
            id="flowRegion4769"><rect
              id="rect4771"
@@ -984,7 +1049,7 @@
              height="35.258293"
              x="246"
              y="1859"
-             style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
+             style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
            id="flowPara4773">Entanglement cases have some additional fields.</flowPara></flowRoot>      <text
          xml:space="preserve"
          style="font-size:18px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
@@ -999,7 +1064,7 @@
            y="1930" /></text>
       <text
          xml:space="preserve"
-         style="font-size:17.95249938999999983px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:17.95249939px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          x="112.51566"
          y="-793.65479"
          id="text4779"
@@ -1174,7 +1239,7 @@
    id="flowSpan4922">owner</flowSpan>'s description of what gear they're missing.</flowPara></flowRoot>      <flowRoot
          xml:space="preserve"
          id="flowRoot4928"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          transform="matrix(0.99722224,0,0,0.99749997,87.008332,-2565.6346)"><flowRegion
            id="flowRegion4930"><rect
              id="rect4932"
@@ -1182,9 +1247,9 @@
              height="127.80997"
              x="678"
              y="1851"
-             style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477000000387%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
+             style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;writing-mode:lr-tb;text-anchor:start;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
            id="flowPara4934">Shipstrike cases currently don't have additional fields. All shipstrike-specific data is also observation-specific.</flowPara></flowRoot>      <path
-         style="fill:none;stroke:#007778;stroke-width:2.24406242000000011;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.24406244999999993, 2.24406244999999993;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Mstart)"
+         style="fill:none;stroke:#007778;stroke-width:2.24406242;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.24406245, 2.24406245;stroke-dashoffset:0;marker-start:none;marker-end:url(#Arrow1Mstart)"
          d="m 90,-434.66537 112.1875,0"
          id="path5033"
          inkscape:connector-curvature="0"
@@ -1226,7 +1291,7 @@
            id="flowPara6822">Unambiguous description of the physical characteristics of gear. E.g. &quot;a green line over attached to a buoy with a black stripe&quot;. Avoid trying to guess the gear's function e.g. &quot;6-inch mesh&quot; is better than &quot;fishing net&quot;. Describe the way the gear is on the animal in the 'entanglement details' field.d</flowPara></flowRoot>      <flowRoot
          xml:space="preserve"
          id="flowRoot3599"
-         style="fill:black;stroke:none;stroke-opacity:1;stroke-width:1px;stroke-linejoin:miter;stroke-linecap:butt;fill-opacity:1;font-family:FreeSans;font-style:normal;font-weight:normal;font-size:16px;line-height:120.00000476999998966%;letter-spacing:0px;word-spacing:0px;-inkscape-font-specification:FreeSans;font-stretch:normal;font-variant:normal;text-anchor:start;text-align:start;writing-mode:lr"><flowRegion
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:FreeSans;-inkscape-font-specification:FreeSans"><flowRegion
            id="flowRegion3601"><rect
              id="rect3603"
              width="124.45079"
@@ -1237,6 +1302,33 @@
     <g
        id="observations"
        transform="translate(95.312439,-540.28044)">
+      <rect
+         ry="22.444452"
+         rx="22.437473"
+         y="-1546.1096"
+         x="1063.4375"
+         height="3127.5"
+         width="990.00006"
+         id="rect5035-6-0-4"
+         style="fill:#e7ec9d;fill-opacity:1;stroke:#000000;stroke-width:4.48812485;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <rect
+         ry="22.444452"
+         rx="22.437473"
+         y="-1557.3596"
+         x="1052.1875"
+         height="3127.5"
+         width="990.00006"
+         id="rect5035-6-0"
+         style="fill:#e7ec9d;fill-opacity:1;stroke:#000000;stroke-width:4.48812485;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+      <rect
+         ry="22.444452"
+         rx="22.437473"
+         y="-1568.6096"
+         x="1040.9375"
+         height="3127.5"
+         width="990.00006"
+         id="rect5035-6"
+         style="fill:#e7ec9d;fill-opacity:1;stroke:#000000;stroke-width:4.48812485;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
       <rect
          ry="22.444452"
          rx="22.437473"
@@ -1313,10 +1405,10 @@
              style="font-size:16.0423336px;line-height:120.00000477%"
              y="1251"
              x="1238"
-             height="37.906944"
+             height="60.463638"
              width="676.88019"
              id="rect5053" /></flowRegion><flowPara
-           id="flowPara5055">The cases that this observation is relevant to. These are references to case entries.</flowPara></flowRoot>      <flowRoot
+           id="flowPara5055">The cases that this observation is relevant to. These are references to case entries. Note that an observation can be relevant to multiple cases, and a case can have multiple observations that are relevant to it.</flowPara></flowRoot>      <flowRoot
          transform="matrix(0.99722224,0,0,0.99749997,84.634761,-2616.267)"
          style="font-size:16.0423336px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="flowRoot5061"
@@ -1334,11 +1426,11 @@
    style="font-style:italic"
    id="flowSpan3648">condition</flowSpan> should correspond to the &quot;condition at initial observation&quot;.</flowPara></flowRoot>      <flowRoot
          transform="matrix(0.99722224,0,0,0.99749997,26.980615,-2632.5795)"
-         style="font-size:16.04233419px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000476999998966%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16.0423336px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          id="flowRoot5077"
          xml:space="preserve"><flowRegion
            id="flowRegion5079"><rect
-             style="line-height:120.00000476999998966%;font-size:16.04233419px"
+             style="font-size:16.0423336px;line-height:120.00000477%"
              y="1468"
              x="1298"
              height="106.1552"
@@ -2052,7 +2144,7 @@
              y="2573" /></flowRegion><flowPara
            id="flowPara6716">Were any tags put on the animal? If so, please note the tag ID's in the narrative.</flowPara></flowRoot>      <text
          xml:space="preserve"
-         style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000476999998966%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
+         style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
          x="1296.9375"
          y="-1039.8597"
          id="text6718"
@@ -2064,7 +2156,7 @@
       <flowRoot
          xml:space="preserve"
          id="flowRoot6722"
-         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000476999998966%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
+         style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
          transform="translate(-104.56238,-1714.1698)"><flowRegion
            id="flowRegion6724"><rect
              id="rect6726"
@@ -2526,11 +2618,65 @@
            sodipodi:nodetypes="cccc" />
       </g>
       <path
-         style="fill:#007778;stroke:#007778;stroke-width:2.25000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:2.25000000000000000, 2.25000000000000000;stroke-dashoffset:0;marker-end:url(#Arrow1Mstart);fill-opacity:1"
+         style="fill:#007778;fill-opacity:1;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-end:url(#Arrow1Mstart)"
          d="m 1125,1372.5 112.5,0"
          id="path10333"
          inkscape:connector-curvature="0"
          transform="translate(-95.312439,-1647.3599)" />
+      <path
+         style="fill:#ff604f;fill-opacity:1;stroke:#ff604f;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-end:url(#Arrow1Mstart)"
+         d="m 1029.6876,-1298.6096 180,0"
+         id="path5402-7"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
+      <path
+         style="fill:#ff604f;fill-opacity:1;stroke:#ff604f;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-end:url(#Arrow1Mstart)"
+         d="m 1029.6876,-1321.1096 180,0"
+         id="path5402-4"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cc" />
     </g>
+    <path
+       style="fill:none;stroke:#ff604f;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
+       d="m 1012.5,-1107.64 c 90,0 22.5,-753.75 112.5,-753.75"
+       id="observation__cases__case-6"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#ff604f;stroke-width:2.25000000000000000;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25000000000000000, 2.25000000000000000;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);"
+       d="m 1035,-1085.14 c 90,0 0,-753.75 90,-753.75"
+       id="observation__cases__case-62"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);marker-end:none"
+       d="m 202.5,512.3597 c -90,0 -180,-697.5 -90,-697.5"
+       id="case_entanglement__analyzed_by__contact"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
+       d="m 945,512.36 c 90,0 89.9999,-22.5003 180,-22.5003"
+       id="observation_shipstrike__contact__contact"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#007678;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
+       d="m 967.5,534.86 c 90,0 67.5,427.4997 157.5,427.4997"
+       id="observation_shipstrike__captain__contact"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
+       d="m 956.25,523.61 c 90,0 78.75,-1338.7503 168.75,-1338.7503"
+       id="observation__reporter__contact"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0;stroke:#007778;stroke-width:2.25;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.25, 2.25;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
+       d="m 945,512.3597 c 89.75,0 90.25,-2002.5 180,-2002.5"
+       id="observation__observer__contact"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
   </g>
 </svg>

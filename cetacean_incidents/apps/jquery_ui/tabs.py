@@ -8,7 +8,7 @@ class Tab(object):
     A Tab has a html_name, a display name, a template and a context.
     '''
     
-    def __init__(self, html_id, template, context=Context(), html_display=None, error_func=None):
+    def __init__(self, html_id, template, context=Context(), html_display=None, error=False):
         '''\
         If display_name is none is defaults to the html_name with '_'s replaced
         by spaces and titlecased.
@@ -23,13 +23,13 @@ class Tab(object):
 
         self.template = template
         self.context = context
-        self.errors = property(error_func)
+        self.error = error
         
     def render_js(self):
         return render_to_string("tab_js.js", {'tab': self})
 
     def render_tab(self):
-        return render_to_string("tab_li.html", {'tab': self})
+        return render_to_string("tab_li.html", {'tab': self, 'error': self.error})
 
     def render_body(self):
         return self.template.render(self.context)
@@ -49,6 +49,15 @@ class Tabs(object):
     def __init__(self, tabs=tuple()):
         # TODO check that tabs is an iterable of Tab instances
         # TODO check that all the html_names differ
+        
+        # add the prev and next IDs
+        prev = None
+        for tab in tabs:
+            if prev:
+                prev.next_id = tab.html_id
+                tab.prev_id = prev.html_id
+            prev = tab
+            
         self.tabs = tabs
     
     def render(self):

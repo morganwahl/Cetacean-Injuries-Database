@@ -1,3 +1,5 @@
+import operator
+
 from datetime import datetime
 
 from django.conf import settings
@@ -5,7 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.forms import Media
 from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
+from django.template import Context, RequestContext
+from django.template.loader import get_template
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
@@ -16,6 +20,7 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from ..models import Case, YearCaseNumber
 from ..forms import AnimalForm, CaseForm, CaseSearchForm
 
+from cetacean_incidents.apps.jquery_ui.tabs import Tab, Tabs
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
@@ -153,21 +158,92 @@ def case_search(request, after_date=None, before_date=None):
         context_instance= RequestContext(request),
     )
 
-@login_required
-@permission_required('incidents.change_case')
-@permission_required('incidents.change_animal')
-def edit_case(request, case_id, template='incidents/edit_case.html', form_class=CaseForm):
-    case = Case.objects.get(id=case_id).specific_instance()
+def _make_animal_tabs(animal, animal_form):
+    return [Tab(
+        html_id= 'animal',
+        template= get_template('incidents/edit_animal_tab.html'),
+        context= Context({
+            'animal': animal,
+            'form': animal_form,
+        }),
+        html_display= mark_safe(u"<em>Animal</em><br>&nbsp;"),
+        error= bool(animal_form.errors),
+    )]
+
+def _make_case_tabs(case, case_form):
+    return [
+        Tab(
+            html_id= 'case',
+            template= get_template('incidents/edit_case_tab.html'),
+            context= Context({
+                'case': case,
+                'form': case_form,
+            }),
+            html_display= mark_safe(u"<em>Case</em><br>&nbsp;"),
+            error= reduce(operator.or_, map(
+                bool,
+                [case_form.non_field_errors()] + map(
+                    lambda f: case_form[f].errors, 
+                    (
+                        'nmfs_id',
+                        'happened_after',
+                        'valid',
+                        'ole_investigation',
+                    ),
+                ),
+            )),
+        ),
+        Tab(
+            html_id= 'case-sinmd',
+            template= get_template('incidents/edit_case_sinmd_tab.html'),
+            context= Context({
+                'case': case,
+                'form': case_form,
+            }),
+            html_display= mark_safe(u"<em>Case</em><br><abbr title=\"Serious Injury and Mortality Determination\">SI&MD</abbr>"),
+            error= reduce(operator.or_, map(
+                bool,
+                [case_form.non_field_errors()] + map(
+                    lambda f: case_form[f].errors,
+                    (
+                        'review_1_date',
+                        'review_1_inits',
+                        'review_2_date',
+                        'review_2_inits',
+                        'case_confirm_criteria',
+                        'animal_fate',
+                        'fate_cause',
+                        'fate_cause_indications',
+                        'si_prevented',
+                        'included_in_sar',
+                        'review_1_notes',
+                        'review_2_notes',
+                    ),
+                ),
+            )),
+        ),
+    ]
+
+def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=tuple()):
+
     if request.method == 'POST':
+        print '_change_case: POST'
         animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
-        form = form_class(request.POST, prefix='case', instance=case)
-        if animal_form.is_valid() and form.is_valid():
+        if animal_form.is_valid() and case_form.is_valid():
+            print '_change_case: valid'
             animal_form.save()
-            form.save()
+            case_form.save()
             return redirect(case)
+        else:
+            print repr({
+                'animal_form': animal_form.errors,
+                'case_form': case_form.errors,
+            })
+            
     else:
         animal_form = AnimalForm(prefix='animal', instance=case.animal)
-        form = form_class(prefix='case', instance=case)
+    
+    tabs = Tabs(_make_animal_tabs(case.animal, animal_form) + _make_case_tabs(case, case_form) + additional_tabs)
     
     template_media = Media(
         css= {'all': (settings.JQUERYUI_CSS_FILE,)},
@@ -175,15 +251,28 @@ def edit_case(request, case_id, template='incidents/edit_case.html', form_class=
     )
     
     return render_to_response(
-        template, {
+        template, 
+        {
             'animal': case.animal,
             'case': case,
-            'forms': {
-                'animal': animal_form,
-                'case': form,
-            },
-            'media': form.media + animal_form.media + template_media,
+            'tabs': tabs,
+            'media': case_form.media + animal_form.media + tabs.media + template_media,
         },
         context_instance= RequestContext(request),
     )
+
+@login_required
+@permission_required('incidents.change_case')
+@permission_required('incidents.change_animal')
+def edit_case(request, case_id):
+
+    case = Case.objects.get(id=case_id).specific_instance()
+
+    if request.method == 'POST':
+        print "post!"
+        form = CaseForm(request.POST, prefix='case', instance=case)
+    else:
+        form = CaseForm(prefix='case', instance=case)
+        
+    return _change_case(request, case, form)
 

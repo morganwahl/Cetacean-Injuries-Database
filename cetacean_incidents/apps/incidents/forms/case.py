@@ -14,6 +14,8 @@ class CaseForm(forms.ModelForm):
             'review_1_date': Datepicker,
             'review_2_date': Datepicker,
         }
+        # don't edit model-relationship fields
+        exclude = ('animal',)
 
 class AddCaseForm(CaseForm):
     

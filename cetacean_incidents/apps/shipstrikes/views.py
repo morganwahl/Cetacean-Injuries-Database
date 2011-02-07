@@ -17,7 +17,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
-from cetacean_incidents.apps.incidents.views import edit_case, _change_incident
+from cetacean_incidents.apps.incidents.views import _change_case, _change_incident
 
 from models import Shipstrike, ShipstrikeObservation
 from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
@@ -25,7 +25,19 @@ from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, 
 @login_required
 @permission_required('shipstrikes.change_shipstrike')
 def edit_shipstrike(request, case_id):
-    return edit_case(request, case_id=case_id, template='shipstrikes/edit_shipstrike.html', form_class=ShipstrikeForm)
+    
+    shipstrike = Shipstrike.objects.get(id=case_id)
+    if request.method == 'POST':
+        form = ShipstrikeForm(request.POST, prefix='case', instance=shipstrike)
+    else:
+        form = ShipstrikeForm(prefix='case', instance=shipstrike)
+        
+    return _change_case(
+        request,
+        case= shipstrike,
+        case_form= form,
+        template= 'shipstrikes/edit_shipstrike.html'
+    )
 
 @login_required
 def shipstrikeobservation_detail(request, obs_id):

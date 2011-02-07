@@ -1,0 +1,49 @@
+{% if case.observation_set.count > 1 %}
+<div class="edit-warning">
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+    Note that this is the case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+</div>
+{% endif %}
+{{ forms.case.non_field_errors }}
+{% with form.review_1_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.review_1_inits as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.review_2_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.review_2_inits as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.case_confirm_criteria as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.animal_fate as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.fate_cause as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.fate_cause_indications as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.si_prevented as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.included_in_sar as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.review_1_notes as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.review_2_notes as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+

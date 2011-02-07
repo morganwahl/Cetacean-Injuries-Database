@@ -1,0 +1,8 @@
+{{ forms.observation.non_field_errors }}
+<h3>Narrative</h3>
+<div>
+    {% with forms.observation.narrative as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+</div>
+

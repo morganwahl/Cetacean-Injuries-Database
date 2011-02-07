@@ -1,0 +1,19 @@
+{# expects an Animal instance as 'animal' and a AnimalForm instance for that animal as 'form' #}
+{% if animal.case_set.count > 1 or animal.observation_set.count > 1 %}
+<div class="edit-warning">
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+    Note that this is the animal data for {% if animal.case_set.count > 1 %}{{ animal.case_set.count }} case{{ animal.case_set.count|pluralize }} and {% endif %} {{ animal.observation_set.count }} observation{{ animal.observation_set.count|pluralize }}.
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+</div>
+{% endif %}
+{% if form.non_field_errors %}
+{{ form.non_field_errors }}
+{% endif %}
+{% for f in form %}
+{% include "labeled_field.html" %}
+{% endfor %}
+

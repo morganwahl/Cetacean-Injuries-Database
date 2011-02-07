@@ -1,0 +1,37 @@
+{{ forms.observation.non_field_errors }}
+<div class="section">
+    <h4>report date and time</h4>
+    {% with forms.observation.datetime_reported as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+</div>
+<div class="section">
+    <h4>reporter</h4>
+    <script type="text/javascript">
+        $().ready(function(){
+            RadioHider.init('{{ forms.observation.new_reporter.html_name }}', {
+                {# TODO? get the keys from forms.observation.new_reporter.field #}
+                'new': 'reporter_new_contact',
+                'other': 'reporter_existing_contact'
+            });
+        });
+    </script>
+    {% with forms.observation.new_reporter as f %}
+    {% include "unlabeled_field.html" %}
+    {% endwith %}
+    <div id="reporter_new_contact" style="display:none;">
+        {% if perms.contacts.add_contact %}
+        {% with forms.new_reporter as form %}
+        {% include "contacts/change_contact_include.html" %}
+        {% endwith %}
+        {% else %}
+        <div class="warning">you don't have permission to add a new contact</div>
+        {% endif %}
+    </div>
+    <div id="reporter_existing_contact" style="display:none;">
+        {% with forms.observation.reporter as f %}
+        {% include "unlabeled_field.html" %}
+        {% endwith %}
+    </div>
+</div>
+

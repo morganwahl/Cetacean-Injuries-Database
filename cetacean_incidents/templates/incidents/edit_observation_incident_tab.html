@@ -1,0 +1,16 @@
+{{ forms.observation.non_field_errors }}
+{% block incident_tab_body %}
+{% with forms.observation.documentation as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.ashore as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.wounded as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.wound_description as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% endblock %}
+

@@ -78,6 +78,7 @@ class ShipstrikeForm(CaseForm):
     
     class Meta(CaseForm.Meta):
         model = Shipstrike
+        exclude = CaseForm.Meta.exclude
 
 class AddShipstrikeForm(ShipstrikeForm):
     

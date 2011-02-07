@@ -18,6 +18,17 @@
     {% for tab in tabs %}
     <div id="{{ tab.html_id }}">
         {{ tab.render_body }}
+        
+        {% if tab.prev_id %}
+        <div style="text-align:left; float: left;">
+            <a class="link-to-{{ tab.prev_id }}" href="#{{ tab.prev_id }}">&#x2190; previous tab</a>
+        </div>
+        {% endif %}
+        {% if tab.next_id %}
+        <div style="text-align: right;">
+            <a class="link-to-{{ tab.next_id }}" href="#{{ tab.next_id }}">next tab &#x2192;</a>
+        </div>
+        {% endif %}
     </div> <!-- id="{{ tab.html_id }}" -->
 
     {% endfor %}
