@@ -138,12 +138,6 @@ def _change_incident(
             'new_observer': ContactForm,
             'new_vesselcontact': ContactForm,
         })
-        if request.user.has_perm('contacts.add_organization'):
-            form_classes.update({
-                'new_reporter_affiliations': formset_factory(OrganizationForm, extra=2),
-                'new_observer_affiliations': formset_factory(OrganizationForm, extra=2),
-                'new_vesselcontact_affiliations': formset_factory(OrganizationForm, extra=2),
-            })
     
     form_classes.update(additional_form_classes)
     
@@ -257,16 +251,6 @@ def _change_incident(
                     _check('new_reporter')
                     observation.reporter = forms['new_reporter'].save()
                     observation.save()
-                    if request.user.has_perm('contacts.add_organization'):
-                        _check('new_reporter_affiliations')
-                        # TODO move this to the ContactForm
-                        # add the affiliations from the new_affs_formset
-                        for org_form in forms['new_reporter_affiliations'].forms:
-                            # don't save orgs with blank names.
-                            if not 'name' in org_form.cleaned_data:
-                                continue
-                            org = org_form.save()
-                            observation.reporter.affiliations.add(org)
             if forms['observation'].cleaned_data['new_reporter'] == 'none':
                 observation.reporter = None
                 observation.save()
@@ -283,24 +267,6 @@ def _change_incident(
                     _check('new_observer')
                     observation.observer = forms['new_observer'].save()
                     observation.save()
-                    if request.user.has_perm('contacts.add_organization'):
-                        _check('new_observer_affiliations')
-                        # TODO move this to the ContactForm
-                        # add the affiliations from the new_affs_formset
-                        for org_form in forms['new_observer_affiliations'].forms:
-                            # don't save orgs with blank names.
-                            if not 'name' in org_form.cleaned_data:
-                                continue
-                            # check if maybe the new org was mentioned in a 
-                            # previously processed new_aff_formset
-                            org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
-                            if org_query.count():
-                                org = org_query[0] # orgs shouldn't really have 
-                                                   # identical names anyway, so 
-                                                   # just use the first one.
-                            else:
-                                org = org_form.save()
-                            observation.observer.affiliations.add(org)
             if forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
                 observation.save()
@@ -327,24 +293,6 @@ def _change_incident(
                         _check('new_vesselcontact')
                         observation.observer_vessel.contact = forms['new_vesselcontact'].save()
                         observation.observer_vessel.save()
-                        if request.user.has_perm('contacts.add_organization'):
-                            _check('new_vesselcontact_affiliations')
-                            # add the affiliations from the new_affs_formset
-                            for org_form in forms['new_vesselcontact_affiliations'].forms:
-                                # don't save orgs with blank names.
-                                if not 'name' in org_form.cleaned_data:
-                                    continue
-                                # check if maybe the new org was mentioned in a 
-                                # previously processed new_aff_formset
-                                org_query = Organization.objects.filter(name=org_form.cleaned_data['name'])
-                                if org_query.count():
-                                    org = org_query[0] # orgs shouldn't really
-                                                       # have identical names 
-                                                       # anyway, so just use the 
-                                                       # first one.
-                                else:
-                                    org = org_form.save()
-                                observation.observer_vessel.contact.affiliations.add(org)
                 if forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
                     observation.observer_vessel.contact = observation.reporter
                     observation.observer_vessel.save()

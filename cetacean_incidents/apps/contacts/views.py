@@ -48,44 +48,22 @@ def _create_or_edit_contact(request, contact_id=None):
         contact = None # the default for ContactForm(instance=)
         template = 'contacts/create_contact.html'
     
-    add_org = request.user.has_perm('contacts.add_organization')
         
-    # the exisintg affiliations will be in the widget in ContactForm. This is
-    # only for adding new Organizations from within the same page
-    if add_org:
-        AffiliationsFormset = formset_factory(OrganizationForm, extra=2)
-    
     if request.method == 'POST':
         form = ContactForm(request.POST, instance=contact)
-        if add_org:
-            new_affiliations_formset = AffiliationsFormset(request.POST)
-        if form.is_valid() and (not add_org or new_affiliations_formset.is_valid()):
+        if form.is_valid():
             contact = form.save()
-            if add_org:
-                # add the affiliations from the new_affs_formset
-                for org_form in new_affiliations_formset.forms:
-                    # don't save orgs with blank names.
-                    if not 'name' in org_form.cleaned_data:
-                        continue
-                    org = org_form.save()
-                    contact.affiliations.add(org)
             return redirect('contact_detail', contact.id)
     else:
         form = ContactForm(instance=contact)
-        if add_org:
-            new_affiliations_formset = AffiliationsFormset()
     
     media = form.media
-    if add_org:
-        media += new_affiliations_formset.media
     
     context = {
         'contact': contact,
         'form': form,
         'media': media,
     }
-    if add_org:
-        context['new_affiliations'] = new_affiliations_formset
     
     return render_to_response(
         template,

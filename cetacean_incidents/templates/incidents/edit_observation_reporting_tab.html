@@ -22,9 +22,7 @@
     <div id="reporter_new_contact" style="display:none;">
         {% if perms.contacts.add_contact %}
         {% with forms.new_reporter as form %}
-        {% with forms.new_reporter_affiliations as new_affiliations %}
         {% include "contacts/change_contact_include.html" %}
-        {% endwith %}
         {% endwith %}
         {% else %}
         <div class="warning">you don't have permission to add a new contact</div>

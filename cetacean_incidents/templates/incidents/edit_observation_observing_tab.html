@@ -32,9 +32,7 @@
     <div id="observer_new_contact" style="display:none;">
         {% if perms.contacts.add_contact %}
         {% with forms.new_observer as form %}
-        {% with forms.new_observer_affiliations as new_affiliations %}
         {% include "contacts/change_contact_include.html" %}
-        {% endwith %}
         {% endwith %}
         {% else %}
         <div class="warning">you don't have permission to add a new contact</div>
@@ -70,9 +68,7 @@
         <h4>vessel info for observer's vessel</h4>
         {% with forms.observer_vessel as v_form %}
         {% with forms.new_vesselcontact as c_form %}
-        {% with forms.new_vesselcontact_affiliations as c_aff_form %}
         {% include "vessels/edit_vessel_include.html" %}
-        {% endwith %}
         {% endwith %}
         {% endwith %}
     </div>

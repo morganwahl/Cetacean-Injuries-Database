@@ -1,8 +1,10 @@
-{# assumes a ContactForm named 'form' and a OrganizationForm formset named 'new_affiliations' #}
+{# assumes a ContactForm named 'form' #}
 <table class="layout">
     <tr class="layout">
         <td class="layout">
+            {% if form.non_field_errors %}
             {{ form.non_field_errors }}
+            {% endif %}
             <div class="subform">
                 <h3>Contact Info</h3>
                 {% with form.name as f %}
@@ -35,17 +37,12 @@
                 {% include "unlabeled_field.html" %}
                 {% endwith %}
                 {% if perms.contacts.add_organization %}
-                {% if new_affiliations %}
                 <div>
                     <span class="fieldname">add new organizations to be affiliated with:</span>
-                    {{ new_affiliations.management_form }}
-                    <div>
-                        {% for aff_form in new_affiliations.forms %}
-                        {{ aff_form.as_p }}
-                        {% endfor %}
-                    </div>
+                    <table>
+                        {{ form.new_affs.as_table }}
+                    </table>
                 </div>
-                {% endif %}
                 {% endif %}
             </div>
         </td>
