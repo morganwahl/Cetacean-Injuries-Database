@@ -287,7 +287,7 @@ def _change_incident(
                     observation.observer_vessel = forms['observer_vessel'].save()
                     observation.save()
                 else:
-                    forms['observation_vessel'].save()
+                    forms['observer_vessel'].save()
                 if request.user.has_perm('contacts.add_contact'):
                     if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
                         _check('new_vesselcontact')
