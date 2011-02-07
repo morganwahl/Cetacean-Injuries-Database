@@ -1,0 +1,26 @@
+{# expects a Case instance as 'case', and a CaseForm instance as 'form' #}
+{% if case.observation_set.count > 1 %}
+<div class="edit-warning">
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+    Note that this is case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+</div>
+{% endif %}
+{{ form.non_field_errors }}
+{% with form.nmfs_id as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.happened_after as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.valid as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.ole_investigation as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+

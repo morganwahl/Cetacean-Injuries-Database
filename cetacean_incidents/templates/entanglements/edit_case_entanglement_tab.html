@@ -1,0 +1,31 @@
+{% if case.observation_set.count > 1 %}
+<div class="edit-warning">
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+    Note that this is case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+    <img
+        src="{% url site-media path="icons/warning.png"%}"
+    >
+</div>
+{{ form.non_field_errors }}
+{% endif %}
+{% with form.gear_fieldnumber as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.gear_analyzed as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.analyzed_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.analyzed_by as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with form.gear_types as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+
