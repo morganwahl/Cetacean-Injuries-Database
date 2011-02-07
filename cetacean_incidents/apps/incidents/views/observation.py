@@ -54,11 +54,11 @@ def observation_detail(request, observation_id):
     )
 
 # what this view does depends on a few things:
-#  animal_id case_id observation_id
-#          *       *           True  edit obs. given and it's case and animal
-#          *    True          False  add obs. to case given and edit case and case's animal
-#      True    False          False  new obs. and new case for animal given. edit animal too.
-#      False   False          False  new obs. of new animal with new case
+#  animal  case observation
+#       *     *        True  edit obs. given and it's case and animal
+#       *  True       False  add obs. to case given and edit case and case's animal
+#    True False       False  new obs. and new case for animal given. edit animal too.
+#   False False       False  new obs. of new animal with new case
 def _change_incident(
         request,
         animal_id=None,
