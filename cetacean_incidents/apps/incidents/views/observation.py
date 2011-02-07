@@ -188,6 +188,8 @@ def _change_incident(
             #if model_instances['observer_vessel'].contact == observation.observer:
             #    form_kwargs['observer_vessel']['initial']['contact_choice'] = 'observer'
             #else:
+                if not 'initial' in form_kwargs['observer_vessel']:
+                    form_kwargs['observer_vessel']['initial'] = {}
                 form_kwargs['observer_vessel']['initial']['contact_choice'] = 'other'
                 form_kwargs['observer_vessel']['initial']['existing_contact'] = model_instances['observer_vessel'].contact.id
     
@@ -339,7 +341,7 @@ def _change_incident(
                 [
                     forms['observation'].non_field_errors(),
                     forms['new_reporter'].errors,
-                ] + forms['new_reporter_affiliations'].errors + map(
+                ] + map(
                     lambda f: forms['observation'][f].errors, 
                     (
                         'datetime_reported',
@@ -362,7 +364,7 @@ def _change_incident(
                     forms['location'].errors,
                     forms['observer_vessel'].errors,
                     forms['new_vesselcontact'].errors,
-                ] + forms['new_observer_affiliations'].errors + forms['new_vesselcontact_affiliations'].errors + map(
+                ] + map(
                     lambda f: forms['observation'][f].errors, 
                     (
                         'initial',

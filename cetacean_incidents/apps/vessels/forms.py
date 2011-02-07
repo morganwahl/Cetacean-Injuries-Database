@@ -103,7 +103,7 @@ class NiceVesselInfoForm(VesselInfoForm):
     )
     
     # should be the same as whatever ModelForm would generate for the 'contact'
-    # field, except it's not required.
+    # field, except with a different name
     _f = VesselInfo._meta.get_field('contact')
     existing_contact = forms.ModelChoiceField(
         queryset= Contact.objects.all(),
