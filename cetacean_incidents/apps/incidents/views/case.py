@@ -158,36 +158,20 @@ def case_search(request, after_date=None, before_date=None):
         context_instance= RequestContext(request),
     )
 
-def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=tuple()):
+def _make_animal_tabs(animal, animal_form):
+    return [Tab(
+        html_id= 'animal',
+        template= get_template('incidents/edit_animal_tab.html'),
+        context= Context({
+            'animal': animal,
+            'form': animal_form,
+        }),
+        html_display= mark_safe(u"<em>Animal</em><br>&nbsp;"),
+        error= bool(animal_form.errors),
+    )]
 
-    if request.method == 'POST':
-        print '_change_case: POST'
-        animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
-        if animal_form.is_valid() and case_form.is_valid():
-            print '_change_case: valid'
-            animal_form.save()
-            case_form.save()
-            return redirect(case)
-        else:
-            print repr({
-                'animal_form': animal_form.errors,
-                'case_form': case_form.errors,
-            })
-            
-    else:
-        animal_form = AnimalForm(prefix='animal', instance=case.animal)
-    
-    tabs = Tabs((
-        Tab(
-            html_id= 'animal',
-            template= get_template('incidents/edit_animal_tab.html'),
-            context= Context({
-                'animal': case.animal,
-                'form': animal_form,
-            }),
-            html_display= mark_safe(u"<em>Animal</em><br>&nbsp;"),
-            error= bool(animal_form.errors),
-        ),
+def _make_case_tabs(case, case_form):
+    return [
         Tab(
             html_id= 'case',
             template= get_template('incidents/edit_case_tab.html'),
@@ -238,7 +222,28 @@ def _change_case(request, case, case_form, template='incidents/edit_case.html', 
                 ),
             )),
         ),
-    ) + additional_tabs )
+    ]
+
+def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=tuple()):
+
+    if request.method == 'POST':
+        print '_change_case: POST'
+        animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
+        if animal_form.is_valid() and case_form.is_valid():
+            print '_change_case: valid'
+            animal_form.save()
+            case_form.save()
+            return redirect(case)
+        else:
+            print repr({
+                'animal_form': animal_form.errors,
+                'case_form': case_form.errors,
+            })
+            
+    else:
+        animal_form = AnimalForm(prefix='animal', instance=case.animal)
+    
+    tabs = Tabs(_make_animal_tabs(case.animal, animal_form) + _make_case_tabs(case, case_form) + additional_tabs)
     
     template_media = Media(
         css= {'all': (settings.JQUERYUI_CSS_FILE,)},
