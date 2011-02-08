@@ -147,24 +147,28 @@ class VesselInfoForm(forms.ModelForm):
     def is_valid(self):
         valid = super(VesselInfoForm, self).is_valid()
         # calling is_valid will 
-        #  access self.error, which will 
+        #  access self.errors, which will 
         #  call self.full_clean, which will 
-        #  populate self.cleaned_data if not bool(self._errors)
-        if valid and self.cleaned_data['contact_choice'] == 'new':
-            valid = self.new_contact.is_valid()
+        #  populate self.cleaned_data or self._errors
+        if not self.errors and hasattr(self, 'cleaned_data'):
+            if self.cleaned_data['contact_choice'] == 'new':
+                valid = self.new_contact.is_valid()
         return valid
     
     @property
     def errors(self):
         errors = super(VesselInfoForm, self).errors
         if not errors and hasattr(self, 'cleaned_data'):
-        # accessing self.errors, will 
-        #  call self.full_clean, which will 
-        #  populate self.cleaned_data if not bool(self._errors)
-            new_contact_err = self.new_contact.errors
-            if new_contact_err:
-                err['new_contact'] = new_contact_err
+            if self.cleaned_data['contact_choice'] == 'new':
+                new_contact_errors = self.new_contact.errors
+                if new_contact_errors:
+                    errors['new_contact'] = new_contact_errors
+        return errors
     
+    def full_clean(self):
+        super(VesselInfoForm, self).full_clean()
+        self.new_contact.full_clean()    
+        
     # note that we don't need to override has_changed to handle self.new_contact
     
     def save(self, commit=True):

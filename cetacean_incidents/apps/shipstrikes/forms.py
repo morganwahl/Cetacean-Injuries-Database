@@ -111,8 +111,9 @@ class StrikingVesselInfoForm(VesselInfoForm):
         #  access self.error, which will 
         #  call self.full_clean, which will 
         #  populate self.cleaned_data if not bool(self._errors)
-        if valid and self.cleaned_data['captain_choice'] == 'new':
-            valid = self.new_captain.is_valid()
+        if not self.errors and hasattr(self, 'cleaned_data'):
+            if self.cleaned_data['captain_choice'] == 'new':
+                valid = self.new_captain.is_valid()
         return valid
     
     @property
@@ -122,9 +123,15 @@ class StrikingVesselInfoForm(VesselInfoForm):
         #  call self.full_clean, which will 
         #  populate self.cleaned_data if not bool(self._errors)
         if not errors and hasattr(self, 'cleaned_data'):
-            new_captain_err = self.new_captain.errors
-            if new_captain_err:
-                err['new_captain'] = new_captain_err
+            if self.cleaned_data['captain_choice'] == 'new':
+                new_captain_errors = self.new_captain.errors
+                if new_captain_errors:
+                    err['new_captain'] = new_captain_errors
+        return errors
+
+    def full_clean(self):
+        super(StrikingVesselInfoForm, self).full_clean()
+        self.new_captain.full_clean()    
 
     # note that we don't need to override has_changed to handle self.new_contact
     
