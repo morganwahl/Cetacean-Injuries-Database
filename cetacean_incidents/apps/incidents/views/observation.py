@@ -288,12 +288,7 @@ def _change_incident(
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
                     observation.observer_vessel.contact = observation.observer
                     observation.observer_vessel.save()
-                elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'other':
-                    observation.observer_vessel.contact = forms['observer_vessel'].cleaned_data['existing_contact']
-                    observation.observer_vessel.save()
-                if forms['observer_vessel'].cleaned_data['contact_choice'] == 'none':
-                    observation.observer_vessel.contact = None
-                    observation.observer_vessel.save()
+                # 'other' and 'none' are handled by NiceVesselInfoForm.save
 
             additional_form_saving(forms, model_instances, _check, observation)
             

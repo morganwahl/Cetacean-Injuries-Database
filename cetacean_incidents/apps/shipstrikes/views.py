@@ -66,8 +66,7 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
                 striking_vessel.contact = observation.reporter
             elif contact_choice == 'observer':
                 striking_vessel.contact = observation.observer
-            elif contact_choice == 'other':
-                striking_vessel.contact = forms['striking_vessel'].cleaned_data['existing_contact']
+            # 'other' and 'none' are handled by NiceVesselInfoForm.save
 
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
             if request.user.has_perm('contacts.add_contact'):
@@ -142,10 +141,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
                 observation.striking_vessel.contact = observation.reporter
             elif contact_choice == 'observer':
                 observation.striking_vessel.contact = observation.observer
-            elif contact_choice == 'other':
-                observation.striking_vessel.contact = forms['striking_vessel'].cleaned_data['existing_contact']
-            else: # contact_choice == 'none'
-                observation.striking_vessel.contact = None
+            # 'other' and 'none' are handled by NiceVesselInfoForm.save
             
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
             if request.user.has_perm('contacts.add_contact'):

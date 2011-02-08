@@ -130,6 +130,21 @@ class NiceVesselInfoForm(VesselInfoForm):
         # make contact_choices overrideable
         self['contact_choice'].field.choices = self.contact_choices
     
+    def save(self, commit=True):
+        vi = super(NiceVesselInfoForm, self).save(commit=False)
+        
+        # TODO self.cleaned_data['contact_choice'] == 'new'
+        if self.cleaned_data['contact_choice'] == 'other':
+            vi.contact = self.cleaned_data['existing_contact']
+        if self.cleaned_data['contact_choice'] == 'none':
+            vi.contact = None
+        
+        if commit:
+            vi.save()
+            self.save_m2m()
+        
+        return vi
+    
     class Meta:
         model = VesselInfo
         # existing_contact is used instead
