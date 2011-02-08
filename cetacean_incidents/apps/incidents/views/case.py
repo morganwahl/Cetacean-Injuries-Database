@@ -1,5 +1,3 @@
-import operator
-
 from datetime import datetime
 
 from django.conf import settings
@@ -8,8 +6,6 @@ from django.db.models import Q
 from django.forms import Media
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, RequestContext
-from django.template.loader import get_template
-from django.utils.safestring import mark_safe
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
@@ -20,9 +16,11 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from ..models import Case, YearCaseNumber
 from ..forms import AnimalForm, CaseForm, CaseSearchForm
 
-from cetacean_incidents.apps.jquery_ui.tabs import Tab, Tabs
+from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+
+from tabs import AnimalTab, CaseTab, CaseSINMDTab
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
@@ -158,73 +156,15 @@ def case_search(request, after_date=None, before_date=None):
         context_instance= RequestContext(request),
     )
 
-def _make_animal_tabs(animal, animal_form):
-    return [Tab(
-        html_id= 'animal',
-        template= get_template('incidents/edit_animal_tab.html'),
-        context= Context({
-            'animal': animal,
-            'form': animal_form,
-        }),
-        html_display= mark_safe(u"<em>Animal</em><br>&nbsp;"),
-        error= bool(animal_form.errors),
-    )]
 
-def _make_case_tabs(case, case_form):
-    return [
-        Tab(
-            html_id= 'case',
-            template= get_template('incidents/edit_case_tab.html'),
-            context= Context({
-                'case': case,
-                'form': case_form,
-            }),
-            html_display= mark_safe(u"<em>Case</em><br>&nbsp;"),
-            error= reduce(operator.or_, map(
-                bool,
-                [case_form.non_field_errors()] + map(
-                    lambda f: case_form[f].errors, 
-                    (
-                        'nmfs_id',
-                        'happened_after',
-                        'valid',
-                        'ole_investigation',
-                    ),
-                ),
-            )),
-        ),
-        Tab(
-            html_id= 'case-sinmd',
-            template= get_template('incidents/edit_case_sinmd_tab.html'),
-            context= Context({
-                'case': case,
-                'form': case_form,
-            }),
-            html_display= mark_safe(u"<em>Case</em><br><abbr title=\"Serious Injury and Mortality Determination\">SI&MD</abbr>"),
-            error= reduce(operator.or_, map(
-                bool,
-                [case_form.non_field_errors()] + map(
-                    lambda f: case_form[f].errors,
-                    (
-                        'review_1_date',
-                        'review_1_inits',
-                        'review_2_date',
-                        'review_2_inits',
-                        'case_confirm_criteria',
-                        'animal_fate',
-                        'fate_cause',
-                        'fate_cause_indications',
-                        'si_prevented',
-                        'included_in_sar',
-                        'review_1_notes',
-                        'review_2_notes',
-                    ),
-                ),
-            )),
-        ),
-    ]
-
-def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=[]):
+def _change_case(
+        request,
+        case,
+        case_form,
+        template='incidents/edit_case.html',
+        additional_tabs=[],
+        additional_tab_context={},
+    ):
 
     if request.method == 'POST':
         print '_change_case: POST'
@@ -243,7 +183,22 @@ def _change_case(request, case, case_form, template='incidents/edit_case.html', 
     else:
         animal_form = AnimalForm(prefix='animal', instance=case.animal)
     
-    tabs = Tabs(_make_animal_tabs(case.animal, animal_form) + _make_case_tabs(case, case_form) + additional_tabs)
+    tab_context = Context({
+        'animal': case.animal,
+        'animal_form': animal_form,
+        'case': case,
+        'case_form': case_form,
+    })
+    tab_context.update(additional_tab_context)
+    
+    tabs = [
+        AnimalTab('animal', tab_context),
+        CaseTab('case', tab_context),
+        CaseSINMDTab('case-sinmd', tab_context),
+    ]
+    tabs += additional_tabs
+    
+    tabs = Tabs(tabs)
     
     template_media = Media(
         css= {'all': (settings.JQUERYUI_CSS_FILE,)},

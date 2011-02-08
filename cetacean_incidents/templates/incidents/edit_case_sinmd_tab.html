@@ -9,41 +9,41 @@
     >
 </div>
 {% endif %}
-{{ forms.case.non_field_errors }}
-{% with form.review_1_date as f %}
+{{ case_form.case.non_field_errors }}
+{% with case_form.review_1_date as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.review_1_inits as f %}
+{% with case_form.review_1_inits as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.review_2_date as f %}
+{% with case_form.review_2_date as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.review_2_inits as f %}
+{% with case_form.review_2_inits as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.case_confirm_criteria as f %}
+{% with case_form.case_confirm_criteria as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.animal_fate as f %}
+{% with case_form.animal_fate as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.fate_cause as f %}
+{% with case_form.fate_cause as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.fate_cause_indications as f %}
+{% with case_form.fate_cause_indications as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.si_prevented as f %}
+{% with case_form.si_prevented as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.included_in_sar as f %}
+{% with case_form.included_in_sar as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.review_1_notes as f %}
+{% with case_form.review_1_notes as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.review_2_notes as f %}
+{% with case_form.review_2_notes as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
 

@@ -1,4 +1,4 @@
-{# expects an Animal instance as 'animal' and a AnimalForm instance for that animal as 'form' #}
+{# expects an Animal instance as 'animal' and a AnimalForm instance for that animal as 'animal_form' #}
 {% if animal.case_set.count > 1 or animal.observation_set.count > 1 %}
 <div class="edit-warning">
     <img
@@ -10,10 +10,10 @@
     >
 </div>
 {% endif %}
-{% if form.non_field_errors %}
-{{ form.non_field_errors }}
+{% if animal_form.non_field_errors %}
+{{ animal_form.non_field_errors }}
 {% endif %}
-{% for f in form %}
+{% for f in animal_form %}
 {% include "labeled_field.html" %}
 {% endfor %}
 
