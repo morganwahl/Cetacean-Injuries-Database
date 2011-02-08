@@ -111,22 +111,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             'striking_vessel_info': not observation.striking_vessel is None,
         }
     }
-    if observation.striking_vessel:
-        form_initials['striking_vessel'] = {}
 
-        captain = observation.striking_vessel.captain
-        if captain is None:
-            form_initials['striking_vessel']['captain_choice'] = 'none'
-        elif captain == observation.reporter:
-            form_initials['striking_vessel']['captain_choice'] = 'reporter'
-        elif captain == observation.observer:
-            form_initials['striking_vessel']['captain_choice'] = 'observer'
-        elif captain == contact:
-            form_initials['striking_vessel']['captain_choice'] = 'vessel'
-        else:
-            form_initials['striking_vessel']['captain_choice'] = 'other'
-            form_initials['striking_vessel']['existing_captain'] = captain.id
-    
     def saving(forms, instances, check, observation):
         if forms['observation']['striking_vessel_info']:
             check('striking_vessel')
@@ -140,20 +125,11 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
             # 'new', 'other', and 'none' are handled by NiceVesselInfoForm.save
             
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
-            if request.user.has_perm('contacts.add_contact'):
-                if captain_choice == 'new':
-                    check(forms['striking_vessel_captain'])
-                    observation.striking_vessel.captain = forms['striking_vessel_captain'].save()
             if captain_choice == 'reporter':
                 observation.striking_vessel.captain = observation.reporter
             elif captain_choice == 'observer':
                 observation.striking_vessel.captain = observation.observer
-            elif captain_choice == 'vessel':
-                observation.striking_vessel.captain = observation.striking_vessel.contact
-            elif captain_choice == 'other':
-                observation.striking_vessel.captain = forms['striking_vessel'].cleaned_data['existing_captain']
-            else: # captain_choice == 'none'
-                observation.striking_vessel.captain = None
+            # 'new', 'vessel', 'other', and 'none' are handled by NiceStrikingVesselInfoForm.save
 
             observation.striking_vessel.save()
     

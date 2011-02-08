@@ -69,6 +69,98 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
         help_text= _f.help_text,
         label= _f.verbose_name.capitalize(),
     )
+    
+    def __init__(self, data=None, initial=None, instance=None, *args, **kwargs):
+        # the values for captain_choice and existing_captain can be set from
+        # a passed 'instance', but such values should be overrideable by the 
+        # passed 'initial' argument
+        if not instance is None:
+            if initial is None:
+                initial = {}
+            if not 'captain_choice' in initial:
+                if instance.captain == instance.contact and not instance.contact is None:
+                    initial['captain_choice'] = 'vessel'
+                elif instance.captain is not None:
+                    initial['captain_choice'] = 'other'
+                else:
+                    initial['captain_choice'] = 'none'
+
+            if not 'existing_captain' in initial:
+                if not instance.captain is None:
+                    initial['existing_captain'] = instance.captain.id
+
+        super(NiceStrikingVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
+        
+        # the ContactForm for new captain contacts
+        new_captain_prefix = 'new_captain'
+        if not prefix is None:
+            new_captain_prefix = prefix + '-' + new_captain_prefix
+        self.new_captain = ContactForm(prefix=new_captain_prefix)
+        
+    # TODO for:
+    #
+    # __unicode__
+    # __iter__
+    # as_table
+    # as_ul
+    # as_p
+    # is_multipart
+    # hidden_fields
+    # visible_fields
+    # 
+    # should we output the corresponding results from self.new_captain as well?
+
+    def is_valid(self):
+        valid = super(NiceVesselInfoForm, self).is_valid()
+        # calling is_valid will 
+        #  access self.error, which will 
+        #  call self.full_clean, which will 
+        #  populate self.cleaned_data if not bool(self._errors)
+        if valid and self.cleaned_data['captain_choice'] == 'new':
+            valid = self.new_captain.is_valid()
+        return valid
+    
+    @property
+    def errors(self):
+        err = super(NiceVesselInfoForm, self).errors
+        # accessing self.errors, will 
+        #  call self.full_clean, which will 
+        #  populate self.cleaned_data if not bool(self._errors)
+        if not err and self.cleaned_data['captain_choice'] == 'new':
+            new_captain_err = self.new_captain.errors
+            if new_captain_err:
+                err['new_captain'] = new_captain_err
+
+    # note that we don't need to override has_changed to handle self.new_contact
+    
+    def save(commit=True):
+        svi = super(NiceStrikingVesselInfoForm, self).save(commit=False)
+        
+        if self.cleaned_data['captain_choice'] == 'new':
+            nc = self.new_captain.save(commit=commit)
+
+            if commit:
+                svi.captain = nc
+            else:
+                old_m2m = self.save_m2m
+                def new_m2m(self):
+                    old_m2m()
+                    svi.captain = nc
+                    svi.save()
+                self.save_m2m = new_m2m
+
+        if self.cleaned_data['captain_choice'] == 'vessel':
+            svi.captain = svi.contact
+        if self.cleaned_data['captain_choice'] == 'other':
+            svi.captain = self.cleaned_data['existing_captain']
+        if self.cleaned_data['captain_choice'] == 'none':
+            svi.captain = None
+        
+        if commit:
+            svi.save()
+            self.save_m2m()
+        
+        return svi
 
     class Meta:
         model = StrikingVesselInfo
