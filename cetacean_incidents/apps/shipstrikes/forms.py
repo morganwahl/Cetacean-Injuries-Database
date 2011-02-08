@@ -10,7 +10,7 @@ from cetacean_incidents.apps.contacts.models import Contact
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
-from cetacean_incidents.apps.vessels.forms import VesselInfoForm, NiceVesselInfoForm
+from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
 from cetacean_incidents.apps.incidents.models import Animal, Case
 from cetacean_incidents.apps.incidents.forms import CaseForm
@@ -18,11 +18,6 @@ from cetacean_incidents.apps.incidents.forms import CaseForm
 from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
 
 class StrikingVesselInfoForm(VesselInfoForm):
-    
-    class Meta:
-        model= StrikingVesselInfo
-    
-class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     '''\
     To be used with a ContactForm on the same page for adding a new captain Contact.
     '''
@@ -89,7 +84,7 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
                 if not instance.captain is None:
                     initial['existing_captain'] = instance.captain.id
 
-        super(NiceStrikingVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
+        super(StrikingVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
         
         # the ContactForm for new captain contacts
         new_captain_prefix = 'new_captain'
@@ -111,7 +106,7 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     # should we output the corresponding results from self.new_captain as well?
 
     def is_valid(self):
-        valid = super(NiceVesselInfoForm, self).is_valid()
+        valid = super(StrikingVesselInfoForm, self).is_valid()
         # calling is_valid will 
         #  access self.error, which will 
         #  call self.full_clean, which will 
@@ -122,11 +117,11 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     
     @property
     def errors(self):
-        err = super(NiceVesselInfoForm, self).errors
+        errors = super(StrikingVesselInfoForm, self).errors
         # accessing self.errors, will 
         #  call self.full_clean, which will 
         #  populate self.cleaned_data if not bool(self._errors)
-        if not err and self.cleaned_data['captain_choice'] == 'new':
+        if not errors and hasattr(self, 'cleaned_data'):
             new_captain_err = self.new_captain.errors
             if new_captain_err:
                 err['new_captain'] = new_captain_err
@@ -134,7 +129,7 @@ class NiceStrikingVesselInfoForm(NiceVesselInfoForm):
     # note that we don't need to override has_changed to handle self.new_contact
     
     def save(commit=True):
-        svi = super(NiceStrikingVesselInfoForm, self).save(commit=False)
+        svi = super(StrikingVesselInfoForm, self).save(commit=False)
         
         if self.cleaned_data['captain_choice'] == 'new':
             nc = self.new_captain.save(commit=commit)

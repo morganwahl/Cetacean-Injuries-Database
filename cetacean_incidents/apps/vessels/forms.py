@@ -82,13 +82,10 @@ class VesselInfoForm(forms.ModelForm):
         initial='US',
     )
 
-    class Meta:
-        model = VesselInfo
-
-class NiceVesselInfoForm(VesselInfoForm):
-    
     contact_choices = (
         ('new', 'add a new contact'),
+        ('reporter', 'use the same contact as the reporter'),
+        ('observer', 'use the same contact as the observer'),
         ('other', 'use an existing contact'),
         ('none', 'no contact info'),
     )
@@ -124,7 +121,7 @@ class NiceVesselInfoForm(VesselInfoForm):
                 if not instance.contact is None:
                     initial['existing_contact'] = instance.contact.id
         
-        super(NiceVesselInfoForm, self).__init__(data, initial=initial, instance=instance, prefix=prefix, *args, **kwargs)
+        super(VesselInfoForm, self).__init__(data, initial=initial, instance=instance, prefix=prefix, *args, **kwargs)
         # make contact_choices overrideable
         self['contact_choice'].field.choices = self.contact_choices
         
@@ -148,7 +145,7 @@ class NiceVesselInfoForm(VesselInfoForm):
     # should we output the corresponding results from self.new_contact as well?
 
     def is_valid(self):
-        valid = super(NiceVesselInfoForm, self).is_valid()
+        valid = super(VesselInfoForm, self).is_valid()
         # calling is_valid will 
         #  access self.error, which will 
         #  call self.full_clean, which will 
@@ -159,11 +156,11 @@ class NiceVesselInfoForm(VesselInfoForm):
     
     @property
     def errors(self):
-        err = super(NiceVesselInfoForm, self).errors
+        errors = super(VesselInfoForm, self).errors
+        if not errors and hasattr(self, 'cleaned_data'):
         # accessing self.errors, will 
         #  call self.full_clean, which will 
         #  populate self.cleaned_data if not bool(self._errors)
-        if not err and self.cleaned_data['contact_choice'] == 'new':
             new_contact_err = self.new_contact.errors
             if new_contact_err:
                 err['new_contact'] = new_contact_err
@@ -172,7 +169,7 @@ class NiceVesselInfoForm(VesselInfoForm):
     
     def save(self, commit=True):
         
-        vi = super(NiceVesselInfoForm, self).save(commit=False)
+        vi = super(VesselInfoForm, self).save(commit=False)
 
         if self.cleaned_data['contact_choice'] == 'new':
             nc = self.new_contact.save(commit=commit)
@@ -202,22 +199,5 @@ class NiceVesselInfoForm(VesselInfoForm):
         model = VesselInfo
         # existing_contact is used instead
         # TODO why?
-        exclude = ('contact')
-
-class ObserverVesselInfoForm(NiceVesselInfoForm):
-    '''\
-    To be used with a ContactForm on the same page for adding a new Contact.
-    '''
-    
-    contact_choices = (
-        ('new', 'add a new contact'),
-        ('reporter', 'use the same contact as the reporter'),
-        ('observer', 'use the same contact as the observer'),
-        ('other', 'use an existing contact'),
-        ('none', 'no contact info'),
-    )
-    
-    class Meta:
-        model = VesselInfo
         exclude = ('contact')
 

@@ -20,7 +20,7 @@ from cetacean_incidents.apps.incidents.forms import AnimalForm
 from cetacean_incidents.apps.incidents.views import _change_case, _change_incident
 
 from models import Shipstrike, ShipstrikeObservation
-from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm, NiceStrikingVesselInfoForm
+from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm
 
 @login_required
 @permission_required('shipstrikes.change_shipstrike')
@@ -94,7 +94,7 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
         addcaseform_class= AddShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
-            'striking_vessel': NiceStrikingVesselInfoForm,
+            'striking_vessel': StrikingVesselInfoForm,
             'striking_vessel_contact': ContactForm,
             'striking_vessel_captain': ContactForm,
         },
@@ -129,7 +129,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
                 observation.striking_vessel.captain = observation.reporter
             elif captain_choice == 'observer':
                 observation.striking_vessel.captain = observation.observer
-            # 'new', 'vessel', 'other', and 'none' are handled by NiceStrikingVesselInfoForm.save
+            # 'new', 'vessel', 'other', and 'none' are handled by StrikingVesselInfoForm.save
 
             observation.striking_vessel.save()
     
@@ -140,7 +140,7 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
         caseform_class= ShipstrikeForm,
         observationform_class= ShipstrikeObservationForm,
         additional_form_classes= {
-            'striking_vessel': NiceStrikingVesselInfoForm,
+            'striking_vessel': StrikingVesselInfoForm,
             'striking_vessel_contact': ContactForm,
             'striking_vessel_captain': ContactForm,
         },

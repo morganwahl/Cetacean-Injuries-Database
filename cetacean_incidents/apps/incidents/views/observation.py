@@ -20,7 +20,7 @@ from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
-from cetacean_incidents.apps.vessels.forms import ObserverVesselInfoForm
+from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab, Tabs
 
@@ -123,7 +123,7 @@ def _change_incident(
         'case': caseform_class,
         'observation': observationform_class,
         'location': NiceLocationForm,
-        'observer_vessel': ObserverVesselInfoForm,
+        'observer_vessel': VesselInfoForm,
     }
     
     # if we're adding a new case, there's no point in having an animal field
@@ -282,7 +282,7 @@ def _change_incident(
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
                     observation.observer_vessel.contact = observation.observer
                     observation.observer_vessel.save()
-                # 'new', 'other', and 'none' are handled by NiceVesselInfoForm.save
+                # 'new', 'other', and 'none' are handled by VesselInfoForm.save
 
             additional_form_saving(forms, model_instances, _check, observation)
             
