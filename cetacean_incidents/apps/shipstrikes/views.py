@@ -115,17 +115,6 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
     if observation.striking_vessel:
         form_initials['striking_vessel'] = {}
 
-        contact = observation.striking_vessel.contact
-        if contact is None:
-            form_initials['striking_vessel']['contact_choice'] = 'none'
-        elif contact == observation.reporter:
-            form_initials['striking_vessel']['contact_choice'] = 'reporter'
-        elif contact == observation.observer:
-            form_initials['striking_vessel']['contact_choice'] = 'observer'
-        else:
-            form_initials['striking_vessel']['contact_choice'] = 'other'
-            form_initials['striking_vessel']['existing_contact'] = contact.id
-
         captain = observation.striking_vessel.captain
         if captain is None:
             form_initials['striking_vessel']['captain_choice'] = 'none'

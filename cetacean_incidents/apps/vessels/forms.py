@@ -112,12 +112,28 @@ class NiceVesselInfoForm(VesselInfoForm):
         label= _f.verbose_name.capitalize(),
     )
     
-    def __init__(self, *args, **kwargs):
-        super(NiceVesselInfoForm, self).__init__(*args, **kwargs)
+    # TODO how to retain positional args without copying them from super?
+    def __init__(self, data=None, initial=None, instance=None, *args, **kwargs):
+        # the values for contact_choice and existing_contact can be set from
+        # a passed 'instance', but such values should be overrideable by the 
+        # passed 'initial' argument
+        if not instance is None:
+            if initial is None:
+                initial = {}
+            if not 'contact_choice' in initial:
+                initial['contact_choice'] = 'other' if not instance.contact is None else 'none'
+            if not 'existing_contact' in initial:
+                if not instance.contact is None:
+                    initial['existing_contact'] = instance.contact.id
+        
+        super(NiceVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
+        # make contact_choices overrideable
         self['contact_choice'].field.choices = self.contact_choices
     
     class Meta:
         model = VesselInfo
+        # existing_contact is used instead
+        # TODO why?
         exclude = ('contact')
 
 class ObserverVesselInfoForm(NiceVesselInfoForm):

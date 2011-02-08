@@ -180,19 +180,6 @@ def _change_incident(
             #else:
                 form_kwargs['observation']['initial']['new_observer'] = 'other'
         
-        if 'observer_vessel' in model_instances and model_instances['observer_vessel'].contact:
-            # This causes unexpected behaviour when one sets 'new_reporter' to 
-            # 'none'
-            #if model_instances['observer_vessel'].contact == observation.reporter:
-            #    form_kwargs['observer_vessel']['initial']['contact_choice'] = 'reporter'
-            #if model_instances['observer_vessel'].contact == observation.observer:
-            #    form_kwargs['observer_vessel']['initial']['contact_choice'] = 'observer'
-            #else:
-                if not 'initial' in form_kwargs['observer_vessel']:
-                    form_kwargs['observer_vessel']['initial'] = {}
-                form_kwargs['observer_vessel']['initial']['contact_choice'] = 'other'
-                form_kwargs['observer_vessel']['initial']['existing_contact'] = model_instances['observer_vessel'].contact.id
-    
     for name, initials in additional_form_initials.items():
         if not name in form_kwargs:
             form_kwargs[name] = {}
