@@ -1,32 +1,32 @@
 <script type="text/javascript">
     {# TODO autoescape off? #}
     $(function(){
-        var $tabs = $('#tabs').tabs();
+        var $tabs = $('#{{ tabs.html_id }}').tabs();
         
-        {% for tab in tabs %}
-        {{ tab.render_js }}
+        {% for td in tabs.tab_data %}
+        {{ td.tab.render_js }}
         {% endfor %}
     });
 </script>
-<div id="tabs">
+<div id="{{ tabs.html_id }}">
     <ul>
-        {% for tab in tabs %}
-        {{ tab.render_tab }}
+        {% for td in tabs.tab_data %}
+        {{ td.li }}
         {% endfor %}
     </ul>
     
-    {% for tab in tabs %}
-    <div id="{{ tab.html_id }}">
-        {{ tab.render_body }}
+    {% for td in tabs.tab_data %}
+    <div id="{{ td.tab.html_id }}">
+        {{ td.body }}
         
-        {% if tab.prev_id %}
+        {% if td.prev_id %}
         <div style="text-align:left; float: left;">
-            <a class="link-to-{{ tab.prev_id }}" href="#{{ tab.prev_id }}">&#x2190; previous tab</a>
+            <a class="link-to-{{ td.prev_id }}" href="#{{ td.prev_id }}">&#x2190; previous tab</a>
         </div>
         {% endif %}
-        {% if tab.next_id %}
+        {% if td.next_id %}
         <div style="text-align: right;">
-            <a class="link-to-{{ tab.next_id }}" href="#{{ tab.next_id }}">next tab &#x2192;</a>
+            <a class="link-to-{{ td.next_id }}" href="#{{ td.next_id }}">next tab &#x2192;</a>
         </div>
         {% endif %}
     </div> <!-- id="{{ tab.html_id }}" -->
