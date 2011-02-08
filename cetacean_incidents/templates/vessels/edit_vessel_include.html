@@ -17,9 +17,7 @@
         {% endwith %}
         <div id="{{ v_form.prefix }}-vesselcontact_new_contact" style="display:none;">
             {% with c_form as form %}
-            {% with c_aff_form as new_affiliations %}
             {% include "contacts/change_contact_include.html" %}
-            {% endwith %}
             {% endwith %}
         </div>
         <div id="{{ v_form.prefix }}-vesselcontact_existing_contact" style="display:none;">
