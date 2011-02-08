@@ -1,4 +1,4 @@
-{# intended to be included in another template, with a NiceVesselInfoForm as v_form, a ContactForm as c_form, and a OrganizationForm formset as c_aff_form #}
+{# intended to be included in another template, with a NiceVesselInfoForm as v_form #}
 {# assumes RadioHider is already defined #}
 <div>
     {{ v_form.non_field_errors }}
@@ -16,7 +16,7 @@
         {% include "unlabeled_field.html" %}
         {% endwith %}
         <div id="{{ v_form.prefix }}-vesselcontact_new_contact" style="display:none;">
-            {% with c_form as form %}
+            {% with v_form.new_contact as form %}
             {% include "contacts/change_contact_include.html" %}
             {% endwith %}
         </div>

@@ -8,6 +8,7 @@ from django.conf import settings
 from models import VesselInfo
 from cetacean_incidents.apps.countries.models import Country
 from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.contacts.forms import ContactForm
 
 class FlagSelect(forms.Select):
     '''\
@@ -85,9 +86,6 @@ class VesselInfoForm(forms.ModelForm):
         model = VesselInfo
 
 class NiceVesselInfoForm(VesselInfoForm):
-    '''\
-    To be used with a ContactForm on the same page for adding a new Contact.
-    '''
     
     contact_choices = (
         ('new', 'add a new contact'),
@@ -113,7 +111,7 @@ class NiceVesselInfoForm(VesselInfoForm):
     )
     
     # TODO how to retain positional args without copying them from super?
-    def __init__(self, data=None, initial=None, instance=None, *args, **kwargs):
+    def __init__(self, data=None, initial=None, instance=None, prefix=None, *args, **kwargs):
         # the values for contact_choice and existing_contact can be set from
         # a passed 'instance', but such values should be overrideable by the 
         # passed 'initial' argument
@@ -126,23 +124,78 @@ class NiceVesselInfoForm(VesselInfoForm):
                 if not instance.contact is None:
                     initial['existing_contact'] = instance.contact.id
         
-        super(NiceVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
+        super(NiceVesselInfoForm, self).__init__(data, initial=initial, instance=instance, prefix=prefix, *args, **kwargs)
         # make contact_choices overrideable
         self['contact_choice'].field.choices = self.contact_choices
+        
+        # the ContactForm for new contacts
+        new_contact_prefix = 'new_contact'
+        if not prefix is None:
+            new_contact_prefix = prefix + '-' + new_contact_prefix
+        self.new_contact = ContactForm(data, prefix=new_contact_prefix)
+    
+    # TODO for:
+    #
+    # __unicode__
+    # __iter__
+    # as_table
+    # as_ul
+    # as_p
+    # is_multipart
+    # hidden_fields
+    # visible_fields
+    # 
+    # should we output the corresponding results from self.new_contact as well?
+
+    def is_valid(self):
+        valid = super(NiceVesselInfoForm, self).is_valid()
+        # calling is_valid will 
+        #  access self.error, which will 
+        #  call self.full_clean, which will 
+        #  populate self.cleaned_data if not bool(self._errors)
+        if valid and self.cleaned_data['contact_choice'] == 'new':
+            valid = self.new_contact.is_valid()
+        return valid
+    
+    @property
+    def errors(self):
+        err = super(NiceVesselInfoForm, self).errors
+        # accessing self.errors, will 
+        #  call self.full_clean, which will 
+        #  populate self.cleaned_data if not bool(self._errors)
+        if not err and self.cleaned_data['contact_choice'] == 'new':
+            new_contact_err = self.new_contact.errors
+            if new_contact_err:
+                err['new_contact'] = new_contact_err
+    
+    # note that we don't need to override has_changed to handle self.new_contact
     
     def save(self, commit=True):
-        vi = super(NiceVesselInfoForm, self).save(commit=False)
         
-        # TODO self.cleaned_data['contact_choice'] == 'new'
+        vi = super(NiceVesselInfoForm, self).save(commit=False)
+
+        if self.cleaned_data['contact_choice'] == 'new':
+            nc = self.new_contact.save(commit=commit)
+
+            if commit:
+                vi.contact = nc
+            else:
+                old_m2m = self.save_m2m
+                def new_m2m(self):
+                    old_m2m()
+                    vi.contact = nc
+                    vi.save()
+                self.save_m2m = new_m2m
+
         if self.cleaned_data['contact_choice'] == 'other':
             vi.contact = self.cleaned_data['existing_contact']
         if self.cleaned_data['contact_choice'] == 'none':
             vi.contact = None
-        
+            
         if commit:
             vi.save()
             self.save_m2m()
-        
+            
         return vi
     
     class Meta:

@@ -136,7 +136,6 @@ def _change_incident(
         form_classes.update({
             'new_reporter': ContactForm,
             'new_observer': ContactForm,
-            'new_vesselcontact': ContactForm,
         })
     
     form_classes.update(additional_form_classes)
@@ -277,18 +276,13 @@ def _change_incident(
                     observation.save()
                 else:
                     forms['observer_vessel'].save()
-                if request.user.has_perm('contacts.add_contact'):
-                    if forms['observer_vessel'].cleaned_data['contact_choice'] == 'new':
-                        _check('new_vesselcontact')
-                        observation.observer_vessel.contact = forms['new_vesselcontact'].save()
-                        observation.observer_vessel.save()
                 if forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
                     observation.observer_vessel.contact = observation.reporter
                     observation.observer_vessel.save()
                 elif forms['observer_vessel'].cleaned_data['contact_choice'] == 'observer':
                     observation.observer_vessel.contact = observation.observer
                     observation.observer_vessel.save()
-                # 'other' and 'none' are handled by NiceVesselInfoForm.save
+                # 'new', 'other', and 'none' are handled by NiceVesselInfoForm.save
 
             additional_form_saving(forms, model_instances, _check, observation)
             
@@ -345,7 +339,6 @@ def _change_incident(
                     forms['new_observer'].errors,
                     forms['location'].errors,
                     forms['observer_vessel'].errors,
-                    forms['new_vesselcontact'].errors,
                 ] + map(
                     lambda f: forms['observation'][f].errors, 
                     (

@@ -67,9 +67,7 @@
     <div id="vessel_info">
         <h4>vessel info for observer's vessel</h4>
         {% with forms.observer_vessel as v_form %}
-        {% with forms.new_vesselcontact as c_form %}
         {% include "vessels/edit_vessel_include.html" %}
-        {% endwith %}
         {% endwith %}
     </div>
 </div> <!-- class="section" -->
