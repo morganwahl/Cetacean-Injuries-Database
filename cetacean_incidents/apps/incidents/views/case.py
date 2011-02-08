@@ -224,7 +224,7 @@ def _make_case_tabs(case, case_form):
         ),
     ]
 
-def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=tuple()):
+def _change_case(request, case, case_form, template='incidents/edit_case.html', additional_tabs=[]):
 
     if request.method == 'POST':
         print '_change_case: POST'
