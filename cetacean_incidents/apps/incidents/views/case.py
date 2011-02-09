@@ -191,11 +191,12 @@ def _change_case(
     tab_context.update(additional_tab_context)
     
     tabs = [
-        AnimalTab('animal', tab_context),
-        CaseTab('case', tab_context),
-        CaseSINMDTab('case-sinmd', tab_context),
-    ]
-    tabs += additional_tabs
+        AnimalTab(html_id='animal'),
+        CaseTab(html_id='case'),
+        CaseSINMDTab(html_id='case-sinmd'),
+    ] + additional_tabs
+    for t in tabs:
+        t.context = tab_context
     
     tabs = Tabs(tabs)
     

@@ -21,17 +21,38 @@ from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Case
 
-from cetacean_incidents.apps.jquery_ui.tabs import Tab
-
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
 
 from cetacean_incidents.apps.incidents.views import case_detail, _change_case, add_observation, edit_observation
 from cetacean_incidents.apps.incidents.views.observation import _change_incident
+from cetacean_incidents.apps.incidents.views.tabs import CaseTab
 
 from models import Entanglement, GearType, EntanglementObservation, BodyLocation, GearBodyLocation
 from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
+
+class EntanglementTab(CaseTab):
+    
+    default_html_display = mark_safe(u"<em>Case</em><br>Entanglement")
+    default_template = 'entanglements/edit_case_entanglement_tab.html'
+    
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [self.context['case_form'].non_field_errors()] + map(
+                    lambda f: self.context['case_form'][f].errors,
+                    (
+                        'gear_fieldnumber',
+                        'gear_analyzed',
+                        'analyzed_date',
+                        'analyzed_by',
+                        'gear_types',
+                    ),
+                ),
+            )
+        )
 
 @login_required
 def entanglement_detail(request, case_id, extra_context):
@@ -53,37 +74,15 @@ def edit_entanglement(request, entanglement_id):
     else:
         form = EntanglementForm(prefix='case', instance=entanglement)
     
-    tabs = (
-        Tab(
-            html_id= 'case-entanglement',
-            template= get_template('entanglements/edit_case_entanglement_tab.html'),
-            context= Context({
-                'case': entanglement,
-                'form': form,
-            }),
-            html_display= mark_safe(u"<em>Case</em><br>Entanglement"),
-            error= reduce(operator.or_, map(
-                bool,
-                [form.non_field_errors()] + map(
-                    lambda f: form[f].errors,
-                    (
-                        'gear_fieldnumber',
-                        'gear_analyzed',
-                        'analyzed_date',
-                        'analyzed_by',
-                        'gear_types',
-                    ),
-                ),
-            )),
-        ),
-    )
+    # _change_case will set the context
+    tab = EntanglementTab(html_id='case-entanglement')
     
     return _change_case(
         request,
         case= entanglement,
         case_form= form,
         template= 'entanglements/edit_entanglement.html', 
-        additional_tabs= tabs,
+        additional_tabs= [tab]
     )
 
 @login_required

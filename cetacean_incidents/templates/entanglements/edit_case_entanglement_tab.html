@@ -8,24 +8,24 @@
         src="{% url site-media path="icons/warning.png"%}"
     >
 </div>
-{{ form.non_field_errors }}
+{{ case_form.non_field_errors }}
 {% endif %}
-{% with form.gear_fieldnumber as f %}
+{% with case_form.gear_fieldnumber as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.gear_retrieved as f %}
+{% with case_form.gear_retrieved as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.gear_analyzed as f %}
+{% with case_form.gear_analyzed as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.analyzed_date as f %}
+{% with case_form.analyzed_date as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.analyzed_by as f %}
+{% with case_form.analyzed_by as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with form.gear_types as f %}
+{% with case_form.gear_types as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
 

@@ -17,8 +17,11 @@ class Tab(object):
 
     required_context_keys = tuple()
     
-    def __init__(self, context, html_id=None, html_display=None, template=None):
+    def __init__(self, context={}, html_id=None, html_display=None, template=None):
         '''\
+        If context isn't given, it must be set before any render functions are
+        called.
+        
         If html_id is None it defaults to the name of the class with 'Tab'
         removed from the end, lowercased.
         
@@ -49,22 +52,27 @@ class Tab(object):
             template = self.default_template
         self.template = template
         
+        self.context = context
+    
+    def check_context(self):
         # check that all the required keys are there
         for k in self.required_context_keys:
-            if not k in context:
+            if not k in self.context:
                 raise ValueError("%s was initiated with a context without a required key: %s" % (self.__class__.__name__, k))
-        self.context = context
-        
+    
     def render_js(self):
+        self.check_context()
         return render_to_string("tab_js.js", {'tab': self})
 
     def li_error(self):
         return False    
     
     def render_li(self):
+        self.check_context()
         return render_to_string("tab_li.html", {'tab': self, 'error': self.li_error()})
 
     def render_body(self):
+        self.check_context()
         return get_template(self.template).render(self.context)
 
 class Tabs(object):
