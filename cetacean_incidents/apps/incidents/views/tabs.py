@@ -66,3 +66,128 @@ class CaseSINMDTab(CaseTab):
             )
         )
 
+class ObservationTab(Tab):
+    required_context_keys = ('forms',)
+
+class ObservationReportingTab(ObservationTab):
+
+    default_html_display = mark_safe(u"<em>Observation</em><br>Reporter")
+    default_template = 'incidents/edit_observation_reporting_tab.html'
+    
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                    self.context['forms']['new_reporter'].errors,
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors, 
+                    (
+                        'datetime_reported',
+                        'new_reporter',
+                        'reporter',
+                    ),
+                ),
+            )
+        )
+
+class ObservationObservingTab(ObservationTab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Observer")
+    default_template = 'incidents/edit_observation_observing_tab.html'
+
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                    self.context['forms']['new_observer'].errors,
+                    self.context['forms']['location'].errors,
+                    self.context['forms']['observer_vessel'].errors,
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors,
+                    (
+                        'initial',
+                        'exam',
+                        'datetime_observed',
+                        'new_observer',
+                        'observer',
+                        'observer_on_vessel',
+                    )
+                )
+            )
+        )
+
+class ObservationAnimalIDTab(ObservationTab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Animal Identification")
+    default_template = 'incidents/edit_observation_animal_identification_tab.html'
+    
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors, 
+                    (
+                        'taxon',
+                        'gender',
+                        'animal_description',
+                        'age_class',
+                        'condition',
+                        'biopsy',
+                        'genetic_sample',
+                        'tagged',
+                    )
+                )
+            )
+        )
+
+class ObservationIncidentTab(ObservationTab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Incident")
+    default_template = 'incidents/edit_observation_incident_tab.html'
+    
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors, 
+                    (
+                        'documentation',
+                        'ashore',
+                        'wounded',
+                        'wound_description',
+                    )
+                )
+            )
+        )
+
+class ObservationNarrativeTab(ObservationTab):
+
+    default_template = 'incidents/edit_observation_narrative_tab.html'
+    default_html_display = mark_safe(u"<em>Observation</em><br>Narrative")
+
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors, 
+                    (
+                        'narrative',
+                    )
+                )
+            )
+        )
+
+

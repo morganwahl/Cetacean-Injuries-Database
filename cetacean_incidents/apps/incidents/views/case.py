@@ -156,7 +156,6 @@ def case_search(request, after_date=None, before_date=None):
         context_instance= RequestContext(request),
     )
 
-
 def _change_case(
         request,
         case,

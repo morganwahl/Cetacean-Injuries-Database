@@ -17,14 +17,24 @@ class Tab(object):
 
     required_context_keys = tuple()
     
-    def __init__(self, html_id, context, template=None, html_display=None):
+    def __init__(self, context, html_id=None, html_display=None, template=None):
         '''\
-        If display_name is none is defaults to the html_name with '_'s replaced
+        If html_id is None it defaults to the name of the class with 'Tab'
+        removed from the end, lowercased.
+        
+        If html_display is None it defaults to the html_id with '_'s replaced
         by spaces and titlecased.
-        Error_func is a callable that is passed the same context as render_li.
-        If it returns False, the tab will be highlighted to indicate an error.
+        
+        template can be passed to override the default template.
         '''
-
+        
+        if html_id is None:
+            # TODO are there things in Python identifiers that can't be in
+            # HTML ids?
+            html_id = self.__class__.__name__
+            if html_id.endswith('Tab'):
+                html_id = html_id[:-len('Tab')]
+            html_id = html_id.lower()
         self.html_id = html_id
 
         if html_display is None:

@@ -22,7 +22,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
-from cetacean_incidents.apps.jquery_ui.tabs import Tab, Tabs
+from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
 from ..models import Animal, Case
 from ..forms import AnimalForm, AddCaseForm, CaseForm
@@ -30,7 +30,7 @@ from ..forms import AnimalForm, AddCaseForm, CaseForm
 from ..models import Observation, ObservationExtension
 from ..forms import ObservationForm
 
-from case import _make_animal_tabs, _make_case_tabs
+from tabs import AnimalTab, CaseTab, CaseSINMDTab, ObservationReportingTab, ObservationObservingTab, ObservationAnimalIDTab, ObservationIncidentTab, ObservationNarrativeTab
 
 @login_required
 def observation_detail(request, observation_id):
@@ -294,9 +294,11 @@ def _change_incident(
             #print "error in form %s: %s" % (formname, unicode(form.errors))
             pass
     
-    context = RequestContext(request, {
+    tab_context = RequestContext(request, {
         'animal': animal,
+        'animal_form': forms['animal'],
         'case': case,
+        'case_form': forms['case'],
         'observation': observation,
         'forms': forms,
     })
@@ -306,115 +308,16 @@ def _change_incident(
         js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
-    tabs = Tabs(_make_animal_tabs(animal, forms['animal']) + _make_case_tabs(case, forms['case']) + [
-         Tab(
-            html_id= 'observation-reporting',
-            template= get_template('incidents/edit_observation_reporting_tab.html'),
-            context= context,
-            html_display= mark_safe(u"<em>Observation</em><br>Reporter"),
-            error= reduce(operator.or_, map(
-                bool,
-                [
-                    forms['observation'].non_field_errors(),
-                    forms['new_reporter'].errors,
-                ] + map(
-                    lambda f: forms['observation'][f].errors, 
-                    (
-                        'datetime_reported',
-                        'new_reporter',
-                        'reporter',
-                    ),
-                ),
-            )),
-         ),
-         Tab(
-            html_id= 'observation-observing',
-            template= get_template('incidents/edit_observation_observing_tab.html'),
-            context= context,
-            html_display= mark_safe(u"<em>Observation</em><br>Observer"),
-            error= reduce(operator.or_, map(
-                bool,
-                [
-                    forms['observation'].non_field_errors(),
-                    forms['new_observer'].errors,
-                    forms['location'].errors,
-                    forms['observer_vessel'].errors,
-                ] + map(
-                    lambda f: forms['observation'][f].errors, 
-                    (
-                        'initial',
-                        'exam',
-                        'datetime_observed',
-                        'new_observer',
-                        'observer',
-                        'observer_on_vessel',
-                    ),
-                ),
-            )),
-         ),
-         Tab(
-            html_id= 'observation-animal_identification',
-            template= get_template('incidents/edit_observation_animal_identification_tab.html'),
-            context= context,
-            html_display= mark_safe(u"<em>Observation</em><br>Animal Identification"),
-            error= reduce(operator.or_, map(
-                bool,
-                [
-                    forms['observation'].non_field_errors(),
-                ] + map(
-                    lambda f: forms['observation'][f].errors, 
-                    (
-                        'taxon',
-                        'gender',
-                        'animal_description',
-                        'age_class',
-                        'condition',
-                        'biopsy',
-                        'genetic_sample',
-                        'tagged',
-                    ),
-                ),
-            )),
-         ),
-         Tab(
-            html_id= 'observation-incident',
-            template= get_template('incidents/edit_observation_incident_tab.html'),
-            context= context,
-            html_display= mark_safe(u"<em>Observation</em><br>Incident"),
-            error= reduce(operator.or_, map(
-                bool,
-                [
-                    forms['observation'].non_field_errors(),
-                ] + map(
-                    lambda f: forms['observation'][f].errors, 
-                    (
-                        'documentation',
-                        'ashore',
-                        'wounded',
-                        'wound_description',
-                    ),
-                ),
-            )),
-         ),
-         Tab(
-            html_id= 'observation-narrative',
-            template= get_template('incidents/edit_observation_narrative_tab.html'),
-            context= context,
-            html_display= mark_safe(u"<em>Observation</em><br>Narrative"),
-            error= reduce(operator.or_, map(
-                bool,
-                [
-                    forms['observation'].non_field_errors(),
-                ] + map(
-                    lambda f: forms['observation'][f].errors, 
-                    (
-                        'narrative',
-                    ),
-                ),
-            )),
-        ),
-    ] + additional_tabs
-    )
+    tabs = Tabs([
+        AnimalTab(tab_context),
+        CaseTab(tab_context),
+        CaseSINMDTab(tab_context, html_id='case-sinmd'),
+        ObservationReportingTab(tab_context, html_id='observation-reporting'),
+        ObservationObservingTab(tab_context, html_id='observation-observing'),
+        ObservationAnimalIDTab(tab_context, html_id='observation-animal'),
+        ObservationIncidentTab(tab_context, html_id='observation-incident'),
+        ObservationNarrativeTab(tab_context, html_id='observation-narrative'),
+    ] + additional_tabs)
 
     return render_to_response(
         template,
@@ -422,7 +325,7 @@ def _change_incident(
             'tabs': tabs,
             'media': reduce( lambda m, f: m + f.media, forms.values() + [tabs], template_media),
         },
-        context_instance= context,
+        context_instance= tab_context,
     )
 
 # TODO rename, since it also can add animals and cases
