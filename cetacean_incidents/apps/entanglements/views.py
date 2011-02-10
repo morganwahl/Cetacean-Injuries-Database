@@ -87,7 +87,7 @@ def edit_entanglement(request, entanglement_id):
         template= 'entanglements/edit_entanglement.html', 
         additional_tabs= [tab]
     )
-
+    
 @login_required
 @permission_required('entanglements.change_entanglement')
 @permission_required('entanglements.view_gear_owner')

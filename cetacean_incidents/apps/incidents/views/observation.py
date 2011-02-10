@@ -306,11 +306,6 @@ def _change_incident(
     })
     tab_context.update(additional_tab_context)
     
-    template_media = Media(
-        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
-        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
-    )
-    
     animal_tabs = [AnimalTab(context=tab_context)]
 
     if cases: # we're editing existing cases
@@ -362,6 +357,11 @@ def _change_incident(
     
     tabs = Tabs(animal_tabs + case_tabs + observation_tabs)
 
+    template_media = Media(
+        css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
+    )
+    
     return render_to_response(
         template,
         {

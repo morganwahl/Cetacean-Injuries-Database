@@ -13,9 +13,9 @@
     >
 </div>
 {% endif %}
-{% if animal_form.non_field_errors %}
+
 {{ animal_form.non_field_errors }}
-{% endif %}
+
 {% for f in animal_form %}
 {% include "labeled_field.html" %}
 {% endfor %}

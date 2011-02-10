@@ -1,6 +1,7 @@
 <h3>{{ observation|default:"<i>new observation</i>" }}</h3>
 
 {{ forms.observation.non_field_errors }}
+
 <div class="section">
     <h4>report date and time</h4>
     {% with forms.observation.datetime_reported as f %}

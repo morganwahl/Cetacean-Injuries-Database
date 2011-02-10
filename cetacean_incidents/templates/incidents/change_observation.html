@@ -48,20 +48,6 @@
 {% endblock %}
 
 {% block content %}
-{% comment %}
-<div>
-<pre>
-animals {{ forms.animal.errors }}
-case {{ forms.case.errors }}
-observation {{ forms.observation.errors }}
-location {{ forms.location.errors }}
-new_reporter {{ forms.new_reporter.errors }}
-new_observer {{ forms.new_observer.errors }}
-observer_vessel {{ forms.observer_vessel.errors }}
-new_vesselcontact {{ forms.new_vesselcontact.errors }}
-</pre>
-</div>
-{% endcomment %}
 <form action="" method="post">
     <button type="submit">
         {% block submit_button %}
