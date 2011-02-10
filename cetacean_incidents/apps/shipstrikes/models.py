@@ -63,6 +63,11 @@ class ShipstrikeObservation(ObservationExtension):
         null= True,
     )
 
+    def get_observation_view_data(self):
+        # avoid circular imports
+        from views import get_shipstrikeobservation_view_data
+        return get_shipstrikeobservation_view_data(self)
+
     class Meta:
         verbose_name = "Observation shipstrike-data"
         verbose_name_plural = verbose_name

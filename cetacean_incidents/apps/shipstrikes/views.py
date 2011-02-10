@@ -6,12 +6,15 @@ from django.template import RequestContext
 from django.forms import Media
 from django.db import transaction
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from reversion import revision
 
 from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Case
+
+from cetacean_incidents.apps.jquery_ui.tabs import Tab
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.contacts.forms import ContactForm
@@ -39,83 +42,94 @@ def edit_shipstrike(request, case_id):
         template= 'shipstrikes/edit_shipstrike.html'
     )
 
-@login_required
-def shipstrikeobservation_detail(request, obs_id):
-    obs = ShipstrikeObservation.objects.get(pk=obs_id)
-    return redirect(obs.observation_ptr, permanent=True)
+class ShipstrikeObservationTab(Tab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Shipstrike")
+    default_template = 'shipstrikes/edit_observation_shipstrike_tab.html'
+    required_context_keys = ('forms',)
+    
+    def li_error(self):
+        return bool(self.context['forms']['shipstrike_observation'].errors)
 
-# TODO merge with edit_shipstrikeobservation
+# TODO make use of get_shipstrikeobservation_view_data
 @login_required
 @permission_required('shipstrikes.change_shipstrike')
 @permission_required('shipstrikes.add_shipstrikeobservation')
 def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
+    '''\
+    Create a new Observation with a ShipstrikeObservation extension and attach
+    it to a Shipstrike, creating the Shipstrike if necessary.
+    
+    If a shipstrike_id is given, that Shipstrikes's animal will be used and
+    animal_id will be ignored.
+    '''
+    
+    animal = None
+    case = None
+    if not shipstrike_id is None:
+        case = Shipstrike.objects.get(id=shipstrike_id)
+        animal = case.animal
+    elif not animal_id is None:
+        animal = Animal.objects.get(id=animal_id)
+    
+    tabs = ShipstrikeObservationTab(html_id='observation-shipstrike')
+    
     def _try_saving(forms, instances, check, observation):
-        if forms['observation'].cleaned_data['striking_vessel_info'] == False:
-            observation.striking_vessel = None
-            observation.save()
+        check('shipstrike_observation')
+        ss_oe = forms['shipstrike_observation'].save()
+        observation.shipstrikes_shipstrikeobservation = ss_oe
+        observation.save()
+        
+        if forms['shipstrike_observation'].cleaned_data['striking_vessel_info'] == False:
+            ss_oe.striking_vessel = None
+            ss_oe.save()
         else: # there's striking_vessel data
             check('striking_vessel')
             striking_vessel = forms['striking_vessel'].save()
             
             contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
-            if request.user.has_perm('contacts.add_contact'):
-                if contact_choice == 'new':
-                    check('striking_vessel_contact')
-                    striking_vessel.contact = forms['striking_vessel_contact'].save()
             if contact_choice == 'reporter':
-                striking_vessel.contact = observation.reporter
+                observation.striking_vessel.contact = observation.reporter
             elif contact_choice == 'observer':
-                striking_vessel.contact = observation.observer
-            # 'other' and 'none' are handled by NiceVesselInfoForm.save
-
+                observation.striking_vessel.contact = observation.observer
+            # 'new', 'other', and 'none' are handled by NiceVesselInfoForm.save
+            
             captain_choice = forms['striking_vessel'].cleaned_data['captain_choice']
-            if request.user.has_perm('contacts.add_contact'):
-                if captain_choice == 'new':
-                    check('striking_vessel_captain')
-                    striking_vessel.captain = forms['striking_vessel_captain'].save()
             if captain_choice == 'reporter':
-                striking_vessel.captain = observation.reporter
+                observation.striking_vessel.captain = observation.reporter
             elif captain_choice == 'observer':
-                striking_vessel.captain = observation.observer
-            elif captain_choice == 'vessel':
-                striking_vessel.captain = striking_vessel.contact
-            elif captain_choice == 'other':
-                striking_vessel.captain = forms['striking_vessel'].cleaned_data['existing_captain']
+                observation.striking_vessel.captain = observation.observer
+            # 'new', 'vessel', 'other', and 'none' are handled by StrikingVesselInfoForm.save
             
             striking_vessel.save()
-            observation.striking_vessel = striking_vessel
+            ss_oe.striking_vessel = striking_vessel
+            ss_oe.save()
 
     return _change_incident(
         request,
-        animal_id= animal_id,
-        case_id= shipstrike_id,
-        template= 'shipstrikes/add_shipstrike_observation.html',
-        caseform_class= ShipstrikeForm,
-        addcaseform_class= AddShipstrikeForm,
-        observationform_class= ShipstrikeObservationForm,
+        animal= animal,
+        case= case,
+        caseform_class= AddShipstrikeForm,
         additional_form_classes= {
+            'shipstrike_observation': ShipstrikeObservationForm,
             'striking_vessel': StrikingVesselInfoForm,
-            'striking_vessel_contact': ContactForm,
-            'striking_vessel_captain': ContactForm,
         },
         additional_form_saving= _try_saving,
+        additional_observation_tabs= [tab]
     )
 
-@login_required
-@permission_required('change_shipstrike')
-@permission_required('change_shipstrikeobservation')
-def edit_shipstrikeobservation(request, shipstrikeobservation_id):
-    observation = ShipstrikeObservation.objects.get(id=shipstrikeobservation_id)
-    form_initials = {
-        'observation': {
-            'striking_vessel_info': not observation.striking_vessel is None,
-        }
-    }
+# data to be passed to _change_incident when editing an Observation
+def get_shipstrikeobservation_view_data(ss_oe):
 
     def saving(forms, instances, check, observation):
-        if forms['observation']['striking_vessel_info']:
+        check('shipstrike_observation')
+        ss_oe = forms['shipstrike_observation'].save()
+        observation.shipstrikes_shipstrikeobservation = ss_oe
+        observation.save()
+
+        if forms['shipstrike_observation']['striking_vessel_info']:
             check('striking_vessel')
-            observation.striking_vessel = forms['striking_vessel'].save()
+            striking_vessel = forms['striking_vessel'].save()
             
             contact_choice = forms['striking_vessel'].cleaned_data['contact_choice']
             if contact_choice == 'reporter':
@@ -131,23 +145,27 @@ def edit_shipstrikeobservation(request, shipstrikeobservation_id):
                 observation.striking_vessel.captain = observation.observer
             # 'new', 'vessel', 'other', and 'none' are handled by StrikingVesselInfoForm.save
 
-            observation.striking_vessel.save()
-    
-    return _change_incident(
-        request,
-        observation_id= shipstrikeobservation_id,
-        template= 'shipstrikes/edit_shipstrike_observation.html',
-        caseform_class= ShipstrikeForm,
-        observationform_class= ShipstrikeObservationForm,
-        additional_form_classes= {
+            striking_vessel.save()
+            ss_oe.striking_vessel = striking_vessel
+            ss_oe.save()
+
+    tab = ShipstrikeObservationTab(html_id='observation-shipstrike')
+
+    return {
+        'form_classes': {
+            'shipstrike_observation': ShipstrikeObservationForm,
             'striking_vessel': StrikingVesselInfoForm,
-            'striking_vessel_contact': ContactForm,
-            'striking_vessel_captain': ContactForm,
         },
-        additional_model_instances= {
-            'striking_vessel': observation.striking_vessel
+        'form_initials': {
+            'shipstrike_observation': {
+                'striking_vessel_info': not ss_oe.striking_vessel is None,
+            },
         },
-        additional_form_initials= form_initials,
-        additional_form_saving= saving,
-    )
+        'model_instances': {
+            'shipstrike_observation': ss_oe,
+            'striking_vessel': ss_oe.striking_vessel,
+        },
+        'form_saving': saving,
+        'tabs': [tab],
+    }
 

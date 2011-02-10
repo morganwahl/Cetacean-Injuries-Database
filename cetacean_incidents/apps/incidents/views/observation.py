@@ -61,48 +61,40 @@ def observation_detail(request, observation_id):
 #   False False       False  new obs. of new animal with new case
 def _change_incident(
         request,
-        animal_id=None,
-        case_id=None,
-        observation_id=None,
+        animal=None,
+        case=None,
+        observation=None,
         template='incidents/add_observation.html',
-        caseform_class= CaseForm,
-        addcaseform_class= AddCaseForm,
-        observationform_class= ObservationForm,
+        caseform_class= AddCaseForm,
         additional_form_classes= {},
         additional_model_instances = {},
         additional_form_initials= {},
         additional_form_saving= lambda forms, instances, check, observation: None,
-        additional_tabs=[],
+        additional_case_tabs=[],
+        additional_observation_tabs=[],
+        additional_tab_context={},
     ):
     '''\
-    The doomsday form-view. If case_id is not None, animal_id is ignored (the
-    case's animal is used instead). If case_id is None, a new Case is created
-    for the animal given in animal_id. If animal_id is None, a new Animal is
-    added as well.
+    The doomsday form-view. If case is not None, animal is ignored (the case's
+    animal is used instead). If case is None, a new Case is created for the
+    animal given. If animal is None, a new Animal is added as well.
     
     observationform_class, if given, should be a subclass of ObservationForm.
-    addcaseform_class should be the same as caseform_class, but without an
-    animal field. additional_model_instances should have keys that correspond to
+    caseform_class should not have an field for the case's animal. 
+    additional_model_instances should have keys that correspond to
     the ones in additional_form_classes.
     '''
     
-    ### First, we get all the model instances we'll want to edit
-    
-    # these are just shortcuts for model_instances['animal', 'case', 'observation']
-    observation = None
-    case = None
-    animal = None
-    if not observation_id is None: # not a new observation
-        observation = Observation.objects.get(id=observation_id).specific_instance()
+    if not observation is None: # not a new observation
         # TODO some way of picking the case?
         case = observation.cases.all()[0].specific_instance()
         animal = observation.animal
-    elif not case_id is None:
-        case = Case.objects.get(id=case_id).specific_instance()
+    elif not case is None:
         animal = case.animal
-    elif not animal_id is None:
-        animal = Animal.objects.get(id=animal_id)
     
+    ### First, we get all the model instances we'll want to edit
+    # note that 'animal', 'case', and 'observation' are just shortcuts. all the
+    # instance we want to edit are in model_instances
     model_instances = {}
     if animal:
         model_instances['animal'] = animal
@@ -121,16 +113,10 @@ def _change_incident(
     form_classes = {
         'animal': AnimalForm,
         'case': caseform_class,
-        'observation': observationform_class,
+        'observation': ObservationForm,
         'location': NiceLocationForm,
         'observer_vessel': VesselInfoForm,
     }
-    
-    # if we're adding a new case, there's no point in having an animal field
-    # for it. that would also make the page non-functional if we're adding a
-    # new animal.
-    if case is None:
-        form_classes['case'] = addcaseform_class
     
     if request.user.has_perm('contacts.add_contact'):
         form_classes.update({
@@ -302,22 +288,28 @@ def _change_incident(
         'observation': observation,
         'forms': forms,
     })
+    tab_context.update(additional_tab_context)
     
     template_media = Media(
         css= {'all': (settings.JQUERYUI_CSS_FILE,)},
         js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
-    tabs = Tabs([
-        AnimalTab(tab_context),
-        CaseTab(tab_context),
-        CaseSINMDTab(tab_context, html_id='case-sinmd'),
-        ObservationReportingTab(tab_context, html_id='observation-reporting'),
-        ObservationObservingTab(tab_context, html_id='observation-observing'),
-        ObservationAnimalIDTab(tab_context, html_id='observation-animal'),
-        ObservationIncidentTab(tab_context, html_id='observation-incident'),
-        ObservationNarrativeTab(tab_context, html_id='observation-narrative'),
-    ] + additional_tabs)
+    tabs = [
+        AnimalTab(),
+        CaseTab(),
+        CaseSINMDTab(html_id='case-sinmd'),
+    ] + additional_case_tabs + [
+        ObservationReportingTab(html_id='observation-reporting'),
+        ObservationObservingTab(html_id='observation-observing'),
+        ObservationAnimalIDTab(html_id='observation-animal'),
+        ObservationIncidentTab(html_id='observation-incident'),
+    ] + additional_observation_tabs +[
+        ObservationNarrativeTab(html_id='observation-narrative'),
+    ]
+    for t in tabs:
+        t.context = tab_context
+    tabs = Tabs(tabs)
 
     return render_to_response(
         template,
@@ -336,8 +328,23 @@ def _change_incident(
 @permission_required('incidents.add_case')
 @permission_required('incidents.change_case')
 def add_observation(request, animal_id=None, case_id=None):
+    '''\
+    Create a new observation with no ObservationExtensions and attach it to
+    a regular Case, creating the Case if necessary.
     
-    return _change_incident(request, animal_id=animal_id, case_id=case_id)
+    If a case_id is given, that case's animal will be used and animal_id will
+    be ignored.
+    '''
+    
+    animal = None
+    case = None
+    if not case_id is None:
+        case = Case.objects.get(id=case_id)
+        animal = case.animal
+    elif not animal_id is None:
+        animal = Animal.objects.get(id=animal_id)
+    
+    return _change_incident(request, animal=animal, case=case)
     
 @login_required
 @permission_required('incidents.change_observation')
@@ -345,5 +352,40 @@ def add_observation(request, animal_id=None, case_id=None):
 @permission_required('incidents.change_animal')
 def edit_observation(request, observation_id):
     
-    return _change_incident(request, observation_id=observation_id)
+    observation = Observation.objects.get(id=observation_id)
+
+    extensions = observation.get_observation_extensions()
+    # TODO there must be a better way just putting all this view data on the 
+    # ObservationExtension models...
+    form_classes = {}
+    form_initials = {}
+    model_instances = {}
+    form_saving_funcs = []
+    tabs = []
+    for e in extensions:
+        d = e.get_observation_view_data()
+        if 'form_classes' in d:
+            form_classes.update(d['form_classes'])
+        if 'form_initials' in d:
+            form_initials.update(d['form_initials'])
+        if 'model_instances' in d:
+            model_instances.update(d['model_instances'])
+        if 'form_saving' in d:
+            form_saving_funcs.append(d['form_saving'])
+        if 'tabs' in d:
+            tabs += d['tabs']
     
+    def saving(*args, **kwargs):
+        for func in form_saving_funcs:
+            func(*args, **kwargs)
+    
+    return _change_incident(
+        request, 
+        observation= observation,
+        additional_form_classes= form_classes,
+        additional_form_initials= form_initials,
+        additional_model_instances= model_instances,
+        additional_form_saving= saving,
+        additional_observation_tabs= tabs,
+    )
+

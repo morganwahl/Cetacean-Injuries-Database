@@ -221,6 +221,11 @@ class EntanglementObservation(ObservationExtension):
 
         return body_locations
 
+    def get_observation_view_data(self):
+        # avoid circular imports
+        from views import get_entanglementobservation_view_data
+        return get_entanglementobservation_view_data(self)
+
     @property
     def _extra_context(self):
         return {

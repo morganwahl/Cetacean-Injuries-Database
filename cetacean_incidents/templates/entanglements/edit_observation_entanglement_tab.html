@@ -1,0 +1,36 @@
+{% with forms.entanglement_observation.anchored as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.entanglement_observation.gear_description as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% with forms.entanglement_observation.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+<div class="field-wrapper">
+    <table>
+        <tr>
+            <td>
+                <table class="bordered">
+                {% for form in forms.entanglement_observation.gear_body_location_forms %}
+                    {{ form.as_table }}
+                {% endfor %}
+                </table>
+            </td>
+            <td>
+                {# TODO get this verbose-name and help-text from the actual EntanglementObservation.gear_body_location field #}
+                <span class="fieldname">Gear Body Locations</span>
+                <p>
+                    <i>where on the animal's body was gear seen or not seen</i>
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>
+{% with forms.entanglement_observation.entanglement_details as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% with forms.entanglement_observation.disentanglement_outcome as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+

@@ -9,7 +9,11 @@ import views
 urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_shipstrike, {}, 'edit_shipstrike'),
     (r'^(?P<shipstrike_id>\d+)/add_observation$', views.add_shipstrikeobservation, {}, 'add_shipstrikeobservation'),
-    (r'^observations/(\d+)/$', views.shipstrikeobservation_detail, {}, 'shipstrikeobservation_detail'),
-    (r'^observations/(\d+)/edit$', views.edit_shipstrikeobservation, {}, 'edit_shipstrikeobservation'),
+    # TODO make a permanent redirect to generic observation detail
+    # No longer makes sense now that ShipstrikeObservation is an ObservationExtension
+    #(r'^observations/(\d+)/$', views.shipstrikeobservation_detail, {}, 'shipstrikeobservation_detail'),
+    # TODO make a permanent redirect to generic observation detail
+    # No longer makes sense now that ShipstrikeObservation is an ObservationExtension
+    #(r'^observations/(\d+)/edit$', views.edit_shipstrikeobservation, {}, 'edit_shipstrikeobservation'),
 )
 

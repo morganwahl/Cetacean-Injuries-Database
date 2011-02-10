@@ -110,4 +110,50 @@ class CaseTestCase(TestCase):
         c.animal.save()
         c = Case.objects.get(id=c.id)
         self.assertEquals(c.name, c._current_name())
+
+class ObservationTestCase(TestCase):
+    
+    def setUp(self):
+        self.animal = Animal.objects.create()
+        self.case = Case.objects.create(animal=self.animal)
+        
+    def test_get_oes(self):
+        
+        no_ext = Observation.objects.create(
+            animal = self.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        no_ext.cases.add(self.case)
+        self.assertEqual(no_ext.get_observation_extensions(), tuple())
+        
+        from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+        ent_ext = Observation.objects.create(
+            animal = self.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        ent_ext.cases.add(self.case)
+        ent_oe = EntanglementObservation.objects.create(observation_ptr=ent_ext)
+        self.assertEqual(ent_ext.get_observation_extensions(), (ent_oe,))
+        
+        from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
+        ss_ext = Observation.objects.create(
+            animal = self.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        ss_ext.cases.add(self.case)
+        ss_oe = ShipstrikeObservation.objects.create(observation_ptr=ss_ext)
+        self.assertEqual(ss_ext.get_observation_extensions(), (ss_oe,))
+
+        both_ext = Observation.objects.create(
+            animal = self.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        both_ext.cases.add(self.case)
+        both_ent_oe = EntanglementObservation.objects.create(observation_ptr=both_ext)
+        both_ss_oe = ShipstrikeObservation.objects.create(observation_ptr=both_ext)
+        self.assertEqual(set(both_ext.get_observation_extensions()), set((both_ent_oe, both_ss_oe)))
         

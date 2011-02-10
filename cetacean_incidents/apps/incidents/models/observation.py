@@ -3,6 +3,7 @@
 import datetime
 import pytz
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -327,6 +328,21 @@ class Observation(Documentable):
     
     objects = ObservationManager()
     
+    def get_observation_extensions(self):
+        
+        # TODO don't hard-code these names
+        oe_fields = ('entanglements_entanglementobservation', 'shipstrikes_shipstrikeobservation')
+        
+        observation_extensions = []
+        for oe_field in oe_fields:
+            try:
+                oe = getattr(self, oe_field)
+                observation_extensions.append(oe)
+            except ObjectDoesNotExist:
+                pass
+        
+        return tuple(observation_extensions)
+
     class Meta:
         app_label = 'incidents'
         ordering = ['datetime_observed', 'datetime_reported', 'id']
@@ -354,6 +370,9 @@ class ObservationExtension(models.Model):
     )
     
     _extra_context = {}
+    
+    def get_observation_view_data(self):
+        return {}
     
     class Meta:
         abstract = True

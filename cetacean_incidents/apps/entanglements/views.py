@@ -21,6 +21,8 @@ from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Case
 
+from cetacean_incidents.apps.jquery_ui.tabs import Tab
+
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
 from cetacean_incidents.apps.incidents.forms import AnimalForm
@@ -237,33 +239,74 @@ def edit_gear_owner(request, entanglement_id):
     )
 
 @login_required
-def entanglementobservation_detail(request, obs_id):
-    obs = EntanglementObservation.objects.get(pk=obs_id)
-    return redirect(obs.observation_ptr, permanent=True)
-
-@login_required
 @permission_required('entanglements.change_entanglement')
 @permission_required('entanglements.add_entanglementobservation')
 def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
+    '''\
+    Create a new Observation with a EntanglementObservation extension and attach
+    it to an Entanglement, creating the Entanglement if necessary.
+    
+    If a entanglement_id is given, that Entanglement's animal will be used and
+    animal_id will be ignored.
+    '''
+    
+    animal = None
+    case = None
+    if not entanglement_id is None:
+        case = Entanglement.objects.get(id=entanglement_id)
+        animal = case.animal
+    elif not animal_id is None:
+        animal = Animal.objects.get(id=animal_id)
+    
+    case_tab = EntanglementTab(html_id='case-entanglement')
+    observation_tab = EntanglementObservationTab(html_id='observation-entanglement')
+    
+    def saving(forms, instances, check, observation):
+        check('entanglement_observation')
+        ent_oe = forms['entanglement_observation'].save()
+        observation.entanglements_entanglementobservation = ent_oe
+        obsrvation.save()
+    
     return _change_incident(
         request,
-        animal_id= animal_id,
-        case_id= entanglement_id,
-        template= 'entanglements/add_entanglement_observation.html',
-        caseform_class= EntanglementForm,
-        addcaseform_class= AddEntanglementForm,
-        observationform_class= EntanglementObservationForm,
+        animal= animal,
+        case= case,
+        caseform_class= AddEntanglementForm,
+        additional_form_classes= {
+            'entanglement_observation': EntanglementObservationForm,
+        },
+        additional_form_saving= saving,
+        additional_observation_tabs= [observation_tab],
+        additional_case_tabs= [case_tab],
     )
 
-@login_required
-@permission_required('entanglements.change_entanglement')
-@permission_required('entanglements.change_entanglementobservation')
-def edit_entanglementobservation(request, entanglementobservation_id):
-    return _change_incident(
-        request,
-        observation_id = entanglementobservation_id,
-        template= 'entanglements/edit_entanglement_observation.html',
-        caseform_class= EntanglementForm,
-        observationform_class= EntanglementObservationForm,
-    )
+class EntanglementObservationTab(Tab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Entanglement")
+    default_template = 'entanglements/edit_observation_entanglement_tab.html'
+    required_context_keys = ('forms',)
 
+    def li_error(self):
+        return bool(self.context['forms']['entanglement_observation'].errors)
+
+def get_entanglementobservation_view_data(ent_oe):
+    
+    tab = EntanglementObservationTab(html_id='observation-entanglement')
+    
+    def saving(forms, instances, check, observation):
+        check('entanglement_observation')
+        ent_oe = forms['entanglement_observation'].save()
+        observation.entanglements_entanglementobservation = ent_oe
+        obsrvation.save()
+
+    return {
+        'form_classes': {
+            'entanglement_observation': EntanglementObservationForm,
+        },
+        'model_instances': {
+            'entanglement_observation': ent_oe,
+        },
+        'form_saving': saving,
+        'tabs': [tab],
+    }
+    
