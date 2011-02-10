@@ -1,5 +1,5 @@
 {% extends "vessels/edit_vessel_include.html" %}
-{# intended to be included in another template, with a StrikingVesselInfoForm as v_form and the vessel's ContactForm as c_form and the vessel's captain ContactForm as cap_form #}
+{# intended to be included in another template, with a StrikingVesselInfoForm as v_form #}
 {% block extra_fields %}
 <div class="subform">
     <h4>Captain Contact</h4>
@@ -16,7 +16,7 @@
     {% endwith %}
     <div id="{{ v_form.prefix }}-vesselcaptain_new_contact" style="display:none;">
         {% if perms.contacts.add_contact %}
-        {% with cap_form as form %}
+        {% with v_form.new_captain as form %}
         {% include "contacts/change_contact_include.html" %}
         {% endwith %}
         {% else %}

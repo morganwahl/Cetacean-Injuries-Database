@@ -7,6 +7,7 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.contacts.forms import ContactForm
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
@@ -65,7 +66,7 @@ class StrikingVesselInfoForm(VesselInfoForm):
         label= _f.verbose_name.capitalize(),
     )
     
-    def __init__(self, data=None, initial=None, instance=None, *args, **kwargs):
+    def __init__(self, data=None, initial=None, instance=None, prefix=None, *args, **kwargs):
         # the values for captain_choice and existing_captain can be set from
         # a passed 'instance', but such values should be overrideable by the 
         # passed 'initial' argument
@@ -84,13 +85,13 @@ class StrikingVesselInfoForm(VesselInfoForm):
                 if not instance.captain is None:
                     initial['existing_captain'] = instance.captain.id
 
-        super(StrikingVesselInfoForm, self).__init__(data, initial=initial, instance=instance, *args, **kwargs)
+        super(StrikingVesselInfoForm, self).__init__(data, initial=initial, instance=instance, prefix=prefix, *args, **kwargs)
         
         # the ContactForm for new captain contacts
         new_captain_prefix = 'new_captain'
         if not prefix is None:
             new_captain_prefix = prefix + '-' + new_captain_prefix
-        self.new_captain = ContactForm(prefix=new_captain_prefix)
+        self.new_captain = ContactForm(data, prefix=new_captain_prefix)
         
     # TODO for:
     #
@@ -126,7 +127,7 @@ class StrikingVesselInfoForm(VesselInfoForm):
             if self.cleaned_data['captain_choice'] == 'new':
                 new_captain_errors = self.new_captain.errors
                 if new_captain_errors:
-                    err['new_captain'] = new_captain_errors
+                    errors['new_captain'] = new_captain_errors
         return errors
 
     def full_clean(self):
@@ -135,7 +136,7 @@ class StrikingVesselInfoForm(VesselInfoForm):
 
     # note that we don't need to override has_changed to handle self.new_contact
     
-    def save(commit=True):
+    def save(self, commit=True):
         svi = super(StrikingVesselInfoForm, self).save(commit=False)
         
         if self.cleaned_data['captain_choice'] == 'new':
