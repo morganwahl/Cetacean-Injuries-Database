@@ -22,6 +22,8 @@ class AddCaseForm(CaseForm):
     class Meta(CaseForm.Meta):
         exclude = ('animal',)
 
+Case.form_class = AddCaseForm
+
 class MergeCaseForm(forms.ModelForm):
     
     class Meta:

@@ -1,3 +1,5 @@
+<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+
 {{ forms.observation.non_field_errors }}
 {% block incident_tab_body %}
 {% with forms.observation.documentation as f %}

@@ -53,23 +53,23 @@ def observation_detail(request, observation_id):
     )
 
 # what this view does depends on a few things:
-#  animal  case observation
-#       *     *        True  edit obs. given and it's case and animal
-#       *  True       False  add obs. to case given and edit case and case's animal
-#    True False       False  new obs. and new case for animal given. edit animal too.
-#   False False       False  new obs. of new animal with new case
+#  animal  cases observation
+#       *      *        True  edit obs. given and it's cases and animal
+#       *   True       False  add obs. to cases given and edit those cases and their animal
+#    True  False       False  new obs. and new case for animal given. edit animal too.
+#   False  False       False  new obs. of new animal with new case
 def _change_incident(
         request,
         animal=None,
-        case=None,
+        cases=None,
+        new_case_form_class=AddCaseForm,
         observation=None,
         template='incidents/add_observation.html',
-        caseform_class= AddCaseForm,
         additional_form_classes= {},
         additional_form_initials= {},
         additional_model_instances = {},
         additional_form_saving= lambda forms, instances, check, observation: None,
-        additional_case_tabs=[],
+        additional_case_tabs=[], # should be a list of lists with additional tabs for each case
         additional_observation_tabs=[],
         additional_tab_context={},
     ):
@@ -78,27 +78,34 @@ def _change_incident(
     animal is used instead). If case is None, a new Case is created for the
     animal given. If animal is None, a new Animal is added as well.
     
-    observationform_class, if given, should be a subclass of ObservationForm.
-    caseform_class should not have an field for the case's animal. 
     additional_model_instances should have keys that correspond to
     the ones in additional_form_classes.
     '''
     
     if not observation is None: # not a new observation
         # TODO some way of picking the case?
-        case = observation.cases.all()[0].specific_instance()
+        cases = [c.specific_instance() for c in observation.cases.all()]
         animal = observation.animal
-    elif not case is None:
-        animal = case.animal
+    elif not cases is None:
+        animal = cases[0].animal
     
+    # check that all the cases have 'animal' as their animal
+    for c in cases:
+        if c.animal != animal:
+            raise ValueError("These cases are for different animals!")
+    
+    def _case_key(case):
+        return 'case-' + unicode(c.pk) 
+
     ### First, we get all the model instances we'll want to edit
-    # note that 'animal', 'case', and 'observation' are just shortcuts. all the
+    # note that 'animal', 'cases', and 'observation' are just shortcuts. all the
     # instance we want to edit are in model_instances
     model_instances = {}
     if animal:
         model_instances['animal'] = animal
-    if case:
-        model_instances['case'] = case
+    if cases:
+        for c in cases:
+            model_instances[_case_key(c)] = c
     if observation:
         model_instances['observation'] = observation
         if observation.observer_vessel:
@@ -108,14 +115,18 @@ def _change_incident(
     model_instances.update(additional_model_instances)
 
     ### Next we set up the dict of form classes
-
+    
     form_classes = {
         'animal': AnimalForm,
-        'case': caseform_class,
         'observation': ObservationForm,
         'location': NiceLocationForm,
         'observer_vessel': VesselInfoForm,
     }
+    if cases: # we're editing cases
+        for c in cases:
+            form_classes[_case_key(c)] = c.form_class
+    else: # we're adding cases
+        form_classes['new_case'] = new_case_form_class
     
     if request.user.has_perm('contacts.add_contact'):
         form_classes.update({
@@ -196,27 +207,34 @@ def _change_incident(
             else:
                 animal = forms['animal'].save()
             
-            _check('case')
-            if not 'case' in model_instances:
-                case = forms['case'].save(commit=False)
+            if cases: # we're editing existing cases
+                for c in cases:
+                    k = _case_key(c)
+                    _check(k)
+                    forms[k].save()
+            else: # we're adding a new case
+                _check('new_case')
+                forms['new_case'].save()
+                new_case = forms['new_case'].save(commit=False)
                 # TODO move this to AddCaseForm.save?
-                case.animal = animal
-                case.save()
-                forms['case'].save_m2m()
-            else:
-                case = forms['case'].save()
-            
+                new_case.animal = animal
+                new_case.save()
+                forms['new_case'].save_m2m()
+        
             _check('observation')
             if not 'observation' in model_instances: # if this is a new obs.
                 observation = forms['observation'].save(commit=False)
                 # TODO move this to ObservationForm.save?
-                observation.animal = case.animal
+                observation.animal = animal
                 observation.save()
                 forms['observation'].save_m2m()
-                observation.cases.add(case)
+                if cases: # we're editing existing cases
+                    for c in cases:
+                        observation.cases.add(c)
+                else: # we're adding a new case
+                    observation.cases.add(new_case)
             else: # we're just editing this obs
                 observation = forms['observation'].save()
-                observation.animal = case.animal # in case case.animal changed
                 observation.save()
             
             if request.user.has_perm('contacts.add_contact'):
@@ -282,8 +300,7 @@ def _change_incident(
     tab_context = RequestContext(request, {
         'animal': animal,
         'animal_form': forms['animal'],
-        'case': case,
-        'case_form': forms['case'],
+        'cases': cases,
         'observation': observation,
         'forms': forms,
     })
@@ -294,11 +311,45 @@ def _change_incident(
         js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
-    tabs = [
-        AnimalTab(),
-        CaseTab(),
-        CaseSINMDTab(html_id='case-sinmd'),
-    ] + additional_case_tabs + [
+    animal_tabs = [AnimalTab(context=tab_context)]
+
+    if cases: # we're editing existing cases
+        case_tabs = []
+        for i in range(len(cases)):
+            c = cases[i]
+            k = _case_key(c)
+            case_tab_context = RequestContext(request, {
+                'case': c,
+                'case_form': forms[k],
+            })
+            
+            try:
+                additional_tabs = additional_case_tabs[i]
+            except IndexError:
+                additional_tabs = []
+            if hasattr(c, 'extra_tab_class'):
+                additional_tabs = [c.extra_tab_class()] + additional_tabs
+            for t in additional_tabs:
+                t.context = case_tab_context
+                t.html_id = k + '-' + t.html_id
+
+            these_case_tabs = [
+                CaseTab(html_id=k + '-case', context=case_tab_context),
+                CaseSINMDTab(html_id=k + '-case-sinmd', context=case_tab_context),
+            ] + additional_tabs
+            
+            case_tabs += these_case_tabs
+    else: # we're adding a new case
+        case_tab_context = RequestContext(request, {
+            'case': None,
+            'case_form': forms['new_case'],
+        })
+        case_tabs = [
+            CaseTab(html_id='new_case', context=case_tab_context),
+            CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
+        ]
+        
+    observation_tabs = [
         ObservationReportingTab(html_id='observation-reporting'),
         ObservationObservingTab(html_id='observation-observing'),
         ObservationAnimalIDTab(html_id='observation-animal'),
@@ -306,9 +357,10 @@ def _change_incident(
     ] + additional_observation_tabs +[
         ObservationNarrativeTab(html_id='observation-narrative'),
     ]
-    for t in tabs:
+    for t in observation_tabs:
         t.context = tab_context
-    tabs = Tabs(tabs)
+    
+    tabs = Tabs(animal_tabs + case_tabs + observation_tabs)
 
     return render_to_response(
         template,

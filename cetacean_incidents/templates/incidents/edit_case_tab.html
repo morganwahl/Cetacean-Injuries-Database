@@ -1,4 +1,7 @@
 {# expects a Case instance as 'case', and a CaseForm instance as 'case_form' #}
+
+<h3>{{ case|default:"<i>new case</i>" }}</h3>
+
 {% if case.observation_set.count > 1 %}
 <div class="edit-warning">
     <img

@@ -1,5 +1,7 @@
+<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+
 {{ forms.observation.non_field_errors }}
-<h3>Narrative</h3>
+<h4>Narrative</h4>
 <div>
     {% with forms.observation.narrative as f %}
     {% include "unlabeled_field.html" %}

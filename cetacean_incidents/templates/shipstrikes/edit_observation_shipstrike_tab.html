@@ -1,3 +1,7 @@
+<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+
+{{ forms.observation.non_field_errors }}
+
 {% with forms.shipstrike_observation.striking_vessel_info as f %}
 {% include "labeled_field.html" %}
 {% endwith %}

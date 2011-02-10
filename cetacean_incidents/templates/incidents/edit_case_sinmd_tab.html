@@ -1,9 +1,13 @@
+{# expects a Case instance as 'case', and a CaseForm instance as 'case_form' #}
+
+<h3>{{ case|default:"<i>new case</i>" }}</h3>
+
 {% if case.observation_set.count > 1 %}
 <div class="edit-warning">
     <img
         src="{% url site-media path="icons/warning.png"%}"
     >
-    Note that this is the case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
+    Note that this is case data for {{ case.observation_set.count }} observation{{ case.observation_set.count|pluralize }}.
     <img
         src="{% url site-media path="icons/warning.png"%}"
     >

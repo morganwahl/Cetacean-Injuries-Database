@@ -35,6 +35,7 @@ from forms import EntanglementForm, AddEntanglementForm, EntanglementObservation
 
 class EntanglementTab(CaseTab):
     
+    default_html_id = 'case-entanglement'
     default_html_display = mark_safe(u"<em>Case</em><br>Entanglement")
     default_template = 'entanglements/edit_case_entanglement_tab.html'
     
@@ -54,6 +55,7 @@ class EntanglementTab(CaseTab):
                 ),
             )
         )
+Entanglement.extra_tab_class = EntanglementTab
 
 @login_required
 def entanglement_detail(request, case_id, extra_context):

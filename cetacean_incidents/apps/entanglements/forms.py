@@ -124,6 +124,8 @@ class AddEntanglementForm(EntanglementForm):
     class Meta(EntanglementForm.Meta):
         exclude = ('gear_owner_info', 'animal')
 
+Entanglement.form_class = AddEntanglementForm
+
 class EntanglementObservationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
