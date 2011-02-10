@@ -5,6 +5,12 @@ The jQuery library should be present in
 
 <MEDIA_ROOT>/<JQUERY_FILE>
 
+The jQuery cookie plugin should be in
+
+<MEDIA_URL>/<JQUERY_PLUGIN_COOKIE>
+
+(see https://github.com/carhartl/jquery-cookie )
+
 The a jQuery-ui library with the overcast theme and the tabs component should be
 present in:
 

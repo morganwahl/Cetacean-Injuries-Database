@@ -85,7 +85,7 @@ class Tabs(object):
     
     class Media:
         css = {'all': (settings.JQUERYUI_CSS_FILE,)}
-        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE)
+        js = (settings.JQUERY_FILE, settings.JQUERY_PLUGIN_COOKIE, settings.JQUERYUI_JS_FILE)
     
     def __init__(self, tabs, html_id='tabs'):
         # TODO check that tabs is an iterable of Tab instances

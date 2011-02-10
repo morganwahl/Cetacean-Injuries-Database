@@ -1,7 +1,13 @@
 <script type="text/javascript">
     {# TODO autoescape off? #}
     $(function(){
-        var $tabs = $('#{{ tabs.html_id }}').tabs();
+        var $tabs = $('#{{ tabs.html_id }}').tabs({
+			cookie: {
+				// store cookie for 30 days
+				//secure: true,
+				expires: 30
+			},
+		});
         
         {% for td in tabs.tab_data %}
         {{ td.tab.render_js }}

@@ -25,6 +25,8 @@ MEDIA_URL = URL_PREFIX + 'site_media/'
 #<MEDIA_URL>/<JQUERY_FILE>
 JQUERY_FILE = 'jquery/jquery-1.4.2.js'
 
+JQUERY_PLUGIN_COOKIE = 'jquery/plugins/jquery.cookie.js'
+
 # The a jQuery-ui library with the overcast theme and the tabs component should 
 # be present in:
 #<MEDIA_URL>/<JQUERYUI_CSS_FILE>
