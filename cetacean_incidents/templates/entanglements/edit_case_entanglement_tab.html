@@ -12,8 +12,10 @@
         src="{% url site-media path="icons/warning.png"%}"
     >
 </div>
-{{ case_form.non_field_errors }}
 {% endif %}
+
+{{ case_form.non_field_errors }}
+
 {% with case_form.gear_fieldnumber as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
