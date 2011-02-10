@@ -8,7 +8,6 @@ from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response, redirect
 from django.template import Context, RequestContext
 from django.template.loader import get_template
-from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
 from reversion import revision
@@ -67,8 +66,8 @@ def _change_incident(
         template='incidents/add_observation.html',
         caseform_class= AddCaseForm,
         additional_form_classes= {},
-        additional_model_instances = {},
         additional_form_initials= {},
+        additional_model_instances = {},
         additional_form_saving= lambda forms, instances, check, observation: None,
         additional_case_tabs=[],
         additional_observation_tabs=[],

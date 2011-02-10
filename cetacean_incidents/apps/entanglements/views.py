@@ -11,7 +11,6 @@ from django.forms.models import modelformset_factory
 from django.db import transaction
 from django.db import models
 from django.conf import settings
-from django.template.loader import get_template
 from django.utils.safestring import mark_safe
 
 from reversion import revision
