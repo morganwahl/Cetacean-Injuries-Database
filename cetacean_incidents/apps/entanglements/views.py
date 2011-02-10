@@ -298,7 +298,7 @@ def get_entanglementobservation_view_data(ent_oe):
         check('entanglement_observation')
         ent_oe = forms['entanglement_observation'].save()
         observation.entanglements_entanglementobservation = ent_oe
-        obsrvation.save()
+        observation.save()
 
     return {
         'form_classes': {
