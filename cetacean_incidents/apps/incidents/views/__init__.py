@@ -12,6 +12,7 @@ from case import (
     case_search,
     cases_by_year,
     edit_case,
+    edit_case_animal,
     _change_case,
 )
 

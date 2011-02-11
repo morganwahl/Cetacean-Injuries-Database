@@ -4,7 +4,7 @@ from django.core.exceptions import ValidationError
 from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
-from ..models import Observation
+from ..models import Case, Observation
 
 class ObservationDateField(UncertainDateTimeField):
     
@@ -109,4 +109,28 @@ class ObservationForm(forms.ModelForm):
         # one-to-one relations shouldn't be shown.
         exclude = ('animal', 'cases', 'location', 'observer_vessel')
 
-
+class ObservationCasesForm(forms.Form):
+    '''\
+    Given an Observation instance, produces a form with a checkbox for each Case
+    for the observation's animal, with the cases the observation is relevant
+    to checked. When save() is called, the observation's cases are changed to
+    the ones that are checked.
+    '''
+    
+    # Note that all the fields are added dynamically in __init__
+    
+    def __init__(self, observation, *args, **kwargs):
+        super(ObservationCasesForm, self).__init__(*args, **kwargs)
+        
+        self.fields['cases'] = forms.ModelMultipleChoiceField(
+            queryset= Case.objects.filter(animal=observation.animal),
+            required= True, # ensures at least one model is selected
+            initial= observation.cases.all(),
+            widget= forms.CheckboxSelectMultiple,
+            label= u"Relevant cases",
+            help_text= u"Select the cases this observation is relevant to. Only cases concerning the animal this observation is of are shown.",
+            error_messages= {
+                'required': u"You must select at least one case."
+            }
+        )
+        

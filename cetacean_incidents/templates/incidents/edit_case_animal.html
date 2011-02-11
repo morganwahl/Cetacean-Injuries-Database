@@ -1,0 +1,35 @@
+{% extends "detail.html" %}
+
+{% block title %}{{ block.super }}: {{ case }}: [choosing animal]{% endblock %}
+
+{% block header %}
+<h2>{{ case }}</h2>
+<h2 style="margin-left:2em;">[choosing animal]</h2>
+{% endblock %}
+
+{% block content %}
+{% if observation_set %}
+Note that this will change the animal for these observations:
+<ul>
+    {% for o in observation_set %}
+    <li>{{ o }} ({{ o.cases.all|join:", " }})</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if case_set %}
+Since some of these observations are relevant to other cases, this will
+change the animal for these cases:
+<ul>
+    {% for c in case_set %}
+    <li>{{ c }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+<div class=section>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form }}
+        <button type="submit">save changes</button>
+    </form>
+<div>
+{% endblock %}

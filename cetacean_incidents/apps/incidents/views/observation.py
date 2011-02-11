@@ -27,15 +27,31 @@ from ..models import Animal, Case
 from ..forms import AnimalForm, AddCaseForm, CaseForm
 
 from ..models import Observation, ObservationExtension
-from ..forms import ObservationForm
+from ..forms import ObservationForm, ObservationCasesForm
 
 from tabs import AnimalTab, CaseTab, CaseSINMDTab, ObservationReportingTab, ObservationObservingTab, ObservationAnimalIDTab, ObservationIncidentTab, ObservationNarrativeTab
 
 @login_required
 def observation_detail(request, observation_id):
     observation = Observation.objects.get(id=observation_id)
+    
+    show_cases_form = False
+    if request.method == 'POST':
+        cases_form = ObservationCasesForm(observation, data=request.POST)
+        if cases_form.is_valid():
+            new_cases = set(cases_form.cleaned_data['cases'])
+            old_cases = set(observation.cases.all())
+            if new_cases != old_cases:
+                observation.cases = new_cases
+        else: # there was an error with the form
+            show_cases_form = True
+    else:
+        cases_form = ObservationCasesForm(observation)
+    
     extra_context = {
         'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
+        'show_cases_form': show_cases_form,
+        'cases_form': cases_form,
     }
     # TODO generify
     for oe_attr in (
