@@ -3,6 +3,7 @@ from case import CaseForm, AddCaseForm
 from observation import ObservationForm
 from search import (
     AnimalIDLookupForm, 
+    AnimalFieldNumberLookupForm,
     AnimalNMFSIDLookupForm,
 
     CaseIDLookupForm,

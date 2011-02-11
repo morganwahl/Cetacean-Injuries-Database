@@ -11,6 +11,22 @@
         <td class="section layout" width="50%">
             <h3>look up a particular animal</h3>
             <form action="" method="get" class="subform">
+                    {% with forms.animal_lookup_field_number.non_field_errors as errors %}
+                    {% if errors %}
+                    <ul class="errorlist">
+                        {% for e in errors %}
+                        <li>{{ e }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    {% endwith %}
+                    {% for f in forms.animal_lookup_field_number %}
+                    {% include "inline_field.html" %}
+                    {% endfor %}
+                    <button type="submit">lookup</button>
+            </form>
+            <div style="text-align: center;"><i>or</i></div>
+            <form action="" method="get" class="subform">
                     {% with forms.animal_lookup_nmfs.non_field_errors as errors %}
                     {% if errors %}
                     <ul class="errorlist">

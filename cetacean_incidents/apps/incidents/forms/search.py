@@ -30,6 +30,23 @@ class AnimalIDLookupForm(SubmitDetectingForm):
             raise forms.ValidationError("no animal with that ID")
         return animal
 
+class AnimalFieldNumberLookupForm(SubmitDetectingForm):
+    field_number = forms.CharField(
+        help_text= u"look up an animal by it's field number",
+        label= "field number",
+    )
+    
+    def clean_field_number(self):
+        data = self.cleaned_data['field_number']
+        animals = Animal.objects.filter(field_number__iexact=data)
+        # field_number isn't garanteed to be unique
+        if animals.count() < 1:
+            raise forms.ValidationError("no animal in the database has that field number")
+        elif animals.count() > 1:
+            animal_ids = animals.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple animals (in the database) have that field number. Their local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
+        return animals[0]
+
 class AnimalNMFSIDLookupForm(SubmitDetectingForm):
     nmfs_id = forms.CharField(
         help_text= u"look up an animal by the NMFS ID for one of its cases",
@@ -102,7 +119,7 @@ class AnimalSearchForm(forms.Form):
 
     name = forms.CharField(
         required= False,
-        help_text= "search for Animals whose name contains this",
+        help_text= "search for Animals whose name or field number contains this",
     )
 
 class CaseSearchForm(forms.Form):

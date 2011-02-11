@@ -21,7 +21,7 @@ from forms import AnimalChoiceForm_factory, CaseTypeForm_factory
 from decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalFieldNumberLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
@@ -33,6 +33,7 @@ def home(request):
     form_classes = {
         'animal_lookup_id': AnimalIDLookupForm,
         'animal_lookup_nmfs': AnimalNMFSIDLookupForm,
+        'animal_lookup_field_number': AnimalFieldNumberLookupForm,
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
         'case_lookup_nmfs': CaseNMFSIDLookupForm,
@@ -55,6 +56,10 @@ def home(request):
         if 'animal_lookup_nmfs-submitted' in request.GET:
             if forms['animal_lookup_nmfs'].is_valid():
                 animal = forms['animal_lookup_nmfs'].cleaned_data['nmfs_id']
+                return redirect(animal)
+        if 'animal_lookup_field_number-submitted' in request.GET:
+            if forms['animal_lookup_field_number'].is_valid():
+                animal = forms['animal_lookup_field_number'].cleaned_data['field_number']
                 return redirect(animal)
         if 'case_lookup_id-submitted' in request.GET:
             if forms['case_lookup_id'].is_valid():

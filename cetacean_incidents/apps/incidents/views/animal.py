@@ -65,7 +65,9 @@ def animal_search(request):
         # empty string for name is same as None
         if form.cleaned_data['name']:
             name = form.cleaned_data['name']
-            animals = animals.filter(name__icontains=name)
+            name_q = Q(name__icontains=name)
+            field_number_q = Q(field_number__icontains=name)
+            animals = animals.filter(name_q | field_number_q)
 
         # simulate distinct() for Oracle
         # an OrderedSet in the collections library would be nice...
