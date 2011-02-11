@@ -73,7 +73,8 @@ class Tab(object):
 
     def render_body(self):
         self.check_context()
-        return get_template(self.template).render(self.context)
+        t = get_template(self.template)
+        return t.render(self.context)
 
 class Tabs(object):
     '''\

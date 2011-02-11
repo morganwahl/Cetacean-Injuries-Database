@@ -192,7 +192,9 @@ def _change_incident(
         class _SomeValidationFailed(Exception):
             pass
         def _check(form_name):
-            if not forms[form_name].is_valid():
+            valid = forms[form_name].is_valid()
+            if not valid:
+                #print "got validity: %s" % repr(valid)
                 raise _SomeValidationFailed(form_name, forms[form_name])
         
         # Revisions should always correspond to transactions!
@@ -294,7 +296,7 @@ def _change_incident(
         try:
             return redirect(_try_saving())
         except _SomeValidationFailed as (formname, form):
-            #print "error in form %s: %s" % (formname, unicode(form.errors))
+            #print "error in form %s: %s" % (formname, unicode(repr(form.errors)))
             pass
     
     tab_context = RequestContext(request, {
