@@ -43,6 +43,26 @@
 {% endblock %}
 
 {% block content %}
+<script type="text/javascript">
+    // TODO no script
+    $().ready(function(){
+        $("#edit_cases_toggle").click(function(event){
+            $("#edit_cases").slideToggle();
+            return false;
+        });
+    });
+</script>
+<a id="edit_cases_toggle" href="#">edit the list of cases this observation is relevant to...</a>
+<div id="edit_cases"{% if not show_cases_form %} style="display:none;"{% endif %} class="section">
+    <form action="" method="post">
+    {% csrf_token %}
+    {{ cases_form.non_field_errors }}
+    {% for f in cases_form %}
+    {% include "labeled_field.html" %}
+    {% endfor %}
+    <button type="submit">save changes to the list of cases</button>
+    </form>
+</div>
 <table class="layout">
     <tr class="layout">
         <td class="layout" width="50%"> <!-- for making columns -->

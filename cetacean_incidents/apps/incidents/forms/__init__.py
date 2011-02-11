@@ -1,6 +1,6 @@
 from animal import AnimalForm, AnimalMergeForm
 from case import CaseForm, AddCaseForm
-from observation import ObservationForm
+from observation import ObservationForm, ObservationCasesForm
 from search import (
     AnimalIDLookupForm, 
     AnimalNMFSIDLookupForm,
