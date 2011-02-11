@@ -54,7 +54,7 @@
 <div class="section">
     {% block case_fields %}
     <div>
-        <span class="fieldname">Animal:</span> {% animal_link case.animal %}
+        <span class="fieldname">Animal:</span> {% animal_link case.animal %} <a href="{% url edit_case_animal case.id %}">change...</a>
     </div>
     {% if case.happened_after %}
     {% display_div case "happened_after" %}

@@ -1,5 +1,5 @@
 from animal import AnimalForm, AnimalMergeForm
-from case import CaseForm, AddCaseForm
+from case import CaseForm, AddCaseForm, CaseAnimalForm
 from observation import ObservationForm, ObservationCasesForm
 from search import (
     AnimalIDLookupForm, 

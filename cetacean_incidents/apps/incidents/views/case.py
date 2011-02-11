@@ -13,8 +13,8 @@ from cetacean_incidents.decorators import permission_required
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-from ..models import Case, YearCaseNumber
-from ..forms import AnimalForm, CaseForm, CaseSearchForm
+from ..models import Animal, Case, YearCaseNumber
+from ..forms import AnimalForm, CaseForm, CaseSearchForm, CaseAnimalForm
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 from cetacean_incidents.apps.entanglements.models import Entanglement
@@ -152,6 +152,62 @@ def case_search(request, after_date=None, before_date=None):
             'media': form.media,
             'case_list': case_list,
             'case_count': len(case_list),
+        },
+        context_instance= RequestContext(request),
+    )
+
+def edit_case_animal(request, case_id):
+    
+    case = Case.objects.get(id=case_id)
+    
+    # we'll need to change the animal for all this cases observations, and for
+    # any cases they're relevant to, and any of those cases other observations,
+    # etc.
+    case_set = set([case])
+    observation_set = set()
+    sets_changed = True
+    while sets_changed:
+        sets_changed = False
+        for c in case_set:
+            for o in c.observation_set.all():
+                if o not in observation_set:
+                    observation_set.add(o)
+                    sets_changed = True
+        for o in observation_set:
+            for c in o.cases.all():
+                if c not in case_set:
+                    case_set.add(c)
+                    sets_changed = True
+    
+    if request.method == 'POST':
+        form = CaseAnimalForm(request.POST, initial={'animal': case.animal})
+        if form.is_valid():
+            # empty value means new animal
+            if form.cleaned_data['animal'] is None:
+            # TODO wrap the creation of the animal and the saving of the cases
+            # in a transaction? or is that already handled by middleware?
+                animal = Animal.objects.create()
+            else:
+                animal = form.cleaned_data['animal']
+            for c in case_set:
+                c.animal = animal
+                c.save()
+            for o in observation_set:
+                o.animal = animal
+                o.save()
+            return redirect(case)
+
+    else:
+        form = CaseAnimalForm(initial={'animal': case.animal})
+    
+    return render_to_response(
+        "incidents/edit_case_animal.html",
+        {
+            'case': case,
+            'case_set': case_set,
+            'observation_set': observation_set,
+            'form': form,
+            'media': form.media,
         },
         context_instance= RequestContext(request),
     )

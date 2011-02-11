@@ -2,7 +2,19 @@ from django import forms
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
-from ..models import Case
+from ..models import Animal, Case
+
+class CaseAnimalForm(forms.Form):
+    '''\
+    Form to change the animal of a case. Provides one field to select an animal.
+    '''
+    
+    animal = forms.ModelChoiceField(
+        queryset= Animal.objects.all(),
+        required= False, # makes the empty choice (which indicates 'new animal') available
+        empty_label= '<new animal>',
+        widget= forms.RadioSelect,
+    )
 
 class CaseForm(forms.ModelForm):
     
