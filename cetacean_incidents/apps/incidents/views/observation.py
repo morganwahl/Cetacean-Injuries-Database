@@ -105,10 +105,11 @@ def _change_incident(
     elif not cases is None:
         animal = cases[0].animal
     
-    # check that all the cases have 'animal' as their animal
-    for c in cases:
-        if c.animal != animal:
-            raise ValueError("These cases are for different animals!")
+    if not cases is None:
+        # check that all the cases have 'animal' as their animal
+        for c in cases:
+            if c.animal != animal:
+                raise ValueError("These cases are for different animals!")
     
     def _case_key(case):
         return 'case-' + unicode(c.pk) 
@@ -406,14 +407,14 @@ def add_observation(request, animal_id=None, case_id=None):
     '''
     
     animal = None
-    case = None
+    cases = None
     if not case_id is None:
-        case = Case.objects.get(id=case_id)
+        cases = [Case.objects.get(id=case_id)]
         animal = case.animal
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
-    return _change_incident(request, animal=animal, case=case)
+    return _change_incident(request, animal=animal, cases=cases)
     
 @login_required
 @permission_required('incidents.change_observation')

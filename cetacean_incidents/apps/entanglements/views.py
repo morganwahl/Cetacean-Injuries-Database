@@ -18,7 +18,7 @@ from reversion import revision
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
-from cetacean_incidents.apps.incidents.models import Case
+from cetacean_incidents.apps.incidents.models import Animal, Case
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab
 
@@ -252,10 +252,10 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     '''
     
     animal = None
-    case = None
+    cases = None
     if not entanglement_id is None:
-        case = Entanglement.objects.get(id=entanglement_id)
-        animal = case.animal
+        cases = [Entanglement.objects.get(id=entanglement_id)]
+        animal = cases[0].animal
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
@@ -271,8 +271,8 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     return _change_incident(
         request,
         animal= animal,
-        case= case,
-        caseform_class= AddEntanglementForm,
+        cases= cases,
+        new_case_form_class= AddEntanglementForm,
         additional_form_classes= {
             'entanglement_observation': EntanglementObservationForm,
         },

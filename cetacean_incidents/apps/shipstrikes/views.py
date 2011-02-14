@@ -65,10 +65,10 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     '''
     
     animal = None
-    case = None
+    cases = None
     if not shipstrike_id is None:
-        case = Shipstrike.objects.get(id=shipstrike_id)
-        animal = case.animal
+        cases = [Shipstrike.objects.get(id=shipstrike_id)]
+        animal = cases[0].animal
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
@@ -108,8 +108,8 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     return _change_incident(
         request,
         animal= animal,
-        case= case,
-        caseform_class= AddShipstrikeForm,
+        cases= cases,
+        new_case_form_class= AddShipstrikeForm,
         additional_form_classes= {
             'shipstrike_observation': ShipstrikeObservationForm,
             'striking_vessel': StrikingVesselInfoForm,
