@@ -233,7 +233,6 @@ def _change_incident(
                     forms[k].save()
             else: # we're adding a new case
                 _check('new_case')
-                forms['new_case'].save()
                 new_case = forms['new_case'].save(commit=False)
                 # TODO move this to AddCaseForm.save?
                 new_case.animal = animal

@@ -72,13 +72,15 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
-    tabs = ShipstrikeObservationTab(html_id='observation-shipstrike')
+    tab = ShipstrikeObservationTab(html_id='observation-shipstrike')
     
     def _try_saving(forms, instances, check, observation):
         check('shipstrike_observation')
-        ss_oe = forms['shipstrike_observation'].save()
-        observation.shipstrikes_shipstrikeobservation = ss_oe
-        observation.save()
+        # committing will fail without first settings ss_oe.observation
+        ss_oe = forms['shipstrike_observation'].save(commit=False)
+        ss_oe.observation_ptr = observation
+        ss_oe.save()
+        forms['shipstrike_observation'].save_m2m()
         
         if forms['shipstrike_observation'].cleaned_data['striking_vessel_info'] == False:
             ss_oe.striking_vessel = None

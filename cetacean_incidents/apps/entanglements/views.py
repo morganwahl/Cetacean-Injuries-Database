@@ -264,9 +264,11 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     
     def saving(forms, instances, check, observation):
         check('entanglement_observation')
-        ent_oe = forms['entanglement_observation'].save()
-        observation.entanglements_entanglementobservation = ent_oe
-        obsrvation.save()
+        # commiting will fail without first setting ent_oe.observation
+        ent_oe = forms['entanglement_observation'].save(commit=False)
+        ent_oe.observation_ptr = observation
+        ent_oe.save()
+        forms['entanglement_observation'].save_m2m()
     
     return _change_incident(
         request,
