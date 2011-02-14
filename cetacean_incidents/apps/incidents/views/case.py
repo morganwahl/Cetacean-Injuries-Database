@@ -188,7 +188,7 @@ def edit_case_animal(request, case_id):
                     sets_changed = True
     
     if request.method == 'POST':
-        form = CaseAnimalForm(request.POST, initial={'animal': case.animal})
+        form = CaseAnimalForm(request.POST, initial={'animal': case.animal.pk})
         if form.is_valid():
             # empty value means new animal
             if form.cleaned_data['animal'] is None:
@@ -206,7 +206,7 @@ def edit_case_animal(request, case_id):
             return redirect(case)
 
     else:
-        form = CaseAnimalForm(initial={'animal': case.animal})
+        form = CaseAnimalForm(initial={'animal': case.animal.pk})
     
     return render_to_response(
         "incidents/edit_case_animal.html",
