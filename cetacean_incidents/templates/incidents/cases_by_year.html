@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
 {% endblock %}
 
-{% block title %}Cases for {{ year }}{% endblock %}
+{% block title %}Cases in {{ year }}{% endblock %}
 
 {% block header %}
 <h2 style="text-align:center;">
@@ -19,7 +19,7 @@
             &#x2190; year before
         </a>
     </div>
-    cases for {{ year }}
+    Cases in {{ year }}
     <div style="display: float; float:right;">
         <a href="{% url cases_by_year year|add:"1" %}">
             year after &#x2192;
@@ -29,7 +29,7 @@
 {% endblock %}
 
 {% block content %}
-{% if yearcasenumbers %}
+{% if cases %}
 <table class="bordered sortable">
     <tr>
         {# TODO this is the same table as in case_search, just with two extra columns #}
@@ -44,9 +44,8 @@
         <th class="sorttable_nosort">observers</th>
         <th># obs.</th>
     </tr>
-    {% for ycn in yearcasenumbers %}
+    {% for case in cases %}
     <tr>
-        {% with ycn.case as case %}
         {# the case-editing page can also change animals #}
         {% if perms.incidents.change_animal and perms.incidents.change_case %}
         <td>
@@ -55,7 +54,7 @@
             </a>
         </td>
         {% endif %}
-        <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
+        <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ case.current_yearnumber.year|default:9999 }}{{ case.current_yearnumber.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>
@@ -73,11 +72,10 @@
         </td>
 	    <td>{{ obs.count }}</td>
         {% endwith %}
-	    {% endwith %}
     </tr>
     {% endfor %}
 </table>
 {% else %}
-<i>no cases have ever been assigned to {{ year }}</i>
+<i>no cases have relevant observations in {{ year }}</i>
 {% endif %}
 {% endblock %}

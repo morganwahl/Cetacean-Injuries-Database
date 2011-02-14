@@ -40,12 +40,20 @@ def cases_by_year(request, year=None):
     if year is None:
         year = datetime.now().year
     year = int(year)
-    yearcasenumbers = YearCaseNumber.objects.filter(year__exact=year).select_related('case')
+    cases = Case.objects.filter(observation__datetime_observed__startswith=u"%04d" % year).order_by('current_yearnumber__year', 'current_yearnumber__number', 'pk')
+    # Oracle doesn't support distinct, so this is a work-around
+    case_list = []
+    case_set = set()
+    for c in cases:
+        if not c in case_set:
+            case_list.append(c)
+        case_set.add(c)
+    cases = case_list
     return render_to_response(
         "incidents/cases_by_year.html",
         {
             'year': year,
-            'yearcasenumbers': yearcasenumbers,
+            'cases': cases,
         },
         context_instance= RequestContext(request),
     )
