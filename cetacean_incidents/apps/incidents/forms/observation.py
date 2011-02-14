@@ -125,7 +125,7 @@ class ObservationCasesForm(forms.Form):
         self.fields['cases'] = forms.ModelMultipleChoiceField(
             queryset= Case.objects.filter(animal=observation.animal),
             required= True, # ensures at least one model is selected
-            initial= observation.cases.all(),
+            initial= [c.pk for c in observation.cases.all()],
             widget= forms.CheckboxSelectMultiple,
             label= u"Relevant cases",
             help_text= u"Select the cases this observation is relevant to. Only cases concerning the animal this observation is of are shown.",
