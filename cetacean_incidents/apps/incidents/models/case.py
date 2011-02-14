@@ -595,7 +595,7 @@ class Case(Documentable, SeriousInjuryAndMortality):
                 super(Case, self).save(*args, **kwargs)
         
         new_name = self._current_name()
-        if new_name != self.name:
+        if not new_name is None and new_name != self.name:
             self.name = new_name
             super(Case, self).save(*args, **kwargs)
 
