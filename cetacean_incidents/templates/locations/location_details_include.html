@@ -33,8 +33,8 @@
             {% if l.waters or l.country or l.state %}
             <div style="text-align: center; font-style: italic;">
                 {% if not l.waters %}
-                {% if l.country.iso = 'US' and l.state %}
-                in or nearest to {{ l.get_state_display }}
+                {% if l.state %}
+                in or nearest to {{ l.get_state_display }}{% if l.country and l.country.iso != 'US' %}, {{ l.country }}{% endif %}
                 {% else %}
                 in or nearest to {{ l.country }}
                 {% endif %}
