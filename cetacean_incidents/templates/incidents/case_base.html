@@ -43,14 +43,6 @@
 {% endblock %}
 
 {% block content %}
-{% if case.associated_cases %}
-<i>other cases for this animal around the time of this one:</i>
-<ul>
-    {% for c in case.associated_cases %}
-    <li>{% case_link c %}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 <div class="section">
     {% block case_fields %}
     <div>
