@@ -85,7 +85,7 @@ class Entanglement(Case):
         return reduce(
             self._yes_no_unk_reduce,
             map(
-                lambda o: o.entanglementobservation.gear_retrieved,
+                lambda o: o.entanglements_entanglementobservation.gear_retrieved,
                 self.observation_set.all()
             )
         )

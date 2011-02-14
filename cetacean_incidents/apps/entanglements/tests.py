@@ -160,11 +160,11 @@ class EntanglementObservationTestCase(TestCase):
         
     def test_basics(self):
         
-        self.assertRaises(EntanglementObservation.DoesNotExist, getattr, self.o, 'entanglementobservation')
+        self.assertRaises(EntanglementObservation.DoesNotExist, getattr, self.o, 'entanglements_entanglementobservation')
         
         eo = EntanglementObservation.objects.create(
             observation_ptr= self.o,
         )
         
-        self.assertEqual(self.o.entanglementobservation, eo)
+        self.assertEqual(self.o.entanglements_entanglementobservation, eo)
 

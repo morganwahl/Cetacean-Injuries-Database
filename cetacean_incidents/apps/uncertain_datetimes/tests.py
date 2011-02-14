@@ -147,7 +147,7 @@ class UncertainDateTimeTestCase(TestCase):
         for rep in unicode_reps:
             dt = rep['uncertain_datetime']
             for kwargs, ret in rep['pairs']:
-                self.assertEqual(dt.__unicode__(**kwargs), ret)
+                self.assertEqual(dt.to_unicode(**kwargs), ret)
 
 class UncertainDateTimeFormFieldTestCase(TestCase):
     def setUp(self):
@@ -194,17 +194,17 @@ class UncertainDateTimeFormFieldTestCase(TestCase):
     def test_partial_time(self):
         form = self.form_class(self.partial_time_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), u'1982-03-20 12:20:??.??????')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'1982-03-20 12:20')
 
     def test_blank(self):
         form = self.form_class(self.blank_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), u'????-??-?? ??:??:??.??????')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'')
 
     def test_year(self):
         form = self.form_class(self.year_data)
         self.assertEquals(form.is_valid(), True)
-        self.assertEquals(unicode(form.cleaned_data['f']), u'2010-??-?? ??:??:??.??????')
+        self.assertEquals(unicode(form.cleaned_data['f']), u'2010')
     
 class UncertainDateTimeModelFieldTestCase(TestCase):
 
