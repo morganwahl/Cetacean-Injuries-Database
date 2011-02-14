@@ -515,6 +515,16 @@ class Case(Documentable, SeriousInjuryAndMortality):
             return None
         return obs.order_by('datetime_observed')[0].datetime_observed
     
+    def earliest_observation(self):
+        if not self.observation_set.exists():
+            return None
+        return self.observation_set.order_by('datetime_observed')[0]
+    
+    def latest_observation(self):
+        if not self.observation_set.exists():
+            return None
+        return self.observation_set.order_by('-datetime_observed')[0]
+
     def earliest_datetime(self):
         if not self.observation_set.exists():
             return None

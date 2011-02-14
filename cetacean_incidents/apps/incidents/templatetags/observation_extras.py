@@ -17,6 +17,17 @@ def observation_link(observation):
     }
     
 @register.simple_tag
+def date_observed_display(dt):
+    '''\
+    Returns the HTML for displaying a just the date of an UncertainDateTime
+    from an Observation
+    '''
+    
+    if dt:
+        return dt.to_unicode(unknown_char=None, time=False)
+    return ''
+
+@register.simple_tag
 def datetime_observed_display(dt):
     '''\
     Returns the HTML for displaying a UncertainDateTime from an Observation

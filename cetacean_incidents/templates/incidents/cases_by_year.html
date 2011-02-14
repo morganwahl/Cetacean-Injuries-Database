@@ -58,20 +58,18 @@
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>
-	    {% with case.observation_set as obs %}
-	    {% with obs.all.0.datetime_observed as first_obs_date %}
-	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% datetime_observed_display first_obs_date %}</td>
+	    {% with case.earliest_observation.datetime_observed as first_obs_date %}
+	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% date_observed_display first_obs_date %}</td>
 	    {% endwith %}
-	    {% with obs.reverse.0.datetime_observed as last_obs_date %}
-	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{% datetime_observed_display last_obs_date %}</td>
+	    {% with case.latest_observation.datetime_observed as last_obs_date %}
+	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{% date_observed_display last_obs_date %}</td>
 	    {% endwith %}
         <td>
-            {% for c in obs.observer_set %}
+            {% for c in case.observation_set.observer_set %}
             {% contact_link c %}
             {% endfor %}
         </td>
-	    <td>{{ obs.count }}</td>
-        {% endwith %}
+	    <td>{{ case.observation_set.count }}</td>
     </tr>
     {% endfor %}
 </table>
