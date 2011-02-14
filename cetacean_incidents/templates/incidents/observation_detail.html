@@ -23,26 +23,6 @@
 <div>
     <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}#reporting">edit this observation</a>
 </div>
-{% endif %}
-{% endblock %}
-
-{% block ids-dl %}
-{% with observation.animal as a %}
-{% include "incidents/animal_ids_include.html" %}
-{% endwith %}
-<hr>
-{% block case_ids %}
-{% for c in observation.cases.all %}
-{% include "incidents/case_ids_include.html" %}
-{% endfor %}
-{% endblock %}
-<hr>
-{% with observation as o %}
-{% include "incidents/observation_ids_include.html" %}
-{% endwith %}
-{% endblock %}
-
-{% block content %}
 <script type="text/javascript">
     // TODO no script
     $().ready(function(){
@@ -63,6 +43,26 @@
     <button type="submit">save changes to the list of cases</button>
     </form>
 </div>
+{% endif %}
+{% endblock %}
+
+{% block ids-dl %}
+{% with observation.animal as a %}
+{% include "incidents/animal_ids_include.html" %}
+{% endwith %}
+<hr>
+{% block case_ids %}
+{% for c in observation.cases.all %}
+{% include "incidents/case_ids_include.html" %}
+{% endfor %}
+{% endblock %}
+<hr>
+{% with observation as o %}
+{% include "incidents/observation_ids_include.html" %}
+{% endwith %}
+{% endblock %}
+
+{% block content %}
 <table class="layout">
     <tr class="layout">
         <td class="layout" width="50%"> <!-- for making columns -->
