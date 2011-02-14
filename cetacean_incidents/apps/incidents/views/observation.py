@@ -326,8 +326,8 @@ def _change_incident(
     
     animal_tabs = [AnimalTab(context=tab_context)]
 
+    case_tabs = []
     if cases: # we're editing existing cases
-        case_tabs = []
         for i in range(len(cases)):
             c = cases[i]
             k = _case_key(c)
@@ -346,12 +346,14 @@ def _change_incident(
                 t.context = case_tab_context
                 t.html_id = k + '-' + t.html_id
 
-            these_case_tabs = [
-                CaseTab(html_id=k + '-case', context=case_tab_context),
-                CaseSINMDTab(html_id=k + '-case-sinmd', context=case_tab_context),
-            ] + additional_tabs
+            case_tabs = [
+                CaseTab(html_id=k + '-case'),
+                CaseSINMDTab(html_id=k + '-case-sinmd'),
+            ] + additional_case_tabs
             
-            case_tabs += these_case_tabs
+            for t in case_tabs:
+                t.context = case_tab_context
+                
     else: # we're adding a new case
         case_tab_context = RequestContext(request, {
             'case': None,
@@ -360,7 +362,10 @@ def _change_incident(
         case_tabs = [
             CaseTab(html_id='new_case', context=case_tab_context),
             CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
-        ]
+        ] + additional_case_tabs
+
+        for t in case_tabs:
+            t.context = case_tab_context
         
     observation_tabs = [
         ObservationReportingTab(html_id='observation-reporting'),
