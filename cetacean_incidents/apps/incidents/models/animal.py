@@ -138,6 +138,16 @@ class Animal(Documentable):
         # note that values_list() won't work on the above queryset
         return [c.entanglement.nmfs_id for c in ent_cases]
     
+    def first_observation(self):
+        if not self.observation_set.count():
+            return None
+        return self.observation_set.order_by('datetime_observed')[0]
+    
+    def last_observation(self):
+        if not self.observation_set.count():
+            return None
+        return self.observation_set.order_by('datetime_observed').reverse()[0]
+    
     def clean(self):
         if not self.field_number is None and self.field_number != '':
             # check that an existing animal doesn't already have this field_number
