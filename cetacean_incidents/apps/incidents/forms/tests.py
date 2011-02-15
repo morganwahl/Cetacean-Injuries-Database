@@ -2,7 +2,28 @@ from django.test import TestCase
 
 import django.forms
 
+from ..models.animal import Animal
+
+from case import CaseAnimalForm
 from observation import ObservationDateField
+
+class CaseAnimalFormTestCase(TestCase):
+    def test_instantiation(self):
+        f = CaseAnimalForm()
+        # unbound is invalid
+        self.assertEqual(f.is_valid(), False)
+        
+        f = CaseAnimalForm(data={'animal': None})
+        self.assertEqual(f.is_valid(), True)
+        self.assertEqual(f.cleaned_data['animal'], None)
+        
+        a = Animal.objects.create()
+        f = CaseAnimalForm(initial={'animal': a.pk})
+        self.assertEqual(f.is_valid(), False)
+        
+        f = CaseAnimalForm(data={'animal': a})
+        self.assertEqual(f.is_valid(), True)
+        self.assertEqual(f.cleaned_data['animal'], a)
 
 class ObservationDateFieldTestCase(TestCase):
     def setUp(self):
