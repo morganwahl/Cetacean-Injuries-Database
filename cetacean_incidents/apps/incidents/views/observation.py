@@ -341,7 +341,7 @@ def _change_incident(
             except IndexError:
                 additional_tabs = []
             if hasattr(c, 'extra_tab_class'):
-                additional_tabs = [c.extra_tab_class()] + additional_tabs
+                additional_tabs = [c.extra_tab_class(html_id=_case_key(c))] + additional_tabs
             for t in additional_tabs:
                 t.context = case_tab_context
                 t.html_id = k + '-' + t.html_id
@@ -349,7 +349,7 @@ def _change_incident(
             case_tabs = [
                 CaseTab(html_id=k + '-case'),
                 CaseSINMDTab(html_id=k + '-case-sinmd'),
-            ] + additional_case_tabs
+            ] + additional_tabs
             
             for t in case_tabs:
                 t.context = case_tab_context
