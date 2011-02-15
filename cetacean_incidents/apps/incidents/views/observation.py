@@ -423,7 +423,7 @@ def add_observation(request, animal_id=None, case_id=None):
     cases = None
     if not case_id is None:
         cases = [Case.objects.get(id=case_id)]
-        animal = case.animal
+        animal = cases[0].animal
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
