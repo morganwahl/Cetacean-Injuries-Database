@@ -21,7 +21,7 @@
 {# the observation-editing page change also change animals and cases #}
 {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
 <div>
-    <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}#reporting">edit this observation</a>
+    <a href="{% block edit_url %}{% url edit_observation observation.id %}{% endblock %}">edit this observation</a>
 </div>
 <script type="text/javascript">
     // TODO no script
