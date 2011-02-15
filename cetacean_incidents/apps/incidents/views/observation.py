@@ -336,24 +336,33 @@ def _change_incident(
                 'case_form': forms[k],
             })
             
-            try:
-                additional_tabs = additional_case_tabs[i]
-            except IndexError:
-                additional_tabs = []
-            if hasattr(c, 'extra_tab_class'):
-                additional_tabs = [c.extra_tab_class(html_id=_case_key(c))] + additional_tabs
-            for t in additional_tabs:
-                t.context = case_tab_context
-                t.html_id = k + '-' + t.html_id
-
-            case_tabs = [
+            # start with the basic case tabs
+            additional_tabs = [
                 CaseTab(html_id=k + '-case'),
                 CaseSINMDTab(html_id=k + '-case-sinmd'),
-            ] + additional_tabs
+            ]
             
-            for t in case_tabs:
+            # add an instance of 'extra_tab_class' if it exists
+            if hasattr(c, 'extra_tab_class'):
+                additional_tabs += [c.extra_tab_class(html_id=k + '-extra')]
+            
+            # add any other tabs for this case passed in to _change_incident
+            try:
+                passed_tabs = additional_case_tabs[i]
+                # prepend _case_key(c) to the tab's html_id
+                if t in passed_tabs:
+                    t.html_id = k + t.html_id
+                additional_tabs += passed_tabs
+            except IndexError:
+                pass
+            
+            # set the context for all the above tabs
+            for t in additional_tabs:
                 t.context = case_tab_context
-                
+            
+            # finally, add the new tabs to the list of all case_tabs
+            case_tabs += additional_tabs
+
     else: # we're adding a new case
         case_tab_context = RequestContext(request, {
             'case': None,
