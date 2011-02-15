@@ -149,6 +149,16 @@ class Entanglement(Case):
     def get_edit_url(self):
         return reverse('edit_entanglement', args=[self.id])
 
+    def clean(self):
+        if not self.nmfs_id is None and self.nmfs_id != '':
+            # TODO do they have to be unique or not?
+            # check that an existing case doesn't already have this nmfs_id
+            cases = Entanglement.objects.filter(nmfs_id=self.nmfs_id)
+            if self.id:
+                cases = cases.exclude(id=self.id)
+            if cases.count() > 0:
+                raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
+
 class BodyLocation(models.Model):
     '''\
     Model for customizable/extensible classification of location on/in an
