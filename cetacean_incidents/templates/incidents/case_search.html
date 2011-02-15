@@ -61,7 +61,7 @@
                 </a>
             </td>
             {% endif %}
-            <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
+            <td sorttable_customkey="{{ case.entanglement.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
                 {% case_link case %}
             </td>
             <td>{% animal_link case.animal %}</td>

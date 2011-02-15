@@ -21,7 +21,8 @@ from forms import AnimalChoiceForm_factory, CaseTypeForm_factory
 from decorators import permission_required
 
 from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalFieldNumberLookupForm, AnimalNMFSIDLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseNMFSIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalFieldNumberLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
+from cetacean_incidents.apps.entanglements.forms import AnimalNMFSIDLookupForm, EntanglementNMFSIDLookupForm
 from cetacean_incidents.apps.incidents.views import add_observation
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
@@ -36,7 +37,7 @@ def home(request):
         'animal_lookup_field_number': AnimalFieldNumberLookupForm,
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
-        'case_lookup_nmfs': CaseNMFSIDLookupForm,
+        'entanglement_lookup_nmfs': EntanglementNMFSIDLookupForm,
         'animal_search': AnimalSearchForm,
         'case_search': CaseSearchForm,
     }
@@ -72,9 +73,9 @@ def home(request):
                 num = form.cleaned_data['number']
                 case = YearCaseNumber.objects.get(year=year, number=num).case
                 return redirect(case)
-        if 'case_lookup_nmfs-submitted' in request.GET:
-            if forms['case_lookup_nmfs'].is_valid():
-                case = forms['case_lookup_nmfs'].cleaned_data['nmfs_id']
+        if 'entanglement_lookup_nmfs-submitted' in request.GET:
+            if forms['entanglement_lookup_nmfs'].is_valid():
+                case = forms['entanglement_lookup_nmfs'].cleaned_data['nmfs_id']
                 return redirect(case)
     
     template_media = Media()

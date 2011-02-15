@@ -16,6 +16,7 @@ from cetacean_incidents.apps.incidents.models import Animal, Case
 from cetacean_incidents.apps.incidents.forms import CaseForm
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 from cetacean_incidents.apps.dag.forms import DAGField
+from cetacean_incidents.apps.incidents.forms import SubmitDetectingForm
 
 from models import Entanglement, EntanglementObservation, GearType, GearOwner, BodyLocation, GearBodyLocation
 
@@ -233,4 +234,38 @@ class GearOwnerForm(forms.ModelForm):
     class Meta:
         model = GearOwner
         exclude = ('case', 'location_gear_set')
+
+class AnimalNMFSIDLookupForm(SubmitDetectingForm):
+    nmfs_id = forms.CharField(
+        help_text= u"look up an animal by the NMFS ID for one of its entanglement cases",
+        label= "entanglement NMFS ID",
+    )
+    
+    def clean_nmfs_id(self):
+        data = self.cleaned_data['nmfs_id']
+        animals = Animal.objects.filter(case__entanglement__nmfs_id__iexact=data)
+        # nmfs_id isn't garanteed to be unique
+        if animals.count() < 1:
+            raise forms.ValidationError("no entanglement case has been marked with that NMFS ID")
+        elif animals.count() > 1:
+            animal_ids = animals.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple animals have entanglement cases with that NMFS ID. The animals' local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
+        return animals[0]
+
+class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
+    nmfs_id = forms.CharField(
+        help_text= u"lookup a particular entanglement case by NMFS ID",
+        label= "entanglement NMFS ID",
+    )
+    
+    def clean_nmfs_id(self):
+        data = self.cleaned_data['nmfs_id']
+        cases = Entanglement.objects.filter(nmfs_id__iexact=data)
+        # nmfs_id isn't garanteed to be unique
+        if cases.count() < 1:
+            raise forms.ValidationError("no case has been marked with that NMFS ID")
+        elif cases.count() > 1:
+            case_ids = cases.values_list('id', flat=True).order_by('id')
+            raise forms.ValidationError("Multiple cases have that NMFS ID. Their local-IDs are: %s" % ', '.join(map(unicode, case_ids)))
+        return cases[0]
 

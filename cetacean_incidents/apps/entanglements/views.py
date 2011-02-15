@@ -46,6 +46,7 @@ class EntanglementTab(CaseTab):
                 [self.context['case_form'].non_field_errors()] + map(
                     lambda f: self.context['case_form'][f].errors,
                     (
+                        'nmfs_id',
                         'gear_fieldnumber',
                         'gear_analyzed',
                         'analyzed_date',

@@ -54,7 +54,7 @@
             </a>
         </td>
         {% endif %}
-        <td sorttable_customkey="{{ case.nmfs_id|default:"A00-00" }} {{ case.current_yearnumber.year|default:9999 }}{{ case.current_yearnumber.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
+        <td sorttable_customkey="{{ case.entanglement.nmfs_id|default:"A00-00" }} {{ case.current_yearnumber.year|default:9999 }}{{ case.current_yearnumber.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
 	        {% case_link case %}
 	    </td>
 	    <td>{% animal_link case.animal %}</td>

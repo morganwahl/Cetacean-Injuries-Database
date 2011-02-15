@@ -57,6 +57,18 @@ class GearOwner(AbstractContact):
 
 class Entanglement(Case):
     
+    nmfs_id = models.CharField(
+        max_length= 255,
+        unique= False, # in case a NMFS case corresponds to multiple cases in
+                       # our database
+        blank= True,
+        verbose_name= "entanglement NMFS ID",
+        help_text= "An entanglement-specific case ID.",
+    )
+    
+    def _case_type_name(self):
+        return self.nmfs_id
+        
     gear_fieldnumber = models.CharField(
         max_length= 255,
         blank= True,

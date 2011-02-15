@@ -28,7 +28,6 @@ class CaseTab(Tab):
                 [self.context['case_form'].non_field_errors()] + map(
                     lambda f: self.context['case_form'][f].errors, 
                     (
-                        'nmfs_id',
                         'happened_after',
                         'valid',
                         'ole_investigation',

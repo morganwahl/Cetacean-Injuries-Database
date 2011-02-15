@@ -16,6 +16,9 @@
 
 {{ case_form.non_field_errors }}
 
+{% with case_form.nmfs_id as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
 {% with case_form.gear_fieldnumber as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
