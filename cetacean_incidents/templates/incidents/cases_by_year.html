@@ -1,8 +1,4 @@
 {% extends "base.html" %}
-{% load case_extras %}
-{% load animal_extras %}
-{% load observation_extras %}
-{% load contact_extras %}
 
 {% block head %}
 {{ block.super }}
@@ -30,49 +26,7 @@
 
 {% block content %}
 {% if cases %}
-<table class="bordered sortable">
-    <tr>
-        {# TODO this is the same table as in case_search, just with two extra columns #}
-        {# the case-editing page can also change animals #}
-        {% if perms.incidents.change_animal and perms.incidents.change_case %}
-        <th class="sorttable_nosort"><!-- case edit link --></th>
-        {% endif %}
-        <th>case</th>
-        <th class="sorttable_nosort">animal</th>
-        <th>first observed</th>
-        <th>last observed</th>
-        <th class="sorttable_nosort">observers</th>
-        <th># obs.</th>
-    </tr>
-    {% for case in cases %}
-    <tr>
-        {# the case-editing page can also change animals #}
-        {% if perms.incidents.change_animal and perms.incidents.change_case %}
-        <td>
-            <a href="{{ case.specific_instance.get_edit_url }}#case">
-                <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
-            </a>
-        </td>
-        {% endif %}
-        <td sorttable_customkey="{{ case.entanglement.nmfs_id|default:"A00-00" }} {{ case.current_yearnumber.year|default:9999 }}{{ case.current_yearnumber.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
-	        {% case_link case %}
-	    </td>
-	    <td>{% animal_link case.animal %}</td>
-	    {% with case.earliest_observation.datetime_observed as first_obs_date %}
-	    <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% date_observed_display first_obs_date %}</td>
-	    {% endwith %}
-	    {% with case.latest_observation.datetime_observed as last_obs_date %}
-	    <td sorttable_customkey="{{ last_obs_date.sortkey }}">{% date_observed_display last_obs_date %}</td>
-	    {% endwith %}
-        <td>
-            {% for c in case.observation_set.observer_set %}
-            {% contact_link c %}
-            {% endfor %}
-        </td>
-	    <td>{{ case.observation_set.count }}</td>
-    </tr>
-    {% endfor %}
-</table>
+{% include "incidents/case_list_include.html" %}
 {% else %}
 <i>no cases have relevant observations in {{ year }}</i>
 {% endif %}
