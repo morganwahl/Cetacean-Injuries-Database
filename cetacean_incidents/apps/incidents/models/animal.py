@@ -41,6 +41,10 @@ class Animal(Documentable):
         max_length= 255,
         help_text= u'Name(s) given to this particular animal. E.g. “Kingfisher”, “RW #2427”. Separate multiple names with commas. This field is intended as a catch-all for animal identifiers besides the field number (which is stored separately).'
     )
+    
+    @property
+    def names(self):
+        return filter(lambda n: bool(n), [n.strip() for n in self.name.split(',')])
 
     determined_taxon = models.ForeignKey(
         Taxon,
@@ -127,6 +131,12 @@ class Animal(Documentable):
         verbose_name= "probable cause of mortality",
         help_text= "If this animal is dead, what (if any) probable cause of mortality has been determined?",
     )
+    
+    def nmfs_ids(self):
+        # TODO doesn't this belong in the entanglements app?
+        ent_cases = self.case_set.filter(case_type='Entanglement').exclude(entanglement__nmfs_id__isnull=True).exclude(entanglement__nmfs_id='')
+        # note that values_list() won't work on the above queryset
+        return [c.entanglement.nmfs_id for c in ent_cases]
     
     def clean(self):
         if not self.field_number is None and self.field_number != '':

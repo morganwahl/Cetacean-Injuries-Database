@@ -1,10 +1,17 @@
 {# Assumes animal was passed in as 'a' and outputs a series of <dt><dd> pairs. #}
-{% if a.name %}
-<dt><b>animal</b> name</dt><dd>{{ a.name }}</dd>
-{% endif %}
+{% load animal_extras %}
+
 {% if a.field_number %}
 <dt><b>animal</b> field number</dt><dd>{{ a.field_number }}</dd>
 {% endif %}
+{% with a.names as names %}
+{% if names %}
+<dt><b>animal</b> name{{ names|length|pluralize }}</dt>
+<dd>
+    {% animal_names_display names "block" %}
+</dd>
+{% endif %}
+{% endwith %}
 {% if not a.name and not a.field_number %}
 <dt><b>animal</b> local ID</dt><dd>{{ a.id }}</dd>
 {% endif %}

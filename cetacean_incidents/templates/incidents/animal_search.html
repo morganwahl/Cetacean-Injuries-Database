@@ -40,9 +40,7 @@
 <table class="bordered{% if animal_list %} sortable{% endif %}">
     <thead>
         <tr>
-            <th>local ID</th>
             <th class="sorttable_nosort">link</th>
-            <th>name</th>
             <th>taxon</th>
             <th>cases</th>
             <th>observations</th>
@@ -52,9 +50,7 @@
     </thead>
 	{% for animal in animal_list %}
 	<tr>
-	    <td>{{ animal.id }}</td>
-	    <td>{% animal_link animal %}</td>
-	    <td>{{ animal.name|default:"<i>none</i>" }}</td>
+	    <td>{% animal_link animal "True" %}</td>
 	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
 	        {% if animal.determined_taxon %}
 	        {{ animal.determined_taxon }}
@@ -66,7 +62,9 @@
 	        {% endif %}
 	        {% endif %}
 	    </td>
-	    <td>{{ animal.case_set.count }}</td>
+	    {% with animal.nmfs_ids as nmfs %}
+	    <td>{{ animal.case_set.count }}{% if nmfs %} <span title="NMFS ID's">({{ nmfs|join:", " }})</span>{% endif %}</td>
+	    {% endwith %}
 	    <td>{{ animal.observation_set.count }}</td>
 	    {% with animal.first_observation.datetime_observed as od %}
 	    {% if od %}
