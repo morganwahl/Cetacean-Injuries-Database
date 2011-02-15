@@ -85,6 +85,7 @@ class AnimalSearchForm(forms.Form):
 
     name = forms.CharField(
         required= False,
+        label= "Name or field number",
         help_text= "search for Animals whose name or field number contains this",
     )
 
