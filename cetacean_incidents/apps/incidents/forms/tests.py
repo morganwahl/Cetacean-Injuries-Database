@@ -71,4 +71,4 @@ class ObservationDateFieldTestCase(TestCase):
     def test_month(self):
         form = self.form_class(self.month_data)
         self.assertEquals(form.is_valid(), False)
-    
+

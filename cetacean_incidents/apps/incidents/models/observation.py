@@ -80,24 +80,25 @@ class Observation(Documentable):
         related_name= 'observed',
         help_text= 'Whoever actually saw the animal.', 
     )
-    observer_vessel = models.OneToOneField(
-        VesselInfo,
-        blank= True,
-        null= True,
-        related_name= 'observed',
-        help_text= 'the vessel the observer was on, if any',
-    )
     datetime_observed = UncertainDateTimeField(
         help_text= "When did the observer see it? (Strictly, when did the observation start?) The earliest observation date for a case's observations is the date used for the case itself, e.g. when assigning a case to a year.",
         verbose_name= 'observation date and time',
     )
     # TODO duration?
+
     location = models.OneToOneField(
         Location,
         blank= True,
         null= True,
         related_name= "observation",
         help_text= 'the observer\'s location at the time of observation. (strictly, where did the observation begin)',
+    )
+    observer_vessel = models.OneToOneField(
+        VesselInfo,
+        blank= True,
+        null= True,
+        related_name= 'observed',
+        help_text= 'the vessel the observer was on, if any',
     )
     
     @property
