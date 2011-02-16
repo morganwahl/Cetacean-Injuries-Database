@@ -111,10 +111,10 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="1765.8731"
-     inkscape:cy="3123.7922"
+     inkscape:cx="1513.9197"
+     inkscape:cy="1123.7922"
      inkscape:document-units="in"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="observations"
      showgrid="true"
      units="in"
      inkscape:snap-global="true"
@@ -212,8 +212,8 @@
            x="1817"
            y="23"
            style="font-size:12px;font-weight:normal;text-align:end;text-anchor:end;-inkscape-font-specification:Sans" /></flowRegion><flowPara
-         id="flowPara5599">version 0.4</flowPara><flowPara
-         id="flowPara5601">2011-02-03</flowPara></flowRoot>    <path
+         id="flowPara5599">version 0.5</flowPara><flowPara
+         id="flowPara5601">2011-02-14</flowPara></flowRoot>    <path
        style="fill:none;stroke:#2d5aff;stroke-width:2.24406242;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.24406245, 2.24406245;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart)"
        d="m 90,-1175.1403 c 0,90 -67.250002,315 22.5,315"
        id="case__animal__animal"
@@ -1341,25 +1341,25 @@
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="692.64014"
+         x="1310.9375"
+         y="760.14044"
          id="text6653"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan6655"
-           x="1322.1875"
-           y="692.64014">was a tag put on the animal?</tspan></text>
+           x="1310.9375"
+           y="760.14044">was a tag put on the animal?</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="782.64014"
+         x="1310.9375"
+         y="850.14044"
          id="text6649"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan6651"
-           x="1322.1875"
-           y="782.64014">genetic samples taken?</tspan></text>
+           x="1310.9375"
+           y="850.14044">genetic samples taken?</tspan></text>
       <flowRoot
          xml:space="preserve"
          id="flowRoot5603"
@@ -1890,13 +1890,13 @@
          xml:space="preserve"
          style="font-size:18px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:100%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Bold"
          x="1052.1875"
-         y="602.64014"
+         y="681.39044"
          id="text5430"
          sodipodi:linespacing="100%"><tspan
            sodipodi:role="line"
            id="tspan5432"
            x="1052.1875"
-           y="602.64014">fields for actions taken during the observation:</tspan></text>
+           y="681.39044">fields for actions taken during the observation:</tspan></text>
       <flowRoot
          xml:space="preserve"
          id="flowRoot5434"
@@ -2101,7 +2101,7 @@
          xml:space="preserve"
          id="flowRoot6686"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-         transform="translate(-84.312439,-1663.6699)"><flowRegion
+         transform="translate(-95.562378,-1596.1696)"><flowRegion
            id="flowRegion6688"><rect
              id="rect6690"
              width="675"
@@ -2113,7 +2113,7 @@
          xml:space="preserve"
          id="flowRoot6694"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-         transform="translate(-95.312439,-1613.6699)"><flowRegion
+         transform="translate(-106.56238,-1546.1696)"><flowRegion
            id="flowRegion6696"><rect
              id="rect6698"
              width="675"
@@ -2124,7 +2124,7 @@
          xml:space="preserve"
          id="flowRoot6702"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-         transform="translate(-124.31244,-1684.6699)"><flowRegion
+         transform="translate(-135.56238,-1617.1696)"><flowRegion
            id="flowRegion6704"><rect
              id="rect6706"
              width="675"
@@ -2135,7 +2135,7 @@
          xml:space="preserve"
          id="flowRoot6710"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-         transform="translate(-141.31244,-1895.6699)"><flowRegion
+         transform="translate(-152.56238,-1828.1696)"><flowRegion
            id="flowRegion6712"><rect
              id="rect6714"
              width="652.5"
@@ -2178,45 +2178,49 @@
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="737.64001"
+         x="1310.9375"
+         y="805.14032"
          id="text6645"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan6647"
-           x="1322.1875"
-           y="737.64001">biopsy samples taken?</tspan></text>
+           x="1310.9375"
+           y="805.14032">biopsy samples taken?</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="850.14014"
+         x="1271.457"
+         y="625.14044"
          id="text3638"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan3640"
-           x="1322.1875"
-           y="850.14014">indications of entanglement?</tspan></text>
+           x="1277.1875"
+           y="625.14044">indications of </tspan><tspan
+           sodipodi:role="line"
+           x="1271.457"
+           y="646.74042"
+           id="tspan3662">entanglement?</tspan></text>
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="827.64014"
+         x="1277.1875"
+         y="591.39044"
          id="text3634"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan3636"
-           x="1322.1875"
-           y="827.64014">indications of shipstrike?</tspan></text>
+           x="1277.1875"
+           y="591.39044">indications of shipstrike?</tspan></text>
       <flowRoot
          xml:space="preserve"
          id="flowRoot3642"
          style="font-size:16px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans"
-         transform="translate(-97.812439,-1659.7637)"><flowRegion
+         transform="translate(-142.81244,-1896.0134)"><flowRegion
            id="flowRegion3644"><rect
              id="rect3646"
-             width="652.5022"
-             height="60.32177"
+             width="697.5022"
+             height="71.571785"
              x="1442.4978"
              y="2472.082"
              style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Sans;-inkscape-font-specification:Sans" /></flowRegion><flowPara
@@ -2371,14 +2375,14 @@
       <text
          xml:space="preserve"
          style="font-size:18px;font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:end;line-height:120.00000477%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:end;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans;-inkscape-font-specification:Sans Italic"
-         x="1322.1875"
-         y="647.64014"
+         x="1310.9375"
+         y="715.14044"
          id="text6641"
          sodipodi:linespacing="120%"><tspan
            sodipodi:role="line"
            id="tspan6643"
-           x="1322.1875"
-           y="647.64014">documentation?</tspan></text>
+           x="1310.9375"
+           y="715.14044">documentation?</tspan></text>
       <g
          id="shipstrike_observations"
          transform="translate(-491.74994,67.500003)">
