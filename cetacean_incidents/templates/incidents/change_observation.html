@@ -52,9 +52,9 @@
     <button type="submit">
         {% block submit_button %}
         {% if observation.id %}
-        save changes to this observation and {{ case }} and {{ animal }}
-        {% else %}{% if case.id %}
-        add a new observation to {{ case }} and save changes to it and {{ animal }}
+        save changes to this observation and {{ cases|join:", " }} and {{ animal }}
+        {% else %}{% if cases.0.id %}
+        add a new observation to {{ cases|join:", " }} and save changes to it and {{ animal }}
         {% else %}{% if animal.id %}
         add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
         {% else %}

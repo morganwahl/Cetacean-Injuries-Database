@@ -318,6 +318,7 @@ def _change_incident(
     tab_context = RequestContext(request, {
         'animal': animal,
         'animal_form': forms['animal'],
+        'new_case': not bool(cases),
         'cases': cases,
         'observation': observation,
         'forms': forms,
