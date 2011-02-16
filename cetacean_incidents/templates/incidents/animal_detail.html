@@ -77,6 +77,7 @@
                 {% endif %}
             </td>
         </tr>
+        {% if animal.determined_gender or animal.probable_gender %}
         <tr class="field">
             <th style="text-align:right;">gender</th>
             <td>
@@ -87,6 +88,7 @@
                 {% endif %}
             </td>
         </tr>
+        {% endif %}
         {% if animal.determined_dead_before %}
         {% display_row animal "determined_dead_before" %}
         {% display_yesunk_row animal 'partial_necropsy' %}

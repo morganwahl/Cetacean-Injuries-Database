@@ -10,6 +10,7 @@
 
 {% block case_fields %}
 {{ block.super }}
+{% display_div case "nmfs_id" %}
 <div>
     <span class="fieldname">was gear recovered?</span> {{ case.gear_recovered|yesno:"yes,no,unknown" }}
 </div>
