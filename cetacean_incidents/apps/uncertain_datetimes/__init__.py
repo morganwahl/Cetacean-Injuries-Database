@@ -94,6 +94,17 @@ class UncertainDateTime(object):
                 raise ValueError("integer microsecond must be between %d and %d (inclusive)"  % (self.MINMICROSECOND, self.MAXMICROSECOND))
         self.microsecond = microsecond
     
+    def __eq__(self, other):
+        if not isinstance(other, UncertainDateTime):
+            return NotImplemented
+        for attr in 'year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond':
+            if getattr(self, attr) != getattr(other, attr):
+                return False
+        return True
+    
+    def __ne__(self, other):
+        return not self.__eq__(other)
+    
     SORTKEY_MAX_LEN = len('YYYYMMDDHHMMSSuSSSSS')
     SORTS_BEFORE_DIGITS = ' '
     SORTS_AFTER_DIGITS = 'z'

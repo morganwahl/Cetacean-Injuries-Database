@@ -98,7 +98,14 @@
                 </table>
                 <h3>Reporting</h3>
                 <table>
+                    {% if observation.datetime_reported == observation.datetime_observed %}
+                    <tr class="field">
+                        <th>report date and time</th>
+                        <td><i>same as observed</i></td>
+                    </tr>
+                    {% else %}
                     {% display_row observation "datetime_reported" %}
+                    {% endif %}
                     <tr class="field">
                         <th>reporter</th>
                         <td>
