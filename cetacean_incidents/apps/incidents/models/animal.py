@@ -44,6 +44,8 @@ class Animal(Documentable):
     
     @property
     def names(self):
+        if not self.name:
+            return []
         return filter(lambda n: bool(n), [n.strip() for n in self.name.split(',')])
 
     determined_taxon = models.ForeignKey(
