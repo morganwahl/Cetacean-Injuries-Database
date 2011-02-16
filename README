@@ -38,6 +38,9 @@ django-reversion 1.3.1
 pytz 2010k
 lxml-2.2
 
+when deployed via mod_fcgid another python package is required:
+    flup 1.0.2
+
 if using the Oracle backend you need:
 
 cx_Oracle 5.0.4
