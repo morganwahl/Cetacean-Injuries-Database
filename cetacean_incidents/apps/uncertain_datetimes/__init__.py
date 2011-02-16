@@ -289,13 +289,13 @@ class UncertainDateTime(object):
                     if not self.day is None:
                         format += '-{0.day:02}'
             
-            if not (format == '' or self.hour is None):
-                format += ' '
-        
         result = format.format(self)
         
         if time:
-            result += self.time_unicode(unknown_char, seconds, microseconds)
+            time_result = self.time_unicode(unknown_char, seconds, microseconds)
+            if time_result != '':
+                result += ' '
+            result += time_result
         
         return result
     
