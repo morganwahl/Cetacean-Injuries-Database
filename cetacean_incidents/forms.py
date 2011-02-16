@@ -22,14 +22,14 @@ def CaseTypeForm_factory(user):
     
     # a tuple of doubles: <class>.__name__, <class>._meta.verbose_name
     type_names = (
+        ('Case', 'Case (generic stranding case)'),
         ('Entanglement', 'Entanglement'),
         ('Shipstrike', 'Shipstrike'),
-        ('Case', 'Case'),
     )
     type_perms = {
+        'Case': lambda u: u.has_perm('incidents.add_case'),
         'Entanglement': lambda u: u.has_perm('entanglements.add_entanglement'),
         'Shipstrike': lambda u: u.has_perm('shipstrikes.add_shipstrike'),
-        'Case': lambda u: u.has_perm('incidents.add_case'),
     }
 
     class _CaseTypeForm(forms.Form):
@@ -43,9 +43,9 @@ def CaseTypeForm_factory(user):
         
         # keys are <class>.__name__, values are <class>
         type_models = {
+            'Case': Case,
             'Entanglement': Entanglement,
             'Shipstrike': Shipstrike,
-            'Case': Case,
         }
 
         case_type = forms.ChoiceField(
@@ -64,9 +64,9 @@ def CaseTypeForm_factory(user):
             'Shipstrike': ShipstrikeForm,
         }
         addcase_form_classes = {
+            'Case': AddCaseForm,
             'Entanglement': AddEntanglementForm,
             'Shipstrike': AddShipstrikeForm,
-            'Case': AddCaseForm,
         }
     
     return _CaseTypeForm
