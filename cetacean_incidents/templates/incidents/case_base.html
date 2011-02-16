@@ -48,6 +48,24 @@
     <div>
         <span class="fieldname">Animal:</span> {% animal_link case.animal %} <a href="{% url edit_case_animal case.id %}">change...</a>
     </div>
+    {% if case.names_list|length > 1 %}
+    <div>
+        <script type="text/javascript">
+            $().ready(function(){
+                $("#past_names_toggle").click(function(event){
+                    $("#past_names_block").slideToggle();
+                    return false;
+                });
+            });
+        </script>
+        <span class="fieldname">Past names for this case:</span> <a href="" id="past_names_toggle">...</a>
+        <ul id="past_names_block" style="display:none;">
+            {% for n in case.names_list %}
+            <li>{{ n }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
     {% if case.happened_after %}
     {% display_div case "happened_after" %}
     {% endif %}

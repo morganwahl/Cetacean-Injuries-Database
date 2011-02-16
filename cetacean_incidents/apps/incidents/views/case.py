@@ -27,6 +27,10 @@ def case_detail(request, case_id, extra_context={}):
     # TODO this is quite inefficient
     case = Case.objects.get(id=case_id)
     case_class = case.specific_class()
+    # the case_detail.html template needs jQuery
+    if not 'media' in extra_context:
+        extra_context['media'] = Media()
+    extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
     return generic_views.object_detail(
         request,
         object_id= case_id,
