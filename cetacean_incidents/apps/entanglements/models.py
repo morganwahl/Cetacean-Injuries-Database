@@ -179,7 +179,7 @@ class BodyLocation(models.Model):
     )
     
     ordering = models.DecimalField(
-        max_digits= 5,
+        max_digits= 6,
         decimal_places = 5,
         default = '.5',
     )
