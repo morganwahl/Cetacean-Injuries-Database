@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.core.urlresolvers import reverse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -15,6 +16,7 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 
 from ..models import Animal, Case, YearCaseNumber
 from ..forms import AnimalForm, CaseForm, CaseSearchForm, CaseAnimalForm
+from ..templatetags.case_extras import YearsForm
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 from cetacean_incidents.apps.entanglements.models import Entanglement
@@ -41,6 +43,12 @@ def case_detail(request, case_id, extra_context={}):
 
 @login_required
 def cases_by_year(request, year=None):
+    # handle the year in a GET arg:
+    yf = YearsForm(request.GET)
+    if yf.is_valid():
+        year = yf.cleaned_data['year']
+        return redirect(reverse('cases_by_year', args=[year]), permanent=True)
+    
     if year is None:
         year = datetime.now().year
     year = int(year)

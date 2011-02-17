@@ -1,0 +1,7 @@
+<form style="display:inline-block;" action="{% url cases_by_year_get %}" method="get">
+    {{ years_form.non_field_errors }}
+    {% with years_form.year as f %}
+    {% include "unlabeled_inline_field.html" %}
+    {% endwith %}
+    <button type="submit">view</button>
+</form>

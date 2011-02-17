@@ -1,4 +1,5 @@
 <!DOCTYPE html> <!-- the HTML5 doctype -->
+{% load case_extras %}
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -81,7 +82,7 @@
                         {% endif %}
                         {% endif %}
                         &#x2022;
-                        <a href="{% url cases_this_year %}">this year</a>
+                        by year: {% case_years_link %}
                     </td>
                     {% if perms.taxons.add_taxon or user.is_staff %}
                     <td>
