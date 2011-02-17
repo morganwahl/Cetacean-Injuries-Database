@@ -79,6 +79,7 @@ def _change_incident(
         animal=None,
         cases=None,
         new_case_form_class=AddCaseForm,
+        additional_new_case_tabs = [], # a list of tabs
         observation=None,
         template='incidents/add_observation.html',
         additional_form_classes= {},
@@ -372,7 +373,7 @@ def _change_incident(
         case_tabs = [
             CaseTab(html_id='new_case', context=case_tab_context),
             CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
-        ] + additional_case_tabs
+        ] + additional_new_case_tabs
 
         for t in case_tabs:
             t.context = case_tab_context

@@ -260,8 +260,7 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
     elif not animal_id is None:
         animal = Animal.objects.get(id=animal_id)
     
-    # this is handled by Entanglement.extra_tab_class
-    #case_tab = EntanglementTab(html_id='case-entanglement')
+    case_tab = EntanglementTab(html_id='case-entanglement')
     observation_tab = EntanglementObservationTab(html_id='observation-entanglement')
     
     def saving(forms, instances, check, observation):
@@ -277,12 +276,11 @@ def add_entanglementobservation(request, animal_id=None, entanglement_id=None):
         animal= animal,
         cases= cases,
         new_case_form_class= AddEntanglementForm,
+        additional_new_case_tabs= [case_tab],
         additional_form_classes= {
             'entanglement_observation': EntanglementObservationForm,
         },
         additional_form_saving= saving,
-        # this is handled by Entanglement.extra_tab_class
-        #additional_case_tabs= [[case_tab]], # should have one list for each case in 'cases'
         additional_observation_tabs= [observation_tab],
     )
 
