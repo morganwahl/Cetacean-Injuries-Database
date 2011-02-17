@@ -1,0 +1,30 @@
+{# assumes an iterable of Tags in 'tags' #}
+{% if tags %}
+<ul>
+    {% for t in tags %}
+    <li>This entry was tagged as &#x201c;{{ t.tag_text }}&#x201d; by {{ t.user }} on {{ t.datetime_tagged }}
+    {% if perms.tags.delete_tag %}
+    <script type="text/javascript">
+        $().ready(function(){
+            $("#delete_tag_link_{{ t.id }}").click(function(event){
+                $("#delete_tag_form_{{ t.id }}").slideDown();
+                return false;
+            });
+            $("#cancel_delete_tag_link_{{ t.id }}").click(function(event){
+                $("#delete_tag_form_{{ t.id }}").slideUp();
+                return false;
+            });
+        });
+    </script>
+    <a href="" title="remove this tag" id="delete_tag_link_{{ t.id }}">x</a>
+    <form id="delete_tag_form_{{ t.id }}" style="display:none;" action="{% url delete_tag t.id %}" method="post">
+        are you sure?
+        {% csrf_token %}
+        <button type="submit">yes</button> <a href="" id="cancel_delete_tag_link_{{ t.id }}">no</a>
+    </form>
+    {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
