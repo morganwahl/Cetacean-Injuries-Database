@@ -12,6 +12,8 @@ from cetacean_incidents.apps.taxons.utils import probable_taxon
 
 from ..utils import probable_gender
 
+from imported import Importable
+
 GENDERS = (
     ("f", "female"),
     ("m", "male"),
@@ -26,7 +28,7 @@ class AnimalManager(models.Manager):
         '''
         return self.filter(determined_taxon__in=Taxon.objects.descendants_ids(taxon))
 
-class Animal(Documentable):
+class Animal(Documentable, Importable):
     field_number = models.CharField(
         max_length= 255,
         blank= True,

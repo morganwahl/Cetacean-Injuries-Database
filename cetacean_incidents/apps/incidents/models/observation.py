@@ -19,6 +19,7 @@ from cetacean_incidents.apps.vessels.models import VesselInfo
 
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
+from imported import Importable
 from animal import GENDERS, Animal
 
 class ObservationManager(models.Manager):
@@ -34,7 +35,7 @@ class ObservationManager(models.Manager):
         
         return observers
 
-class Observation(Documentable):
+class Observation(Documentable, Importable):
     '''\
     The heart of the database: observations. 
     
@@ -303,12 +304,6 @@ class Observation(Documentable):
         null= True,
         help_text= "Were any genetic samples taken?",
         verbose_name= "genetic samples taken?",
-    )
-    
-    import_notes = models.TextField(
-        blank= True,
-        #editable= False, # note that this only means it's not editable in the admin interface
-        help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
     
     @models.permalink

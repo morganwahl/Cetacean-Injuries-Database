@@ -13,6 +13,7 @@ from cetacean_incidents.apps.taxons.models import Taxon
 
 from ..utils import probable_gender
 
+from imported import Importable
 from animal import Animal
 from observation import Observation
 
@@ -191,7 +192,7 @@ class SeriousInjuryAndMortality(models.Model):
     class Meta:
         abstract = True
 
-class Case(Documentable, SeriousInjuryAndMortality):
+class Case(Documentable, SeriousInjuryAndMortality, Importable):
     '''\
     A case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known.
     
