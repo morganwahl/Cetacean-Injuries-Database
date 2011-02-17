@@ -40,6 +40,9 @@
     {% endblock %}
 </div>
 {% endif %}
+{% with case.tag_set.all as tags %}
+{% include "tags/tags_detail_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}

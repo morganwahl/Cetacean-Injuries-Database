@@ -44,6 +44,9 @@
     </form>
 </div>
 {% endif %}
+{% with observation.tag_set.all as tags %}
+{% include "tags/tags_detail_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block ids-dl %}
