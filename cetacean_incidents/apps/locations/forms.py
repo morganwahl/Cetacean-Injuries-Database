@@ -21,7 +21,7 @@ class NiceLocationForm(LocationForm):
             
     # TODO surely there's a library to take care of this; perferably with
     # localization...
-    _dms_re = re.compile(
+    _DMS_RE = re.compile(
         # don't forget to double-escape unicode strings
         u'^[^NSEW\\d\\-\u2212\\.]*'
         + r'(?P<pre_dir>[NSEW])?' # match a direction
@@ -41,8 +41,9 @@ class NiceLocationForm(LocationForm):
         re.IGNORECASE
     )
     
-    def _clean_coordinate(self, value, is_lat):
-        parsed = self._dms_re.search(value)
+    @staticmethod
+    def _clean_coordinate(value, is_lat):
+        parsed = NiceLocationForm._DMS_RE.search(value)
         if not parsed:
             raise forms.ValidationError(u"can't figure out format of coordinate")
         
