@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import re
 
 from django import forms
@@ -91,23 +93,23 @@ class NiceLocationForm(LocationForm):
 
         degrees = reduce(not_none, parsed.group('dms_degrees', 'dm_degrees', 'd_degrees'))
         if degrees:
-            degrees = float(degrees) # we don't need to check for exceptions, 
-                                     # since any string that matched the pattern 
-                                     # will parse as a float
+            degrees = Decimal(degrees) # we don't need to check for exceptions, 
+                                     # since any string that matched the 
+                                     # pattern will parse as a float
         else:
-            degrees = 0.0
+            degrees = Decimal(0)
         
         minutes = reduce(not_none, parsed.group('dms_minutes', 'dm_minutes'))
         if minutes:
-            minutes = float(minutes)
+            minutes = Decimal(minutes)
         else:
-            minutes = 0.0
+            minutes = Decimal(0)
         
         seconds = parsed.group('dms_seconds')
         if seconds:
-            seconds = float(seconds)
+            seconds = Decimal(seconds)
         else:
-            seconds = 0.0
+            seconds = Decimal(0)
 
         return (neg, degrees, minutes, seconds)
                 

@@ -29,7 +29,7 @@ def dms_to_dec(dms):
     
     (negative, degrees, minutes, seconds) = dms
     
-    decimal_degrees = ((degrees * 60 * 60) + (minutes * 60) + seconds) / (60.0 * 60.0)
+    decimal_degrees = ((degrees * 60 * 60) + (minutes * 60) + seconds) / (60 * 60)
     if negative: decimal_degrees = - decimal_degrees
     
     return decimal_degrees
