@@ -91,6 +91,7 @@ class NiceLocationForm(LocationForm):
                 return y
             return x
 
+        # TODO switch to decimal
         degrees = reduce(not_none, parsed.group('dms_degrees', 'dm_degrees', 'd_degrees'))
         if degrees:
             degrees = Decimal(degrees) # we don't need to check for exceptions, 
@@ -99,12 +100,14 @@ class NiceLocationForm(LocationForm):
         else:
             degrees = Decimal(0)
         
+        # TODO switch to decimal
         minutes = reduce(not_none, parsed.group('dms_minutes', 'dm_minutes'))
         if minutes:
             minutes = Decimal(minutes)
         else:
             minutes = Decimal(0)
         
+        # TODO switch to decimal
         seconds = parsed.group('dms_seconds')
         if seconds:
             seconds = Decimal(seconds)
