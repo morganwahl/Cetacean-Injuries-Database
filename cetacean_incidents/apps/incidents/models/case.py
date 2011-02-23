@@ -539,9 +539,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             return None
         return self.latest_datetime() - self.earliest_datetime()
     
-    def associated_cases(self):
-        return Case.objects.associated_cases(self)
-    
     def save(self, *args, **kwargs):
         
         super(Case, self).save(*args, **kwargs)
@@ -588,7 +585,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     case_type = models.CharField(
         max_length= 512,
         default= 'Case',
-        editable= False,
+        editable= False, # note that this only means it's not editable in the admin interface
         null= False,
         help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
     )

@@ -222,11 +222,12 @@ class EntanglementObservation(ObservationExtension):
     disentanglement_outcome = models.CharField(
         max_length= 4,
         choices= (
-            ('entg', 'entangled'),
+            #('',     'unknown'),
             ('shed', 'gear shed'),
+            ('mntr', 'monitor'),
+            ('entg', 'entangled'),
             ('part', 'partial'),
             ('cmpl', 'complete'),
-            ('mntr', 'monitor'),
         ),
         blank= True,
         help_text= u"""\

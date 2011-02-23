@@ -346,11 +346,13 @@ def _change_incident(
             
             # add an instance of 'extra_tab_class' if it exists
             if hasattr(c, 'extra_tab_class'):
+                #print "got tab from extra_tab_class"
                 additional_tabs += [c.extra_tab_class(html_id=k + '-extra')]
             
             # add any other tabs for this case passed in to _change_incident
             try:
                 passed_tabs = additional_case_tabs[i]
+                #print "got tabs from additional_case_tabs"
                 # prepend _case_key(c) to the tab's html_id
                 if t in passed_tabs:
                     t.html_id = k + t.html_id
@@ -374,6 +376,8 @@ def _change_incident(
             CaseTab(html_id='new_case', context=case_tab_context),
             CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
         ] + additional_new_case_tabs
+        #if len(additional_new_case_tabs) > 0:
+        #    print "got tabs from additional_new_case_tabs"
 
         for t in case_tabs:
             t.context = case_tab_context

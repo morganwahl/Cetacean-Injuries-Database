@@ -120,10 +120,11 @@ class CaseSearchForm(forms.Form):
     # TODO check that after date is before before_date
     
     # TODO get the choices dynamically
+    # TODO change to include/exclude Entanglements/Shipstrikes
     case_type = forms.ChoiceField(
         choices= (
             ('', '<any>'),
-            ('c', 'Case'),
+            ('c', 'not Entanglement or Shipstrike (other stranding)'),
             ('e', 'Entanglement'),
             ('s', 'Shipstrike'),
         ),
