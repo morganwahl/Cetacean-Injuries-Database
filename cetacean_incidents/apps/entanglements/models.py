@@ -229,7 +229,21 @@ class EntanglementObservation(ObservationExtension):
             ('mntr', 'monitor'),
         ),
         blank= True,
-        help_text= "If there was a disentanglement attempted, what was the outcome?"
+        help_text= u"""\
+            <em>Was a disentanglement attempted and if so, what was the outcome?<em>
+            <dl>
+                <dt>gear shed</dt>
+                <dd>No disentanglement was attempted since the animal had disentangled itself.</dd>
+                <dt>monitor</dt>
+                <dd>No disentanglement was attempted since the entanglement wasn't severe enough to warrant it.</dd>
+                <dt>entangled</dt>
+                <dd>A disentanglement was needed, but either couldn't be attempted or was unsuccessful.</dd>
+                <dt>partial</dt>
+                <dd>A disentanglement was attempted and the gear was partly removed.</dd>
+                <dt>complete</dt>
+                <dd>A disentanglement was attempted and the gear was completely removed.</dd>
+            </dl>
+        """,
     )
     
     def get_gear_body_locations(self):
