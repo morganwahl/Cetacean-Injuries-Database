@@ -98,5 +98,6 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.jquery_ui',
     'cetacean_incidents.apps.describe_fields',
     'cetacean_incidents.apps.documents',
+    'cetacean_incidents.apps.strandings_import',
 )
 
