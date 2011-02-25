@@ -206,6 +206,23 @@ div#content {
     padding: .5em;
 }
 
+div.import_notes {
+    font-size: 80%;
+}
+div.import_notes span.date {
+    white-space: nowrap;
+}
+div.import_notes span.filename {
+    white-space: nowrap;
+}
+div.import_notes table.layout td {
+    vertical-align: top;
+}
+div.import_notes table.imported_entry th {
+    text-align: right;
+    white-space: pre-wrap;
+}
+
 /******* forms ******/
 
 div.field_wrapper {

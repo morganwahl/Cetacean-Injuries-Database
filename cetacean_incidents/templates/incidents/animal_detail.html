@@ -102,6 +102,9 @@
         {% endif %}
         {% endif %}
     </table>
+    {% with animal.import_notes as notes %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
 </div>
 
 <div class="section">

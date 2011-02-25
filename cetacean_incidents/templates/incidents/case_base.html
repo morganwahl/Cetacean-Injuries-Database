@@ -115,6 +115,9 @@
     </p>
     {% endif %}
     {% endblock %}
+    {% with case.import_notes as notes %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
 </div>
 {% block extra_case_fields %}{% endblock %}
 <div class="section">

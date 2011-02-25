@@ -174,7 +174,9 @@
             {% if observation.import_notes %}
             <div class="section">
                 <h3>Import notes</h3>
-                <div style="font-family: Terminus, monospace; font-size:75%;">{% display_unlabeled_bigtext_div observation "import_notes" %}</div>
+                {% with observation.import_notes as notes %}
+                {% include "incidents/import_notes_include.html" %}
+                {% endwith %}
             </div>
             {% endif %}
         </td>
