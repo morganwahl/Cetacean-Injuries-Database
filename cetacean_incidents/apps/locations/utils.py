@@ -13,6 +13,8 @@ def dec_to_dms(decimal_degrees):
     otherwise.
     '''
     
+    decimal_degrees = D(unicode(decimal_degrees))
+    
     negative = bool(decimal_degrees < 0)
     # the call to trunc is redundant ( int() will do the same thing ) but i want
     # to make it clear how the conversion works.
@@ -31,8 +33,8 @@ def dms_to_dec(dms):
     (negative, degrees, minutes, seconds) = dms
     
     seconds = D(unicode(seconds))
-    seconds += minutes * D('60')
-    seconds += degrees * D('60') * D('60')
+    seconds += D(unicode(minutes)) * D('60')
+    seconds += D(unicode(degrees)) * D('60') * D('60')
     decimal_degrees = seconds / (D('60') * D('60'))
     if negative: decimal_degrees = - decimal_degrees
     
