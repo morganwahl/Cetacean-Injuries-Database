@@ -895,8 +895,8 @@ def parse_csv(csv_file, commit=False):
             continue
         
         # ignore beaked whales
-        #if row['Common Name'] == 'BEWH':
-        #    continue
+        if row['Common Name'] == 'BEWH':
+            continue
         
         new = {
             'observation': [],
@@ -922,9 +922,6 @@ def parse_csv(csv_file, commit=False):
         
         row_results.append({'row_num': i, 'row': row, 'data': new})
         
-        #if i + 1 == 9:
-        #    break
-    
     return tuple(row_results)
 
 def _process_import_notes(notes, row, filename):
