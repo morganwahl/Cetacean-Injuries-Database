@@ -7,3 +7,8 @@ class ImportCSVForm(forms.Form):
         label= "CSV file",
     )
     
+    test_run = forms.BooleanField(
+        initial= True,
+        required= False,
+    )
+    
