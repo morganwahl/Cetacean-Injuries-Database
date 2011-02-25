@@ -31,6 +31,7 @@ class CaseTab(Tab):
                         'happened_after',
                         'valid',
                         'ole_investigation',
+                        'human_interaction',
                     )
                 )
             )
