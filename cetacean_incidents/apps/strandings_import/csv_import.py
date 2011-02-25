@@ -159,8 +159,8 @@ def get_ashore(row):
         "1": True,
     }[ashore]
 
-def translate_taxon(data, key, abbr):
-    data[key] = {
+def translate_taxon(data, data_key, row):
+    data[data_key] = {
         'BEWH': Taxon.objects.get(tsn=180506), # beaked whales
         'BRWH': Taxon.objects.get(tsn=612597), # bryde's whale
         'FIWH': Taxon.objects.get(tsn=180527), # finback
@@ -175,10 +175,10 @@ def translate_taxon(data, key, abbr):
         'UNRW': Taxon.objects.get(tsn=552298), # unknown rorqual
         'FI/SEWH': Taxon.objects.get(tsn=180523), # finback or sei whale
         'UNWH': Taxon.objects.get(tsn=180403), # unknown whale
-    }[abbr]
+    }[row['Common Name']]
 
-    if abbr in set(('UNWH', 'UNRW', 'FI/SEWH', 'RIWH?')):
-        odd_value(data, key)
+    if row['Common Name'] in set(('UNWH', 'UNRW', 'FI/SEWH', 'RIWH?')):
+        odd_value(data, 'Common Name')
 
 ### Three types of import problems
 
@@ -211,10 +211,9 @@ def unknown_values(data, column_names):
 def odd_value(data, column_name):
     note_error('odd_value', column_name, data['import_notes'])
 
-def parse_animal(row, temp_id):
+def parse_animal(row):
     
     a = {
-        'id': temp_id.next(),
         'import_notes': {},
     }
     
@@ -238,7 +237,7 @@ def parse_animal(row, temp_id):
         '0': False,
         '1': True,
     }[row['Sp Ver?']]:
-        translate_taxon(a, 'determined_taxon', row['Common Name'])
+        translate_taxon(a, 'determined_taxon', row)
     # the value isn't understood
     if row['Sp Ver?'] not in set(('', '0', '1')):
         unknown_value(a, 'Sp Ver?')
@@ -271,18 +270,18 @@ def parse_animal(row, temp_id):
     # necropsy
     a['necropsy'], a['partial_necropsy'], understood = {
         (None,  None,  None ): (False, False, True),
-        (None,  False, False): (False, False, False),
-        (False, None,  None ): (False, False, False),
-        (False, False, None ): (False, False, False),
+        (None,  False, False): (False, False, True),
+        (False, None,  None ): (False, False, True),
+        (False, False, None ): (False, False, True),
         (False, False, False): (False, False, True),
 
         (None,  True,  None ): (True,  False, True),
         (True,  None,  None ): (True,  False, False),
         (True,  True,  None ): (True,  False, True),
         (True,  False, False): (True,  False, False),
-        (True,  True,  False): (True,  False, False),
+        (True,  True,  False): (True,  False, True),
 
-        (None,  False, True ): (False, True,  False),
+        (None,  False, True ): (False, True,  True),
         (False, False, True ): (False, True,  False),
         (False, None,  True ): (False, True,  False),
         (True,  None,  True ): (False, True,  False),
@@ -318,12 +317,10 @@ def parse_animal(row, temp_id):
     
     return a
 
-def parse_case(row, temp_id, animal_data):
+def parse_case(row):
     
     # animal
     c = {
-        'id': temp_id.next(),
-        'animal': animal_data['id'],
         'import_notes': {},
     }
     
@@ -345,14 +342,14 @@ def parse_case(row, temp_id, animal_data):
              'E': 'Entanglement',
       'E  (CAN)': 'Entanglement',
      'E (lures)': 'Entanglement',
-           'C,M': ('Case', 'Shipstrike'),
-          'M,SS': ('Case', 'Shipstrike'),
-          'M, C': ('Case', 'Shipstrike'),
-         'M, SS': ('Case', 'Shipstrike'),
-           'M,E': ('Case', 'Entanglement'),
-          'M, E': ('Case', 'Entanglement'),
-          'E, M': ('Case', 'Entanglement'),
-           'E,M': ('Case', 'Entanglement'),
+           'C,M': set(('Case', 'Shipstrike')),
+          'M,SS': set(('Case', 'Shipstrike')),
+          'M, C': set(('Case', 'Shipstrike')),
+         'M, SS': set(('Case', 'Shipstrike')),
+           'M,E': set(('Case', 'Entanglement')),
+          'M, E': set(('Case', 'Entanglement')),
+          'E, M': set(('Case', 'Entanglement')),
+           'E,M': set(('Case', 'Entanglement')),
     }[cls]
     if resight or row['Classification'] in set((
         '',
@@ -426,12 +423,9 @@ def parse_case(row, temp_id, animal_data):
     
     return c
 
-def parse_location(row, temp_id):
+def parse_location(row, observation_data):
 
-    l = {
-        'id': temp_id.next(),
-        'import_notes': {},
-    }
+    l = {}
     
     # description
     if row['General location']:
@@ -487,37 +481,36 @@ def parse_location(row, temp_id):
             lat = dms_to_dec(lat)
             l['lat'] = lat
         except ValidationError as e:
-            unknown_value(l, 'LATITUDE')
+            unknown_value(observation_data, 'LATITUDE')
     if row['LONGITUDE']:
         try:
             lon = NiceLocationForm._clean_coordinate(row['LONGITUDE'], is_lat=False)
             lon = dms_to_dec(lon)
             # assume west
             if lon > 0:
-                odd_value(l, 'LONGITUDE')
+                odd_value(observation_data, 'LONGITUDE')
             lon = - abs(lon)
             l['lon'] = lon
         except ValidationError:
-            unknown_value(l, 'LONGITUDE')
+            unknown_value(observation_data, 'LONGITUDE')
     if ('lat' in l) != ('lon' in l):
-        unknown_values(l, ('LATITUDE', 'LONGITUDE'))
+        unknown_values(observation_data, ('LATITUDE', 'LONGITUDE'))
     if ('lat' in l) and ('lon' in l):
         l['coordinates'] = "%s,%s" % (l['lat'], l['lon'])
     
     return l
 
-def parse_observation(row, temp_id, case_data, location_data):
+def parse_observation(row, case_data):
     
     o = {
-        'id': temp_id.next(),
         'import_notes': {},
     }
     
     # animal
-    o['animal'] = case_data['animal']
+    #o['animal'] = case_data['animal']
     
     # cases
-    o['cases'] = case_data['id']
+    #o['cases'] = case_data['id']
     
     # initial
     # exam
@@ -544,20 +537,20 @@ def parse_observation(row, temp_id, case_data, location_data):
         unimportable_value(o, 'Date')
     date = parse_date(row['Date'])
     uncertain_datetime = UncertainDateTime(date.year, date.month, date.day)
-    o['datetime_observed'] = uncertain_datetime.to_unicode()
+    o['datetime_observed'] = uncertain_datetime
     
     # location
-    o['location'] = location_data['id']
+    #o['location'] = location_data['id']
     
     # observer_vessel defaults to None
 
     # reporter defaults to None
 
     # datetime_reported
-    o['datetime_reported'] = UncertainDateTime(uncertain_datetime.year).to_unicode()
+    o['datetime_reported'] = UncertainDateTime(uncertain_datetime.year)
     
     # taxon
-    translate_taxon(o, 'taxon', row['Common Name'])
+    translate_taxon(o, 'taxon', row)
 
     if row['Sp Ver?']:
         unimportable_column(o, 'Sp Ver?')
@@ -637,6 +630,7 @@ def parse_observation(row, temp_id, case_data, location_data):
     if o['exam_condition'] == 0 and o['alive_condition'] != 0:
         o['exam_condition'] = o['alive_condition']
     o['split'] = False
+    o['condition'] = o['initial_condition']
     if o['initial_condition'] != o['exam_condition'] and o['exam_condition'] != 0:
         o['split'] = True
     
@@ -705,7 +699,7 @@ def parse_observation(row, temp_id, case_data, location_data):
     o['observation_extensions'] = {}
     
     ## EntanglementObservation
-    if case_data['__class__'] == 'Entanglement' or case_data['__class__'] is set and 'Entanglement' in case_data['__class__']:
+    if case_data['__class__'] == 'Entanglement' or isinstance(case_data['__class__'], set) and 'Entanglement' in case_data['__class__']:
         eo = {}
         
         # anchored defaults to None
@@ -792,7 +786,7 @@ def parse_observation(row, temp_id, case_data, location_data):
             (False, 'no gear'): ('shed', True),
             (False, 'entangled'): ('entg', True),
 
-            (True, 'entangled'): ('entg', False),
+            (True, 'entangled'): ('entg', True),
             (True, 'partly entangled'): ('part', True),
             (True, 'some gear'): ('', False),
             (True, 'no gear'): ('cmpl', True),
@@ -804,20 +798,22 @@ def parse_observation(row, temp_id, case_data, location_data):
     
     ## ShipstrikeObservation
     # striking_vessel defaults to None
+    if case_data['__class__'] == 'Shipstrike' or isinstance(case_data['__class__'], set) and 'Shipstrike' in case_data['__class__']:
+        o['observation_extensions']['shipstrike_observation'] = {}
     
     return o
 
-def parse_documents(row, temp_id, animal_data, case_data):
+def parse_documents(row, animal_data, case_data):
     
     docs = []
     
-    for doc_key, data, doctype_name in (
-        ('CCS web page', case_data, 'CCS web page'),
-        ('Ceta data rec', animal_data, 'Cetacean Data Record'),
-        ('Hi Form?', case_data, 'Human-Interaction Form'),
-        ('Histo results', animal_data, 'Histological Findings'),
-        ('Lg Whale email', case_data, 'Large Whale email'),
-        ('Stranding Rept?', case_data, 'Stranding Report (Level-A)'),
+    for doc_key, attach_to, data, doctype_name in (
+        ('Ceta data rec', 'animal', animal_data, 'Cetacean Data Record'),
+        ('Histo results', 'animal', animal_data, 'Histological Findings'),
+        ('CCS web page', 'case', case_data, 'CCS web page'),
+        ('Hi Form?', 'case', case_data, 'Human-Interaction Form'),
+        ('Lg Whale email', 'case', case_data, 'Large Whale email'),
+        ('Stranding Rept?', 'case', case_data, 'Stranding Report (Level-A)'),
     ):
         if row[doc_key]:
             yes_values = set(('1',))
@@ -825,8 +821,7 @@ def parse_documents(row, temp_id, animal_data, case_data):
             if row[doc_key] in yes_values:
                 # create a new document
                 d = {
-                    'id': temp_id.next(),
-                    'attached_to': data['id'],
+                    'attach_to': attach_to,
                     'document_type': DocumentType.objects.get(name=doctype_name),
                 }
                 docs.append(d)
@@ -860,7 +855,6 @@ def parse_csv(csv_file, commit=False):
     data = csv.DictReader(csv_file, dialect='excel')
     
     row_results = []
-    temp_id = imap(operator.neg, count(1))
     
     for i, row in enumerate(data):
         # normalize cell values and check for unhandled fieldnames
@@ -887,32 +881,26 @@ def parse_csv(csv_file, commit=False):
         }
         changed = {}
         
-        a = parse_animal(row, temp_id)
-        if a['id'] < 0:
-            new['animal'] = a
-        else:
-            changed['animal'] = a
+        a = parse_animal(row)
+        new['animal'] = a
         
-        c = parse_case(row, temp_id, a)
-        if c['id'] < 0:
-            new['case'] = c
-        else:
-            changed['case'] = c
+        c = parse_case(row)
+        new['case'] = c
         
         # observations are always new
-        l = parse_location(row, temp_id)
-        new['location'] = l
-        o = parse_observation(row, temp_id, case_data=c, location_data=l)
+        o = parse_observation(row, c)
         new['observation'] = o
+        l = parse_location(row, o)
+        new['location'] = l
         
-        docs = parse_documents(row, temp_id, animal_data=a, case_data=c)
+        docs = parse_documents(row, a, c)
         if docs:
             new['documents'] = docs
         
-        row_results.append({'row_num': i, 'row': row, 'model': new, 'changed': changed})
+        row_results.append({'row_num': i, 'row': row, 'data': new})
         
-        #if i + 1 == 3:
-        #    break
+        if i + 1 == 1:
+            break
     
     return tuple(row_results)
 
