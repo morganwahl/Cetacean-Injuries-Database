@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.utils.html import conditional_escape as esc
+from django.shortcuts import redirect
 
 from cetacean_incidents.decorators import permission_required
 
@@ -25,6 +26,7 @@ def import_csv(request):
             
             if not form.cleaned_data['test_run']:
                 process_results(results, form.cleaned_data['csv_file'].name)
+                return redirect('home')
             
     else:
         form = ImportCSVForm()
