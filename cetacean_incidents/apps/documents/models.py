@@ -33,6 +33,9 @@ class DocumentType(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        ordering = ('name', 'id')
 
 class Specificable(models.Model):
     
