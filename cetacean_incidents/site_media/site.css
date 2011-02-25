@@ -249,11 +249,15 @@ table th, .fieldname {
 }
 
 /*    chameleon	#8ae234 #73d216 #4e9a06 */
-div.note {
+div.note, li.note {
     background-color: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
     color: #274c03; /* chameleon 3, at half value (30% absolute val.) */
     border: thin solid #73d216; /* chameleon 2 */
     text-align: center;
+}
+li.note {
+    list-style-type: none;
+    margin: 0;
 }
 
 div.warning, div.edit-warning {
