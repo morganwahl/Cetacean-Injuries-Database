@@ -3,7 +3,7 @@ from reversion.admin import VersionAdmin
 from models import Animal, YearCaseNumber, Case, Observation
 
 class AnimalAdmin(VersionAdmin):
-    pass
+    list_display = ('id', 'field_number', 'name')
 admin.site.register(Animal, AnimalAdmin)
 
 class CaseAdmin(VersionAdmin):
