@@ -181,6 +181,6 @@ class Animal(Documentable, Importable):
     
     class Meta:
         app_label = 'incidents'
-        ordering = ('name', 'id')
+        ordering = ('field_number', 'name', 'id')
 
 
