@@ -922,8 +922,8 @@ def parse_csv(csv_file, commit=False):
         
         row_results.append({'row_num': i, 'row': row, 'data': new})
         
-        if i + 1 == 1:
-            break
+        #if i + 1 == 9:
+        #    break
     
     return tuple(row_results)
 
