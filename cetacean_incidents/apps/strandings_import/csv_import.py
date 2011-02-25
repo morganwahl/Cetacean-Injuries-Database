@@ -32,6 +32,8 @@ from cetacean_incidents.apps.incidents.models import Observation
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
 
+from cetacean_incidents.apps.tags.models import Tag
+
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
@@ -1011,7 +1013,12 @@ def _process_import_notes(notes, row, filename):
     
     return result
 
-def _save_row(r, filename):
+def _make_tag(thing, user):
+    tag = Tag(entry=thing, user=user, tag_text=u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details.")
+    tag.clean()
+    tag.save()
+
+def _save_row(r, filename, user):
     data = r['data']
     
     ### animal
@@ -1033,6 +1040,7 @@ def _save_row(r, filename):
     animal = Animal(**animal_kwargs)
     animal.clean()
     animal.save()
+    _make_tag(animal, user)
 
     ### case(s)
     c = r['data']['case']
@@ -1064,6 +1072,7 @@ def _save_row(r, filename):
     for case in cases:
         case.clean()
         case.save()
+        _make_tag(case, user)
 
     ### observations(s)
     l = r['data']['location']
@@ -1108,6 +1117,7 @@ def _save_row(r, filename):
         obs.clean()
         obs.save()
         obs.cases = cases
+        _make_tag(obs, user)
         if 'entanglement_observation' in o['observation_extensions']:
             eo_kwargs = copy(o['observation_extensions']['entanglement_observation'])
             eo_kwargs['observation_ptr'] = obs
@@ -1137,7 +1147,7 @@ def _save_row(r, filename):
                 d.clean()
                 d.save()
 
-def process_results(results, filename):
+def process_results(results, filename, user):
     '''\
     Create all the new models described in results in a single transaction and
     a single revision.
@@ -1145,5 +1155,5 @@ def process_results(results, filename):
     # process the results
     for r in results:
         print r['row_num']
-        _save_row(r, filename)
-
+        _save_row(r, filename, user)
+    

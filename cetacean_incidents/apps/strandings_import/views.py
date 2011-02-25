@@ -25,7 +25,7 @@ def import_csv(request):
             results = parse_csv(form.cleaned_data['csv_file'])
             
             if not form.cleaned_data['test_run']:
-                process_results(results, form.cleaned_data['csv_file'].name)
+                process_results(results, form.cleaned_data['csv_file'].name, request.user)
                 return redirect('home')
             
     else:
