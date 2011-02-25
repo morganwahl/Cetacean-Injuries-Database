@@ -38,6 +38,12 @@
     {% endwith %}
 </div>
 <div>
+    {% with forms.observation.animal_length as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.observation.animal_length_sigdigs as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
     {% with forms.observation.age_class as f %}
     {% include "labeled_field.html" %}
     {% endwith %}

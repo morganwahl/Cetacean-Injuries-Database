@@ -137,6 +137,8 @@ class ObservationAnimalIDTab(ObservationTab):
                         'taxon',
                         'gender',
                         'animal_description',
+                        'animal_length',
+                        'animal_length_sigdigs',
                         'age_class',
                         'condition',
                         'biopsy',

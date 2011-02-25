@@ -130,6 +130,12 @@
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
+                    {% if observation.animal_length %}
+                    {% display_row observation "animal_length" %}
+                    {% endif %}
+                    {% if observation.animal_length_sigdigs %}
+                    {% display_row observation "animal_length_sigdigs" %}
+                    {% endif %}
                     {% if observation.age_class %}
                     {% display_chosen_row observation "age_class" %}
                     {% endif %}

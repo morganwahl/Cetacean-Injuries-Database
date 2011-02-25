@@ -6,6 +6,7 @@ import pytz
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 from cetacean_incidents.apps.contacts.models import Contact
 
@@ -162,6 +163,29 @@ class Observation(Documentable, Importable):
         blank= True,
         null= True,
         help_text= u"""The most specific taxon (e.g. a species) the animal is described as. Can be a vauge as an order or as specific as a subspecies or just unknown. Taxa are taken from the "Integrated Taxonomic Information System" (see itis.gov).""",
+    )
+
+    animal_length = models.DecimalField(
+        blank= True,
+        null= True,
+        # 99.9999
+        # blue whales get up 33 meters, so this gives us .1 millimeter-precision
+        # on any animal
+        max_digits= 6,
+        decimal_places= 4,
+        validators= [MinValueValidator(0)],
+        help_text= u"""Length of the animal in meters, if measured.""",
+    )
+    
+    animal_length_sigdigs = models.IntegerField(
+        blank= True,
+        null= True,
+        validators= [
+            MinValueValidator(1),
+            MaxValueValidator(6), # should equal animal_length.max_digits
+        ],
+        verbose_name= '# of significant digits in animal_length',
+        help_text= u"""defaults to # of non-zero digits in 'animal length'""",
     )
 
     age_class = models.CharField(
@@ -339,6 +363,11 @@ class Observation(Documentable, Importable):
         return ret
     
     objects = ObservationManager()
+    
+    def clean(self):
+        if self.animal_length and not self.animal_length_sigdigs:
+            sign, digits, exponent = self.animal_length.as_tuple()
+            self.animal_length_sigdigs = len(digits)
     
     def get_observation_extensions(self):
         
