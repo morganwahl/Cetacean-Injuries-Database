@@ -1,16 +1,17 @@
+import os
+from copy import copy
 import operator
 from itertools import imap, count
 from decimal import Decimal
 from datetime import datetime
+import pytz
 import re
 import csv
 
-from django.db import transaction
 from django.db.models import Q
 from django.forms import ValidationError
 from django.contrib.localflavor.us.us_states import STATES_NORMALIZED
-
-from reversion import revision
+from django.utils.html import conditional_escape as esc
 
 from cetacean_incidents.apps.countries.models import Country
 
@@ -847,8 +848,6 @@ def parse_documents(row, animal_data, case_data):
 
     return docs
 
-@transaction.commit_on_success
-@revision.create_on_success
 def parse_csv(csv_file, commit=False):
     '''\
     Given a file-like object with CSV data, return a tuple with one item for
@@ -1141,7 +1140,7 @@ def _save_row(r, filename):
 def process_results(results, filename):
     '''\
     Create all the new models described in results in a single transaction and
-    a single revision
+    a single revision.
     '''
     # process the results
     for r in results:
