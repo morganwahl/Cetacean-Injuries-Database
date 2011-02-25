@@ -475,11 +475,12 @@ def parse_location(row, observation_data):
         l['state'] = state
     
     # coordinates
+    lat = None
+    lon = None
     if row['LATITUDE']:
         try:
             lat = NiceLocationForm._clean_coordinate(row['LATITUDE'], is_lat=True)
             lat = dms_to_dec(lat)
-            l['lat'] = lat
         except ValidationError as e:
             unknown_value(observation_data, 'LATITUDE')
     if row['LONGITUDE']:
@@ -490,13 +491,12 @@ def parse_location(row, observation_data):
             if lon > 0:
                 odd_value(observation_data, 'LONGITUDE')
             lon = - abs(lon)
-            l['lon'] = lon
         except ValidationError:
             unknown_value(observation_data, 'LONGITUDE')
-    if ('lat' in l) != ('lon' in l):
+    if (lat is None) != (lon is None):
         unknown_values(observation_data, ('LATITUDE', 'LONGITUDE'))
-    if ('lat' in l) and ('lon' in l):
-        l['coordinates'] = "%s,%s" % (l['lat'], l['lon'])
+    if (not lat is None) and (not lon is None):
+        l['coordinates'] = "%s,%s" % (lat, lon)
     
     return l
 
