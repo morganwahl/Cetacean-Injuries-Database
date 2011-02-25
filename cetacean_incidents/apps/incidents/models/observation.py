@@ -262,6 +262,22 @@ class Observation(Documentable, Importable):
         ''',
     )
     
+    indication_entanglement = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "Indication of Entanglement?",
+        help_text= u"""Was there any indication the animal had been entangled? This includes scars and wounds likely due to entanglement, as well as gear present. Note that entanglement cases shouldn't be created unless there is actual gear on the animal.""",
+    )
+    
+    indication_shipstrike = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "Indication of Shipstrike?",
+        help_text= u"""Was there any indication the animal had been struck? Note that this may or may not fulfill the criterea for a shipstrike case.""",
+    )
+
     # note that wounded is for injuries, 'wound_description' is for maladies in
     # general
     wounded = models.NullBooleanField(

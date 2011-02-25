@@ -163,6 +163,8 @@ class ObservationIncidentTab(ObservationTab):
                     (
                         'documentation',
                         'ashore',
+                        'indication_entanglement',
+                        'indication_shipstrike',
                         'wounded',
                         'wound_description',
                     )
