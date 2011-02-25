@@ -265,7 +265,7 @@ class UncertainDateTime(object):
         format = u''
 
         if unknown_char is not None:
-            format += ' {0.hour:02}' if not self.hour is None else ' ' + unknown_char * 2
+            format += '{0.hour:02}' if not self.hour is None else '' + unknown_char * 2
             format += ':{0.minute:02}' if not self.minute is None else ':' + unknown_char * 2
             if seconds:
                 format += ':{0.second:02}' if not self.second is None else ':' + unknown_char * 2
