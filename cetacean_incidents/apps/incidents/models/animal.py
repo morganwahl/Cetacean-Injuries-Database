@@ -117,6 +117,14 @@ class Animal(Documentable, Importable):
     def dead(self):
         return (not self.determined_dead_before is None) and self.determined_dead_before <= datetime.date.today()
     
+    carcass_disposed = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "carcass disposed?", # yeah, not very verbose, but you can't have a question mark in a fieldname
+        help_text= "If this animal is dead, was the carcass disposed of?",
+    )
+    
     partial_necropsy = models.BooleanField(
         default= False,
         verbose_name= "partially necropsied?", # yeah, not very verbose, but you can't have a question mark in a fieldname
