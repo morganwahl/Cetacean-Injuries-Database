@@ -23,7 +23,7 @@ $().ready(function(){
 </script>
 {% endblock %}
 
-{% block header %}<h2>import a taxon from ITIS</h2>{% endblock %}
+{% block header %}<h2>import a taxon from <a href="http://www.itis.gov"><abbr title="Integrated Taxonomic Information System">ITIS</abbr></a></h2>{% endblock %}
 
 {% block content %}
 <p>
@@ -31,7 +31,7 @@ Search for an animal taxon to import (along with it's supertaxa). Note that taxa
 </p>
 <form id="search_form">
     <p>
-        <label for="q">search scientific names, or common names, or ITIS numbers</label><input name="q" type="search">
+        <label for="q">search scientific names, or common names, or <abbr title="Integrated Taxonomic Information System">ITIS</abbr> <abbr title="Taxonomic Serial Number">TSN</abbr></label><input name="q" type="search">
         <button type="submit">search</button>
         <span id="waiting" style="display:none;">
             <img src="{% url site-media "Loader3.gif" %}"> searching ...
