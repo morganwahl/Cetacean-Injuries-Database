@@ -1,6 +1,17 @@
-<div class="import_notes">
+{# assumes an HTML string was passed in as 'notes' #} 
+{% if notes %}
+<script type="text/javascript">
+    $().ready(function(){
+        $("#import_notes_toggle").click(function(event){
+            $("#import_notes_block").slideToggle();
+            return false;
+        });
+    });
+</script>
+<a id="import_notes_toggle" href="">Import Notes ...</a>
+<div class="import_notes" id="import_notes_block" style="display:none">
     <div>
     {{ notes|safe }}
     </div>
 </div>
-
+{% endif %}
