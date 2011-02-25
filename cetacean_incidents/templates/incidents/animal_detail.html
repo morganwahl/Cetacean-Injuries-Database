@@ -96,11 +96,15 @@
         {% display_row animal "determined_dead_before" %}
         {% display_yesunk_row animal 'partial_necropsy' %}
         {% display_yesunk_row animal 'necropsy' %}
+        {% display_yesnounk_row animal "carcass_disposed" %}
         {% if animal.cause_of_death %}
         {% display_row animal "cause_of_death" %}
         {% endif %}
         {% endif %}
     </table>
+    {% with animal.import_notes as notes %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
 </div>
 
 <div class="section">

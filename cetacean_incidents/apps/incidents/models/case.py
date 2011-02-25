@@ -224,6 +224,19 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         verbose_name= 'incident was on or after',
     )
     
+    human_interaction = models.CharField(
+        max_length= 3,
+        choices= (
+            ('unk', 'not yet determined'),
+            ('yes', 'yes'),
+            ('no' , 'no'),
+            ('cbd', 'can\'t be determined'),
+        ),
+        default= 'unk',
+        verbose_name= "Human Interaction?",
+        help_text= "Was the incident due to human interaction?"
+    )
+    
     ole_investigation = models.NullBooleanField(
         blank= True,
         null= True,

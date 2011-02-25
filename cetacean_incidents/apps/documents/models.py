@@ -67,7 +67,10 @@ class Documentable(Specificable):
     Any class you want to attach documents to should inherit from this one.
     '''
     
-    pass
+    def __unicode__(self):
+        if not self.id:
+            return "<new Documentable>"
+        return "Documentable entry #%06d" % self.id
 
 class Document(Specificable):
     

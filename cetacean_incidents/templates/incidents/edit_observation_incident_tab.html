@@ -8,6 +8,12 @@
 {% with forms.observation.ashore as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
+{% with forms.observation.indication_shipstrike as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.indication_entanglement as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
 {% with forms.observation.wounded as f %}
 {% include "labeled_field.html" %}
 {% endwith %}

@@ -114,6 +114,15 @@ This template is an amalgam of editing and viewing.
             {% display_yesunk_cell source 'necropsy' %}
     	</tr>
         <tr>
+            {% display_yesnounk_cell destination 'carcass_disposed' %}
+            <td>
+            {% with form.carcass_disposed as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            </td>
+            {% display_yesnounk_cell source 'carcass_disposed' %}
+    	</tr>
+        <tr>
             {% display_cell destination 'cause_of_death' %}
             <td>
             {% with form.cause_of_death as f %}

@@ -1,4 +1,5 @@
 import math
+from decimal import Decimal as D
 
 MILE_IN_METERS = 1609.344 # exact
 
@@ -16,8 +17,8 @@ def dec_to_dms(decimal_degrees):
     # the call to trunc is redundant ( int() will do the same thing ) but i want
     # to make it clear how the conversion works.
     degrees = int(math.trunc(abs(decimal_degrees)))
-    minutes = int(math.trunc((abs(decimal_degrees) * 60) - (degrees * 60)))
-    seconds = (abs(decimal_degrees) * 60 * 60) - (degrees * 60 * 60) - (minutes * 60)
+    minutes = int(math.trunc((abs(decimal_degrees) * D('60')) - (degrees * D('60'))))
+    seconds = (abs(decimal_degrees) * D('60') * D('60')) - (degrees * D('60') * D('60')) - (minutes * D('60'))
     
     return (negative, degrees, minutes, seconds)
 
@@ -29,7 +30,10 @@ def dms_to_dec(dms):
     
     (negative, degrees, minutes, seconds) = dms
     
-    decimal_degrees = ((degrees * 60 * 60) + (minutes * 60) + seconds) / (60.0 * 60.0)
+    seconds = D(unicode(seconds))
+    seconds += minutes * D('60')
+    seconds += degrees * D('60') * D('60')
+    decimal_degrees = seconds / (D('60') * D('60'))
     if negative: decimal_degrees = - decimal_degrees
     
     return decimal_degrees

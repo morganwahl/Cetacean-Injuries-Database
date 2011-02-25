@@ -206,6 +206,23 @@ div#content {
     padding: .5em;
 }
 
+div.import_notes {
+    font-size: 80%;
+}
+div.import_notes span.date {
+    white-space: nowrap;
+}
+div.import_notes span.filename {
+    white-space: nowrap;
+}
+div.import_notes table.layout td {
+    vertical-align: top;
+}
+div.import_notes table.imported_entry th {
+    text-align: right;
+    white-space: pre-wrap;
+}
+
 /******* forms ******/
 
 div.field_wrapper {
@@ -232,11 +249,15 @@ table th, .fieldname {
 }
 
 /*    chameleon	#8ae234 #73d216 #4e9a06 */
-div.note {
+div.note, li.note {
     background-color: #a8e26f; /* chameleon 1, at 2/3 saturation (51% absolute sat.) */
     color: #274c03; /* chameleon 3, at half value (30% absolute val.) */
     border: thin solid #73d216; /* chameleon 2 */
     text-align: center;
+}
+li.note {
+    list-style-type: none;
+    margin: 0;
 }
 
 div.warning, div.edit-warning {

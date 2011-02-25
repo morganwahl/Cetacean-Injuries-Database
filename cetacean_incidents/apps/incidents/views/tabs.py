@@ -31,6 +31,7 @@ class CaseTab(Tab):
                         'happened_after',
                         'valid',
                         'ole_investigation',
+                        'human_interaction',
                     )
                 )
             )
@@ -136,6 +137,8 @@ class ObservationAnimalIDTab(ObservationTab):
                         'taxon',
                         'gender',
                         'animal_description',
+                        'animal_length',
+                        'animal_length_sigdigs',
                         'age_class',
                         'condition',
                         'biopsy',
@@ -162,6 +165,8 @@ class ObservationIncidentTab(ObservationTab):
                     (
                         'documentation',
                         'ashore',
+                        'indication_entanglement',
+                        'indication_shipstrike',
                         'wounded',
                         'wound_description',
                     )
