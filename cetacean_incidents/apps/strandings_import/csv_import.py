@@ -737,12 +737,17 @@ def parse_observation(row, case_data):
         # disentanglement_outcome
         attempt = {
                '': None,
+              '.': None,
               '0': False,
              'no': False,
              'No': False,
               '1': True,
             'Yes': True,
         }[row['Disentangle attempt on live whale?']]
+        if row['Disentangle attempt on live whale?'] in set((
+            '.',
+        )):
+            unknown_value(o, 'Disentangle attempt on live whale?')
         outcome = {
             '': 'unknown',
             '?': 'unknown',
