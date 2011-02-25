@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}: import strandings data{% endblock %}
+
+{% block header %}
+<h2>import strandings data</h2>
+{% endblock %}
+
+{% block content %}
+<div>
+    <form{% if form.is_multipart %}
+      enctype="multipart/form-data"{% endif %}
+      method="post"
+      action="">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">import</button>
+    </form>
+</div>
+{% if results %}
+<hr>
+<div>
+    {% for r in results %}
+    <table>
+        {% for k, v in r.row.items %}
+        {% if v %}
+        <tr><th style="text-align:right; max-width:20em; white-space: pre-wrap;">&lt;{{ k }}&gt;</th><td>{{ v }}</td></tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+    <pre>{{ r.data|pprint }}</pre>
+    <hr>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
