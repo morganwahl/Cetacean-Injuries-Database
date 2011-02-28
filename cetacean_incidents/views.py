@@ -8,6 +8,7 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.forms import Media
 from django.utils.safestring import mark_safe
@@ -366,7 +367,7 @@ def import_taxon(request):
 @login_required
 def odd_entries(request):
     
-    field_numbers = set(Animal.objects.exclude(field_number='').values_list('field_number', flat=True))
+    field_numbers = set(Animal.objects.exclude(Q(field_number='') | Q(field_number__isnull=True)).values_list('field_number', flat=True))
     same_number = {}
     for num in field_numbers:
         animals = Animal.objects.filter(field_number=num)
@@ -374,9 +375,11 @@ def odd_entries(request):
             same_number[num] = animals
     
     animal_names = set()
-    for a in Animal.objects.exclude(name=''):
+    for a in Animal.objects.exclude(Q(name='') | Q(name__isnull=True)):
         for name in a.names:
-            animal_names.add(name.lower().strip())
+            name = name.lower().strip()
+            if not name == '':
+                animal_names.add(name)
     same_name = {}
     for name in animal_names:
         animals = Animal.objects.filter(name__icontains=name)
