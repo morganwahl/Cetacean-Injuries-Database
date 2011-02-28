@@ -39,6 +39,10 @@ from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 
 
+CURRENT_IMPORT_TAG = u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details."
+
+IMPORT_TAGS = set((CURRENT_IMPORT_TAG,))
+
 class UnrecognizedFieldError(ValueError):
     
     # require a column name
@@ -1016,7 +1020,7 @@ def _process_import_notes(notes, row, filename):
     return result
 
 def _make_tag(thing, user):
-    tag = Tag(entry=thing, user=user, tag_text=u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details.")
+    tag = Tag(entry=thing, user=user, tag_text=CURRENT_IMPORT_TAG)
     tag.clean()
     tag.save()
 

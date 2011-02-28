@@ -84,14 +84,15 @@
                         &#x2022;
                         by year: {% case_years_link %}
                     </td>
-                    {% if perms.taxons.add_taxon or user.is_staff %}
                     <td>
                         <div class="category">
                             administrative tools
                         </div>
                         {% if perms.taxons.add_taxon %}
                         <a class="action" href="{% url import_taxon %}">import taxa</a>
+                        &#x2022;
                         {% endif %}
+                        <a class="action" href="{% url review_imports %}">unreviewed imports</a>
                         {% comment %}
                         {# these pages are buggy and inscrutable #}
                         {% if perms.taxons.add_taxon and user.is_staff %}
@@ -102,7 +103,6 @@
                         {% endif %}
                         {% endcomment %}
                     </td>
-                    {% endif %}
                 </tr>
             </table>
         </div>
