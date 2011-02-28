@@ -25,6 +25,22 @@ class CaseTestCase(TestCase):
         
         self.assertNotEquals(c.animal, self.animal)
     
+    def test_yearnumbers(self):
+        c = Case(animal=self.animal)
+        self.assertEquals(c.current_yearnumber, None)
+        c.save()
+        self.assertEquals(c.current_yearnumber, None)
+    
+        obs = Observation.objects.create(
+            animal = c.animal,
+            datetime_observed= UncertainDateTime(2011),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        obs.cases.add(c)
+        # update c
+        c = Case.objects.get(id=c.id)
+        self.assertNotEquals(c.current_yearnumber, None)
+
     def test_names(self):
         c = Case.objects.create(animal=self.animal)
         
@@ -34,7 +50,7 @@ class CaseTestCase(TestCase):
         self.assertEquals(c.names_set, set())
         
         n = 'new name!'
-        c.name = n
+        c.names = n
         self.assertEquals(c.names, n)
         self.assertEquals(c.name, n)
         self.assertEquals(c.names_list, [n])
@@ -55,16 +71,9 @@ class CaseTestCase(TestCase):
         self.assertEquals(c.names_list, ['one', 'two', 'two', 'three', 'two'])
         self.assertEquals(c.names_set, set(['one', 'two', 'three']))
         
-        c.name = '5'
-        self.assertEquals(c.name, '5')
-        self.assertEquals(c.names_list, ['one', 'two', 'two', 'three', 'two', '5'])
-        self.assertEquals(c.names_set, set(['one', 'two', 'three', '5']))
-        
         c.names = ''
 
         self.assertEquals(c._current_name(), None)
-        
-        c.save()
         self.assertEquals(c.name, c._current_name())
         
         obs = Observation.objects.create(

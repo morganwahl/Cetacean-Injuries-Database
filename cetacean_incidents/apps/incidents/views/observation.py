@@ -241,8 +241,8 @@ def _change_incident(
                 forms['new_case'].save_m2m()
         
             _check('observation')
+            observation = forms['observation'].save(commit=False)
             if not 'observation' in model_instances: # if this is a new obs.
-                observation = forms['observation'].save(commit=False)
                 # TODO move this to ObservationForm.save?
                 observation.animal = animal
                 observation.save()
@@ -253,22 +253,18 @@ def _change_incident(
                 else: # we're adding a new case
                     observation.cases.add(new_case)
             else: # we're just editing this obs
-                observation = forms['observation'].save()
-                observation.save()
+                pass
             
             if request.user.has_perm('contacts.add_contact'):
                 if forms['observation'].cleaned_data['new_reporter'] == 'new':
                     _check('new_reporter')
                     observation.reporter = forms['new_reporter'].save()
-                    observation.save()
             if forms['observation'].cleaned_data['new_reporter'] == 'none':
                 observation.reporter = None
-                observation.save()
     
             _check('location')
             if not 'location' in model_instances:
                 observation.location = forms['location'].save()
-                observation.save()
             else:
                 forms['location'].save()
             
@@ -276,26 +272,24 @@ def _change_incident(
                 if forms['observation'].cleaned_data['new_observer'] == 'new':
                     _check('new_observer')
                     observation.observer = forms['new_observer'].save()
-                    observation.save()
             if forms['observation'].cleaned_data['new_observer'] == 'reporter':
                 observation.observer = observation.reporter
-                observation.save()
             if forms['observation'].cleaned_data['new_observer'] == 'none':
                 observation.observer = None
-                observation.save()
             
+            #print "observation: vessel"
             if forms['observation'].cleaned_data['observer_on_vessel'] == False:
                 vessel_info = observation.observer_vessel
-                observation.observer_vessel = None
-                observation.save()
-                if vessel_info: # be sure to only delete _after_ you've unhooked
-                                # it from the observation
+                if not vessel_info is None:
+                    observation.observer_vessel = None
+                    observation.save()
+                    # be sure to only delete _after_ you've unhooked
+                    # it from the observation
                     vessel_info.delete()
             else: # there's observer_vessel data
                 _check('observer_vessel')
                 if not 'observer_vessel' in model_instances:
                     observation.observer_vessel = forms['observer_vessel'].save()
-                    observation.save()
                 else:
                     forms['observer_vessel'].save()
                 if forms['observer_vessel'].cleaned_data['contact_choice'] == 'reporter':
@@ -305,6 +299,7 @@ def _change_incident(
                     observation.observer_vessel.contact = observation.observer
                     observation.observer_vessel.save()
                 # 'new', 'other', and 'none' are handled by VesselInfoForm.save
+            observation.save()
 
             additional_form_saving(forms, model_instances, _check, observation)
             

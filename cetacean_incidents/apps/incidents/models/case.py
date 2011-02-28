@@ -276,6 +276,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return u""
     
     def _current_name(self):
+        if not self.id:
+            return None
         
         obs = self.observation_set
         # Cases with no observations yet don't get names
@@ -322,25 +324,27 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return name
     
     # names_list is intentially read-only, so that it can only be modified via
-    # _set_name
+    # update_names
     def _get_names_list(self):
         if self.names is None:
             return []
         return filter(lambda x: x != '', self.names.split(','))
     names_list = property(_get_names_list)
 
+    # name is intentially read-only, so that it can only be modified via
+    # update_names
     def _get_name(self):
         if self.names_list:
             return self.names_list[-1]
         return None
-    def _set_name(self, new_name):
-        if new_name != self.name:
-            if self.names is None or self.names == '':
-                self.names = new_name
-            else:
-                self.names += ',' + new_name
+    #def _set_name(self, new_name):
+    #    if new_name != self.name:
+    #        if self.names is None or self.names == '':
+    #            self.names = new_name
+    #        else:
+    #            self.names += ',' + new_name
 
-    name = property(_get_name, _set_name)
+    name = property(_get_name)
     
     # names_set is intentially read-only, so that it can only be modified via
     # _set_name
@@ -348,10 +352,23 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return frozenset(self._get_names_list())
     names_set = property(_get_names_set)
     
-    def _update_name(self):
-        # TODO is this the best way to do this?
-        self.save()
+    def update_names(self):
+        #print "called update_names"
+        # don't do anything if the case hasn't been saved yet
+        if not self.id:
+            return
+        
+        new_name = self._current_name()
+        if not new_name is None and new_name != self.name:
+            if self.names is None or self.names == '':
+                self.names = new_name
+            else:
+                self.names += ',' + new_name
+
         return
+    
+    ### NOTE! none of these handler account for changes to case.animal,
+    # obsevation.cases or observation.animal
     
     # Taxon fields that can affect Case._current_name
     # Taxon.name -> Taxon.scientific_name -> Animal.taxon.scientific_name
@@ -374,8 +391,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # cases for name updates
         
         for c in Case.objects.all():
-            c._update_name()
-    
+            c.save()
+   
     @staticmethod
     def _taxon_post_delete_update_name_handler(sender, **kwargs):
         # sender should be Taxon
@@ -384,7 +401,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # just have to check every case
         
         for c in Case.objects.all():
-            c._update_name()
+            c.save()
     
     # Animal fields that can affect Case._current_name
     # Animal.determined_taxon
@@ -402,8 +419,9 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # Animal.taxon, which would change Case.animal.taxon for all cases
         # in Animal.case_set
         a = kwargs['instance']
+        #print "Animal post_save"
         for c in a.case_set.all():
-            c._update_name()
+            c.save()
         
     # Case fields that can affect Case._current_name
     # Case.nmfs_id
@@ -435,8 +453,9 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         ycn = kwargs['instance']
         # ycn.current should only have one case in it, but we'll loop over it
         # just in case
+        print "YearCaseNumber post_save"
         for c in ycn.current.all():
-            c._update_name()
+            c.save()
     
     # Observation fields that can affect Case._current_name
     # Observation.case  # ManyToManyField!
@@ -447,7 +466,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     def _observation_post_save_update_name_handler(sender, **kwargs):
         # sender should be Observation
         
-        if kwargs['created']:
+        #if kwargs['created']:
+            #print "Observation post_save"
         
             cases = set()
             o = kwargs['instance']
@@ -462,14 +482,14 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             cases.update(o.cases.all())
             
             for c in cases:
-                c._update_name()
+                c.save()
             
-        else:
+        #else:
             # since the observation may previously been for any animal,
             # and we don't know which one, any animal's probable_taxon may
             # have changed, and we have to check every case
-            for c in Case.objects.all():
-                c._update_name()
+            #for c in Case.objects.all():
+            #    c.save()
 
     @staticmethod
     def _observation_post_delete_update_name_handler(sender, **kwargs):
@@ -478,6 +498,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # the probable_taxon of the observation's animal may have changed,
         # which could change the name of any case for the animal
         
+        #print "Observation post_delete"
+
         cases = set()
         o = kwargs['instance']
         
@@ -488,29 +510,30 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         cases.update(o.cases.all())
 
         for c in cases:
-            c._update_name()
+            c.save()
     
     @staticmethod
     def _observation_cases_m2m_changed_update_name_handler(sender, **kwargs):  
         # sender should be Observation.cases.through
         action, reverse = kwargs['action'], kwargs['reverse']
         if action in ('post_add', 'post_remove') and not reverse:
+            #print "Observation.cases change add/remove"
             # cases were added to or removed from an observation
             case_ids = kwargs['pk_set']
             for c in Case.objects.filter(id__in=case_ids):
-                c._update_name()
+                c.save()
         if action == 'post_clear' and not reverse:
-            # an observation's cases were cleared
-            # we don't know what the cases used to be, so we just have to update
-            # everything
-            for c in Case.objects.all():
-                c._update_name()
+            #print "Observation.cases change clear"
+            o = kwargs['instance']
+            for c in o.animal.case_set.all():
+                c.save()
 
         if action in ('post_add', 'post_remove', 'post_clear') and reverse:
+            #print "Observation.cases change reverse"
             # observations were added to or removed from a case or a case's
             # observations were cleared
             case = kwargs['instance']
-            case._update_name()
+            case.save()
 
     def date(self, obs=None):
         '''\
@@ -552,9 +575,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             return None
         return self.latest_datetime() - self.earliest_datetime()
     
-    def save(self, *args, **kwargs):
-        
-        super(Case, self).save(*args, **kwargs)
+    def save(self, force_insert=False, force_update=False, using=None):
+        super(Case, self).save(force_insert, force_update, using)
         
         date = self.date()
         if date:
@@ -584,16 +606,15 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
                     self.current_yearnumber = new_year_case_number
-                    super(Case, self).save(*args, **kwargs)
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
-                super(Case, self).save(*args, **kwargs)
         
-        new_name = self._current_name()
-        if not new_name is None and new_name != self.name:
-            self.name = new_name
-            super(Case, self).save(*args, **kwargs)
+        self.update_names()
+
+        super(Case, self).save(using=using)
+
+    save.alters_data = True
 
     case_type = models.CharField(
         max_length= 512,
