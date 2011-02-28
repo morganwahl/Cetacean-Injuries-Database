@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 
 from generic_views import direct_to_template
-from views import home, revision_detail, new_case, object_history, import_taxon
+from views import home, revision_detail, new_case, object_history, import_taxon, odd_entries
 
 from reversion.models import Revision
 
@@ -22,6 +22,8 @@ urlpatterns = patterns('',
     (r'^entanglements/', include('cetacean_incidents.apps.entanglements.urls')),
     (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),
     (r'^tags/', include('cetacean_incidents.apps.tags.urls')),
+ 
+    (r'^problems/', odd_entries, {}, 'odd_entries'),
  
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

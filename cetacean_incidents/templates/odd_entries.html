@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load animal_extras %}
+{% load case_extras %}
+
+{% block header %}<h2>Entries with potential problems</h2>{% endblock %}
+
+{% block content %}
+{% if animals_same_number %}
+<div>
+    <h3>Animals with the same field number</h3>
+    <ul>
+        {% for number, animals in animals_same_number.items %}
+        <li>
+            {{ number }}
+            <ul>
+                {% for a in animals %}
+                {% animal_link a %}
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if animals_same_name %}
+<div>
+    <h3>Animals with the same name</h3>
+    <ul>
+        {% for name, animals in animals_same_name.items %}
+        <li>
+            {{ name }}
+            <ul>
+                {% for a in animals %}
+                {% animal_link a %}
+                {% endfor %}
+            </ul>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if animals_no_cases %}
+<div>
+    <h3>Animals with no cases</h3>
+    <ul>
+        {% for a in animals_no_cases %}
+        <li>
+            {% animal_link a %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if cases_no_observations %}
+<div>
+    <h3>Cases with no observations</h3>
+    <ul>
+        {% for c in cases_no_observations %}
+        <li>
+            {% case_link c %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% endblock %}

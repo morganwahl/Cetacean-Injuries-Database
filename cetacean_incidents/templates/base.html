@@ -93,6 +93,8 @@
                         &#x2022;
                         {% endif %}
                         <a class="action" href="{% url review_imports %}">unreviewed imports</a>
+                        &#x2022;
+                        <a class="action" href="{% url odd_entries %}">odd entries</a>
                         {% comment %}
                         {# these pages are buggy and inscrutable #}
                         {% if perms.taxons.add_taxon and user.is_staff %}

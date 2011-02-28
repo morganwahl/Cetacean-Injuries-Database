@@ -362,3 +362,39 @@ def new_case(request, initial_animal_id=None):
 def import_taxon(request):
     
     return unsecured_import_taxon(request)
+
+@login_required
+def odd_entries(request):
+    
+    field_numbers = set(Animal.objects.exclude(field_number='').values_list('field_number', flat=True))
+    same_number = {}
+    for num in field_numbers:
+        animals = Animal.objects.filter(field_number=num)
+        if animals.count() > 1:
+            same_number[num] = animals
+    
+    animal_names = set()
+    for a in Animal.objects.exclude(name=''):
+        for name in a.names:
+            animal_names.add(name.lower().strip())
+    same_name = {}
+    for name in animal_names:
+        animals = Animal.objects.filter(name__icontains=name)
+        if animals.count() > 1:
+            same_name[name] = animals
+        
+    no_cases = Animal.objects.filter(case__id__isnull=True)
+    
+    no_obs = Case.objects.filter(observation__id__isnull=True)
+
+    return render_to_response(
+        'odd_entries.html',
+        {
+            'animals_same_number': same_number,
+            'animals_same_name': same_name,
+            'animals_no_cases': no_cases,
+            'cases_no_observations': no_obs,
+        },
+        context_instance= RequestContext(request),
+    )
+
