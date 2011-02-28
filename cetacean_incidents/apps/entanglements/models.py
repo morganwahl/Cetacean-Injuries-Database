@@ -236,9 +236,9 @@ class EntanglementObservation(ObservationExtension):
                 <dt>gear shed</dt>
                 <dd>No disentanglement was attempted since the animal had disentangled itself.</dd>
                 <dt>monitor</dt>
-                <dd>No disentanglement was attempted since the entanglement wasn't severe enough to warrant it.</dd>
+                <dd>The entanglement was determined not to be severe enough to warrant a disentanglement attempt.</dd>
                 <dt>entangled</dt>
-                <dd>A disentanglement was needed, but either couldn't be attempted or was unsuccessful.</dd>
+                <dd>A disentanglement wasn't deemed unnecessary, but either couldn't be attempted or was unsuccessful.</dd>
                 <dt>partial</dt>
                 <dd>A disentanglement was attempted and the gear was partly removed.</dd>
                 <dt>complete</dt>
