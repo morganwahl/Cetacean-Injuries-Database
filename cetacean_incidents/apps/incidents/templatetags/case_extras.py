@@ -2,6 +2,7 @@ from datetime import date
 
 from django import template
 
+from django.conf import settings
 from django import forms
 
 from ..models import Observation
@@ -16,7 +17,17 @@ def case_link(case):
     '''\
     Returns the link HTML for a case.
     '''
-    return {'case': case}
+
+    # avoid circular imports
+    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    from cetacean_incidents.apps.tags.models import Tag
+    needs_review = bool(Tag.objects.filter(entry=case, tag_text__in=IMPORT_TAGS))
+
+    return {
+        'case': case,
+        'needs_review': needs_review,
+        'media_url': settings.MEDIA_URL,
+    }
 
 @register.inclusion_tag('case_years_link.html')
 def case_years_link():

@@ -3,6 +3,7 @@ from django import template
 from cetacean_incidents.apps.incidents.models import Case
 
 from django.utils.safestring import mark_safe
+from django.conf import settings
 
 register = template.Library()
 
@@ -17,8 +18,15 @@ def animal_link(animal, block=""):
     # get any NMFS IDs for it's cases, since these are often used as ersatz 
     # animal IDs
     
+    # avoid circular imports
+    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    from cetacean_incidents.apps.tags.models import Tag
+    needs_review = bool(Tag.objects.filter(entry=animal, tag_text__in=IMPORT_TAGS))
+
     return {
         'animal': animal,
+        'needs_review': needs_review,
+        'media_url': settings.MEDIA_URL,
         'animal_display': animal_display(animal, block),
     }
 

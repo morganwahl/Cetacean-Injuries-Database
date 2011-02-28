@@ -3,10 +3,11 @@
     <a href="{{ case.get_absolute_url }}">{% if not case.valid %}<span class="invalid">{% endif %}{{ case }}{% if not case.valid %}</span>{% endif %}</a>
     {% if case.ole_investigation %}
     <img
-        src="{% url site-media path="icons/OLE.png"%}"
+        src="{{ media_url }}icons/OLE.png"
         alt="OLE"
         title="there's an OLE investigation for this case">
     {% endif %}
     {% include "incidents/case-valid-icon.html" %}
+    {% if needs_review %}<img title="this entry needs review" src="{{ media_url }}icons/needs_review.png">{% endif %}
 {% if case.ole_investigation %}</span>{% endif %}
 {% endspaceless %}

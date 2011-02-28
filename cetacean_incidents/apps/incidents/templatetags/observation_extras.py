@@ -11,8 +11,15 @@ def observation_link(observation):
     '''\
     Returns the link HTML for a observation.
     '''
+    
+    # avoid circular imports
+    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    from cetacean_incidents.apps.tags.models import Tag
+    needs_review = bool(Tag.objects.filter(entry=observation, tag_text__in=IMPORT_TAGS))
+
     return {
         'observation': observation,
+        'needs_review': needs_review,
         'media_url': settings.MEDIA_URL,
     }
     

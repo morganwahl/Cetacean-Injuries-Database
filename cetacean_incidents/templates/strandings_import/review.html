@@ -17,16 +17,16 @@
     {% for o in c.observation_set.all %}
     <tr>
         {% ifchanged a.id %}
-        <td>{{ a.id|stringformat:"06d" }} {% if a.id in tagged %}<img src="{{ MEDIA_URL }}icons/needs_review.png" title="this imported entry needs review"> {% endif %}{% animal_link a %}</td>
+        <td>{{ a.id|stringformat:"06d" }} {% animal_link a %}</td>
         {% else %}
         <td style="text-align: center;">"</td>
         {% endifchanged %}
         {% ifchanged c %}
-        <td>{% if a.id in tagged %}<img src="{{ MEDIA_URL }}icons/needs_review.png" title="this imported entry needs review"> {% endif %}{% case_link c %}</td>
+        <td>{% case_link c %}</td>
         {% else %}
         <td style="text-align: center;">"</td>
         {% endifchanged %}
-        <td>{% if a.id in tagged %}<img src="{{ MEDIA_URL }}icons/needs_review.png" title="this imported entry needs review"> {% endif %}{% observation_link o %}</td>
+        <td>{% observation_link o %}</td>
     </tr>
     {% endfor %}
     {% endfor %}

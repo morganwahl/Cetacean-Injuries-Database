@@ -12,11 +12,9 @@
         {% for number, animals in animals_same_number.items %}
         <li>
             {{ number }}
-            <ul>
-                {% for a in animals %}
-                {% animal_link a %}
-                {% endfor %}
-            </ul>
+            <div>
+                {% for a in animals %}{% animal_link a %},{% endfor %}
+            </div>
         </li>
         {% endfor %}
     </ul>
@@ -29,11 +27,9 @@
         {% for name, animals in animals_same_name.items %}
         <li>
             {{ name }}
-            <ul>
-                {% for a in animals %}
-                {% animal_link a %}
-                {% endfor %}
-            </ul>
+            <div>
+                {% for a in animals %}{% animal_link a %},{% endfor %}
+            </div>
         </li>
         {% endfor %}
     </ul>
