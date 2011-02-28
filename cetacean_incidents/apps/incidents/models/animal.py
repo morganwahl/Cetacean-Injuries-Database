@@ -161,13 +161,14 @@ class Animal(Documentable, Importable):
         return self.observation_set.order_by('datetime_observed').reverse()[0]
     
     def clean(self):
-        if not self.field_number is None and self.field_number != '':
-            # check that an existing animal doesn't already have this field_number
-            animals = Animal.objects.filter(field_number=self.field_number)
-            if self.id:
-                animals = animals.exclude(id=self.id)
-            if animals.count() > 0:
-                raise ValidationError("field number '%s' is already in use by animal '%s'" % (self.field_number, unicode(animals[0])))
+        if False:
+            if not self.field_number is None and self.field_number != '':
+                # check that an existing animal doesn't already have this field_number
+                animals = Animal.objects.filter(field_number=self.field_number)
+                if self.id:
+                    animals = animals.exclude(id=self.id)
+                if animals.count() > 0:
+                    raise ValidationError("field number '%s' is already in use by animal '%s'" % (self.field_number, unicode(animals[0])))
 
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
