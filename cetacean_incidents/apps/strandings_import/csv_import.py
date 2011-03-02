@@ -39,9 +39,12 @@ from cetacean_incidents.apps.taxons.models import Taxon
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 
 
-CURRENT_IMPORT_TAG = u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details."
+CURRENT_IMPORT_TAG = u"This entry was created by an automated import and has not yet been reviewed by a human. See 'Import Notes' for details."
 
-IMPORT_TAGS = set((CURRENT_IMPORT_TAG,))
+IMPORT_TAGS = set((
+    CURRENT_IMPORT_TAG,
+    u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details."
+))
 
 class UnrecognizedFieldError(ValueError):
     
