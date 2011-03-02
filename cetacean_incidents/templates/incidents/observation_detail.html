@@ -4,6 +4,7 @@
 {% load case_extras %}
 {% load generic_field_display %}
 {% load taxon_extras %}
+{% load observation_extras %}
 
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
@@ -130,12 +131,34 @@
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
-                    {% if observation.animal_length %}
-                    {% display_row observation "animal_length" %}
-                    {% endif %}
-                    {% if observation.animal_length_sigdigs %}
-                    {% display_row observation "animal_length_sigdigs" %}
-                    {% endif %}
+                    <tr class="field"><th>animal length</th><td>
+                        <div id="length_m">
+                            {% display_length observation.animal_length "m" observation.animal_length_sigdigs %}
+                        </div>
+                        <div id="length_cm">
+                            {% display_length observation.animal_length "cm" observation.animal_length_sigdigs %}
+                        </div>
+                        <div id="length_ft">
+                            {% display_length observation.animal_length "ft" observation.animal_length_sigdigs %}
+                        </div>
+                        <div id="length_in">
+                            {% display_length observation.animal_length "in" observation.animal_length_sigdigs %}
+                        </div>
+                        <form>
+                            <input type="radio" name="unit" value="m">m
+                            <input type="radio" name="unit" checked="checked" value="cm">cm
+                            <input type="radio" name="unit" value="ft">ft
+                            <input type="radio" name="unit" value="in">in
+                        </form>
+                        <script type="text/javascript">
+                            RadioHider.init('unit', {
+                                'm': 'length_m',
+                                'cm': 'length_cm',
+                                'ft': 'length_ft',
+                                'in': 'length_in'
+                            });
+                        </script>
+                    </td></tr>
                     {% if observation.age_class %}
                     {% display_chosen_row observation "age_class" %}
                     {% endif %}
