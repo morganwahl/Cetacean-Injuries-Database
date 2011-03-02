@@ -126,12 +126,12 @@ CLASSIFICATIONS = set((
 ))
 
 # various length units, in meters
-CENTIMETER = Decimal(1) / 100
+CENTIMETER = Decimal('0.1')
 INCH = Decimal('2.54') * CENTIMETER
 FOOT = 12 * INCH
 def parse_length(length):
     '''\
-    Returns meters.
+    Returns a tuple of length in meters and sigdigs of original.
     '''
     
     # trim
@@ -139,26 +139,29 @@ def parse_length(length):
     
     m = None
     
-    # centimeters
-    match = re.match(r'(?i)(?P<length>[0-9.]+)\s*(cm)?$', length)
-    if match:
-        cm = Decimal(match.group('length'))
-        m = cm / 100
-    
-    # inches
-    match = re.match(r'(?i)(?P<length>[0-9.]+)\s*(in|")$', length)
-    if match:
-        inches = Decimal(match.group('length'))
-        m = inches * INCH
-    
-    # feet
-    match = re.match(r"(?i)(?P<length>[0-9.]+)\s*(ft|')$", length)
-    if match:
-        feet = Decimal(match.group('length'))
-        m = feet * FOOT
+    for unit_match, unit_factor in (
+        (r'(cm)?', CENTIMETER), # note that this matches no-unit
+        (r'(in|")', INCH),
+        (r"(ft|')", FOOT),
+    ):
+        match = re.match(r'(?i)(?P<length>[0-9.]+)\\s*' + unit_match + '$', length)
+        if match:
+            length_string = match.group('length')
+            length_decimal = Decimal(length_string)
+            m = length_decimal * unit_factor
+            break
 
     if not m:
         raise ValueError("can't figure out length: %s" % length)
+    
+    (sign, digits, exponent) = length_decimal.as_tuple()
+    # is there a decimal?
+    if '.' in length_string:
+        # count all the digits as significant
+        sigdigs = len(digits)
+    else:
+        # don't count trailing zeros
+        sigdigs = len(len_string.strip('0'))
     
     return m
 
@@ -585,7 +588,9 @@ def parse_observation(row, case_data):
     # animal_length
     if row['Total Length (cm)  *=est'] not in set(('', 'U')):
         try:
-            o['animal_length'] = parse_length(row['Total Length (cm)  *=est'])
+            length, sigdigs = parse_length(row['Total Length (cm)  *=est'])
+            o['animal_length'] = length
+            o['animal_length_sigdigs'] = sigdigs
         except ValueError:
             unimportable_value(o, 'Total Length (cm)  *=est')
 
