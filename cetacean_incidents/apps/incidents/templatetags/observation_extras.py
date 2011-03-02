@@ -53,6 +53,8 @@ FOOT = D('12') * INCH
 
 @register.simple_tag
 def display_length(length_in_meters, unit, sigdigs=None):
+    if not isinstance(length_in_meters, D):
+        return ''
 
     if sigdigs is None:
         sign, digits, exponent = length_in_meters.as_tuple()

@@ -131,6 +131,7 @@
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
+                    {% if observation.animal_length %}
                     <tr class="field"><th>animal length</th><td>
                         <div id="length_m">
                             {% display_length observation.animal_length "m" observation.animal_length_sigdigs %}
@@ -159,6 +160,7 @@
                             });
                         </script>
                     </td></tr>
+                    {% endif %}
                     {% if observation.age_class %}
                     {% display_chosen_row observation "age_class" %}
                     {% endif %}
