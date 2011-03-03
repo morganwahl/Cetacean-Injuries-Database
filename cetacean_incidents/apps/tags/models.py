@@ -19,6 +19,7 @@ class Tag(models.Model):
     )
     
     tag_text = models.CharField(
+        db_index=True,
         max_length=1024,
     )
 
