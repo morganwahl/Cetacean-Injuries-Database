@@ -1,38 +1,131 @@
 from django import template
 
-from cetacean_incidents.apps.incidents.models import Case
-
+from django.core.cache import cache
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.template.loader import get_template
+from django.template import Context
+from django.db import models
+
+from cetacean_incidents.apps.tags.models import Tag
+
+from ..models import Animal, Case
 
 register = template.Library()
 
-# assumes the the django.template.loaders.app_directories.load_template_source 
-# is being used, which is the default.
-@register.inclusion_tag('animal_link.html')
-def animal_link(animal, block=""):
+@register.simple_tag
+def animal_link(animal, block=False):
     '''\
     Returns the link HTML for an animal.
     '''
+    
+    cache_key = u'animal_link_%d' % animal.id
+    if block:
+        cache_key = cache_key + u'_block'
+
+    cached = cache.get(cache_key)
+    if cached:
+        #print "cache hit!: %s" % cache_key
+        return cached
     
     # get any NMFS IDs for it's cases, since these are often used as ersatz 
     # animal IDs
     
     # avoid circular imports
     from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
-    from cetacean_incidents.apps.tags.models import Tag
     needs_review = bool(Tag.objects.filter(entry=animal, tag_text__in=IMPORT_TAGS))
-
-    return {
+    
+    context = Context({
         'animal': animal,
         'needs_review': needs_review,
         'media_url': settings.MEDIA_URL,
         'animal_display': animal_display(animal, block),
-    }
+    })
+    
+    # assumes the loader
+    # django.template.loaders.app_directories.load_template_source is being
+    # used, which is the default.
+    template = get_template('animal_link.html')
+    result = template.render(context)
+    
+    cache.set(cache_key, result, 7 * 24 * 3600)
 
+    return result
+        
 @register.simple_tag
-def animal_display(animal, block=""):
-    return animal_display_inline(animal) if not block else animal_display_block(animal)
+def animal_display(animal, block=False):
+
+    cache_key = u'animal_display_%d' % animal.id
+    if block:
+        cache_key = cache_key + u'_block'
+
+    cached = cache.get(cache_key)
+    if cached:
+        #print "cache hit!: %s" % cache_key
+        return cached
+    
+    result = animal_display_inline(animal) if not block else animal_display_block(animal)
+    
+    cache.set(cache_key, result, 7 * 24 * 3600)
+
+    return result
+
+# remove stale cache entries
+def _animal_post_save(sender, **kwargs):
+    # sender should be Animal
+    
+    if kwargs['created']:
+        return
+    
+    animal = kwargs['instance']
+    # TODO we're repeating the cache_key above
+    cache_keys = [
+        u'animal_link_%d' % animal.id,
+        u'animal_link_%d_block' % animal.id,
+        u'animal_display_%d' % animal.id,
+        u'animal_display_%d_block' % animal.id,
+    ]
+    #print "cache delete!: %s" % ', '.join(cache_keys)
+    cache.delete_many(cache_keys)
+
+models.signals.post_save.connect(
+    sender= Animal,
+    receiver= _animal_post_save,
+    dispatch_uid= 'cache_clear__animal_extras__animal__post_save',
+)
+
+def _tag_post_save_or_post_delete(sender, **kwargs):
+    # sender should be Tag
+    
+    tag = kwargs['instance']
+
+    # avoid circular imports
+    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    if not tag.tag_text in IMPORT_TAGS:
+        return
+
+    # we don't need to check if the entry is an animal, since if it isn't, it
+    # won't have any cache entries. This assumes 
+    # Animal.objects.filter(id=tag.entry_id).exists() is slower than 
+    # cache.delete_many(cache_keys)
+    # TODO we're repeating the cache_key above
+    cache_keys = [
+        u'animal_link_%d' % tag.entry_id,
+        u'animal_link_%d_block' % tag.entry_id,
+    ]
+    #print "cache delete!: %s" % ', '.join(cache_keys)
+    cache.delete_many(cache_keys)
+
+models.signals.post_save.connect(
+    sender= Tag,
+    receiver=  _tag_post_save_or_post_delete,
+    dispatch_uid= 'cache_clear__animal_extras__tag__post_save',
+)
+models.signals.post_delete.connect(
+    sender= Tag,
+    receiver=  _tag_post_save_or_post_delete,
+    dispatch_uid= 'cache_clear__animal_extras__tag__post_delete',
+)
 
 def animal_display_inline(animal):
     '''\

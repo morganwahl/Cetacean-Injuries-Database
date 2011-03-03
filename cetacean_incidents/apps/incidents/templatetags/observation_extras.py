@@ -1,30 +1,142 @@
 from decimal import Decimal as D
 
+from django.core.cache import cache
 from django import template
 from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.template import Context
+from django.template.loader import get_template
+from django.db import models
+
+from cetacean_incidents.apps.contacts.models import Contact
+from cetacean_incidents.apps.tags.models import Tag
 
 register = template.Library()
 
-# assumes the the django.template.loaders.app_directories.load_template_source 
-# is being used, which is the default.
-@register.inclusion_tag('observation_link.html')
+from ..models import Animal, Observation
+
+@register.simple_tag
 def observation_link(observation):
     '''\
     Returns the link HTML for a observation.
     '''
     
+    cache_key = u'observation_link_%d' % observation.id
+
+    cached = cache.get(cache_key)
+    if cached:
+        #print "cache hit!: %s" % cache_key
+        return cached
+    
     # avoid circular imports
     from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
-    from cetacean_incidents.apps.tags.models import Tag
     needs_review = bool(Tag.objects.filter(entry=observation, tag_text__in=IMPORT_TAGS))
 
-    return {
+    context = Context({
         'observation': observation,
         'needs_review': needs_review,
         'media_url': settings.MEDIA_URL,
-    }
+    })
+
+    # assumes the loader 
+    # django.template.loaders.app_directories.load_template_source is being
+    # used, which is the default.
+    template = get_template('observation_link.html')
+    result = template.render(context)
     
+    cache.set(cache_key, result, 7 * 24 * 3600)
+
+    return result
+    
+# remove stale cache entries
+def _observation_post_save(sender, **kwargs):
+    # sender should be Observation
+    
+    if kwargs['created']:
+        return
+    
+    observation = kwargs['instance']
+    # TODO we're repeating the cache_key above
+    cache_key = u'observation_link_%d' % observation.id
+    #print "cache delete!: %s" % cache_key
+    cache.delete(cache_key)
+        
+models.signals.post_save.connect(
+    sender= Observation,
+    receiver= _observation_post_save,
+    dispatch_uid= 'cache_clear__observation_extras__observation__post_save',
+)
+
+def _tag_post_save_or_post_delete(sender, **kwargs):
+    # sender should be Tag
+    
+    tag = kwargs['instance']
+
+    # avoid circular imports
+    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    if not tag.tag_text in IMPORT_TAGS:
+        return
+
+    # we don't need to check if the entry is an observation, since if it isn't,
+    # it won't have any cache entries. This assumes 
+    # Observation.objects.filter(id=tag.entry_id).exists() is slower than 
+    # cache.delete_many(cache_keys)
+    # TODO we're repeating the cache_key above
+    cache_key = u'case_link_%d' % tag.entry_id
+    #print "cache delete!: %s" % cache_key
+    cache.delete(cache_key)
+
+models.signals.post_save.connect(
+    sender= Tag,
+    receiver=  _tag_post_save_or_post_delete,
+    dispatch_uid= 'cache_clear__observation_extras__tag__post_save',
+)
+models.signals.post_delete.connect(
+    sender= Tag,
+    receiver=  _tag_post_save_or_post_delete,
+    dispatch_uid= 'cache_clear__observation_extras__tag__post_delete',
+)
+
+# observation_link uses animal.observation
+def _animal_post_save(sender, **kwargs):
+
+    if kwargs['created']:
+        return
+    
+    animal = kwargs['instance']
+    # TODO is there a faster way to just get the IDs?
+    for observation_id in animal.observation_set.values_list('id', flat=True):
+        # TODO we're repeating the cache_key above
+        cache_key = u'observation_link_%d' % observation_id
+        #print "cache delete!: %s" % cache_key
+        cache.delete(cache_key)
+
+models.signals.post_save.connect(
+    sender= Animal,
+    receiver=  _animal_post_save,
+    dispatch_uid= 'cache_clear__observation_extras__animal__post_save',
+)
+
+# observation_link uses observation.observer.name
+def _contact_post_save(sender, **kwargs):
+
+    if kwargs['created']:
+        return
+    
+    contact = kwargs['instance']
+    # TODO is there a faster way to just get the IDs?
+    for observation_id in contact.observed.values_list('id', flat=True):
+        # TODO we're repeating the cache_key above
+        cache_key = u'observation_link_%d' % observation_id
+        #print "cache delete!: %s" % cache_key
+        cache.delete(cache_key)
+
+models.signals.post_save.connect(
+    sender= Contact,
+    receiver=  _contact_post_save,
+    dispatch_uid= 'cache_clear__observation_extras__contact__post_save',
+)
+
 @register.simple_tag
 def date_observed_display(dt):
     '''\
