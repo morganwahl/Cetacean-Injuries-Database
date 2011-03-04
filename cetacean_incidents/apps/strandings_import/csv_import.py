@@ -3,7 +3,7 @@ from copy import copy
 import operator
 from itertools import imap, count
 from decimal import Decimal
-from datetime import datetime
+import datetime
 import pytz
 import re
 import csv
@@ -55,6 +55,8 @@ class UnrecognizedFieldError(ValueError):
 FIELDNAMES = set((
 # ignorable
  'New event ?',
+  'New Case ?',
+'File complete? (internal use)',
 'Strike form?',
    'CCS Forms',
 
@@ -79,6 +81,7 @@ FIELDNAMES = set((
         'Event Confirmed?', # valid
 'NMFS Database Regional #', # just note in import_notes
         'NMFS Database # ', # just note in import_notes
+   'Additional Identifier', # just note in import_notes
 'Entanglement or Collision #', # just note in import_notes
             'CCS web page', # document attached to case with type 'CCS web page'
                 'Hi Form?', # document attached to case with type 'Human-Interaction Form'
@@ -118,6 +121,7 @@ FIELDNAMES = set((
        'LONGITUDE', # coordinates
 'General location', # description
         'State/EZ', # state, waters, country
+          'Region', # just note in import_notes
 ))
 CLASSIFICATIONS = set((
     'M', # mortality
@@ -168,7 +172,7 @@ def parse_length(length):
 def parse_date(date):
     for format in ('%Y/%m/%d', '%d-%b-%y', '%m/%d/%Y'):
         try:
-            return datetime.strptime(date, format).date()
+            return datetime.datetime.strptime(date, format).date()
         except ValueError:
             pass
     raise ValueError("can't parse datetime %s" % date)
@@ -203,11 +207,12 @@ def translate_taxon(data, data_key, row):
         'UNAN': None,                          # unknown animal
         'UNBA': Taxon.objects.get(tsn=552298), # unknown baleen whale
         'UNRW': Taxon.objects.get(tsn=552298), # unknown rorqual
+        'UNFS': Taxon.objects.get(tsn=180523), # finback or sei whale
         'FI/SEWH': Taxon.objects.get(tsn=180523), # finback or sei whale
         'UNWH': Taxon.objects.get(tsn=180403), # unknown whale
     }[row['Common Name']]
 
-    if row['Common Name'] in set(('UNWH', 'UNRW', 'FI/SEWH', 'RIWH?')):
+    if row['Common Name'] in set(('UNWH', 'UNRW', 'FI/SEWH', 'RIWH?', 'UNFS')):
         odd_value(data, 'Common Name')
 
 ### Three types of import problems
@@ -251,6 +256,8 @@ def parse_animal(row):
         unimportable_column(a, 'NMFS Database # ')
     if row['NMFS Database Regional #']:
         unimportable_column(a, 'NMFS Database Regional #')
+    if row['Additional Identifier']:
+        unimportable_column(a, 'Additional Identifier')
     
     # field_number
     if row['Field # ']:
@@ -284,7 +291,11 @@ def parse_animal(row):
         '1': False,
     }[row['Alive?']]
     if dead:
-        a['determined_dead_before'] = parse_date(row['Date'])
+        # a one-off exception
+        if row['Date'] == 'unk-Sep07':
+            a['determined_dead_before'] = datetime.date(2007, 10, 1)
+        else:
+            a['determined_dead_before'] = parse_date(row['Date'])
     # the value isn't understood
     if row['Alive?'] not in set(('', '0', '1')):
         unknown_value(a, 'Alive?')
@@ -292,6 +303,7 @@ def parse_animal(row):
     # carcass_disposed
     a['carcass_disposed'] = {
         '': None,
+        'U': None,
         '0': False,
         'N': False,
         '1': True,
@@ -358,7 +370,7 @@ def parse_case(row):
     
     # case_type
     cls = row['Classification']
-    cls, resight = re.subn(r'(?i)\s*\(Resight\)', '', cls)
+    cls, resight = re.subn(r'(?i)\s*\(?Resight\)?', '', cls)
     resight = bool(resight)
     
     c['__class__'] = {
@@ -374,14 +386,17 @@ def parse_case(row):
              'E': 'Entanglement',
       'E  (CAN)': 'Entanglement',
      'E (lures)': 'Entanglement',
+ 'E (entrapped)': 'Entanglement',
            'C,M': set(('Case', 'Shipstrike')),
           'M,SS': set(('Case', 'Shipstrike')),
           'M, C': set(('Case', 'Shipstrike')),
+          'C, M': set(('Case', 'Shipstrike')),
          'M, SS': set(('Case', 'Shipstrike')),
            'M,E': set(('Case', 'Entanglement')),
           'M, E': set(('Case', 'Entanglement')),
           'E, M': set(('Case', 'Entanglement')),
            'E,M': set(('Case', 'Entanglement')),
+       'E, C, M': set(('Case', 'Shipstrike', 'Entanglement')),
     }[cls]
     if resight or row['Classification'] in set((
         '',
@@ -391,6 +406,7 @@ def parse_case(row):
         'M(Incidental Take)',
         'E  (CAN)',
         'E (lures)',
+        'E (entrapped)',
     )):
         odd_value(c, 'Classification')
     
@@ -405,8 +421,11 @@ def parse_case(row):
     c['valid'] = {
         '': 1,
         '0': 1,
+        '0?': 1,
         '1': 2,
     }[row['Event Confirmed?']]
+    if c['valid'] in set(('0?',)):
+        odd_value(c, 'valid')
     
     # happened_after defaults to None
     
@@ -419,12 +438,14 @@ def parse_case(row):
     c['human_interaction'] = {
         '': 'unk',
         '1/cbd?': 'unk',
+        '1?': 'unk',
         '0': 'no',
         '1': 'yes',
         'cbd': 'cbd',
         'CBD': 'cbd',
+        'CBD`': 'cbd',
     }[row['HI ?']]
-    if c['human_interaction'] in set(('1/cbd?',)):
+    if c['human_interaction'] in set(('1/cbd?','1?')):
         unknown_value(c, 'human_interaction')
 
     # ole_investigation defaults to False
@@ -476,14 +497,24 @@ def parse_location(row, observation_data):
         country = Country.objects.get(iso='US')
         eez = True
         state = None
-    elif state_input in (('can',)):
-        country = Country.objects.get(iso='CA')
+    elif state_input in (('ber', 'can', 'cn')):
+        country = Country.objects.get(iso={
+            'ber': 'BM',
+            'can': 'CA',
+            'cn':  'CA',
+        }[state_input])
         eez = None
         state = None
     elif state_input in STATES_NORMALIZED.keys():
         country = Country.objects.get(iso='US')
         eez = False
         state = STATES_NORMALIZED[state_input]
+    # one-off errors
+    elif state_input in set(('ma eez',)):
+        unknown_value(observation_data, 'State/EZ')
+        country = None
+        eez = None
+        state = None
     else:
         raise KeyError(row['State/EZ'])
     
@@ -530,6 +561,9 @@ def parse_location(row, observation_data):
     if (not lat is None) and (not lon is None):
         l['coordinates'] = "%s,%s" % (lat, lon)
     
+    if row['Region']:
+        unimportable_column(observation_data, 'Region')
+    
     return l
 
 def parse_observation(row, case_data):
@@ -567,8 +601,12 @@ def parse_observation(row, case_data):
     # datetime_observed
     if not row['Date']:
         unimportable_value(o, 'Date')
-    date = parse_date(row['Date'])
-    uncertain_datetime = UncertainDateTime(date.year, date.month, date.day)
+    # a one-off exception
+    if row['Date'] == 'unk-Sep07':
+        uncertain_datetime = UncertainDateTime(2007, 9)
+    else:
+        date = parse_date(row['Date'])
+        uncertain_datetime = UncertainDateTime(date.year, date.month, date.day)
     o['datetime_observed'] = uncertain_datetime
     
     # location
@@ -601,15 +639,20 @@ def parse_observation(row, case_data):
     o['age_class'] = {
         '': '',
         'Y': '',
+        'Y*': '',
         'U': '',
         'M': '',
         'C': 'ca',
         'J': 'ju',
         'SA': 'ju',
         'S': 'ju',
+        'S*': 'ju',
         'A': 'ad',
+        'A*': 'ad',
     }[row[age_key]]
-    if row[age_key] in set(('Y','S','M')):
+    if row[age_key] in set(('S*','A*')):
+        odd_value(o, age_key)
+    if row[age_key] in set(('Y', 'Y*', 'S','M')):
         unknown_value(o, age_key)
     
     # gender
@@ -686,11 +729,13 @@ def parse_observation(row, case_data):
         {
             '': None,
             '?': None,
+            'Yes (in necro report)': None,
             'No': False,
             'NO': False,
             'Yes': True,
             'video': True,
             'pending': True,
+            'Pending': True,
             'Gear only': True,
         }[row['Pictures']],
         {
@@ -718,16 +763,22 @@ def parse_observation(row, case_data):
     # indication_entanglement
     o['indication_entanglement'] = {
         '': None,
+        '1?': None,
         '0': False,
         '1': True,
     }[row['Indication of Entanglement']]
+    if row['Indication of Entanglement'] in set(('1?',)):
+        unknown_value(o, 'Indication of Entanglement')
     
     # indication_shipstrike
     o['indication_shipstrike'] = {
         '': None,
         '0': False,
         '1': True,
+        '1*': True,
     }[row['Indication of Ship Strike']]
+    if not row['Indication of Ship Strike'] in set(('', '0', '1')):
+        odd_value(o, 'Indication of Ship Strike')
     
     ### ObservationExtensions
     o['observation_extensions'] = {}
@@ -765,19 +816,27 @@ def parse_observation(row, case_data):
         outcome = {
             '': 'unknown',
             '?': 'unknown',
+            'Animal releases': 'unknown',
             'Carrying gear': 'gear',
             'disentangled': 'no gear',
             'Disentangled': 'no gear',
+            'fully disentangled': 'no gear',
+            'disentangled by bystander': 'no gear',
             'Entangled': 'entangled',
             'entangled': 'entangled',
+            'Unsuccessful': 'unsuccessful',
             'Gear free': 'no gear',
+            'Potentially gear free': 'unknown',
             'Minor': 'unknown',
             'No attempt made': 'unknown',
             'NOAA, GA': 'unknown',
             'Partial Disentanglement': 'partly entangled',
             'partial disentanglement': 'partly entangled',
+            'Partial disentanglement': 'partly entangled',
             'some line still embedded in dorsal peduncle': 'some gear',
             'unable to relocate': 'unknown',
+            'Unable to relocate': 'unknown',
+            'Animal could not be relocated': 'unknown',
             'Unknown': 'unknown',
             'unknown': 'unknown',
         }[row['Disentangle status of live whale']]
@@ -785,6 +844,7 @@ def parse_observation(row, case_data):
             '?',
             'Carrying gear',
             'some line still embedded in dorsal peduncle',
+            'disentangled by bystander',
         )):
             odd_value(o, 'Disentangle status of live whale')
         if row['Disentangle status of live whale'] in set((
@@ -792,6 +852,10 @@ def parse_observation(row, case_data):
             'No attempt made',
             'NOAA, GA',
             'unable to relocate',
+            'Unable to relocate',
+            'Animal could not be relocated',
+            'Potentially gear free',
+            'Animal releases',
         )):
             unknown_value(o, 'Disentangle status of live whale')
         # disentanglement_outcome choices:
@@ -826,6 +890,7 @@ def parse_observation(row, case_data):
             (False, 'entangled'): ('entg', True),
 
             (True, 'entangled'): ('entg', True),
+            (True, 'unsuccessful'): ('entg', True),
             (True, 'partly entangled'): ('part', True),
             (True, 'some gear'): ('', False),
             (True, 'no gear'): ('cmpl', True),
@@ -944,7 +1009,7 @@ def _process_import_notes(notes, row, filename):
     else:
         timezone = pytz.utc
     header = u"""<p>Imported on <span class="date">%s</span> from <span class="filename">%s</span>.</p>\n""" % (
-        esc(datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S %z')),
+        esc(datetime.datetime.now(timezone).strftime('%Y-%m-%d %H:%M:%S %z')),
         esc(filename),
     )
     
@@ -1172,4 +1237,4 @@ def process_results(results, filename, user):
     for r in results:
         print r['row_num']
         _save_row(r, filename, user)
-    
+
