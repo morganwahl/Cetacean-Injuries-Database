@@ -258,7 +258,9 @@ def parse_animal(row):
     
     # name
     if row['Individual']:
-        a['name'] = row['Individual']
+        # filter 'unknown'
+        if row['Individual'] not in set(('U',)):
+            a['name'] = row['Individual']
     
     # determined_taxon
     if {
