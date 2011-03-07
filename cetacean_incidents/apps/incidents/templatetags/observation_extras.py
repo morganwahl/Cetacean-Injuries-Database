@@ -82,7 +82,7 @@ def _tag_post_save_or_post_delete(sender, **kwargs):
     # Observation.objects.filter(id=tag.entry_id).exists() is slower than 
     # cache.delete_many(cache_keys)
     # TODO we're repeating the cache_key above
-    cache_key = u'case_link_%d' % tag.entry_id
+    cache_key = u'observation_link_%d' % tag.entry_id
     #print "cache delete!: %s" % cache_key
     cache.delete(cache_key)
 
