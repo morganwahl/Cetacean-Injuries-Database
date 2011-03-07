@@ -61,7 +61,8 @@ FIELDNAMES = set((
    'CCS Forms',
 
 # animal
-             'Field # ', # field_number
+             'Field # ', # field_number (regional database # in 2005 data)
+          'Field # (S)', # field_number in 2005 data
            'Individual', # name
               'Sp Ver?', # if yes, set taxon
           'Common Name', # determined_taxon (also used for Observation.taxon)
@@ -80,7 +81,9 @@ FIELDNAMES = set((
   'Resight: Date 1st Seen', # just note in import_notes
         'Event Confirmed?', # valid
 'NMFS Database Regional #', # just note in import_notes
+                 'Field #', # 2005 column name for 'NMFS Database Regional'
         'NMFS Database # ', # just note in import_notes
+                 'NMFS # ', # 2005 column name for 'NMFS Database # '
    'Additional Identifier', # just note in import_notes
 'Entanglement or Collision #', # just note in import_notes
             'CCS web page', # document attached to case with type 'CCS web page'
@@ -100,6 +103,7 @@ FIELDNAMES = set((
   'Total Length (cm)  *=est', # animal_description
 ' Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
 '                               Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
+'                       Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
                     'Alive?', # condition
           'Initial condtion', # condition, observation splitting, initial
              'Exam condtion', # condition, observation splitting, exam
@@ -180,6 +184,7 @@ def parse_date(date):
 ASHORE_KEYS = (
     ' Ashore?     - Did the whale/carcass ultimately come ashore',
     '                               Ashore?     - Did the whale/carcass ultimately come ashore',
+    '                       Ashore?     - Did the whale/carcass ultimately come ashore',
 )
 def get_ashore(row):
     # ashore has a couple variations:
@@ -196,6 +201,7 @@ def get_ashore(row):
 def translate_taxon(data, data_key, row):
     data[data_key] = {
         'BEWH': Taxon.objects.get(tsn=180506), # beaked whales
+        'BOWH': Taxon.objects.get(tsn=180533), # bowhead whale
         'BRWH': Taxon.objects.get(tsn=612597), # bryde's whale
         'FIWH': Taxon.objects.get(tsn=180527), # finback
         'HUWH': Taxon.objects.get(tsn=180530), # humpback
@@ -252,15 +258,22 @@ def parse_animal(row):
         'import_notes': {},
     }
     
-    if row['NMFS Database # ']:
+    if 'NMFS Database # ' in row and row['NMFS Database # ']:
         unimportable_column(a, 'NMFS Database # ')
-    if row['NMFS Database Regional #']:
+    if 'NMFS # ' in row and row['NMFS # ']:
+        unimportable_column(a, 'NMFS # ')
+    if 'NMFS Database Regional #' in row and row['NMFS Database Regional #']:
         unimportable_column(a, 'NMFS Database Regional #')
-    if row['Additional Identifier']:
+    if 'Field #' in row and row['Field #']:
+        unimportable_column(a, 'Field #')
+    if 'Additional Identifier' in row and row['Additional Identifier']:
         unimportable_column(a, 'Additional Identifier')
     
     # field_number
-    if row['Field # ']:
+    # 2005 has different column names
+    if 'Field # (S)' in row and row['Field # (S)']:
+        a['field_number'] = row['Field # (S)']
+    elif 'Field # ' in row and row['Field # ']:
         a['field_number'] = row['Field # ']
     
     # name
@@ -383,7 +396,9 @@ def parse_case(row):
 'M(Incidental Take)': 'Case',
              'C': 'Shipstrike',
             'SS': 'Shipstrike',
+    'C (injury)': 'Shipstrike',
              'E': 'Entanglement',
+            'E,': 'Entanglement',
       'E  (CAN)': 'Entanglement',
      'E (lures)': 'Entanglement',
  'E (entrapped)': 'Entanglement',
@@ -404,6 +419,7 @@ def parse_case(row):
         'M(resight?)',
         'M(Likely resight)',
         'M(Incidental Take)',
+        'C (injury)',
         'E  (CAN)',
         'E (lures)',
         'E (entrapped)',
@@ -497,11 +513,12 @@ def parse_location(row, observation_data):
         country = Country.objects.get(iso='US')
         eez = True
         state = None
-    elif state_input in (('ber', 'can', 'cn')):
+    elif state_input in (('ber', 'can', 'cn', 'dr',)):
         country = Country.objects.get(iso={
             'ber': 'BM',
             'can': 'CA',
             'cn':  'CA',
+            'dr':  'DO',
         }[state_input])
         eez = None
         state = None
@@ -561,7 +578,7 @@ def parse_location(row, observation_data):
     if (not lat is None) and (not lon is None):
         l['coordinates'] = "%s,%s" % (lat, lon)
     
-    if row['Region']:
+    if 'Region' in row and row['Region']:
         unimportable_column(observation_data, 'Region')
     
     return l
@@ -737,6 +754,8 @@ def parse_observation(row, case_data):
             'pending': True,
             'Pending': True,
             'Gear only': True,
+            'Yes (HC pict)': True,
+            'Yes (Video)': True,
         }[row['Pictures']],
         {
              '': None,
