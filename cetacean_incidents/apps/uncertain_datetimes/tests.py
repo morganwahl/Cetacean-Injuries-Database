@@ -148,6 +148,15 @@ class UncertainDateTimeTestCase(TestCase):
             dt = rep['uncertain_datetime']
             for kwargs, ret in rep['pairs']:
                 self.assertEqual(dt.to_unicode(**kwargs), ret)
+    
+    def test_repr(self):
+        for dt in (
+            self.blank,
+            self.just_year,
+            self.just_day,
+            self.point,
+        ):
+            self.assertEqual(dt, eval(repr(dt)))
 
 class UncertainDateTimeFormFieldTestCase(TestCase):
     def setUp(self):

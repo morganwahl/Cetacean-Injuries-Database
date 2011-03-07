@@ -312,4 +312,10 @@ class UncertainDateTime(object):
     
     def __unicode__(self):
         return self.to_unicode(unknown_char=None)
+    
+    def __repr__(self):
+        args = []
+        for f in self.known_fields:
+            args.append(f + '=' + repr(getattr(self, f)))
+        return 'UncertainDateTime(%s)' % ', '.join(args)
         
