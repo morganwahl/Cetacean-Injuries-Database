@@ -1,15 +1,15 @@
-{# assumes an HTML string was passed in as 'notes' #} 
+{# assumes an HTML string was passed in as 'notes' and a something as 'notes_id' #} 
 {% if notes %}
 <script type="text/javascript">
     $().ready(function(){
-        $("#import_notes_toggle").click(function(event){
-            $("#import_notes_block").slideToggle();
+        $("#import_notes_toggle_{{ notes_id }}").click(function(event){
+            $("#import_notes_block_{{ notes_id }}").slideToggle();
             return false;
         });
     });
 </script>
-<a id="import_notes_toggle" href="">Import Notes ...</a>
-<div class="import_notes" id="import_notes_block" style="display:none">
+<a id="import_notes_toggle_{{ notes_id }}" href="">Import Notes ...</a>
+<div class="import_notes" id="import_notes_block_{{ notes_id }}" style="display:none">
     <div>
     {{ notes|safe }}
     </div>

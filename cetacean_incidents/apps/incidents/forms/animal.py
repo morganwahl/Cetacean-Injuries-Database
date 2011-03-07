@@ -35,6 +35,11 @@ class AnimalMergeForm(MergeForm):
         label= _f.verbose_name.capitalize(),
     )
 
+    def save(self, commit=True):
+        # concatenate import_notes
+        self.destination.import_notes += self.source.import_notes
+        return super(AnimalMergeForm, self).save(commit)
+        
     class Meta:
         model = Animal
         widgets = {

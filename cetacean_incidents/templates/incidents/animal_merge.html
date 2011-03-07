@@ -131,6 +131,25 @@ This template is an amalgam of editing and viewing.
             </td>
             {% display_cell source 'cause_of_death' %}
     	</tr>
+        <tr>
+            <td>
+                {% with destination.import_notes as notes %}
+                {% with destination.id as notes_id %}
+                {% include "incidents/import_notes_include.html" %}
+                {% endwith %}
+                {% endwith %}
+            </td>
+    	    <td>the merged animal will have all these import notes
+    	    {{ form.import_notes }}
+    	    </td>
+            <td>
+                {% with source.import_notes as notes %}
+                {% with source.id as notes_id %}
+                {% include "incidents/import_notes_include.html" %}
+                {% endwith %}
+                {% endwith %}
+            </td>
+    	</tr>
     	<tr>
     	    <td>
     	        {% if form.destination_fk_refs %}
