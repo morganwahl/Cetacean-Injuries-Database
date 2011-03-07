@@ -95,6 +95,9 @@ class MergeForm(forms.ModelForm):
         self.destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
         
     def save(self, commit=True):
+        # FIXME uncommited saving is uncertain
+        if not commit:
+            raise NotImplementedError("uncommited saving of MergeForms is not yet implemented")
         # TODO create a transaction?
         if not commit:
             self._save_m2m_todo = []
@@ -118,6 +121,7 @@ class MergeForm(forms.ModelForm):
 
         return super(MergeForm, self).save(commit=commit)
     
+    # FIXME this method is never called
     def pre_save(self):
         for inst in self._save_m2m_todo:
             inst.save()
