@@ -100,6 +100,7 @@ FIELDNAMES = set((
                    'Sp Ver?', # just note in import_notes
                        'Sex', # gender
 'Age (at time of event)  *PRD indicated age by length as presented in field guides ', # age_class
+'Age (at time of event)', # age_class (in 2004 data)
   'Total Length (cm)  *=est', # animal_description
 ' Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
 '                               Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
@@ -314,14 +315,15 @@ def parse_animal(row):
         unknown_value(a, 'Alive?')
     
     # carcass_disposed
-    a['carcass_disposed'] = {
-        '': None,
-        'U': None,
-        '0': False,
-        'N': False,
-        '1': True,
-        'Y': True,
-    }[row['Carcass Dispossed Y/N']]
+    if 'Carcass Dispossed Y/N' in row:
+        a['carcass_disposed'] = {
+            '': None,
+            'U': None,
+            '0': False,
+            'N': False,
+            '1': True,
+            'Y': True,
+        }[row['Carcass Dispossed Y/N']]
     
     # partial_necropsy
     # necropsy
@@ -358,12 +360,14 @@ def parse_animal(row):
               '': None,
              '0': False,
             'na': False,
+           'N/A': False,
              '1': True,
         }[row['Full necropsy']],
         {
               '': None,
              '0': False,
             'na': False,
+           'N/A': False,
              '1': True,
         }[row['Partial necropsy']],
     ]
@@ -652,25 +656,33 @@ def parse_observation(row, case_data):
             unimportable_value(o, 'Total Length (cm)  *=est')
 
     # age_class
-    age_key = 'Age (at time of event)  *PRD indicated age by length as presented in field guides '
-    o['age_class'] = {
-        '': '',
-        'Y': '',
-        'Y*': '',
-        'U': '',
-        'M': '',
-        'C': 'ca',
-        'J': 'ju',
-        'SA': 'ju',
-        'S': 'ju',
-        'S*': 'ju',
-        'A': 'ad',
-        'A*': 'ad',
-    }[row[age_key]]
-    if row[age_key] in set(('S*','A*')):
-        odd_value(o, age_key)
-    if row[age_key] in set(('Y', 'Y*', 'S','M')):
-        unknown_value(o, age_key)
+    age_keys = (
+        'Age (at time of event)  *PRD indicated age by length as presented in field guides ',
+        'Age (at time of event)',
+    )
+    for age_key in age_keys:
+        if age_key in row:
+            o['age_class'] = {
+                '': '',
+               'Y': '',
+              'Y*': '',
+               'U': '',
+               'M': '',
+               'C': 'ca',
+            'Calf': 'ca',
+               'J': 'ju',
+              'SA': 'ju',
+               'S': 'ju',
+              'S*': 'ju',
+        'Subadult': 'ju',
+               'A': 'ad',
+              'A*': 'ad',
+            }[row[age_key]]
+            if row[age_key] in set(('S*','A*')):
+                odd_value(o, age_key)
+            if row[age_key] in set(('Y', 'Y*', 'S','M')):
+                unknown_value(o, age_key)
+            break;
     
     # gender
     o['gender'] = {
@@ -689,6 +701,7 @@ def parse_observation(row, case_data):
         
     conditions = {
          '': 0,
+        '0': 0,
         'U': 0,
        'na': 0,
        'NE': 0,
@@ -739,6 +752,7 @@ def parse_observation(row, case_data):
         (None,  True ): True,
         (False, None ): False,
         (False, False): False,
+        (False, True): None,
         (True,  None ): True,
         (True,  True ): True,
         (True,  False): True,
@@ -746,6 +760,7 @@ def parse_observation(row, case_data):
         {
             '': None,
             '?': None,
+            'Unk': None,
             'Yes (in necro report)': None,
             'No': False,
             'NO': False,
@@ -756,6 +771,16 @@ def parse_observation(row, case_data):
             'Gear only': True,
             'Yes (HC pict)': True,
             'Yes (Video)': True,
+            'Yes -FMRI': True,
+            'Yes-From Barb': True,
+            'Yes -VMSM': True,
+            'Yes, CCS website': True,
+            'Yes, SER': True,
+            'Yes, MMSC': True,
+            'Yes, NEAq': True,
+            'Yes, Mystic disposable': True,
+            'Yes, UNE': True,
+            'Yes, CCSN': True,
         }[row['Pictures']],
         {
              '': None,
