@@ -21,14 +21,27 @@
 <hr>
 <div>
     {% for r in results %}
-    <table>
-        {% for k, v in r.row.items %}
-        {% if v %}
-        <tr><th style="text-align:right; max-width:20em; white-space: pre-wrap;">&lt;{{ k }}&gt;</th><td>{{ v }}</td></tr>
-        {% endif %}
-        {% endfor %}
+    <table class="layout" border="1">
+        <tr>
+            <td style="width: 50%;">
+                <table>
+                    {% for k, v in r.row.items %}
+                    {% if v %}
+                    <tr>
+                        <th style="text-align:right;">
+                            <span style="white-space: pre-wrap;">&lt;{{ k }}&gt;</span>
+                        </th>
+                        <td>{{ v|truncatewords:20 }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </table>
+            </td>
+            <td style="width: 50%;">
+                <span style="white-space: pre-wrap; font-family: monospace;">{{ r.data|pprint }}</span>
+            </td>
+        </tr>
     </table>
-    <pre>{{ r.data|pprint }}</pre>
     <hr>
     {% endfor %}
 </div>
