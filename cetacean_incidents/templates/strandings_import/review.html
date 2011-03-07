@@ -7,29 +7,53 @@
 
 {% block header %}
 <h2>Imported Entries</h2>
+{% with animals as page %}
+{% include "paginator_include.html" %}
+{% endwith %}
 {% endblock %}
 
 {% block content %}
-<table>
-    <tr><th>animal</th><th>case</th><th>observation</th></tr>
-    {% for a in animals %}
-    {% for c in a.case_set.all %}
-    {% for o in c.observation_set.all %}
-    <tr>
-        {% ifchanged a.id %}
-        <td>{{ a.id|stringformat:"06d" }} {% animal_link a %}</td>
+<div>
+    {% for a in animals.object_list %}
+    {% ifchanged a.id %}
+    <div>
+        <div>
+            {{ a.id|stringformat:"06d" }} {% animal_link a %}
+        </div>
+        
+        <div>
+        {% if a.case_set.count > 1 %}
+        <em>cases:</em>
+        <ul>
+            {% for c in a.case_set.all %}
+            <li>{% case_link c %}</li>
+            {% endfor %}
+        </ul>
         {% else %}
-        <td style="text-align: center;">"</td>
-        {% endifchanged %}
-        {% ifchanged c %}
-        <td>{% case_link c %}</td>
+        {% if a.case_set.count == 1 %}
+        <em>case:</em> {% case_link a.case_set.all.0 %}
+        {% endif %}
+        {% endif %}
+        </div>
+        
+        <div>
+        {% if a.observation_set.count > 1 %}
+        <em>observations:</em>
+        <ul>
+            {% for o in a.observation_set.all %}
+            <li>{% observation_link o %}</li>
+            {% endfor %}
+        </ul>
         {% else %}
-        <td style="text-align: center;">"</td>
-        {% endifchanged %}
-        <td>{% observation_link o %}</td>
-    </tr>
+        {% if a.observation_set.count == 1 %}
+        <em>observation:</em> {% observation_link a.observation_set.all.0 %}
+        {% endif %}
+        {% endif %}
+        </div>
+
+        <hr>
+    </div>
+    {% endifchanged %}
     {% endfor %}
-    {% endfor %}
-    {% endfor %}
-</table>
+</div>
 {% endblock %}

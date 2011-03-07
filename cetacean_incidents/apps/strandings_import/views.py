@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.shortcuts import redirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 
 from reversion import revision
 
@@ -49,24 +50,33 @@ def review_imports(request):
     
     tagged = Documentable.objects.filter(tag__tag_text__in=IMPORT_TAGS).values_list('id', flat=True)
     
-    tagged_animal = Q(id__in=tagged)
-    tagged_case = Q(case__id__in=tagged)
-    tagged_obs = Q(observation__id__in=tagged)
+    animal_filter = Q(id__in=tagged)
+    animal_filter |= Q(case__id__in=tagged)
+    animal_filter |= Q(observation__id__in=tagged)
     
-    # Oracle doesn't supprot DISTINCT
-    animal_set = set()
-    animal_list = []
-    for a in Animal.objects.filter(
-        tagged_animal | tagged_case | tagged_obs
-    ).order_by('observation__datetime_observed', 'case__id', 'id'):
-        if a not in animal_set:
-            animal_set.add(a)
-            animal_list.append(a)
+    # note that Oracle doesn't support DISTINCT
+    animals = Animal.objects.filter(
+        animal_filter
+    ).order_by('observation__datetime_observed', 'case__id', 'id')
     
+    animal_pages = Paginator(animals, 10)
+
+    # Make sure page request is an int. If not, deliver first page.
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+
+    # If page request (9999) is out of range, deliver last page of results.
+    try:
+        animals = animal_pages.page(page)
+    except (EmptyPage, InvalidPage):
+        animals = animal_pages.page(paginator.num_pages)
+
     return render_to_response(
         'strandings_import/review.html',
         {
-            'animals': animal_list,
+            'animals': animals,
             'tagged': tagged,
         },
         context_instance= RequestContext(request),

@@ -91,6 +91,10 @@ td.layout {
     vertical-align: top;
 }
 
+div.pagination {
+    text-align: center;
+}
+
 table.bordered {
     border: thin solid #babdb6; /* aluminium 3 */
 }
