@@ -1,10 +1,44 @@
 from django import forms
+from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
+
 from cetacean_incidents.apps.merge_form.forms import MergeForm
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from ..models import Animal
+
+class AnimalAutocomplete(ModelAutocomplete):
+    
+    model = Animal
+    
+    def __init__(self, attrs=None):
+        super(AnimalAutocomplete, self).__init__(
+            attrs=attrs,
+            source= 'animal_autocomplete_source',
+            options= {
+                'minLength': 2,
+            },
+        )
+    
+    def render(self, name, value, attrs=None):
+        return super(AnimalAutocomplete, self).render(
+            name=name,
+            value=value,
+            attrs=attrs,
+            custom_html= 'animal_autocomplete_entry',
+            # TODO better was to pass this URL
+            extra_js= '''\
+            animal_autocomplete_source_url = "%s";
+            ''' % reverse('animal_search_json'),
+        )
+    
+    class Media:
+        css = {'all': (settings.JQUERYUI_CSS_FILE, 'animal_autocomplete.css')}
+        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'animal_autocomplete.js')
 
 class AnimalForm(forms.ModelForm):
     

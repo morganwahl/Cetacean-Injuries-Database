@@ -1,0 +1,30 @@
+.ui-autocomplete span.animal_display {
+    display: block;
+    font-weight: bold;
+    line-height: 90%;
+    padding-top: .2em;
+    padding-left: .2em;
+    padding-right: .2em;
+    padding-bottom: .1em;
+}
+.ui-autocomplete span.animal_taxon {
+    display: block;
+    font-size: 85%;
+    line-height: 85%;
+    font-style: italic;
+    white-space: nowrap;
+    padding-left: 1.176470588em; /* 1em before the font-size:85% */
+    padding-right: 0.235294118em; /* .2em before the font-size:85% */
+    padding-top: 0.117647059em; /* .1em before the font-size:85% */
+    padding-bottom: 0.117647059em; /* .1em before the font-size:85% */
+}.ui-autocomplete span.animal_id {
+    display: block;
+    font-family: monospace;
+    font-size: 60%;
+    line-height: 85%;
+    padding-left: 1.666666667em; /* 1em before the font-size:60% */
+    padding-right: 0.333333333em; /* .2em before the font-size:60% */
+    padding-top: 0.117647059em; /* .1em before the font-size:60% */
+    padding-bottom: 0.333333333em;
+}
+

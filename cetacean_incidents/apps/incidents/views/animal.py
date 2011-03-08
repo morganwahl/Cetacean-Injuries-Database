@@ -1,5 +1,10 @@
 import operator
 
+try:
+    import json
+except ImportError:
+    import simplejson as json # for python 2.5 compat.
+
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
@@ -14,6 +19,7 @@ from cetacean_incidents.apps.taxons.models import Taxon
 
 from ..models import Animal
 from ..forms import AnimalForm, AnimalSearchForm, AnimalMergeSourceForm, AnimalMergeForm
+from ..templatetags.animal_extras import animal_display
 
 @login_required
 def animal_detail(request, animal_id):
@@ -105,6 +111,7 @@ def animal_search_json(request):
     if words:
         firstword = words[0]
         q = Q(name__icontains=firstword)
+        q |= Q(field_number__icontains=firstword)
         try:
             q |= Q(id__exact=int(firstword))
         except ValueError:
@@ -118,11 +125,20 @@ def animal_search_json(request):
     # in the JSON
     animals = []
     for result in results:
+        
+        plain_name = unicode(result)
+        
+        html_name = animal_display(result, block=True)
+
+        taxon = result.determined_taxon
+        if taxon:
+            taxon = unicode(taxon.scientific_name())
+        
         animals.append({
             'id': result.id,
-            'name': result.name,
-            'display_name': unicode(result),
-            'determined_taxon': unicode(result.determined_taxon),
+            'plain_name': plain_name,
+            'html_name': html_name,
+            'taxon': taxon,
         })
     # TODO return 304 when not changed?
     
