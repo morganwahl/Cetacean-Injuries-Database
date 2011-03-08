@@ -1,13 +1,17 @@
 from decimal import Decimal as D
 
-from django import forms
 from django.core.exceptions import ValidationError
+from django import forms
 from django.forms.util import ErrorList
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
+
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
-from ..models import Case, Observation
+from ..models import (
+    Case,
+    Observation,
+)
 
 class LengthWidget(forms.MultiWidget):
     

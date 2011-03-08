@@ -1,15 +1,23 @@
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
-from django.forms.formsets import formset_factory
 from django.forms import Media
+from django.forms.formsets import formset_factory
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
+from django.template import RequestContext
 
-from cetacean_incidents.forms import merge_source_form_factory
+from django.contrib.auth.decorators import login_required
+
 from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.forms import merge_source_form_factory
 
+from forms import (
+    ContactForm,
+    ContactMergeForm,
+    OrganizationForm,
+)
 from models import Contact
-from forms import ContactForm, OrganizationForm, ContactMergeForm
 
 @login_required
 def contact_detail(request, contact_id):

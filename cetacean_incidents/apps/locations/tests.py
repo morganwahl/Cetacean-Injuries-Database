@@ -1,8 +1,11 @@
-from django.test import TestCase
-
 from decimal import Decimal as D
 
-from utils import dms_to_dec, dec_to_dms
+from django.test import TestCase
+
+from utils import (
+    dms_to_dec,
+    dec_to_dms,
+)
 
 class UtilsTestCase(TestCase):
     def testDmsToDec(self):

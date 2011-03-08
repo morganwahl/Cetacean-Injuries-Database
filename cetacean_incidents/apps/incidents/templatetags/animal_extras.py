@@ -1,15 +1,17 @@
-from django import template
-
-from django.core.cache import cache
-from django.utils.safestring import mark_safe
 from django.conf import settings
-from django.template.loader import get_template
-from django.template import Context
+from django.core.cache import cache
 from django.db import models
+from django import template
+from django.template import Context
+from django.template.loader import get_template
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.tags.models import Tag
 
-from ..models import Animal, Case
+from ..models import (
+    Animal,
+    Case,
+)
 
 register = template.Library()
 

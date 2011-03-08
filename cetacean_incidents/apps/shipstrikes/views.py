@@ -1,29 +1,23 @@
-from datetime import datetime
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
-from django.forms import Media
-from django.db import transaction
-from django.conf import settings
 from django.utils.safestring import mark_safe
 
-from reversion import revision
+from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
-from cetacean_incidents.apps.incidents.models import Case
+from cetacean_incidents.apps.incidents.views import (
+    _change_case,
+    _change_incident,
+)
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab
 
-from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.contacts.forms import ContactForm
-from cetacean_incidents.apps.incidents.forms import AnimalForm
-
-from cetacean_incidents.apps.incidents.views import _change_case, _change_incident
-
-from models import Shipstrike, ShipstrikeObservation
-from forms import ShipstrikeObservationForm, ShipstrikeForm, AddShipstrikeForm, StrikingVesselInfoForm
+from models import Shipstrike
+from forms import (
+    AddShipstrikeForm,
+    ShipstrikeForm,
+    ShipstrikeObservationForm,
+    StrikingVesselInfoForm,
+)
 
 @login_required
 @permission_required('shipstrikes.change_shipstrike')

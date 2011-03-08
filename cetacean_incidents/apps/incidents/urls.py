@@ -1,8 +1,12 @@
 from django.conf.urls.defaults import *
-from models import Case, Observation, Animal
 
 from cetacean_incidents.views import new_case
 
+from models import (
+    Animal,
+    Case,
+    Observation,
+)
 import views
 
 animals_args = {

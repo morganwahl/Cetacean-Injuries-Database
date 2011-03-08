@@ -1,6 +1,18 @@
-from animal import AnimalForm, AnimalMergeSourceForm, AnimalMergeForm
-from case import CaseForm, AddCaseForm, CaseAnimalForm
-from observation import ObservationForm, ObservationCasesForm
+from animal import (
+    AnimalAutocomplete,
+    AnimalForm,
+    AnimalMergeForm,
+    AnimalMergeSourceForm,
+)
+from case import (
+    AddCaseForm,
+    CaseAnimalForm,
+    CaseForm,
+)
+from observation import (
+    ObservationCasesForm,
+    ObservationForm,
+)
 from search import (
     SubmitDetectingForm,
     

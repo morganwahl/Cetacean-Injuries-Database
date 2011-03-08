@@ -1,36 +1,43 @@
-import os
 from copy import copy
-import operator
-from itertools import imap, count
-from decimal import Decimal
+import csv
 import datetime
+from decimal import Decimal
+import os
 import pytz
 import re
-import csv
 
 from django.db.models import Q
 from django.forms import ValidationError
-from django.contrib.localflavor.us.us_states import STATES_NORMALIZED
 from django.utils.html import conditional_escape as esc
+
+from django.contrib.localflavor.us.us_states import STATES_NORMALIZED
 
 from cetacean_incidents.apps.countries.models import Country
 
-from cetacean_incidents.apps.documents.models import DocumentType
-from cetacean_incidents.apps.documents.models import Document
+from cetacean_incidents.apps.documents.models import (
+    Document,
+    DocumentType,
+)
 
-from cetacean_incidents.apps.entanglements.models import Entanglement
-from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+from cetacean_incidents.apps.entanglements.models import (
+    Entanglement,
+    EntanglementObservation,
+)
 
-from cetacean_incidents.apps.locations.utils import dms_to_dec
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.locations.models import Location
+from cetacean_incidents.apps.locations.utils import dms_to_dec
 
-from cetacean_incidents.apps.incidents.models import Animal
-from cetacean_incidents.apps.incidents.models import Case
-from cetacean_incidents.apps.incidents.models import Observation
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Case,
+    Observation,
+)
 
-from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
+from cetacean_incidents.apps.shipstrikes.models import (
+    Shipstrike,
+    ShipstrikeObservation,
+)
 
 from cetacean_incidents.apps.tags.models import Tag
 

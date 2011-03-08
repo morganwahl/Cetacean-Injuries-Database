@@ -1,7 +1,6 @@
+from django.db import models
 from django import template
 from django.template.loader import render_to_string
-
-from django.db import models
 
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 

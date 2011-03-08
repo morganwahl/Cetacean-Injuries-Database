@@ -1,9 +1,14 @@
 from django import forms
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
-from ..models import Animal, Case, YearCaseNumber
+from ..models import (
+    Animal,
+    Case,
+    YearCaseNumber,
+)
 
 class SubmitDetectingForm(forms.Form):
     '''\

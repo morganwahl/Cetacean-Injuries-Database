@@ -1,11 +1,12 @@
 from django.conf import settings
 from django.conf.urls.defaults import *
+
 from django.contrib import admin
 
-from generic_views import direct_to_template
-from views import home, revision_detail, new_case, object_history, import_taxon, odd_entries
-
 from reversion.models import Revision
+
+from generic_views import direct_to_template
+import views
 
 admin.autodiscover()
 
@@ -23,7 +24,7 @@ urlpatterns = patterns('',
     (r'^shipstrikes/', include('cetacean_incidents.apps.shipstrikes.urls')),
     (r'^tags/', include('cetacean_incidents.apps.tags.urls')),
  
-    (r'^problems/', odd_entries, {}, 'odd_entries'),
+    (r'^problems/', views.odd_entries, {}, 'odd_entries'),
  
     # strip the initial '/' from the login url
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
@@ -31,7 +32,7 @@ urlpatterns = patterns('',
     # the permission_required decorator redirects on bad permissions
     url(r'^not_allowed/$', direct_to_template, {'template': 'not_allowed.html'}, 'not_allowed'),
     
-    (r'^$', home, {}, "home")
+    (r'^$', views.home, {}, "home")
 )
 
 all_revisions_args = {
@@ -47,12 +48,12 @@ urlpatterns += patterns('cetacean_incidents.generic_views',
     (r'^revisions/recent$', 'object_list', recent_revisions_args, 'recent_revisions'),
 )
 urlpatterns += patterns('',
-    (r'^new_case$', new_case, {}, 'new_case'),
-    (r'^revisions/(?P<rev_id>\d+)/$', revision_detail, {}, 'revision_detail'),
-    (r'^revisions/object_history/(?P<content_type_id>\d+)/$', object_history, {}, 'object_history'),
-    (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', object_history, {}, 'object_history'),
+    (r'^new_case$', views.new_case, {}, 'new_case'),
+    (r'^revisions/(?P<rev_id>\d+)/$', views.revision_detail, {}, 'revision_detail'),
+    (r'^revisions/object_history/(?P<content_type_id>\d+)/$', views.object_history, {}, 'object_history'),
+    (r'^revisions/object_history/(?P<content_type_id>\d+)/(?P<object_id>\d+)/$', views.object_history, {}, 'object_history'),
     
-    (r'staff_tools/import_taxon$', import_taxon, {}, 'import_taxon'),
+    (r'staff_tools/import_taxon$', views.import_taxon, {}, 'import_taxon'),
 )
 
 # name the MEDIA_URL for use in templates. also has django serve up media if

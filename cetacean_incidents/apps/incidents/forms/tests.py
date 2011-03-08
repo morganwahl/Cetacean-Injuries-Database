@@ -1,6 +1,5 @@
-from django.test import TestCase
-
 import django.forms
+from django.test import TestCase
 
 from ..models.animal import Animal
 

@@ -8,17 +8,35 @@ from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
-from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
-from cetacean_incidents.apps.taxons.forms import TaxonField
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.vessels.forms import VesselInfoForm
-from cetacean_incidents.apps.incidents.models import Animal, Case
-from cetacean_incidents.apps.incidents.forms import CaseForm
-from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
-from cetacean_incidents.apps.dag.forms import DAGField
-from cetacean_incidents.apps.incidents.forms import SubmitDetectingForm
 
-from models import Entanglement, EntanglementObservation, GearType, GearOwner, BodyLocation, GearBodyLocation
+from cetacean_incidents.apps.dag.forms import DAGField
+
+from cetacean_incidents.apps.incidents.forms import (
+    CaseForm,
+    SubmitDetectingForm,
+)
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Case,
+)
+
+from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+
+from cetacean_incidents.apps.taxons.forms import TaxonField
+
+from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
+
+from cetacean_incidents.apps.vessels.forms import VesselInfoForm
+
+from models import (
+    BodyLocation,
+    Entanglement,
+    EntanglementObservation,
+    GearBodyLocation,
+    GearType,
+    GearOwner,
+)
 
 class InlineRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
     def render(self):

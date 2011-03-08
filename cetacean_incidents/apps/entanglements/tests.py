@@ -1,9 +1,17 @@
 from django.test import TestCase
 
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Observation,
+)
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
-from cetacean_incidents.apps.incidents.models import Animal, Observation
 
-from models import Entanglement, GearType, GearTypeRelation, EntanglementObservation
+from models import (
+    Entanglement,
+    EntanglementObservation,
+    GearType,
+    GearTypeRelation,
+)
 from forms import GearOwnerForm
 
 class GearTypeTestCase(TestCase):

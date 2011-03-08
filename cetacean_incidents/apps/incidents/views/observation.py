@@ -1,35 +1,67 @@
 import operator
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.forms import Media
 from django.forms.formsets import formset_factory
-from django.shortcuts import render_to_response, redirect
-from django.template import Context, RequestContext
+from django.shortcuts import (
+    render_to_response,
+    redirect,
+)
+from django.template import (
+    Context,
+    RequestContext,
+)
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
+
+from django.contrib.auth.decorators import login_required
 
 from reversion import revision
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
-from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
+from cetacean_incidents.apps.contacts.forms import (
+    ContactForm,
+    OrganizationForm,
+)
+
+from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
-from cetacean_incidents.apps.jquery_ui.tabs import Tabs
+from ..models import (
+    Animal,
+    Case,
+)
+from ..forms import (
+    AnimalForm,
+    AddCaseForm,
+    CaseForm,
+)
 
-from ..models import Animal, Case
-from ..forms import AnimalForm, AddCaseForm, CaseForm
+from ..models import (
+    Observation,
+    ObservationExtension,
+)
+from ..forms import (
+    ObservationForm,
+    ObservationCasesForm,
+)
 
-from ..models import Observation, ObservationExtension
-from ..forms import ObservationForm, ObservationCasesForm
-
-from tabs import AnimalTab, CaseTab, CaseSINMDTab, ObservationReportingTab, ObservationObservingTab, ObservationAnimalIDTab, ObservationIncidentTab, ObservationNarrativeTab
+from tabs import (
+    AnimalTab,
+    CaseSINMDTab,
+    CaseTab,
+    ObservationAnimalIDTab,
+    ObservationIncidentTab,
+    ObservationNarrativeTab,
+    ObservationObservingTab,
+    ObservationReportingTab,
+)
 
 @login_required
 def observation_detail(request, observation_id):

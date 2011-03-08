@@ -1,7 +1,8 @@
-from django.views.generic.list_detail import object_list as old_object_list
 from django.views.generic.list_detail import object_detail as old_object_detail
-from django.views.generic.simple import redirect_to as old_redirect_to
+from django.views.generic.list_detail import object_list as old_object_list
 from django.views.generic.simple import direct_to_template as old_direct_to_template
+from django.views.generic.simple import redirect_to as old_redirect_to
+
 from django.contrib.auth.decorators import login_required
 
 @login_required

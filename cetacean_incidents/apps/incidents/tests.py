@@ -1,7 +1,10 @@
-from unittest import TestSuite, defaultTestLoader
+from unittest import (
+    TestSuite,
+    defaultTestLoader,
+)
 
-import models
 import forms
+import models
 import templatetags
 
 def suite():

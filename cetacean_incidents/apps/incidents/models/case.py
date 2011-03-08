@@ -4,17 +4,17 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from cetacean_incidents.apps.taxons.utils import probable_taxon
-
 from cetacean_incidents.apps.documents.models import Documentable
 
-from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 from cetacean_incidents.apps.taxons.models import Taxon
+from cetacean_incidents.apps.taxons.utils import probable_taxon
+
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
 from ..utils import probable_gender
 
-from imported import Importable
 from animal import Animal
+from imported import Importable
 from observation import Observation
 
 # TODO there's probably a way to get a list of all the subclasses,

@@ -11,22 +11,24 @@ import urllib2
 from lxml import etree
 from lxml import objectify
 
-from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.conf import settings
 from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.shortcuts import redirect
 from django.forms import Media
+from django.http import HttpResponse
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
 from django.template import RequestContext
 from django.template.loader import render_to_string
-from django.conf import settings
 
-from cetacean_incidents.forms import merge_source_form_factory
+from django.contrib.auth.decorators import login_required
+
 from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.forms import merge_source_form_factory
 
-from models import Taxon
 from forms import TaxonMergeForm
+from models import Taxon
 
 @login_required
 def taxon_tree(request, root_id=None):

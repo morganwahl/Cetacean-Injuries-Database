@@ -10,12 +10,26 @@ descendants: entanglements and shipstrikes.
 
 from django import forms
 
-from cetacean_incidents.apps.incidents.models import Case, Animal
-from cetacean_incidents.apps.incidents.forms import CaseForm, AddCaseForm
+from cetacean_incidents.apps.entanglements.forms import (
+    AddEntanglementForm,
+    EntanglementForm,
+)
 from cetacean_incidents.apps.entanglements.models import Entanglement
-from cetacean_incidents.apps.entanglements.forms import EntanglementForm, AddEntanglementForm
+
+from cetacean_incidents.apps.incidents.forms import (
+    AddCaseForm,
+    CaseForm,
+)
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Case,
+)
+
+from cetacean_incidents.apps.shipstrikes.forms import (
+    AddShipstrikeForm,
+    ShipstrikeForm,
+)
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeForm, AddShipstrikeForm
 
 def CaseTypeForm_factory(user):
     'Generates a CaseTypeForm based on what types a user can add.'

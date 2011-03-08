@@ -1,7 +1,5 @@
-import math
 from decimal import Decimal as D
-
-MILE_IN_METERS = 1609.344 # exact
+import math
 
 # FYI the unicode code-points for degrees, minutes, seconds are
 # U+00B0 U+2032 U+2033

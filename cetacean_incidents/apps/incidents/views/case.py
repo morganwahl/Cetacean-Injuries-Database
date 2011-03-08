@@ -1,28 +1,51 @@
 from datetime import datetime
 
-from django.core.urlresolvers import reverse
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
+from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.forms import Media
-from django.shortcuts import render_to_response, redirect
-from django.template import Context, RequestContext
+from django.shortcuts import (
+    render_to_response,
+    redirect,
+)
+from django.template import (
+    Context,
+    RequestContext,
+)
+
+from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
 
+from cetacean_incidents.apps.entanglements.models import Entanglement
+
+from cetacean_incidents.apps.jquery_ui.tabs import Tabs
+
+from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-from ..models import Animal, Case, YearCaseNumber
-from ..forms import AnimalForm, CaseForm, CaseSearchForm, CaseAnimalForm
+
+from ..models import (
+    Animal,
+    Case,
+    YearCaseNumber,
+)
+from ..forms import (
+    AnimalForm,
+    CaseAnimalForm,
+    CaseForm,
+    CaseSearchForm,
+)
 from ..templatetags.case_extras import YearsForm
 
-from cetacean_incidents.apps.jquery_ui.tabs import Tabs
-from cetacean_incidents.apps.entanglements.models import Entanglement
-from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-
-from tabs import AnimalTab, CaseTab, CaseSINMDTab
+from tabs import (
+    AnimalTab,
+    CaseTab,
+    CaseSINMDTab,
+)
 
 @login_required
 def case_detail(request, case_id, extra_context={}):

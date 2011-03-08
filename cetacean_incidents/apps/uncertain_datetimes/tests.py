@@ -1,11 +1,16 @@
-from datetime import datetime, timedelta, MINYEAR, MAXYEAR
+from datetime import (
+    MAXYEAR,
+    MINYEAR,
+    datetime,
+    timedelta,
+)
 
-from django.test import TestCase
 import django.forms
+from django.test import TestCase
 
 from . import UncertainDateTime
-from models import UncertainDateTimeField as UncertainDateTimeModelField
 from forms import UncertainDateTimeField as UncertainDateTimeFormField
+from models import UncertainDateTimeField as UncertainDateTimeModelField
 
 class UncertainDateTimeTestCase(TestCase):
     def setUp(self):

@@ -1,9 +1,14 @@
 from django.contrib import admin
+
 from reversion.admin import VersionAdmin
 
 from cetacean_incidents.apps.vessels.admin import VesselAdmin
 
-from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
+from models import (
+    Shipstrike,
+    ShipstrikeObservation,
+    StrikingVesselInfo,
+)
 
 class ShipstrikeAdmin(VersionAdmin):
     pass

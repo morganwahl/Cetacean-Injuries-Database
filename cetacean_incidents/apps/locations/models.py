@@ -3,11 +3,15 @@
 import re
 
 from django.db import models
+
 from django.contrib.localflavor.us.models import USStateField
 
 from cetacean_incidents.apps.countries.models import Country
 
-from utils import dec_to_dms, dms_to_dec
+from utils import (
+    dec_to_dms,
+    dms_to_dec,
+)
 
 class Location(models.Model):
     '''\

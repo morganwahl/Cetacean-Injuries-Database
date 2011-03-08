@@ -1,9 +1,11 @@
-from django import forms
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django import forms
 
-from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
-from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
+from cetacean_incidents.apps.jquery_ui.widgets import (
+    Datepicker,
+    ModelAutocomplete,
+)
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 

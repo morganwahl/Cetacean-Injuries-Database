@@ -1,20 +1,32 @@
-from django.contrib.auth.decorators import login_required
+from django.core.paginator import (
+    EmptyPage,
+    InvalidPage,
+    Paginator,
+)
 from django.db import transaction
 from django.db.models import Q
-from django.shortcuts import redirect
-from django.shortcuts import render_to_response
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
 from django.template import RequestContext
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
+
+from django.contrib.auth.decorators import login_required
 
 from reversion import revision
 
 from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.documents.models import Documentable
-from cetacean_incidents.apps.incidents.models import Animal, Case, Observation
+
+from cetacean_incidents.apps.incidents.models import Animal
 
 from forms import ImportCSVForm
-from csv_import import parse_csv, process_results, IMPORT_TAGS
+from csv_import import (
+    IMPORT_TAGS,
+    parse_csv,
+    process_results,
+)
     
 # TODO perms
 @login_required

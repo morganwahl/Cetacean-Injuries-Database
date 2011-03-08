@@ -5,8 +5,11 @@ import pytz
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
+from django.core.validators import (
+    MinValueValidator,
+    MaxValueValidator,
+)
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 
 from cetacean_incidents.apps.contacts.models import Contact
 
@@ -16,12 +19,15 @@ from cetacean_incidents.apps.locations.models import Location
 
 from cetacean_incidents.apps.taxons.models import Taxon
 
-from cetacean_incidents.apps.vessels.models import VesselInfo
-
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
+from cetacean_incidents.apps.vessels.models import VesselInfo
+
+from animal import (
+    Animal,
+    GENDERS,
+)
 from imported import Importable
-from animal import GENDERS, Animal
 
 class ObservationManager(models.Manager):
 

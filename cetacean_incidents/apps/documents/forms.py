@@ -1,6 +1,10 @@
 from django import forms
 
-from models import Document, UploadedFile, RepositoryFile
+from models import (
+    Document,
+    RepositoryFile,
+    UploadedFile,
+)
 
 class DocumentModelForm(forms.Form):
     '''\

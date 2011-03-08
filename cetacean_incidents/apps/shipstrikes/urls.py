@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import *
 
+import views
+
 urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
     (r'^(\d+)/$', 'case_detail', {}, 'shipstrike_detail'),
 )
-
-import views
 
 urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_shipstrike, {}, 'edit_shipstrike'),

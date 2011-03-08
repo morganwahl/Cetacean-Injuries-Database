@@ -1,19 +1,33 @@
-from django.core.files import File
-from django.shortcuts import render_to_response, redirect
-from django.template import RequestContext
-from django.forms import Media
-from django.conf import settings
-
 import os
 from os import path
+
+from django.conf import settings
+from django.core.files import File
+from django.forms import Media
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
+from django.template import RequestContext
 
 from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
-from forms import DocumentForm, UploadedFileForm, RepositoryFileForm, NewDocumentForm, NewUploadedFileForm
+from forms import (
+    DocumentForm,
+    NewDocumentForm,
+    NewUploadedFileForm,
+    RepositoryFileForm,
+    UploadedFileForm,
+)
 
-from models import Documentable, Document, UploadedFile, RepositoryFile
+from models import (
+    Document,
+    Documentable,
+    RepositoryFile,
+    UploadedFile,
+)
 
 @login_required
 def view_document(request, d):

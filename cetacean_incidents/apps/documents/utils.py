@@ -1,5 +1,5 @@
-import random
 import base64
+import random
 
 def int_to_bytes(i):
     result = ''

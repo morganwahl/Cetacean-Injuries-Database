@@ -1,7 +1,8 @@
 from django.db import models
 
-from cetacean_incidents.apps.countries.models import Country
 from cetacean_incidents.apps.contacts.models import Contact
+
+from cetacean_incidents.apps.countries.models import Country
 
 class VesselTag(models.Model):
     name = models.CharField(

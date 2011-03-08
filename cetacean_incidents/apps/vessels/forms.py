@@ -1,14 +1,15 @@
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django import forms
 from django.forms.util import flatatt
-
-from django.core.urlresolvers import reverse
 from django.utils.safestring import mark_safe
-from django.conf import settings
+
+from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.contacts.models import Contact
+
+from cetacean_incidents.apps.countries.models import Country
 
 from models import VesselInfo
-from cetacean_incidents.apps.countries.models import Country
-from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.contacts.forms import ContactForm
 
 class FlagSelect(forms.Select):
     '''\

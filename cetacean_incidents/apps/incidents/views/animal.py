@@ -10,15 +10,23 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.forms import Media
 from django.http import HttpResponse
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import (
+    render_to_response,
+    redirect,
+)
 from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required
 
 from cetacean_incidents.apps.taxons.models import Taxon
 
+from ..forms import (
+    AnimalForm,
+    AnimalMergeSourceForm,
+    AnimalMergeForm,
+    AnimalSearchForm,
+)
 from ..models import Animal
-from ..forms import AnimalForm, AnimalSearchForm, AnimalMergeSourceForm, AnimalMergeForm
 from ..templatetags.animal_extras import animal_display
 
 @login_required

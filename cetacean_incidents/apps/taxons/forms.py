@@ -1,11 +1,11 @@
-from django import forms
-from django.template.loader import render_to_string
 from django.core.validators import EMPTY_VALUES
-from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.conf import settings
+from django import forms
 from django.template.loader import render_to_string
 
 from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
+
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from models import Taxon

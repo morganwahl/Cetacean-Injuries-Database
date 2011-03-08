@@ -1,19 +1,23 @@
 from decimal import Decimal as D
 
-from django.core.cache import cache
-from django import template
-from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.core.cache import cache
+from django.db import models
+from django import template
 from django.template import Context
 from django.template.loader import get_template
-from django.db import models
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.contacts.models import Contact
+
 from cetacean_incidents.apps.tags.models import Tag
 
-register = template.Library()
+from ..models import (
+    Animal,
+    Observation,
+)
 
-from ..models import Animal, Observation
+register = template.Library()
 
 @register.simple_tag
 def observation_link(observation):

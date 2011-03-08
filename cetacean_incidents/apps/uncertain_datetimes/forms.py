@@ -1,13 +1,13 @@
 from calendar import month_name
-import re
 from copy import deepcopy
+import re
 
 from django.core.exceptions import ValidationError
 from django import forms
 from django.forms.util import ErrorList
-from django.utils.safestring import mark_safe
-from django.utils import copycompat as copy
 from django.template.loader import render_to_string
+from django.utils import copycompat as copy
+from django.utils.safestring import mark_safe
 
 from . import UncertainDateTime
 

@@ -1,6 +1,13 @@
 from django.contrib import admin
+
 from reversion.admin import VersionAdmin
-from models import DocumentType, Document, UploadedFile, RepositoryFile
+
+from models import (
+    Document,
+    DocumentType,
+    RepositoryFile,
+    UploadedFile,
+)
 
 class DocumentTypeAdmin(VersionAdmin):
     pass

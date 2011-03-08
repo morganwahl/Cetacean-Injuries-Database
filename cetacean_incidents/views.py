@@ -1,31 +1,61 @@
-import numbers
+from difflib import SequenceMatcher
 
 import json
 
-from difflib import SequenceMatcher
+import numbers
 
-from django.shortcuts import render_to_response, redirect
-from django.http import HttpResponse
-from django.template import RequestContext
 from django.db import models
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required, user_passes_test
-from django.forms import Media
-from django.utils.safestring import mark_safe
-from django.core.urlresolvers import NoReverseMatch
 from django.conf import settings
+from django.core.urlresolvers import NoReverseMatch
+from django.forms import Media
+from django.http import HttpResponse
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
+from django.template import RequestContext
+from django.utils.safestring import mark_safe
+
+from django.contrib.auth.decorators import (
+    login_required,
+    user_passes_test,
+)
 from django.contrib.contenttypes.models import ContentType
 
-from reversion.models import Revision, Version
+from reversion.models import (
+    Revision,
+    Version,
+)
 
-from forms import AnimalChoiceForm_factory, CaseTypeForm_factory
 from decorators import permission_required
+from forms import (
+    AnimalChoiceForm_factory,
+    CaseTypeForm_factory,
+)
 
-from cetacean_incidents.apps.incidents.models import Animal, Case, YearCaseNumber, Observation
-from cetacean_incidents.apps.incidents.forms import AnimalIDLookupForm, AnimalFieldNumberLookupForm, AnimalSearchForm, CaseIDLookupForm, CaseYearlyNumberLookupForm, CaseSearchForm
-from cetacean_incidents.apps.entanglements.forms import AnimalNMFSIDLookupForm, EntanglementNMFSIDLookupForm
-from cetacean_incidents.apps.incidents.views import add_observation
+from cetacean_incidents.apps.entanglements.forms import (
+    AnimalNMFSIDLookupForm,
+    EntanglementNMFSIDLookupForm,
+)
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
+
+from cetacean_incidents.apps.incidents.forms import (
+    AnimalIDLookupForm,
+    AnimalFieldNumberLookupForm,
+    AnimalSearchForm,
+    CaseIDLookupForm,
+    CaseYearlyNumberLookupForm,
+    CaseSearchForm,
+)
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Case,
+    Observation,
+    YearCaseNumber,
+)
+from cetacean_incidents.apps.incidents.views import add_observation
+
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
 
 from cetacean_incidents.apps.taxons.views import import_search as unsecured_import_taxon

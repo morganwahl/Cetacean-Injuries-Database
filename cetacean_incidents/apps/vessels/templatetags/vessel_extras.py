@@ -3,7 +3,6 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.countries.utils.isoflag import iso_flag
-from cetacean_incidents.apps.generic_templates.templatetags.generic_field_display import display_row
 
 register = template.Library()
 

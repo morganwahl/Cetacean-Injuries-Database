@@ -1,37 +1,66 @@
+from datetime import datetime
 import operator
 
-from datetime import datetime
-
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render_to_response, redirect
-from django.template import Context, RequestContext
+from django.db import (
+    models,
+    transaction,
+)
 from django.forms import Media
 from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
-from django.db import transaction
-from django.db import models
-from django.conf import settings
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
+from django.template import (
+    Context,
+    RequestContext,
+)
 from django.utils.safestring import mark_safe
 
 from reversion import revision
 
-from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
+from cetacean_incidents import generic_views
 
-from cetacean_incidents.apps.incidents.models import Animal, Case
+from cetacean_incidents.apps.contacts.forms import (
+    ContactForm,
+    OrganizationForm,
+)
+
+from cetacean_incidents.apps.incidents.forms import AnimalForm
+from cetacean_incidents.apps.incidents.models import (
+    Animal,
+    Case,
+)
+from cetacean_incidents.apps.incidents.views import (
+    _change_case,
+    add_observation,
+    case_detail,
+    edit_observation,
+)
+from cetacean_incidents.apps.incidents.views.observation import _change_incident
+from cetacean_incidents.apps.incidents.views.tabs import CaseTab
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
-from cetacean_incidents.apps.contacts.forms import ContactForm, OrganizationForm
-from cetacean_incidents.apps.incidents.forms import AnimalForm
 
-from cetacean_incidents.apps.incidents.views import case_detail, _change_case, add_observation, edit_observation
-from cetacean_incidents.apps.incidents.views.observation import _change_incident
-from cetacean_incidents.apps.incidents.views.tabs import CaseTab
-
-from models import Entanglement, GearType, EntanglementObservation, BodyLocation, GearBodyLocation
-from forms import EntanglementForm, AddEntanglementForm, EntanglementObservationForm, GearOwnerForm
+from models import (
+    BodyLocation,
+    Entanglement,
+    EntanglementObservation,
+    GearBodyLocation,
+    GearType,
+)
+from forms import (
+    AddEntanglementForm,
+    EntanglementForm,
+    EntanglementObservationForm,
+    GearOwnerForm,
+)
 
 class EntanglementTab(CaseTab):
     

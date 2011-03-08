@@ -1,6 +1,13 @@
 from django.contrib import admin
+
 from reversion.admin import VersionAdmin
-from models import Animal, YearCaseNumber, Case, Observation
+
+from models import (
+    Animal,
+    Case,
+    Observation,
+    YearCaseNumber,
+)
 
 class AnimalAdmin(VersionAdmin):
     list_display = ('id', 'field_number', 'name')

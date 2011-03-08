@@ -2,7 +2,10 @@ from django import forms
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
-from ..models import Animal, Case
+from ..models import (
+    Animal,
+    Case,
+)
 
 class CaseAnimalForm(forms.Form):
     '''\

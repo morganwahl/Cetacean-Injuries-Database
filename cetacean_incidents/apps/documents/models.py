@@ -5,15 +5,15 @@ Model of 'physical' files, forms, photos, etc. They may very well be files on a 
 import os
 from os import path
 
-from django.db import models
-from django.core.files.storage import FileSystemStorage
-from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.files.storage import FileSystemStorage
+from django.db import models
 
 from django.contrib.auth.models import User
 
-from utils import rand_string
 from form_fields import DirectoryPathField as DirectoryPathFormField
+from utils import rand_string
 
 def _checkdir(p):
     if not path.isdir(p):

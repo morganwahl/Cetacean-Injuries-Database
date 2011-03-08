@@ -1,11 +1,10 @@
 from decimal import Decimal
-
 import re
 
 from django import forms
 
 from models import Location
-from utils import MILE_IN_METERS, dms_to_dec
+from utils import dms_to_dec
 
 class LocationForm(forms.ModelForm):
     

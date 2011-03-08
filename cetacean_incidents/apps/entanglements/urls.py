@@ -1,6 +1,6 @@
+from django.conf import settings
 from django.conf.urls.defaults import *
 from django.forms import Media
-from django.conf import settings
 
 import views
 

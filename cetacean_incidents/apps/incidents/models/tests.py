@@ -1,9 +1,13 @@
-from datetime import datetime, timedelta
+from datetime import (
+    datetime,
+    timedelta,
+)
 
 from django.test import TestCase
 
-from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.taxons.models import Taxon
+
+from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 
 from animal import Animal
 from case import Case

@@ -1,11 +1,24 @@
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
 
-from cetacean_incidents.apps.contacts.models import AbstractContact, Contact
-from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
+from cetacean_incidents.apps.contacts.models import (
+    AbstractContact,
+    Contact,
+)
+
+from cetacean_incidents.apps.dag.models import (
+    DAGEdge_factory,
+    DAGNode_factory,
+)
+
 from cetacean_incidents.apps.locations.models import Location
-from cetacean_incidents.apps.incidents.models import Case, ObservationExtension
-from cetacean_incidents.apps.dag.models import DAGEdge_factory, DAGNode_factory
+
+from cetacean_incidents.apps.incidents.models import (
+    Case,
+    ObservationExtension,
+)
+
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
 class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
     name= models.CharField(

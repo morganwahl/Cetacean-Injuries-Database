@@ -1,8 +1,11 @@
-from django.test import TestCase
-
 from decimal import Decimal as D
 
-from observation_extras import round_decimal, display_decimal
+from django.test import TestCase
+
+from observation_extras import (
+    round_decimal,
+    display_decimal,
+)
 
 class ObservationExtrasTestCase(TestCase):
     def setUp(self):

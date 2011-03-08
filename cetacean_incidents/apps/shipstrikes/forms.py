@@ -1,22 +1,17 @@
-from itertools import chain
 from django import forms
-from django.forms import fields
-from django.template.loader import render_to_string
-from django.utils.encoding import force_unicode
-from django.utils.html import conditional_escape
-from django.utils.safestring import mark_safe
 
-from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.contacts.forms import ContactForm
+from cetacean_incidents.apps.contacts.models import Contact
 
-from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.incidents.forms import CaseForm
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
-from cetacean_incidents.apps.incidents.models import Animal, Case
-from cetacean_incidents.apps.incidents.forms import CaseForm
-
-from models import Shipstrike, ShipstrikeObservation, StrikingVesselInfo
+from models import (
+    Shipstrike,
+    ShipstrikeObservation,
+    StrikingVesselInfo,
+)
 
 class StrikingVesselInfoForm(VesselInfoForm):
     '''\

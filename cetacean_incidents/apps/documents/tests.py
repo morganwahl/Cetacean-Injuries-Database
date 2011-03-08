@@ -1,19 +1,21 @@
-from django.test import TestCase
-
-from django.conf import settings
-from django.core.files.base import ContentFile
-
-from django.db import transaction
-
-from django.contrib.auth.models import User
-
 import os
 from os import path
 
-from utils import rand_string
+from django.conf import settings
+from django.core.files.base import ContentFile
+from django.db import transaction
+from django.test import TestCase
+
+from django.contrib.auth.models import User
+
 from models import upload_storage as fs
-from models import _repos_url, _repos_dir
-from models import DocumentType, Document, UploadedFile, RepositoryFile
+from models import _repos_dir
+from models import _repos_url
+from models import Document
+from models import DocumentType
+from models import RepositoryFile
+from models import UploadedFile
+from utils import rand_string
 
 class UploadTestCase(TestCase):
     def test_fs(self):

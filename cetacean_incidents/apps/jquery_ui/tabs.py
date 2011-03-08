@@ -1,8 +1,10 @@
-from django.forms.widgets import MediaDefiningClass
 from django.conf import settings
+from django.forms.widgets import MediaDefiningClass
 from django.template import Context
-from django.template.loader import render_to_string
-from django.template.loader import get_template
+from django.template.loader import (
+    get_template,
+    render_to_string,
+)
 
 class Tab(object):
     '''\

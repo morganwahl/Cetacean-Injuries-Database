@@ -1,25 +1,25 @@
 from animal import (
     animal_detail,
+    animal_merge,
     animal_search,
     animal_search_json,
     create_animal,
     edit_animal,
-    animal_merge,
 )
 
 from case import (
+    _change_case,
     case_detail,
     case_search,
     cases_by_year,
     edit_case,
     edit_case_animal,
-    _change_case,
 )
 
 from observation import (
-    observation_detail,
+    _change_incident,
     add_observation,
     edit_observation,
-    _change_incident,
+    observation_detail,
 )
 

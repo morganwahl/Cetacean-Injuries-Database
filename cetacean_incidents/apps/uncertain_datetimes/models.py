@@ -1,6 +1,6 @@
-import re
 from copy import deepcopy
 from datetime import timedelta
+import re
 
 from django.db import models
 

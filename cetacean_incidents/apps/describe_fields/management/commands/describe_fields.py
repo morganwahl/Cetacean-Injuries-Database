@@ -1,4 +1,7 @@
-from django.core.management.base import AppCommand, CommandError
+from django.core.management.base import (
+    AppCommand,
+    CommandError,
+)
 from django.db import models
 
 type_names = {

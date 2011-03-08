@@ -1,9 +1,12 @@
-from django.db import models
 from django.core.urlresolvers import reverse
+from django.db import models
 
-from cetacean_incidents.apps.vessels.models import VesselInfo
 from cetacean_incidents.apps.contacts.models import Contact
-from cetacean_incidents.apps.incidents.models import Case, ObservationExtension
+from cetacean_incidents.apps.incidents.models import (
+    Case,
+    ObservationExtension,
+)
+from cetacean_incidents.apps.vessels.models import VesselInfo
 
 class StrikingVesselInfo(VesselInfo):
     length = models.FloatField(

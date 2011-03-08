@@ -1,7 +1,16 @@
 from django.contrib import admin
+
 from reversion.admin import VersionAdmin
 
-from models import Entanglement, EntanglementObservation, GearType, GearTypeRelation, GearOwner, BodyLocation, GearBodyLocation
+from models import (
+    BodyLocation,
+    Entanglement,
+    EntanglementObservation,
+    GearBodyLocation,
+    GearOwner,
+    GearType,
+    GearTypeRelation,
+)
 
 class EntanglementAdmin(VersionAdmin):
     pass

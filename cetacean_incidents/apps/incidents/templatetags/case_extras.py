@@ -1,18 +1,21 @@
 from datetime import date
 
-from django import template
-
-from django.core.cache import cache
 from django.conf import settings
-from django import forms
-from django.template.loader import get_template
-from django.template import Context
+from django.core.cache import cache
 from django.db import models
+from django import forms
+from django import template
+from django.template import Context
+from django.template.loader import get_template
 
-from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.tags.models import Tag
 
-from ..models import Case, Observation
+from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
+
+from ..models import (
+    Case,
+    Observation.
+)
 
 register = template.Library()
 
