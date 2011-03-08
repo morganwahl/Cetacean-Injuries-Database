@@ -320,7 +320,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         
         # ensure the name doesn't contain commas
         name = name.replace(',',';')
-
+        
         return name
     
     # names_list is intentially read-only, so that it can only be modified via

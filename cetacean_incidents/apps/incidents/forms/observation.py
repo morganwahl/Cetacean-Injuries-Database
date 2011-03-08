@@ -232,6 +232,7 @@ class ObservationForm(forms.ModelForm):
     )
     
     def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList, label_suffix=':', empty_permitted=False, instance=None):
+
         if instance:
             if not instance.animal_length is None:
                 if initial is None:
@@ -243,9 +244,11 @@ class ObservationForm(forms.ModelForm):
                     initial = {}
                 if 'animal_length_sigdigs' not in initial:
                     initial['animal_length_sigdigs'] = instance.animal_length_sigdigs
+
         if not initial is None and 'animal_length' in initial:
             if 'animal_length_sigdigs' in initial:
                 initial['animal_length_and_sigdigs'] = (initial['animal_length'] * 100, 'cm', initial['animal_length_sigdigs'])
+
         super(ObservationForm, self).__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance)
     
     def save(self, commit=True):

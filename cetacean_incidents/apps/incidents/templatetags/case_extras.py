@@ -101,8 +101,6 @@ models.signals.post_delete.connect(
     dispatch_uid= 'cache_clear__case_extras__tag__post_delete',
 )
 
-
-
 @register.inclusion_tag('case_years_link.html')
 def case_years_link():
     return {'years_form': YearsForm()}

@@ -244,7 +244,6 @@ def _change_incident(
         def _check(form_name):
             valid = forms[form_name].is_valid()
             if not valid:
-                #print "got validity: %s" % repr(valid)
                 raise _SomeValidationFailed(form_name, forms[form_name])
         
         # Revisions should always correspond to transactions!
@@ -254,10 +253,7 @@ def _change_incident(
         @revision.create_on_success
         def _try_saving():
             _check('animal')
-            if not 'animal' in model_instances:
-                animal = forms['animal'].save()
-            else:
-                animal = forms['animal'].save()
+            animal = forms['animal'].save()
             
             if cases: # we're editing existing cases
                 for c in cases:
@@ -309,7 +305,6 @@ def _change_incident(
             if forms['observation'].cleaned_data['new_observer'] == 'none':
                 observation.observer = None
             
-            #print "observation: vessel"
             if forms['observation'].cleaned_data['observer_on_vessel'] == False:
                 vessel_info = observation.observer_vessel
                 if not vessel_info is None:
@@ -331,10 +326,11 @@ def _change_incident(
                     observation.observer_vessel.contact = observation.observer
                     observation.observer_vessel.save()
                 # 'new', 'other', and 'none' are handled by VesselInfoForm.save
+            
             observation.save()
 
             additional_form_saving(forms, model_instances, _check, observation)
-            
+
             return observation
 
         try:
@@ -379,7 +375,6 @@ def _change_incident(
             # add any other tabs for this case passed in to _change_incident
             try:
                 passed_tabs = additional_case_tabs[i]
-                #print "got tabs from additional_case_tabs"
                 # prepend _case_key(c) to the tab's html_id
                 if t in passed_tabs:
                     t.html_id = k + t.html_id
@@ -403,8 +398,6 @@ def _change_incident(
             CaseTab(html_id='new_case', context=case_tab_context),
             CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
         ] + additional_new_case_tabs
-        #if len(additional_new_case_tabs) > 0:
-        #    print "got tabs from additional_new_case_tabs"
 
         for t in case_tabs:
             t.context = case_tab_context

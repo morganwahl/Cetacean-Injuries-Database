@@ -70,7 +70,7 @@ def add_shipstrikeobservation(request, animal_id=None, shipstrike_id=None):
     
     def _try_saving(forms, instances, check, observation):
         check('shipstrike_observation')
-        # committing will fail without first settings ss_oe.observation
+        # committing will fail without first setting ss_oe.observation
         ss_oe = forms['shipstrike_observation'].save(commit=False)
         ss_oe.observation_ptr = observation
         ss_oe.save()
