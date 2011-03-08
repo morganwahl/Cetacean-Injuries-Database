@@ -9,12 +9,11 @@ from django.shortcuts import render_to_response, redirect
 from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required
-from cetacean_incidents.forms import merge_source_form_factory
 
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from ..models import Animal
-from ..forms import AnimalForm, AnimalSearchForm, AnimalMergeForm
+from ..forms import AnimalForm, AnimalSearchForm, AnimalMergeSourceForm, AnimalMergeForm
 
 @login_required
 def animal_detail(request, animal_id):
@@ -27,7 +26,7 @@ def animal_detail(request, animal_id):
     }
 
     if request.user.has_perms(('incidents.change_animal', 'incidents.delete_animal')):
-        merge_form = merge_source_form_factory(Animal, animal)()
+        merge_form = AnimalMergeSourceForm(destination=animal)
         context['merge_form'] = merge_form
         context['media'] += merge_form.media
         context['media'] += Media(js=(settings.JQUERY_FILE,))
@@ -193,7 +192,7 @@ def animal_merge(request, destination_id, source_id=None):
     destination = Animal.objects.get(id=destination_id)
     
     if source_id is None:
-        merge_form = merge_source_form_factory(Animal, destination)(request.GET)
+        merge_form = AnimalMergeSourceForm(destination, request.GET)
         if not merge_form.is_valid():
             return redirect('animal_detail', destination.id)
         source = merge_form.cleaned_data['source']
