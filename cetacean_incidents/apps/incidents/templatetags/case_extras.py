@@ -14,7 +14,7 @@ from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 
 from ..models import (
     Case,
-    Observation.
+    Observation,
 )
 
 register = template.Library()
