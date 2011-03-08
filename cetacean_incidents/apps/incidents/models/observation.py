@@ -149,7 +149,8 @@ class Observation(Documentable, Importable):
         '''
         
         # don't return datetimes in the future
-        now = datetime.datetime.now(pytz.utc)
+        # TODO timezones?
+        now = datetime.datetime.now()
         return min(self.datetime_observed.latest, self.datetime_reported.latest, now)
     
     @property

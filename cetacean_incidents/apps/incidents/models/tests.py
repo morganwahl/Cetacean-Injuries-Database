@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from django.test import TestCase
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
@@ -120,7 +122,92 @@ class ObservationTestCase(TestCase):
     def setUp(self):
         self.animal = Animal.objects.create()
         self.case = Case.objects.create(animal=self.animal)
+    
+    def test_earliest(self):
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2011, 3, 8, 9, 38),
+                datetime_observed= UncertainDateTime(2011),
+            ).earliest_datetime,
+            datetime(2011,1,1,0,0),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2011),
+                datetime_observed= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).earliest_datetime,
+            datetime(2011,3,8,9,38),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(3011),
+                datetime_observed= UncertainDateTime(3011, 3, 8, 9, 38),
+            ).earliest_datetime,
+            datetime(3011,3,8,9,38),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2010),
+                datetime_observed= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).earliest_datetime,
+            datetime(2010,1,1,0,0),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_observed= UncertainDateTime(2010),
+                datetime_reported= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).earliest_datetime,
+            datetime(2010,1,1,0,0),
+        )
         
+    def test_latest(self):
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2011, 3, 8, 9, 38),
+                datetime_observed= UncertainDateTime(2011),
+            ).latest_datetime,
+            datetime(2011,3,8,9,39),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2011),
+                datetime_observed= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).latest_datetime,
+            datetime(2011,3,8,9,39),
+        )
+        # the two different calls to now() will be off by a few seconds
+        now = datetime.now()
+        latest = Observation(
+            animal= self.animal,
+            # this test will eventually fail...
+            datetime_reported= UncertainDateTime(3011),
+            datetime_observed= UncertainDateTime(3011, 3, 8, 9, 38),
+        ).latest_datetime
+        self.assertTrue(latest - now < timedelta(hours=1))
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_reported= UncertainDateTime(2010),
+                datetime_observed= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).latest_datetime,
+            datetime(2011,1,1,0,0),
+        )
+        self.assertEqual(
+            Observation(
+                animal= self.animal,
+                datetime_observed= UncertainDateTime(2010),
+                datetime_reported= UncertainDateTime(2011, 3, 8, 9, 38),
+            ).latest_datetime,
+            datetime(2011,1,1,0,0),
+        )
+    
     def test_get_oes(self):
         
         no_ext = Observation.objects.create(
