@@ -69,6 +69,7 @@ class AnimalMergeSourceForm(forms.Form):
             label= 'other %s' % Animal._meta.verbose_name,
             required= True, # ensures an animal is selected
             initial= None,
+            widget= AnimalAutocomplete,
             help_text= u"""Choose an animal to merge into this one. That animal's entry will be deleted and references to it will refer to this entry instead.""",
             error_messages= {
                 'required': u"You must select an animal."
