@@ -116,6 +116,7 @@ class AnimalChoiceForm(forms.Form):
         
         self.fields['existing_animal'] = forms.ModelChoiceField(
             queryset= Animal.objects.all(),
+            widget = AnimalAutocomplete,
             empty_label= '<none chosen>',
             required= not self.can_add,
             help_text= "choose an existing animal in the database",
