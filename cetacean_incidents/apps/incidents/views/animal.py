@@ -6,6 +6,7 @@ except ImportError:
     import simplejson as json # for python 2.5 compat.
 
 from django.conf import settings
+from django.core.cache import cache
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.forms import Media
@@ -115,6 +116,11 @@ def animal_search_json(request):
     if 'q' in request.GET:
         query = request.GET['q']
     
+    cache_key = 'animal_search_json: %s' % query
+    cached_json = cache.get(cache_key)
+    if cached_json:
+        return HttpResponse(cached_json)
+    
     words = query.split()
     if words:
         firstword = words[0]
@@ -150,7 +156,10 @@ def animal_search_json(request):
         })
     # TODO return 304 when not changed?
     
-    return HttpResponse(json.dumps(animals))
+    json_result = json.dumps(animals)
+    cache.set(cache_key, json_result, 60) # timeout quickly to catch updates
+                                          # to the animals
+    return HttpResponse(json_result)
 
 @login_required
 @permission_required('incidents.add_animal')
