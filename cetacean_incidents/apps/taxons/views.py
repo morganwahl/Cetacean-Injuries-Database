@@ -49,7 +49,7 @@ def taxon_tree(request, root_id=None):
         context_instance= RequestContext(request),
     )
 
-def taxon_search(request):
+def taxon_search_json(request):
     '''\
     Given a request with a query in the 'q' key of the GET string, returns a 
     JSON list of Taxons.
