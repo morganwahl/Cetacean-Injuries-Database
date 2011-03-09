@@ -64,10 +64,11 @@ class ObservationReportingTab(ObservationTab):
             )
         )
 
-class ObservationObservingTab(ObservationTab):
+class ObservationObservingTab(Tab):
     
     default_html_display = mark_safe(u"<em>Observation</em><br>Observer")
     default_template = 'incidents/edit_observation_observing_tab.html'
+    required_context_keys = ('forms',)
 
     def li_error(self):
         return reduce(
@@ -92,10 +93,11 @@ class ObservationObservingTab(ObservationTab):
             )
         )
 
-class ObservationAnimalIDTab(ObservationTab):
+class ObservationAnimalIDTab(Tab):
     
     default_html_display = mark_safe(u"<em>Observation</em><br>Animal Identification")
     default_template = 'incidents/edit_observation_animal_identification_tab.html'
+    required_context_keys = ('forms',)
     
     def li_error(self):
         return reduce(
@@ -122,10 +124,11 @@ class ObservationAnimalIDTab(ObservationTab):
             )
         )
 
-class ObservationIncidentTab(ObservationTab):
+class ObservationIncidentTab(Tab):
     
     default_html_display = mark_safe(u"<em>Observation</em><br>Incident")
     default_template = 'incidents/edit_observation_incident_tab.html'
+    required_context_keys = ('forms',)
     
     def li_error(self):
         return reduce(
@@ -147,10 +150,11 @@ class ObservationIncidentTab(ObservationTab):
             )
         )
 
-class ObservationNarrativeTab(ObservationTab):
+class ObservationNarrativeTab(Tab):
 
     default_template = 'incidents/edit_observation_narrative_tab.html'
     default_html_display = mark_safe(u"<em>Observation</em><br>Narrative")
+    required_context_keys = ('forms',)
 
     def li_error(self):
         return reduce(
