@@ -194,7 +194,7 @@ class SeriousInjuryAndMortality(models.Model):
 
 class Case(Documentable, SeriousInjuryAndMortality, Importable):
     '''\
-    A case is has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known.
+    A case has all the data for _one_ incident of _one_ animal (i.e. a single strike of a ship, a single entanglement of an animal in a particular set of gear). Hypothetically the incident has a single datetime and place that it occurs, although that's almost never actually known.
     
     Much of the information on a case is in the set of observations marked as relevant to it. Cases also serve to connect observations with the animals they're of.
     '''

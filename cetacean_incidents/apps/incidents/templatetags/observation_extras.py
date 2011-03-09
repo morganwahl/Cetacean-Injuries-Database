@@ -233,7 +233,8 @@ def display_decimal(dec):
                 and digits[index] == 0 # the digit is zero
                 and len(digits) > 1 # and it's not the only digit
             ):
-                format = '<u>%s</u>'
+                #format = u'%s\u0305' # overline character
+                format = u'<u>%s</u>' # HTML underline
             else:
                 format = '%s'
                 

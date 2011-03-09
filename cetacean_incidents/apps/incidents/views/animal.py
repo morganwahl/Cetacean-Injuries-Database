@@ -7,7 +7,6 @@ except ImportError:
 
 from django.conf import settings
 from django.core.cache import cache
-from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.forms import Media
 from django.http import HttpResponse
@@ -16,6 +15,8 @@ from django.shortcuts import (
     redirect,
 )
 from django.template import RequestContext
+
+from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
