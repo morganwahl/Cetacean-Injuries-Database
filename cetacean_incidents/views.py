@@ -30,7 +30,7 @@ from reversion.models import (
 
 from decorators import permission_required
 from forms import (
-    AnimalChoiceForm_factory,
+    AnimalChoiceForm,
     CaseTypeForm_factory,
 )
 
@@ -337,7 +337,7 @@ def new_case(request, initial_animal_id=None):
     '''
     
     form_classes = {
-        'animal_choice': AnimalChoiceForm_factory(request.user),
+        'animal_choice': AnimalChoiceForm,
         'case_type': CaseTypeForm_factory(request.user),
     }
 
@@ -348,18 +348,22 @@ def new_case(request, initial_animal_id=None):
         }
         if request.GET:
             form_kwargs[name]['data'] = request.GET
+    form_kwargs['animal_choice']['user'] = request.user
     if not initial_animal_id is None:
-        form_kwargs['animal_choice']['initial'] = {'animal': initial_animal_id}
+        form_kwargs['animal_choice']['initial'] = {
+            'new_animal': '',
+            'existing_animal': initial_animal_id,
+        }
 
     forms = {}
     for name, f_class in form_classes.items():
         forms[name] = f_class(**form_kwargs[name])
     
     if reduce(lambda so_far, f: so_far and f.is_valid(), forms.values(), True):
-        animal = forms['animal_choice'].cleaned_data['animal']
-        animal_id = None
-        if not animal is None:
-            animal_id = animal.id
+        if forms['animal_choice'].can_add and forms['animal_choice'].cleaned_data['new_animal']:
+            animal_id = None
+        else:
+            animal_id = forms['animal_choice'].cleaned_data['existing_animal'].id
         
         case_type = forms['case_type'].cleaned_data['case_type']
         

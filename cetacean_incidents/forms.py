@@ -18,6 +18,7 @@ from cetacean_incidents.apps.entanglements.models import Entanglement
 
 from cetacean_incidents.apps.incidents.forms import (
     AddCaseForm,
+    AnimalAutocomplete,
     CaseForm,
 )
 from cetacean_incidents.apps.incidents.models import (
@@ -85,27 +86,56 @@ def CaseTypeForm_factory(user):
     
     return _CaseTypeForm
 
-def AnimalChoiceForm_factory(user):
+class AnimalChoiceForm(forms.Form):
     '''\
-    Generates an AnimalChoiceForm that depends on whether a user can add new 
-    animals.
+    A form that depends on whether a user can add new animals.
     '''
+    
+    # all the fields are generated dynamically in __init__
+    
+    def __init__(self, user=None, *args, **kwargs):
+        super(AnimalChoiceForm, self).__init__(*args, **kwargs)
 
-    class _AnimalChoiceForm(forms.Form):
+        if not user is None and user.has_perm('incidents.add_animal'):
+            self.can_add = True
+        else:
+            self.can_add = False
         
-        help_text = "choose an existing animal in the database"
-        if user.has_perm('incidents.add_animal'):
-            help_text += ", or to add a new one"
+        if self.can_add:
+            self.fields['new_animal'] = forms.TypedChoiceField(
+                choices= (
+                    ('yes', 'add a new animal entry'),
+                    ('', 'use a existing entry'),
+                ),
+                coerce= bool,
+                initial= '',
+                required= False, # allows a False value
+                label= '',
+                widget= forms.RadioSelect,
+            )
         
-        animal = forms.ModelChoiceField(
+        self.fields['existing_animal'] = forms.ModelChoiceField(
             queryset= Animal.objects.all(),
-            empty_label= '<new animal>' if user.has_perm('incidents.add_animal') else '<select an animal>',
-            required= not user.has_perm('incidents.add_animal'),
-            help_text= help_text,
+            empty_label= '<none chosen>',
+            required= not self.can_add,
+            help_text= "choose an existing animal in the database",
         )
     
-    return _AnimalChoiceForm
+    def clean(self):
+        # if not self.can_add fields['existing_animal'].required = True
+        data = self.cleaned_data
+        if self.can_add:
+            # fields['existing_animal'].required = False, but it is required if
+            # fields['new_animal'] is False
+            new = data.get('new_animal')
 
+            if not new:
+                if 'existing_animal' in data: # did 'existing_animal' validate?
+                    if data['existing_animal'] is None:
+                        raise forms.ValidationError('Either add a new animal or choose an existing one.')
+        
+        return data
+            
 def merge_source_form_factory(model, destination):
 
     class _MergeSourceForm(forms.Form):
