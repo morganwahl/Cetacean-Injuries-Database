@@ -112,7 +112,6 @@ class ObservationAnimalIDTab(Tab):
                         #'animal_length',         # handled by ObservationForm
                         #'animal_length_sigdigs',
                         'age_class',
-                        'condition',
                         'biopsy',
                         'genetic_sample',
                         'tagged',
@@ -138,6 +137,7 @@ class ObservationIncidentTab(Tab):
                     (
                         'documentation',
                         'ashore',
+                        'condition',
                         'indication_entanglement',
                         'indication_shipstrike',
                         'wounded',
