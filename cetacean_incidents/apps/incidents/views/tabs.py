@@ -37,34 +37,6 @@ class CaseTab(Tab):
             )
         )
     
-class CaseSINMDTab(CaseTab):
-    
-    default_html_display = mark_safe(u"<em>Case</em><br><abbr title=\"Serious Injury and Mortality Determination\">SI&MD</abbr>")
-    default_template = 'incidents/edit_case_sinmd_tab.html'
-    
-    def li_error(self):
-        return reduce(
-            operator.or_, map(
-                bool,
-                [self.context['case_form'].non_field_errors()] + map(
-                    lambda f: self.context['case_form'][f].errors,
-                    (
-                        'review_1_date',
-                        'review_1_inits',
-                        'review_2_date',
-                        'review_2_inits',
-                        'case_confirm_criteria',
-                        'animal_fate',
-                        'fate_cause',
-                        'fate_cause_indications',
-                        'si_prevented',
-                        'included_in_sar',
-                        'review_1_notes',
-                        'review_2_notes',
-                    )
-                )
-            )
-        )
 
 class ObservationTab(Tab):
     required_context_keys = ('forms',)

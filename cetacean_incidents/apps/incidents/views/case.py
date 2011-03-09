@@ -44,7 +44,6 @@ from ..templatetags.case_extras import YearsForm
 from tabs import (
     AnimalTab,
     CaseTab,
-    CaseSINMDTab,
 )
 
 @login_required
@@ -292,7 +291,6 @@ def _change_case(
     tabs = [
         AnimalTab(html_id='animal'),
         CaseTab(html_id='case'),
-        CaseSINMDTab(html_id='case-sinmd'),
     ] + additional_tabs
     for t in tabs:
         t.context = tab_context

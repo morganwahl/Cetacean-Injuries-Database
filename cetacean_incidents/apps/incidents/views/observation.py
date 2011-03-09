@@ -54,7 +54,6 @@ from ..forms import (
 
 from tabs import (
     AnimalTab,
-    CaseSINMDTab,
     CaseTab,
     ObservationAnimalIDTab,
     ObservationIncidentTab,
@@ -364,7 +363,6 @@ def _change_incident(
             # start with the basic case tabs
             additional_tabs = [
                 CaseTab(html_id=k + '-case'),
-                CaseSINMDTab(html_id=k + '-case-sinmd'),
             ]
             
             # add an instance of 'extra_tab_class' if it exists
@@ -396,7 +394,6 @@ def _change_incident(
         })
         case_tabs = [
             CaseTab(html_id='new_case', context=case_tab_context),
-            CaseSINMDTab(html_id='new_case-sinmd', context=case_tab_context),
         ] + additional_new_case_tabs
 
         for t in case_tabs:
