@@ -13,8 +13,9 @@ var animal_autocomplete_source = function (request, response) {
             var suggests  = []
             for(var i = 0; i < animals.length; i++) {
                 suggests[i] = {};
-                suggests[i].label = animals[i].plain_name;
-                suggests[i].html_label = animals[i].html_name;
+                suggests[i].label = animals[i].id;
+                suggests[i].html_label = animals[i].plain_name;
+                suggests[i].block_label = animals[i].html_name
                 suggests[i].id = animals[i].id;
                 suggests[i].value = animals[i].id;
                 suggests[i].taxon = animals[i].taxon;
@@ -40,7 +41,7 @@ function zero_pad(number, size) {
 }
 
 var animal_autocomplete_entry = function(item) {
-    var e = '<span class="animal_display">' + item.html_label + '</span>';
+    var e = '<span class="animal_display">' + item.block_label + '</span>';
     if (item.taxon) {
         e += '<span class="animal_taxon">' + item.taxon + '</span>';
     }
