@@ -12,6 +12,8 @@ from lxml import etree
 from lxml import objectify
 
 from django.conf import settings
+from django.core.cache import cache
+from django.db import models
 from django.db.models import Q
 from django.forms import Media
 from django.http import HttpResponse
@@ -59,6 +61,11 @@ def taxon_search_json(request):
     if 'q' in request.GET:
         get_query = request.GET['q']
     
+    cache_key = 'taxon_search_json: %s' % get_query
+    cached_json = cache.get(cache_key)
+    if cached_json:
+        return HttpResponse(cached_json)
+    
     words = get_query.split()
     if words:
         common_query = Q(common_names__icontains=get_query)
@@ -101,7 +108,25 @@ def taxon_search_json(request):
         })
     # TODO return 304 when not changed?
     
-    return HttpResponse(json.dumps(taxa))
+    json_result = json.dumps(taxa)
+    # we can do a long timeout since adding or editing a new Taxon will clear
+    # the cache
+    cache.set(cache_key, json_result, 7 * 24 * 60 * 60)
+    return HttpResponse(json_result)
+
+# remove stale cache entries
+def _taxon_post_save(sender, **kwargs):
+    # sender should be Taxon
+    
+    # no way to know what taxon_search_json keys would match the changed Taxon,
+    # so we just have to clear the cache
+    cache.clear()
+
+models.signals.post_save.connect(
+    sender= Taxon,
+    receiver= _taxon_post_save,
+    dispatch_uid= 'cache_clear__taxon_search_json__taxon__post_save',
+)
 
 @login_required
 def taxon_detail(request, taxon_id):
