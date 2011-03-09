@@ -9,7 +9,18 @@
     </td>
     {% if f.help_text %}
     <td>
+        <script type="text/javascript">
+            $().ready(function(){
+                $("#{{ f.auto_id }}_definitions_link").click(function(event){
+                    $("#{{ f.auto_id }}_definitions_block").slideToggle();
+                    return false;
+                });
+            });
+        </script>
+        <a id="{{ f.auto_id }}_definitions_link" href="">definitions...</a>
+        <div id="{{ f.auto_id }}_definitions_block" style="display:none;">
         {{ f.help_text|safe }}
+        </div>
     </td>
     {% endif %}
     </tr></table>
