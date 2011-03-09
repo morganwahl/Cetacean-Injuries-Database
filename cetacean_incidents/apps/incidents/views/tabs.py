@@ -28,10 +28,10 @@ class CaseTab(Tab):
                 [self.context['case_form'].non_field_errors()] + map(
                     lambda f: self.context['case_form'][f].errors, 
                     (
-                        'happened_after',
                         'valid',
-                        'ole_investigation',
+                        'happened_after',
                         'human_interaction',
+                        'ole_investigation',
                     )
                 )
             )
@@ -84,9 +84,9 @@ class ObservationObservingTab(Tab):
                     (
                         'initial',
                         'exam',
-                        'datetime_observed',
                         'new_observer',
                         'observer',
+                        'datetime_observed',
                         'observer_on_vessel',
                     )
                 )
@@ -95,7 +95,7 @@ class ObservationObservingTab(Tab):
 
 class ObservationAnimalIDTab(Tab):
     
-    default_html_display = mark_safe(u"<em>Observation</em><br>Animal Identification")
+    default_html_display = mark_safe(u"<em>Observation</em><br>Animal Description")
     default_template = 'incidents/edit_observation_animal_identification_tab.html'
     required_context_keys = ('forms',)
     
