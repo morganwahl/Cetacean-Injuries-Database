@@ -2,13 +2,13 @@
 {{ f }}
 {% else %}
 <div class="field_wrapper">
-    <table><tr><td>
+    <table class="layout"><tr class="layout"><td class="layout">
 	    <div>
 		    <span class="fieldname">{{ f.label_tag }}</span> {{ f }}
 	    </div>
     </td>
     {% if f.help_text %}
-    <td>
+    <td class="layout">
         <script type="text/javascript">
             $().ready(function(){
                 $("#{{ f.auto_id }}_definitions_link").click(function(event){
