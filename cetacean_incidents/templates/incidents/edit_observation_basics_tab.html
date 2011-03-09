@@ -3,6 +3,14 @@
 {{ forms.observation.non_field_errors }}
 
 <div class="section">
+    {% with forms.observation.initial as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+    {% with forms.observation.exam as f %}
+    {% include "labeled_field.html" %}
+    {% endwith %}
+</div>
+<div class="section">
     <h4>report date and time</h4>
     {% with forms.observation.datetime_reported as f %}
     {% include "unlabeled_field.html" %}

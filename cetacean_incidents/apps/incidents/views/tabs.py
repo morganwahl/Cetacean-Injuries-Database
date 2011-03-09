@@ -37,15 +37,12 @@ class CaseTab(Tab):
             )
         )
     
+class ObservationBasicsTab(Tab):
 
-class ObservationTab(Tab):
+    default_html_display = mark_safe(u"<em>Observation</em><br>&nbsp;")
+    default_template = 'incidents/edit_observation_basics_tab.html'
     required_context_keys = ('forms',)
 
-class ObservationReportingTab(ObservationTab):
-
-    default_html_display = mark_safe(u"<em>Observation</em><br>Reporter")
-    default_template = 'incidents/edit_observation_reporting_tab.html'
-    
     def li_error(self):
         return reduce(
             operator.or_, map(
@@ -56,6 +53,8 @@ class ObservationReportingTab(ObservationTab):
                 ] + map(
                     lambda f: self.context['forms']['observation'][f].errors, 
                     (
+                        'initial',
+                        'exam',
                         'datetime_reported',
                         'new_reporter',
                         'reporter',
@@ -82,8 +81,6 @@ class ObservationObservingTab(Tab):
                 ] + map(
                     lambda f: self.context['forms']['observation'][f].errors,
                     (
-                        'initial',
-                        'exam',
                         'new_observer',
                         'observer',
                         'datetime_observed',

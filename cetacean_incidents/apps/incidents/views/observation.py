@@ -55,11 +55,11 @@ from ..forms import (
 from tabs import (
     AnimalTab,
     CaseTab,
+    ObservationBasicsTab,
     ObservationAnimalIDTab,
     ObservationIncidentTab,
     ObservationNarrativeTab,
     ObservationObservingTab,
-    ObservationReportingTab,
 )
 
 @login_required
@@ -400,7 +400,7 @@ def _change_incident(
             t.context = case_tab_context
         
     observation_tabs = [
-        ObservationReportingTab(html_id='observation-reporting'),
+        ObservationBasicsTab(html_id='observation-basics'),
         ObservationObservingTab(html_id='observation-observing'),
         ObservationAnimalIDTab(html_id='observation-animal'),
         ObservationIncidentTab(html_id='observation-incident'),
