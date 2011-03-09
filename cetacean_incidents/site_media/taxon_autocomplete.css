@@ -8,8 +8,9 @@
     display: block;
     font-size: 85%;
     line-height: 85%;
-    padding-left: .4em;
-    padding-bottom: .2em;
-    padding-right: .2em;
+    padding-left: 1.176470588em; /* 1em before the font-size:85% */
+    padding-right: 0.235294118em; /* .2em before the font-size:85% */
+    padding-top: 0;
+    padding-bottom: 0;
 }
 
