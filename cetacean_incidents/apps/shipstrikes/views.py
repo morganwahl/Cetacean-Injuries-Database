@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
+from cetacean_incidents.apps.incidents.models import Animal
 from cetacean_incidents.apps.incidents.views import (
     _change_case,
     _change_incident,
