@@ -2,9 +2,6 @@
 
 {{ forms.observation.non_field_errors }}
 
-{% with forms.observation.documentation as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
 {% with forms.observation.ashore as f %}
 {% include "labeled_field.html" %}
 {% endwith %}

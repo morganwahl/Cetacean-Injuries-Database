@@ -112,9 +112,6 @@ class ObservationAnimalIDTab(Tab):
                         #'animal_length',         # handled by ObservationForm
                         #'animal_length_sigdigs',
                         'age_class',
-                        'biopsy',
-                        'genetic_sample',
-                        'tagged',
                     )
                 )
             )
@@ -135,13 +132,36 @@ class ObservationIncidentTab(Tab):
                 ] + map(
                     lambda f: self.context['forms']['observation'][f].errors, 
                     (
-                        'documentation',
                         'ashore',
                         'condition',
                         'indication_entanglement',
                         'indication_shipstrike',
                         'wounded',
                         'wound_description',
+                    )
+                )
+            )
+        )
+
+class ObservationActionsTab(Tab):
+    
+    default_html_display = mark_safe(u"<em>Observation</em><br>Actions")
+    default_template = 'incidents/edit_observation_actions_tab.html'
+    required_context_keys = ('forms',)
+    
+    def li_error(self):
+        return reduce(
+            operator.or_, map(
+                bool,
+                [
+                    self.context['forms']['observation'].non_field_errors(),
+                ] + map(
+                    lambda f: self.context['forms']['observation'][f].errors, 
+                    (
+                        'documentation',
+                        'tagged',
+                        'biopsy',
+                        'genetic_sample',
                     )
                 )
             )
