@@ -60,7 +60,6 @@ from tabs import (
     ObservationIncidentTab,
     ObservationNarrativeTab,
     ObservationObservingTab,
-    ObservationActionsTab,
 )
 
 @login_required
@@ -405,7 +404,6 @@ def _change_incident(
         ObservationObservingTab(html_id='observation-observing'),
         ObservationAnimalIDTab(html_id='observation-animal'),
         ObservationIncidentTab(html_id='observation-incident'),
-        ObservationActionsTab(html_id='observation-actions'),
     ] + additional_observation_tabs +[
         ObservationNarrativeTab(html_id='observation-narrative'),
     ]

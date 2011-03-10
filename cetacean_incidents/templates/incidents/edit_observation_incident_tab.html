@@ -2,6 +2,7 @@
 
 {{ forms.observation.non_field_errors }}
 
+<div class="section">
 {% with forms.observation.ashore as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
@@ -20,4 +21,19 @@
 {% with forms.observation.wound_description as f %}
 {% include "bigtext_field.html" %}
 {% endwith %}
+</div>
+<div class="section">
+{% with forms.observation.documentation as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.tagged as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.biopsy as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.observation.genetic_sample as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+</div>
 
