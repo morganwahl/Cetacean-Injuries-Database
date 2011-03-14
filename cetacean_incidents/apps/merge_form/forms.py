@@ -67,14 +67,22 @@ class MergeForm(forms.ModelForm):
     def _get_m2m_refs(cls, instance):
         '''
         Get all the ManyToManyField references _to_ an instance. Returns a 
-        tuple of triples of the form: (<other model>, <other field>, 
+        tuple of triples of the form: (<other Model>, <other field>, 
         <RelatedManager of other instances>).
         '''
         
-        if instance._meta.get_all_related_many_to_many_objects():
-            raise NotImplementedError("merging models with ManyToManyField references to them isn't implemented yet")
+        related_objects = instance._meta.get_all_related_many_to_many_objects()
+        results = []
+        for ro in related_objects:
+            other_queryset = getattr(instance, ro.get_accessor_name()).all()
+            for other_instance in other_queryset:
+                results.append((
+                    ro.model,
+                    ro.field,
+                    other_instance,
+                ))
         
-        return []
+        return tuple(results)
     
     @classmethod
     def _get_o2o_refs_from(cls, instance):
@@ -125,6 +133,13 @@ class MergeForm(forms.ModelForm):
         if not commit:
             raise NotImplementedError("uncommited saving of MergeForms is not yet implemented")
         
+        for (other_model, other_field, other_instance) in self.source_m2m_refs:
+            accessor = getattr(other_instance, other_field.name)
+            # don't remove source; the references to it will disappear when it
+            # is deleted.
+            #accessor.remove(self.source)
+            accessor.add(self.destination)
+
         for (other_model, other_field, other_instance) in self.source_fk_refs:
             # note that OneToOneFields are also ForeignKeys
             if isinstance(other_field, models.OneToOneField):
@@ -133,8 +148,6 @@ class MergeForm(forms.ModelForm):
                 setattr(other_instance, other_field.name, self.destination)
                 other_instance.save()
         
-        if self.source_m2m_refs:
-            raise NotImplementedError("saving merged instances with ManyToManyField references to them is not implemented")
         self.source.delete()
         
         return super(MergeForm, self).save(commit=commit)
