@@ -40,6 +40,31 @@
     {% endblock %}
 </div>
 {% endif %}
+{% if perms.incidents.change_case and perms.incidents.delete_case %}
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another case into this one...</a>
+    </div>
+    <form action="{% url case_merge case.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {% if case.animal.case_set.count > 1 %}
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+            {% else %}
+            There are no other cases for this animal.
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endif %}
 {% with case.tag_set.all as tags %}
 {% include "tags/tags_detail_include.html" %}
 {% endwith %}

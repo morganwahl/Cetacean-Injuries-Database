@@ -8,6 +8,8 @@ from case import (
     AddCaseForm,
     CaseAnimalForm,
     CaseForm,
+    CaseMergeForm,
+    CaseMergeSourceForm,
 )
 from observation import (
     ObservationCasesForm,

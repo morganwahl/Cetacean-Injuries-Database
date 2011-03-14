@@ -14,6 +14,7 @@ from case import (
     cases_by_year,
     edit_case,
     edit_case_animal,
+    case_merge,
 )
 
 from observation import (

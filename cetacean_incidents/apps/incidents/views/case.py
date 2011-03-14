@@ -37,6 +37,8 @@ from ..forms import (
     AnimalForm,
     CaseAnimalForm,
     CaseForm,
+    CaseMergeForm,
+    CaseMergeSourceForm,
     CaseSearchForm,
 )
 from ..templatetags.case_extras import YearsForm
@@ -54,6 +56,13 @@ def case_detail(request, case_id, extra_context={}):
     # the case_detail.html template needs jQuery
     if not 'media' in extra_context:
         extra_context['media'] = Media()
+
+    if request.user.has_perms(('incidents.change_case', 'incidents.delete_case')):
+        merge_form = CaseMergeSourceForm(destination=case)
+        extra_context['merge_form'] = merge_form
+        extra_context['media'] += merge_form.media
+        extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
+
     extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
     return generic_views.object_detail(
         request,
@@ -327,4 +336,61 @@ def edit_case(request, case_id):
         form = CaseForm(prefix='case', instance=case)
         
     return _change_case(request, case, form)
+
+@login_required
+@permission_required('incidents.change_case')
+@permission_required('incidents.delete_case')
+def case_merge(request, destination_id, source_id=None):
+    # the "source" case will be deleted and references to it will be change to
+    # the "destination" case
+    
+    destination = Case.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = CaseMergeSourceForm(destination, request.GET)
+        if not merge_form.is_valid():
+            return redirect('case_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Case.objects.get(id=source_id)
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = CaseMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('case_detail', destination.id)
+    else:
+        form = CaseMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/case_merge.html',
+        {
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'media': form.media,
+            'destination_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_fk_refs
+            ),
+            'source_fk_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_fk_refs
+            ),
+            'destination_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.destination_m2m_refs
+            ),
+            'source_m2m_refs': map(
+                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
+                form.source_m2m_refs
+            ),
+        },
+        context_instance= RequestContext(request),
+    )
 

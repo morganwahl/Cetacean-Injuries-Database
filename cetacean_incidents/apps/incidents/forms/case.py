@@ -2,9 +2,12 @@ from django import forms
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
+from cetacean_incidents.apps.merge_form.forms import MergeForm
+
 from ..models import (
     Animal,
     Case,
+    YearCaseNumber,
 )
 
 class CaseAnimalForm(forms.Form):
@@ -39,8 +42,52 @@ class AddCaseForm(CaseForm):
 
 Case.form_class = AddCaseForm
 
-class MergeCaseForm(forms.ModelForm):
+class CaseMergeSourceForm(forms.Form):
     
+    # note that all fields are added dynamically in __init__
+    
+    def __init__(self, destination, *args, **kwargs):
+        super(CaseMergeSourceForm, self).__init__(*args, **kwargs)
+        
+        self.fields['source'] = forms.ModelChoiceField(
+            queryset= Case.objects.exclude(id=destination.id).filter(animal=destination.animal),
+            label= 'other %s' % Case._meta.verbose_name,
+            required= True, # ensures an animal is selected
+            initial= None,
+            help_text= u"""Choose a case to merge into this one. That case will be deleted and references to it will refer to this case instead.""",
+            error_messages= {
+                'required': u"You must select an case."
+            },
+        )
+
+class CaseMergeForm(MergeForm):
+    
+    def __init__(self, source, destination, data=None, **kwargs):
+        # don't merge cases that aren't already for the same animal
+        if source.animal != destination.animal:
+            raise ValueError("can't merge cases for different animals!")
+        super(CaseMergeForm, self).__init__(source, destination, data, **kwargs)
+    
+    def save(self, commit=True):
+        # append source import_notes to destination import_notes
+        self.destination.import_notes += self.source.import_notes
+
+        # prepend source names to destination names
+        if self.destination.names:
+            if self.source.names:
+                self.destination.names = self.source.names + ',' + self.destination.names
+            else:
+                self.source.names = self.destination.names
+        
+        # In cases where souce and destination has YearCaseNumbers in the same
+        # year, Case.save() will handle setting destination.current_yearnumber
+        # to the lower of the two numbers.
+        
+        return super(CaseMergeForm, self).save(commit)
+
     class Meta:
         model = Case
+        # don't even include this field so that a CaseMergeForm can't change the
+        # animal of the destination case
+        exclude = ('animal',)
 
