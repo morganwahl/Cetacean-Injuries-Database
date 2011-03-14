@@ -603,7 +603,10 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
                 if date.year != self.current_yearnumber.year:
                     try:
                         # do we have a previous assignment for our current year?
-                        new_year_case_number = YearCaseNumber.objects.get(case=self, year=date.year)
+                        # note that there may be multiple yearly number
+                        # assignments for the same year and case if another
+                        # case has been merged into this one.
+                        new_year_case_number = YearCaseNumber.objects.filter(case=self, year=date.year).order_by('number')[0]
                     except YearCaseNumber.DoesNotExist:
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
