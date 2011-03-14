@@ -608,13 +608,13 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
                         # add a new entry for this year-case combo
                         new_year_case_number = _new_yearcasenumber()
                     self.current_yearnumber = new_year_case_number
+                    super(Case, self).save(using=using)
             else:
                 # assign a new number
                 self.current_yearnumber = _new_yearcasenumber()
+                super(Case, self).save(using=using)
         
         self.update_names()
-
-        super(Case, self).save(using=using)
 
     save.alters_data = True
 
