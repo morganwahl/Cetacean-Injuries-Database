@@ -438,24 +438,26 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     #    c = kwargs['instance']
     #    c._update_name()
 
+    # TODO We don't need to listen to changes in YearCaseNumber, since that's
+    # all handled withing Case.save(), right?
     # YearCaseNumber fields that can affect Case._current_name
     # YearCaseNumber.year -> Case.current_yearnumber.year
     # YearCaseNumber.number -> Case.current_yearnumber.number
-    @staticmethod
-    def _yearcasenumber_post_save_update_name_handler(sender, **kwargs):
-        # sender should be YearCaseNumber
-
-        if kwargs['created']:
-            # a newly-created animal can't have any references to it, so we
-            # don't need to update anything
-            return
-        
-        ycn = kwargs['instance']
-        # ycn.current should only have one case in it, but we'll loop over it
-        # just in case
-        print "YearCaseNumber post_save"
-        for c in ycn.current.all():
-            c.save()
+    #@staticmethod
+    #def _yearcasenumber_post_save_update_name_handler(sender, **kwargs):
+    #    # sender should be YearCaseNumber
+    #
+    #    if kwargs['created']:
+    #        # a newly-created animal can't have any references to it, so we
+    #        # don't need to update anything
+    #        return
+    #    
+    #    ycn = kwargs['instance']
+    #    # ycn.current should only have one case in it, but we'll loop over it
+    #    # just in case
+    #    print "YearCaseNumber post_save"
+    #    for c in ycn.current.all():
+    #       c.save()
     
     # Observation fields that can affect Case._current_name
     # Observation.case  # ManyToManyField!
@@ -693,11 +695,12 @@ models.signals.post_save.connect(
     receiver= Case._animal_post_save_update_name_handler,
     dispatch_uid= 'case__update_name__animal__post_save',
 )
-models.signals.post_save.connect(
-    sender= YearCaseNumber,
-    receiver= Case._yearcasenumber_post_save_update_name_handler,
-    dispatch_uid= 'case__update_name__yearcasenumber__post_save',
-)
+# see comment above Case._yearcasenumber_post_save_update_name_handler
+#models.signals.post_save.connect(
+#    sender= YearCaseNumber,
+#    receiver= Case._yearcasenumber_post_save_update_name_handler,
+#    dispatch_uid= 'case__update_name__yearcasenumber__post_save',
+#)
 models.signals.post_save.connect(
     sender= Observation,
     receiver= Case._observation_post_save_update_name_handler,
