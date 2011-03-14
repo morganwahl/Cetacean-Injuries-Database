@@ -32,7 +32,7 @@ class AnimalAutocomplete(ModelAutocomplete):
             value=value,
             attrs=attrs,
             custom_html= 'animal_autocomplete_entry',
-            # TODO better was to pass this URL
+            # TODO better way to pass this URL
             extra_js= '''\
             animal_autocomplete_source_url = "%s";
             ''' % reverse('animal_search_json'),
@@ -74,10 +74,10 @@ class AnimalMergeSourceForm(forms.Form):
             widget= AnimalAutocomplete,
             help_text= u"""Choose an animal to merge into this one. That animal's entry will be deleted and references to it will refer to this entry instead.""",
             error_messages= {
-                'required': u"You must select an animal."
+                'required': u"You must select an animal.",
             },
         )
-
+        
 # TODO this is the same as the AnimalForm, just with a different superclass
 class AnimalMergeForm(MergeForm):
     

@@ -127,7 +127,7 @@ class MergeForm(forms.ModelForm):
 
         self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
         self.destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
-        
+    
     def save(self, commit=True):
         # FIXME uncommited saving is uncertain
         if not commit:
