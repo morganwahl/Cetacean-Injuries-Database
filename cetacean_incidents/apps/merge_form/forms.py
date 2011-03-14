@@ -33,18 +33,33 @@ class MergeForm(forms.ModelForm):
         for rel_obj in rel_objs:
             # note that OneToOneFields are also ForeignKeys
             if isinstance(rel_obj.field, models.OneToOneField):
-                # There isn't necessarily another instance at the other end of  
-                # the relation
-                try:
+                # this may be the 'parent_link' field used to implement multi-
+                # table inheritance.
+                if rel_obj.field.rel.parent_link:
+                    # if so, there must not be anything on the other side of
+                    # the relation, since that would mean this instance isn't
+                    # the most specific one
+                    try:
+                        getattr(instance, rel_obj.get_accessor_name())
+                        # TODO not the best error message
+                        raise ValueError("Can't merge instances of non-abstract superclasses unless there is no data for any subclass.")
+                    except ObjectDoesNotExist:
+                        pass
+                else:
                     other_instance = getattr(instance, rel_obj.get_accessor_name())
-                    raise NotImplementedError("merging instances with o2o references to them isn't supported yet.")
-                #    results.append( (rel_obj.model, rel_obj.field, other_instance) )
-                except ObjectDoesNotExist:
-                    pass
+                    results.append((
+                        rel_obj.model,
+                        rel_obj.field,
+                        other_instance,
+                    ))
             else:
                 other_queryset = getattr(instance, rel_obj.get_accessor_name())
                 for other_instance in other_queryset.all():
-                    results.append( (rel_obj.model, rel_obj.field, other_instance) )
+                    results.append((
+                        rel_obj.model,
+                        rel_obj.field,
+                        other_instance,
+                    ))
         
         return tuple(results)
 
@@ -78,6 +93,17 @@ class MergeForm(forms.ModelForm):
         return tuple(results)
     
     def __init__(self, source, destination, data=None, **kwargs):
+        if not isinstance(source, models.Model):
+            raise TypeError("source isn't a Model instance!")
+        if not isinstance(destination, models.Model):
+            raise TypeError("destination isn't a Model instance!")
+            # source can be a superclass of destination, but not the other way
+            # around.
+        if not isinstance(destination, source.__class__):
+            raise TypeError("destination type %s can't have source type %s merged into it!"% (destination.__class__, source.__class__))
+        if source == destination:
+            raise ValueError("can't merge something with itself!")
+        
         super(MergeForm, self).__init__(data, instance=destination, **kwargs)
         self.source = source
         self.destination = destination
