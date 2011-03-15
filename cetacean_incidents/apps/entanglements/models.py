@@ -11,6 +11,8 @@ from cetacean_incidents.apps.dag.models import (
     DAGNode_factory,
 )
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from cetacean_incidents.apps.locations.models import Location
 
 from cetacean_incidents.apps.incidents.models import (
@@ -172,6 +174,9 @@ class Entanglement(Case):
             if cases.count() > 0:
                 raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
 
+guard_deletes(Contact, Entanglement, 'analyzed_by')
+
+
 class BodyLocation(models.Model):
     '''\
     Model for customizable/extensible classification of location on/in an
@@ -297,4 +302,6 @@ class GearBodyLocation(models.Model):
     
     class Meta:
         unique_together = ('observation', 'location')
+
+# TODO should delete of a body-location delete data for that location too?
 

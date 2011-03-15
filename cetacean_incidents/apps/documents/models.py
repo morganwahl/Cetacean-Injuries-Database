@@ -12,6 +12,8 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from form_fields import DirectoryPathField as DirectoryPathFormField
 from utils import rand_string
 
@@ -108,6 +110,9 @@ class Document(Specificable):
     class Meta:
         ordering = ('document_type', 'id')
 
+guard_deletes(DocumentType, Document, 'document_type')
+guard_deletes(Documentable, Document, 'attached_to')
+
 _uploads_dir_name = 'uploads'
 _uploads_dir = path.join(_storage_dir, _uploads_dir_name)
 _checkdir(_uploads_dir)
@@ -188,6 +193,8 @@ class UploadedFile(Document):
 
     class Meta:
         ordering = ('document_type', 'name', 'id')
+
+guard_deletes(User, UploadedFile, 'uploader')
 
 _repos_dir_name = 'repositories'
 _repos_dir = path.join(_storage_dir, _repos_dir_name)

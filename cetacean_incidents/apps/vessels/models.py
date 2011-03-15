@@ -4,6 +4,8 @@ from cetacean_incidents.apps.contacts.models import Contact
 
 from cetacean_incidents.apps.countries.models import Country
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 class VesselTag(models.Model):
     name = models.CharField(
         max_length= 512,
@@ -69,4 +71,7 @@ class VesselInfo(models.Model):
             ret += ", %s" % self.flag.iso
         ret += ')'
         return ret
+
+guard_deletes(Contact, VesselInfo, 'contact')
+guard_deletes(Country, VesselInfo, 'flag')
 

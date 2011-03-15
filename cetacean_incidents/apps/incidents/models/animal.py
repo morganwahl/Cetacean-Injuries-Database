@@ -5,6 +5,8 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from cetacean_incidents.apps.documents.models import Documentable
 
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -192,4 +194,5 @@ class Animal(Documentable, Importable):
         app_label = 'incidents'
         ordering = ('field_number', 'name', 'id')
 
+guard_deletes(Taxon, Animal, 'determined_taxon')
 

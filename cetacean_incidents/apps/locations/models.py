@@ -8,6 +8,8 @@ from django.contrib.localflavor.us.models import USStateField
 
 from cetacean_incidents.apps.countries.models import Country
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from utils import (
     dec_to_dms,
     dms_to_dec,
@@ -140,4 +142,6 @@ class Location(models.Model):
             return unicode(self.coordinates)
         
         return u"<#%s>" % unicode(self.pk)
+
+guard_deletes(Country, Location, 'country')
         

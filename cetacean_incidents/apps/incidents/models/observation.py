@@ -13,6 +13,8 @@ from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from cetacean_incidents.apps.documents.models import Documentable
 
 from cetacean_incidents.apps.locations.models import Location
@@ -396,6 +398,15 @@ class Observation(Documentable, Importable):
     class Meta:
         app_label = 'incidents'
         ordering = ['datetime_observed', 'datetime_reported', 'id']
+
+# prevent deletes from cascading to an Observation
+for m, rm, fn in (
+    (Animal, Observation, 'animal'),
+    (Contact, Observation, 'observer'),
+    (Contact, Observation, 'reporter'),
+    (Taxon, Observation, 'taxon'),
+):
+    guard_deletes(m, rm, fn)
 
 class ObservationExtension(models.Model):
     '''\

@@ -1,5 +1,7 @@
 from django.db import models
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 class TaxonManager(models.Manager):
 
     def descendants(self, taxon):
@@ -229,4 +231,6 @@ class Taxon(models.Model):
 
     def __unicode__(self):
         return u'%s %s' % (self.name, self.get_rank_display())
+
+guard_deletes(Taxon, Taxon, 'supertaxon')
 

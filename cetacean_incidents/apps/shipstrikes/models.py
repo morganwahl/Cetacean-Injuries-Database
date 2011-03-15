@@ -2,10 +2,14 @@ from django.core.urlresolvers import reverse
 from django.db import models
 
 from cetacean_incidents.apps.contacts.models import Contact
+
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from cetacean_incidents.apps.incidents.models import (
     Case,
     ObservationExtension,
 )
+
 from cetacean_incidents.apps.vessels.models import VesselInfo
 
 class StrikingVesselInfo(VesselInfo):
@@ -48,6 +52,8 @@ class StrikingVesselInfo(VesselInfo):
         editable= False, # note that this only means it's not editable in the admin interface
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
+
+guard_deletes(Contact, StrikingVesselInfo, 'captain')
     
 class Shipstrike(Case):
 

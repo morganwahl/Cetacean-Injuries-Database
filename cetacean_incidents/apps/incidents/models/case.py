@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 
+from cetacean_incidents.apps.delete_guard import guard_deletes
+
 from cetacean_incidents.apps.documents.models import Documentable
 
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -652,6 +654,8 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         app_label = 'incidents'
         ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
 
+guard_deletes(Animal, Case, 'animal')
+
 class YearCaseNumber(models.Model):
     '''\
     A little table to do the bookkeeping when assigning yearly-numbers to cases.
@@ -682,6 +686,9 @@ class YearCaseNumber(models.Model):
     class Meta:
         app_label = 'incidents'
         ordering = ('year', 'number')
+
+guard_deletes(YearCaseNumber, Case, 'current_yearnumber')
+guard_deletes(Case, YearCaseNumber, 'case')
 
 models.signals.post_save.connect(
     sender= Taxon,
