@@ -16,14 +16,9 @@ from ..models import (
 class LengthWidget(forms.MultiWidget):
     
     def __init__(self, attrs=None):
-        ti_attrs = {'size':'10'}
-        other_attrs = None
-        if not attrs is None:
-            ti_attrs.update(attrs)
-            other_attrs = attrs
         widgets = (
-            forms.TextInput(attrs=ti_attrs),
-            forms.Select(attrs=other_attrs,
+            forms.TextInput(attrs={'size':'10'}),
+            forms.Select(
                 choices= (
                     ('cm', u'centimeters'),
                     ('in', u'inches'),
@@ -31,7 +26,7 @@ class LengthWidget(forms.MultiWidget):
                     ('m',  u'meters'),
                 ),
             ),
-            forms.Select(attrs=other_attrs,
+            forms.Select(
                 choices= (
                     ('0', u'auto'),
                     ('1', u'1'),
