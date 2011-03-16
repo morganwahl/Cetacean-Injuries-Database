@@ -66,14 +66,19 @@ class CaseMergeForm(MergeForm):
         # don't merge cases that aren't already for the same animal
         if source.animal != destination.animal:
             raise ValueError("can't merge cases for different animals!")
+
+        # TODO SI&M !
+        if destination.si_n_m_info or source.si_n_m_info:
+            raise NotImplementedError("Can't yet merge cases with Serious Injury and Mortality info.")
+        
         super(CaseMergeForm, self).__init__(source, destination, data, **kwargs)
     
     def save(self, commit=True):
         # append source import_notes to destination import_notes
         self.destination.import_notes += self.source.import_notes
 
-        # TODO SI&M!
-
+        # TODO SI&M !
+       
         # prepend source names to destination names
         if self.destination.names:
             if self.source.names:
