@@ -15,6 +15,7 @@ response = c.post(
     follow=True,
     data= {
         'csv_file': csv_file,
+        #'test_run': True,
     },
 )
 csv_file.close()
@@ -24,7 +25,4 @@ pprint({
     'redirect_chain': response.redirect_chain,
     #'context': response.context,
 })
-html = open('test_import_results.html', 'wb')
-html.write(response.content)
-html.close()
 

@@ -3,12 +3,12 @@ from django import forms
 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+from cetacean_incidents.apps.merge_form.forms import MergeForm
+
 from models import (
     Contact,
     Organization,
 )
-
-from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 class EmailInput(forms.TextInput):
     '''\
