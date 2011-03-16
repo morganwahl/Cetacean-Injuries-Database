@@ -18,7 +18,7 @@ class FlagSelect(forms.Select):
     '''
     
     class Media:
-        js = (settings.JQUERY_FILE,)
+        js = (settings.JQUERY_FILE, 'flag_select.js')
     
     def render(self, name, value, attrs=None, choices=()):
         if value is None:
@@ -30,23 +30,12 @@ class FlagSelect(forms.Select):
         output = [ '''\
         <script type="text/javascript">
             jQuery(function(){
-                var select = $("#%(id)s > select");
-                select.change(function(event){
-                    // remove the old flag first
-                    $("#%(id)s > img.flag").remove()
-                    if ( select.val() == '' )
-                        return;
-                    var icon_url = "%(media)s" + select.val().toLowerCase()  + ".png";
-                    // set the margin to 1/4 the image size
-                    $("#%(id)s").prepend("<img style=\\"margin: 4px;\\" class=\\"flag\\" src=\\"" + icon_url + "\\">");
-                });
-                // trigger the event to load the flag for the initial value.
-                select.change();
+                FlagSelect.init("%(id)s", "%(media)s");
             });
         </script>
         ''' % {
             'id': attrs ['id'],
-            'media': reverse('site-media', kwargs={'path': 'flags/'}),
+            'media': settings.MEDIA_URL,
         }]
 
         span_attrs = self.build_attrs(attrs)
