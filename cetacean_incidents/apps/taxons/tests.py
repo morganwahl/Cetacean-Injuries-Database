@@ -39,6 +39,10 @@ class TaxonManagerTestCase(TestCase):
         self.orang = Taxon.objects.get(name='Ponginae', rank=.8)
 
     def tearDown(self):
+        # remove supertaxa or we'll get a CascadedDeleteError
+        for t in self.apes:
+            t.supertaxon = None
+            t.save()
         for t in self.apes:
             Taxon.delete(t)
 
