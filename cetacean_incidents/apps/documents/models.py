@@ -103,9 +103,9 @@ class Document(Specificable):
         return ('view_document', (self.id,))
     
     def __unicode__(self):
-        if self.id:
-            return 'document #{0.id:06}'.format(self)
-        return 'document (no ID)'
+        id_string = '#{0.id:06}'.format(self) if self.id else '(no ID)'
+        doctype_string = unicode(self.document_type) if self.document_type else u'document'
+        return u'%s %s' % (doctype_string, id_string)
     
     class Meta:
         ordering = ('document_type', 'id')
