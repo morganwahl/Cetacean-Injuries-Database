@@ -94,6 +94,19 @@ class CaseTestCase(TestCase):
         self.assertEquals(c._current_name(), '2011#%d (2011) Case of Unknown taxon' % c.current_yearnumber.number)
         self.assertEquals(c.name, c._current_name())
         
+        # removing an obs still leaves behind the old name
+        obs.cases.remove(c)
+        self.assertEquals(c._current_name(), None)
+        self.assertEquals(c.name, '2011#%d (2011) Case of Unknown taxon' % c.current_yearnumber.number)
+        
+        obs.datetime_observed = UncertainDateTime(2010)
+        obs.save()
+        obs.cases.add(c)
+        # update c
+        c = Case.objects.get(id=c.id)
+        self.assertEquals(c._current_name(), '2010#%d (2010) Case of Unknown taxon' % c.current_yearnumber.number)
+        self.assertEquals(c.name, c._current_name())
+        
         obs.datetime_observed = UncertainDateTime(2011, 7)
         obs.save()
         c = Case.objects.get(id=c.id)
