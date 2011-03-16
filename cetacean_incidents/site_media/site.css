@@ -227,6 +227,11 @@ div.import_notes table.imported_entry th {
     white-space: pre-wrap;
 }
 
+/* set the margin to 1/4 the image size */
+img.flag {
+    margin: 4px; /* for flag images that are 16x16 */
+}
+
 /******* forms ******/
 
 div.field_wrapper {
