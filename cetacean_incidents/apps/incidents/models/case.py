@@ -354,21 +354,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return frozenset(self._get_names_list())
     names_set = property(_get_names_set)
     
-    def update_names(self):
-        #print "called update_names"
-        # don't do anything if the case hasn't been saved yet
-        if not self.id:
-            return
-        
-        new_name = self._current_name()
-        if not new_name is None and new_name != self.name:
-            if self.names is None or self.names == '':
-                self.names = new_name
-            else:
-                self.names += ',' + new_name
-
-        return
-    
     ### NOTE! none of these handler account for changes to case.animal,
     # obsevation.cases or observation.animal
     
@@ -619,7 +604,15 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
                 self.current_yearnumber = _new_yearcasenumber()
                 super(Case, self).save(using=using)
         
-        self.update_names()
+        # don't do anything if the case hasn't been saved yet
+        if self.id:
+            new_name = self._current_name()
+            if not new_name is None and new_name != self.name:
+                if self.names is None or self.names == '':
+                    self.names = new_name
+                else:
+                    self.names += ',' + new_name
+                super(Case, self).save(using=using)
 
     save.alters_data = True
 
