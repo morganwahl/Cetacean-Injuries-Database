@@ -1,0 +1,10 @@
+<tr{% if differ %} class="differ"{% endif %}>
+    {{ destination_cell }}
+    <td>
+        {% with field as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {{ source_cell }}
+</tr>
+

@@ -1,5 +1,5 @@
 {% extends "merge_form/merge.html" %}
-{% load generic_field_display %}
+{% load merge_display %}
 
 {% comment %}
 This template is an amalgam of editing and viewing.
@@ -11,68 +11,12 @@ This template is an amalgam of editing and viewing.
 {% endblock %}
 
 {% block form_rows %}
-<tr>
-    {% display_cell destination 'name' %}
-    <td>
-        {% with form.name as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'name' %}
-</tr>
-<tr>
-    {% display_cell destination 'sort_name' %}
-    <td>
-        {% with form.sort_name as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'sort_name' %}
-</tr>
-<tr>
-    {% display_yesnounk_cell destination 'person' %}
-    <td>
-        {% with form.person as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_yesnounk_cell source 'person' %}
-</tr>
-<tr>
-    {% display_cell destination 'phone' %}
-    <td>
-        {% with form.phone as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'phone' %}
-</tr>
-<tr>
-    {% display_cell destination 'email' %}
-    <td>
-        {% with form.email as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'email' %}
-</tr>
-<tr>
-    {% display_bigtext_cell destination 'address' %}
-    <td>
-        {% with form.address as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_bigtext_cell source 'address' %}
-</tr>
-<tr>
-    {% display_bigtext_cell destination 'notes' %}
-    <td>
-        {% with form.notes as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_bigtext_cell source 'notes' %}
-</tr>
+{% display_merge_row destination source form 'name' %}
+{% display_merge_row destination source form 'sort_name' %}
+{% display_merge_yesnounk_row destination source form 'person' %}
+{% display_merge_row destination source form 'phone' %}
+{% display_merge_row destination source form 'email' %}
+{% display_merge_row destination source form 'address' %}
+{% display_merge_row destination source form 'notes' %}
 {% endblock %}
 

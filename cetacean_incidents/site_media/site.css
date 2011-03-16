@@ -130,7 +130,7 @@ ins, .added {
     border: thin dashed #73d216; /* chameleon 2 */
     color: #274c03; /* chameleon 3 at half value (30% absolute val.) */
 }
-.changed {
+.changed, .differ {
     background-color: #fcf08d; /* butter 1, at 2/3 saturation (44% absolute sat.) */
     border: thin dashed #edd400; /* butter 2 */
     color: #614f00;  /* butter 3 at half value (38% absolute val.) */

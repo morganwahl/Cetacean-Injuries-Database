@@ -1,5 +1,5 @@
 {% extends "merge_form/merge.html" %}
-{% load generic_field_display %}
+{% load merge_display %}
 
 {% comment %}
 This template is an amalgam of editing and viewing.
@@ -12,111 +12,15 @@ This template is an amalgam of editing and viewing.
 {% endblock %}
 
 {% block form_rows %}
-<tr>
-    {% display_cell destination 'name' %}
-    <td>
-        {% with form.name as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'name' %}
-</tr>
-<tr>
-    {% display_cell destination 'field_number' %}
-    <td>
-        {% with form.field_number as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'field_number' %}
-</tr>
-<tr>
-    <td>
-        {% if destination.determined_taxon %}
-        {{ destination.determined_taxon }} ({{ destination.determined_taxon.common_names }})
-        {% else %}
-        <i>undetermined</i>{% if destination.probable_taxon %} (probably <i>{{ destination.probable_taxon }}</i>){% endif %}
-        {% endif %}
-    </td>
-    <td>
-    {% with form.determined_taxon as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    <td>
-        {% if source.determined_taxon %}
-        {{ source.determined_taxon }} ({{ source.determined_taxon.common_names }})
-        {% else %}
-        <i>undetermined</i>{% if source.probable_taxon %} (probably <i>{{ source.probable_taxon }}</i>){% endif %}
-        {% endif %}
-    </td>
-</tr>
-<tr>
-    <td>
-        {% if destination.determined_gender %}
-        {{ destination.get_determined_gender_display|default:"unknown" }}
-        {% else %}
-        <i>undetermined</i>{% if destination.probable_gender %} (probably {{ destination.get_probable_gender_display }}){% endif %}
-        {% endif %}
-    </td>
-    <td>
-    {% with form.determined_gender as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    <td>
-        {% if source.determined_gender %}
-        {{ source.get_determined_gender_display|default:"unknown" }}
-        {% else %}
-        <i>undetermined</i>{% if source.probable_gender %} (probably {{ source.get_probable_gender_display }}){% endif %}
-        {% endif %}
-    </td>
-</tr>
-<tr>
-    {% display_cell destination "determined_dead_before" %}
-    <td>
-    {% with form.determined_dead_before as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    {% display_cell source "determined_dead_before" %}
-</tr>
-<tr>
-    {% display_yesunk_cell destination 'partial_necropsy' %}
-    <td>
-    {% with form.partial_necropsy as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    {% display_yesunk_cell source 'partial_necropsy' %}
-</tr>
-<tr>
-    {% display_yesunk_cell destination 'necropsy' %}
-    <td>
-    {% with form.necropsy as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    {% display_yesunk_cell source 'necropsy' %}
-</tr>
-<tr>
-    {% display_yesnounk_cell destination 'carcass_disposed' %}
-    <td>
-    {% with form.carcass_disposed as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    {% display_yesnounk_cell source 'carcass_disposed' %}
-</tr>
-<tr>
-    {% display_cell destination 'cause_of_death' %}
-    <td>
-    {% with form.cause_of_death as f %}
-    {% include "labeled_field.html" %}
-    {% endwith %}
-    </td>
-    {% display_cell source 'cause_of_death' %}
-</tr>
+{% display_merge_row destination source form 'name' %}
+{% display_merge_row destination source form 'field_number' %}
+{% display_merge_taxon_row destination source form 'determined_taxon' %}
+{% display_merge_gender_row destination source form 'determined_gender' %}
+{% display_merge_row destination source form 'determined_dead_before' %}
+{% display_merge_yesunk_row destination source form 'partial_necropsy' %}
+{% display_merge_yesunk_row destination source form 'necropsy' %}
+{% display_merge_yesnounk_row destination source form 'carcass_disposed' %}
+{% display_merge_row destination source form 'cause_of_death' %}
 <tr>
     <td>
         {% with destination.import_notes as notes %}
