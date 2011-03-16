@@ -2,12 +2,12 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django import forms
 
+from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
+
 from cetacean_incidents.apps.jquery_ui.widgets import (
     Datepicker,
     ModelAutocomplete,
 )
-
-from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
@@ -79,7 +79,7 @@ class AnimalMergeSourceForm(forms.Form):
         )
         
 # TODO this is the same as the AnimalForm, just with a different superclass
-class AnimalMergeForm(MergeForm):
+class AnimalMergeForm(DocumentableMergeForm):
     
     # ModelForm won't fill in all the handy args for us if we specify our own
     # field

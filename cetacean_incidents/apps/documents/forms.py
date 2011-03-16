@@ -1,7 +1,10 @@
 from django import forms
 
+from cetacean_incidents.apps.merge_form.forms import MergeForm
+
 from models import (
     Document,
+    Documentable,
     RepositoryFile,
     UploadedFile,
 )
@@ -64,3 +67,27 @@ class NewUploadedFileForm(forms.ModelForm):
         model = UploadedFile
         exclude = NewDocumentForm.base_fields.keys()
 
+# Not intended for actual instantiation, just puts the duplicate-document 
+# removal code in one place
+class DocumentableMergeForm(MergeForm):
+
+    def save(self, commit=True):
+        result = super(DocumentableMergeForm, self).save(commit)
+        
+        # remove duplicate documents that don't have an uploaded file
+        doc_types_seen = set()
+        for d in result.documents.all():
+            d = d.specific_instance()
+            # only handle vanilla Documents
+            if not isinstance(d, Document):
+                continue
+            if d.document_type in doc_types_seen:
+                d.delete()
+            else:
+                doc_types_seen.add(d.document_type)
+        
+        return result
+
+    class Meta:
+        model = Documentable
+        
