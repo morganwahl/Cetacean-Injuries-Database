@@ -1,5 +1,7 @@
 from django import forms
 
+from cetacean_incidents.apps.documents.models import Document
+
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
@@ -90,7 +92,21 @@ class CaseMergeForm(MergeForm):
         # year, Case.save() will handle setting destination.current_yearnumber
         # to the lower of the two numbers.
         
-        return super(CaseMergeForm, self).save(commit)
+        result = super(CaseMergeForm, self).save(commit)
+        
+        # remove duplicate documents that don't have an uploaded file
+        doc_types_seen = set()
+        for d in result.documents.all():
+            d = d.specific_instance()
+            # only handle vanilla Documents
+            if not isinstance(d, Document):
+                continue
+            if d.document_type in doc_types_seen:
+                d.delete()
+            else:
+                doc_types_seen.add(d.document_type)
+        
+        return result
 
     class Meta:
         model = Case
