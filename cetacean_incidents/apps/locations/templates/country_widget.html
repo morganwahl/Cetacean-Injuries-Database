@@ -1,0 +1,12 @@
+<div{{ attrs }} class="country_widget">
+    <script type="text/javascript">
+        $().ready(function(){
+            RadioHider.init("{{ radio_name }}", {
+                "{{ other_value }}": "{{ select_id }}"
+            });
+        });
+    </script>
+    {{ radio_widget }}
+    {{ select_widget }}
+</div>
+

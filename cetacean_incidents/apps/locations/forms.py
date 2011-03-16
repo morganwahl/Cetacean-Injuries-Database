@@ -5,6 +5,7 @@ from django import forms
 
 from models import Location
 from utils import dms_to_dec
+from widgets import CountryWidget
 
 class LocationForm(forms.ModelForm):
     
@@ -170,5 +171,6 @@ class NiceLocationForm(LocationForm):
         exclude = ('roughness',)
         widgets = {
             'coordinates': forms.HiddenInput,
+            'country': CountryWidget,
         }
 
