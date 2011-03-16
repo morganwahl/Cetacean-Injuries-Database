@@ -54,6 +54,8 @@ This template is an amalgam of editing and viewing.
     </td>
     {% display_yesnounk_cell source 'ole_investigation' %}
 </tr>
+{% block additional_form_rows %}
+{% endblock %}
 <tr>
     <td>
         {% with destination.import_notes as notes %}

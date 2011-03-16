@@ -8,6 +8,36 @@
 {% endwith %}
 {% endblock %}
 
+{% block merge_link %}
+{% if perms.incidents.change_case and perms.incidents.delete_case %}
+{% if perms.entanglements.change_entanglement and perms.entanglements.delete_entanglement %}
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another case into this one...</a>
+    </div>
+    <form action="{% url entanglement_merge case.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {% if case.animal.case_set.count > 1 %}
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+            {% else %}
+            There are no other cases for this animal.
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endif %}
+{% endblock merge_link %}
+
 {% block case_fields %}
 {{ block.super }}
 {% display_div case "nmfs_id" %}

@@ -30,7 +30,10 @@ from cetacean_incidents.apps.contacts.forms import (
     OrganizationForm,
 )
 
-from cetacean_incidents.apps.incidents.forms import AnimalForm
+from cetacean_incidents.apps.incidents.forms import (
+    AnimalForm,
+    CaseMergeSourceForm,
+)
 from cetacean_incidents.apps.incidents.models import (
     Animal,
     Case,
@@ -58,6 +61,7 @@ from models import (
 from forms import (
     AddEntanglementForm,
     EntanglementForm,
+    EntanglementMergeForm,
     EntanglementObservationForm,
     GearOwnerForm,
 )
@@ -89,6 +93,21 @@ Entanglement.extra_tab_class = EntanglementTab
 
 @login_required
 def entanglement_detail(request, case_id, extra_context):
+    
+    case = Entanglement.objects.get(id=case_id)
+    
+    # the entanglement_detail.html template needs jQuery
+    if not 'media' in extra_context:
+        extra_context['media'] = Media()
+
+    if request.user.has_perms(('incidents.change_entanglement', 'incidents.delete_entanglement')):
+        merge_form = CaseMergeSourceForm(destination=case)
+        extra_context['merge_form'] = merge_form
+        extra_context['media'] += merge_form.media
+        extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
+
+    extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
+
     return generic_views.object_detail(
         request,
         object_id= case_id,
@@ -343,3 +362,47 @@ def get_entanglementobservation_view_data(ent_oe):
         'tabs': [tab],
     }
     
+@login_required
+@permission_required('incidents.change_entanglement')
+@permission_required('incidents.delete_entanglement')
+def entanglement_merge(request, destination_id, source_id=None):
+    #pprint(('entanglement_merge', destination_id, source_id))
+    # the "source" case will be deleted and references to it will be change to
+    # the "destination" case
+    
+    destination = Entanglement.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = CaseMergeSourceForm(destination, request.GET)
+        if not merge_form.is_valid():
+            return redirect('entanglement_detail', destination.id)
+        source = merge_form.cleaned_data['source'].specific_instance()
+    else:
+        source = Case.objects.get(id=source_id).specific_instance()
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = EntanglementMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('entanglement_detail', destination.id)
+    else:
+        form = EntanglementMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'entanglements/entanglement_merge.html',
+        {
+            'object_name': 'case',
+            'object_name_plural': 'cases',
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'media': form.media,
+        },
+        context_instance= RequestContext(request),
+    )
+

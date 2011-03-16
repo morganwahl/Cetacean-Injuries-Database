@@ -40,6 +40,7 @@
     {% endblock %}
 </div>
 {% endif %}
+{% block merge_link %}
 {% if perms.incidents.change_case and perms.incidents.delete_case %}
 <script type="text/javascript">
     jQuery(document).ready(function(){
@@ -65,6 +66,7 @@
     </form>
 </div>
 {% endif %}
+{% endblock merge_link %}
 {% with case.tag_set.all as tags %}
 {% include "tags/tags_detail_include.html" %}
 {% endwith %}

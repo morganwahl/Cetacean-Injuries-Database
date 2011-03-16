@@ -14,6 +14,7 @@ from cetacean_incidents.apps.dag.forms import DAGField
 
 from cetacean_incidents.apps.incidents.forms import (
     CaseForm,
+    CaseMergeForm,
     SubmitDetectingForm,
 )
 from cetacean_incidents.apps.incidents.models import (
@@ -286,4 +287,41 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
             case_ids = cases.values_list('id', flat=True).order_by('id')
             raise forms.ValidationError("Multiple cases have that NMFS ID. Their local-IDs are: %s" % ', '.join(map(unicode, case_ids)))
         return cases[0]
+
+class EntanglementMergeForm(CaseMergeForm):
+    
+    def __init__(self, source, destination, data=None, **kwargs):
+        # TODO gear owner info!
+        if destination.gear_owner_info:
+            raise NotImplementedError("can't yet merge entanglement cases with gear-owner info.")
+        if isinstance(source, Entanglement):
+            if source.gear_owner_info:
+                raise NotImplementedError("can't yet merge entanglement cases with gear-owner info.")
+        
+        super(EntanglementMergeForm, self).__init__(source, destination, data, **kwargs)
+    
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('gear_types')
+    gear_types = DAGField(
+        queryset= GearType.objects.all(),
+        required= _f.blank != True,
+        help_text= 'selecting a type implies the ones above it in the hierarchy',
+        label= _f.verbose_name.capitalize(),
+    )
+
+    def save(self, commit=True):
+        # TODO gear owner info!
+        
+        return super(EntanglementMergeForm, self).save(commit)
+
+    class Meta:
+        model = Entanglement
+        # don't even include this field so that an EntanglementMergeForm can't 
+        # change the animal of the destination case
+        exclude = ('animal',)
+        widgets = {
+            'analyzed_date': Datepicker,
+        }
 

@@ -1,0 +1,106 @@
+{% extends "incidents/case_merge.html" %}
+{% load generic_field_display %}
+
+{% comment %}
+This template is an amalgam of editing and viewing.
+{% endcomment %}
+
+{% block additional_form_rows %}
+<tr>
+    {% display_cell destination 'nmfs_id' %}
+    <td>
+        {% with form.nmfs_id as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    {% display_cell source 'nmfs_id' %}
+    {% endif %}
+</tr>
+<tr>
+    {% display_cell destination 'gear_fieldnumber' %}
+    <td>
+        {% with form.gear_fieldnumber as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    {% display_cell source 'gear_fieldnumber' %}
+    {% endif %}
+</tr>
+<tr>
+    {% display_yesnounk_cell destination 'gear_analyzed' %}
+    <td>
+        {% with form.gear_analyzed as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    {% display_yesnounk_cell source 'gear_analyzed' %}
+    {% endif %}
+</tr>
+<tr>
+    {% display_cell destination 'analyzed_date' %}
+    <td>
+        {% with form.analyzed_date as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    {% display_cell source 'analyzed_date' %}
+    {% endif %}
+</tr>
+<tr>
+    {% display_cell destination 'analyzed_by' %}
+    <td>
+        {% with form.analyzed_by as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    {% display_cell source 'analyzed_by' %}
+    {% endif %}
+</tr>
+<tr>
+    <td>
+        <span class="fieldname">gear types:</span>
+        <ul>
+            {% for geartype in destination.gear_types.all %}
+            <li>{{ geartype }}</li>
+            {% endfor %}
+        </ul>
+        {% if destination.implied_gear_types %}
+        <i>implied gear types:</i>
+        <ul>
+            {% for geartype in destination.implied_gear_types %}
+            <li>{{ geartype }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </td>
+    <td>
+        {% with form.gear_types as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% if source.case_type = "Entanglement" %}
+    <td>
+        <span class="fieldname">gear types:</span>
+        <ul>
+            {% for geartype in source.gear_types.all %}
+            <li>{{ geartype }}</li>
+            {% endfor %}
+        </ul>
+        {% if source.implied_gear_types %}
+        <i>implied gear types:</i>
+        <ul>
+            {% for geartype in source.implied_gear_types %}
+            <li>{{ geartype }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+    </td>
+    {% endif %}
+</tr>
+{% endblock %}
+
