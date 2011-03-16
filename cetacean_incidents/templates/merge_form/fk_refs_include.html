@@ -1,0 +1,16 @@
+{% if fk_refs %}
+This {{ object_name }} is referenced by:
+<ul>
+    {% for other_model, other_instance_dict in fk_refs.items %}
+    <li>
+        <b>{{ other_model }}</b>
+        <ul>
+            {% for other_instance, fields in other_instance_dict.items %}
+            <li><a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ fields|join:", " }}</li>
+            {% endfor %}
+        </ul>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+

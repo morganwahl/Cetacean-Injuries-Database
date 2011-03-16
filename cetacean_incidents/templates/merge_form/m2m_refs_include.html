@@ -1,0 +1,9 @@
+{% if m2m_refs %}
+This {{ object_name }} is among the references in:
+<ul>
+    {% for other_model, other_field, other_instance in m2m_refs %}
+    <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+

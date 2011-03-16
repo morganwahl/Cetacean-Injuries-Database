@@ -23,11 +23,20 @@ class MergeForm(forms.ModelForm):
     def _get_fk_refs(cls, instance):
         '''
         Get all the ForeignKey and OneToOne references _to_ an instance. 
-        Returns a tuple of triples of the form: (<other model>, <other field>, 
-        <other instance>).
+        Returns a dict like {<other model>: {<other instance primary key>: [<other fields>]}}
         '''
         
-        results = []
+        results = {}
+        def _results_add(other_model, other_instance, other_field):
+            # It's important to store only the primary key since we 
+            # don't want to have multiple in-memory instance of the same
+            # object in the database
+            pk = other_instance.pk
+            if not other_model in results:
+                results[other_model] = {}
+            if not pk in results[other_model]:
+                results[other_model][pk] = []
+            results[other_model][pk].append(other_field)        
         
         rel_objs = instance._meta.get_all_related_objects()
         for rel_obj in rel_objs:
@@ -46,29 +55,21 @@ class MergeForm(forms.ModelForm):
                     except ObjectDoesNotExist:
                         pass
                 else:
-                    other_instance = getattr(instance, rel_obj.get_accessor_name())
-                    results.append((
-                        rel_obj.model,
-                        rel_obj.field,
-                        other_instance,
-                    ))
+                    other_instance_pk = getattr(instance, rel_obj.get_accessor_name())
+                    _results_add(rel_obj.model, other_instance, rel_obj.field)
             else:
                 other_queryset = getattr(instance, rel_obj.get_accessor_name())
                 for other_instance in other_queryset.all():
-                    results.append((
-                        rel_obj.model,
-                        rel_obj.field,
-                        other_instance,
-                    ))
+                    _results_add(rel_obj.model, other_instance, rel_obj.field)
         
-        return tuple(results)
+        return results
 
     @classmethod
     def _get_m2m_refs(cls, instance):
         '''
         Get all the ManyToManyField references _to_ an instance. Returns a 
         tuple of triples of the form: (<other Model>, <other field>, 
-        <RelatedManager of other instances>).
+        <other instance primary key>).
         '''
         
         related_objects = instance._meta.get_all_related_many_to_many_objects()
@@ -79,7 +80,7 @@ class MergeForm(forms.ModelForm):
                 results.append((
                     ro.model,
                     ro.field,
-                    other_instance,
+                    other_instance.pk,
                 ))
         
         return tuple(results)
@@ -128,24 +129,64 @@ class MergeForm(forms.ModelForm):
         self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
         self.destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
     
+    @staticmethod
+    def _get_fk_refs_display(fk_refs):
+        result = {}
+        for model, model_dict in fk_refs.items():
+            new_model_dict = {}
+            for pk, fields in model_dict.items():
+                new_model_dict[model.objects.get(pk=pk)] = map(lambda f: f.verbose_name, fields)
+            if len(new_model_dict) == 1:
+                model_name = model._meta.verbose_name
+            else:
+                model_name = model._meta.verbose_name_plural
+            result[model_name] = new_model_dict
+        return result
+    
+    @property
+    def source_fk_refs_display(self):
+        return self._get_fk_refs_display(self.source_fk_refs)
+    
+    @property
+    def destination_fk_refs_display(self):
+        return self._get_fk_refs_display(self.destination_fk_refs)
+
+    @staticmethod
+    def _get_m2m_refs_display(m2m_refs):
+        return map(
+            lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[0].objects.get(pk=t[2])),
+            m2m_refs
+        )
+
+    @property
+    def source_m2m_refs_display(self):
+        return self._get_m2m_refs_display(self.source_m2m_refs)
+    
+    @property
+    def destination_m2m_refs_display(self):
+        return self._get_m2m_refs_display(self.destination_m2m_refs)
+
     def save(self, commit=True):
         # FIXME uncommited saving is uncertain
         if not commit:
             raise NotImplementedError("uncommited saving of MergeForms is not yet implemented")
         
-        for (other_model, other_field, other_instance) in self.source_m2m_refs:
+        for (other_model, other_field, other_instance_pk) in self.source_m2m_refs:
+            other_instance = other_model.objects.get(pk=other_instance_pk)
             accessor = getattr(other_instance, other_field.name)
             # don't remove source; the references to it will disappear when it
             # is deleted.
             #accessor.remove(self.source)
             accessor.add(self.destination)
-
-        for (other_model, other_field, other_instance) in self.source_fk_refs:
-            # note that OneToOneFields are also ForeignKeys
-            if isinstance(other_field, models.OneToOneField):
-                raise NotImplementedError("saving o2o references to the merged instance isn't implemented yet")
-            else:
-                setattr(other_instance, other_field.name, self.destination)
+        
+        for other_model, model_dict in self.source_fk_refs.items():
+            for other_instance_pk, fields in model_dict.items():
+                other_instance = other_model.objects.get(pk=other_instance_pk)
+                for f in fields:
+                    if isinstance(f, models.OneToOneField):
+                        raise NotImplementedError("saving o2o references to the merged instance isn't implemented yet")
+                    else:
+                        setattr(other_instance, f.name, self.destination)
                 other_instance.save()
         
         self.source.delete()

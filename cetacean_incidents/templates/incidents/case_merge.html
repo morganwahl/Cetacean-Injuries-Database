@@ -1,140 +1,77 @@
-{% extends "detail.html" %}
+{% extends "merge_form/merge.html" %}
 {% load generic_field_display %}
 
 {% comment %}
 This template is an amalgam of editing and viewing.
 {% endcomment %}
 
-{% block title %}{{ block.super }}: {{ destination }} [merging with {{ source }}] {% endblock %}
-
 {% block ids-dl %}
 <dt><b>case</b> names</dt><dd>merging {{ source.name|default:"<i>no name</i>" }} into {{ destination.name|default:"<i>no name</i>" }}</dd>
 <dt><b>case</b> local IDs</dt><dd>merging {{ source.id }} into {{ destination.id }}</dd>
 {% endblock %}
 
-{% block header %}
-<h2>{{ destination }} [merging with {{ source }}]</h2>
-{% endblock %}
-
-{% block content %}
-<pre>
-{{ form.errors }}
-</pre>
-<form action="" method="post">
-    {% csrf_token %}
-    <table class="section bordered">
-        <tr>
-            <td>{{ destination.id }}</td>
-            <td>{{ form.non_field_errors }}</td>
-            <td>{{ source.id }}</td>
-    	</tr>
-        <tr>
-            {% display_cell destination 'animal' %}
-            <td>
-                Both cases should already have the same animal.
-            </td>
-            {% display_cell source 'animal' %}
-    	</tr>
-        <tr>
-            {% display_chosen_cell destination 'valid' %}
-            <td>
-                {% with form.valid as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-            </td>
-            {% display_chosen_cell source 'valid' %}
-    	</tr>
-        <tr>
-            {% display_cell destination 'happened_after' %}
-            <td>
-                {% with form.happened_after as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-            </td>
-            {% display_cell source 'happened_after' %}
-    	</tr>
-        <tr>
-            {% display_chosen_cell destination 'human_interaction' %}
-            <td>
-                {% with form.human_interaction as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-            </td>
-            {% display_chosen_cell source 'human_interaction' %}
-    	</tr>
-        <tr>
-            {% display_yesnounk_cell destination 'ole_investigation' %}
-            <td>
-                {% with form.ole_investigation as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
-            </td>
-            {% display_yesnounk_cell source 'ole_investigation' %}
-    	</tr>
-        <tr>
-            <td>
-                {% with destination.import_notes as notes %}
-                {% with destination.id as notes_id %}
-                {% include "incidents/import_notes_include.html" %}
-                {% endwith %}
-                {% endwith %}
-            </td>
-    	    <td>the merged case will have all these import notes
-    	    {{ form.import_notes }}
-    	    </td>
-            <td>
-                {% with source.import_notes as notes %}
-                {% with source.id as notes_id %}
-                {% include "incidents/import_notes_include.html" %}
-                {% endwith %}
-                {% endwith %}
-            </td>
-    	</tr>
-    	<tr>
-    	    <td>
-    	        {% if form.destination_fk_refs %}
-    	        This case is referenced by:
-    	        <ul>
-    	            {% for other_model, other_field, other_instance in destination_fk_refs %}
-    	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
-    	            {% endfor %}
-    	        </ul>
-    	        {% endif %}
-    	        {% if form.destination_m2m_refs %}
-    	        This case is among the references in:
-    	        <ul>
-    	            {% for other_model, other_field, other_instance in destination_m2m_refs %}
-    	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
-    	            {% endfor %}
-    	        </ul>
-    	        {% endif %}
-    	    </td>
-    	    <td>the merged case will have all the references of these two cases</td>
-    	    <td>
-    	        {% if form.source_fk_refs %}
-    	        This case is referenced by:
-    	        <ul>
-    	            {% for other_model, other_field, other_instance in source_fk_refs %}
-    	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
-    	            {% endfor %}
-    	        </ul>
-    	        {% endif %}
-    	        {% if form.source_m2m_refs %}
-    	        This animal is among the references in:
-    	        <ul>
-    	            {% for other_model, other_field, other_instance in source_m2m_refs %}
-    	            <li><b>{{ other_model }}</b> <a href="{{ other_instance.get_absolute_url }}">{{ other_instance }}</a>: {{ other_field }}</li>
-    	            {% endfor %}
-    	        </ul>
-    	        {% endif %}
-    	    </td>
-    	</tr>
-        <tr>
-            <td colspan="3" style="text-align: center;">
-        	    <button type="submit">merge {{ source }} into {{ destination }}</button>
-            </td>
-    	</tr>
-    </table>
-</form>
+{% block form_rows %}
+<tr>
+    {% display_cell destination 'animal' %}
+    <td>
+        Both cases should already have the same animal.
+    </td>
+    {% display_cell source 'animal' %}
+</tr>
+<tr>
+    {% display_chosen_cell destination 'valid' %}
+    <td>
+        {% with form.valid as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% display_chosen_cell source 'valid' %}
+</tr>
+<tr>
+    {% display_cell destination 'happened_after' %}
+    <td>
+        {% with form.happened_after as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% display_cell source 'happened_after' %}
+</tr>
+<tr>
+    {% display_chosen_cell destination 'human_interaction' %}
+    <td>
+        {% with form.human_interaction as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% display_chosen_cell source 'human_interaction' %}
+</tr>
+<tr>
+    {% display_yesnounk_cell destination 'ole_investigation' %}
+    <td>
+        {% with form.ole_investigation as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {% display_yesnounk_cell source 'ole_investigation' %}
+</tr>
+<tr>
+    <td>
+        {% with destination.import_notes as notes %}
+        {% with destination.id as notes_id %}
+        {% include "incidents/import_notes_include.html" %}
+        {% endwith %}
+        {% endwith %}
+    </td>
+    <td>the merged case will have all these import notes
+    {{ form.import_notes }}
+    </td>
+    <td>
+        {% with source.import_notes as notes %}
+        {% with source.id as notes_id %}
+        {% include "incidents/import_notes_include.html" %}
+        {% endwith %}
+        {% endwith %}
+    </td>
+</tr>
 {% endblock %}
 

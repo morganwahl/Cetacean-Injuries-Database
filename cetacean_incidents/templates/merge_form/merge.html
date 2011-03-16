@@ -1,0 +1,54 @@
+{% extends "detail.html" %}
+
+{% comment %}
+This template is an amalgam of editing and viewing.
+{% endcomment %}
+
+{% block title %}{{ block.super }}: {{ destination }} [merging with {{ source }}] {% endblock %}
+
+{% block ids-dl %}
+{% endblock %}
+
+{% block header %}
+<h2>{{ destination }} [merging with {{ source }}]</h2>
+{% endblock %}
+
+{% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <table class="section bordered">
+        <tr>
+            <td>{{ destination.id }}</td>
+            <td>{{ form.non_field_errors }}</td>
+            <td>{{ source.id }}</td>
+    	</tr>
+    	{% block form_rows %}
+    	{% endblock %}
+        <tr>
+            <td>
+                {% with form.destination_fk_refs_display as fk_refs %}
+                {% include "merge_form/fk_refs_include.html" %}
+                {% endwith %}
+                {% with form.destination_m2m_refs_display as m2m_refs %}
+                {% include "merge_form/m2m_refs_include.html" %}
+                {% endwith %}
+            </td>
+            <td>the merged {{ object_name }} will have all the references of these two {{ object_name_plural }}</td>
+            <td>
+                {% with form.source_fk_refs_display as fk_refs %}
+                {% include "merge_form/fk_refs_include.html" %}
+                {% endwith %}
+                {% with form.source_m2m_refs_display as m2m_refs %}
+                {% include "merge_form/m2m_refs_include.html" %}
+                {% endwith %}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="text-align: center;">
+        	    <button type="submit">merge {{ source }} into {{ destination }}</button>
+            </td>
+    	</tr>
+    </table>
+</form>
+{% endblock %}
+

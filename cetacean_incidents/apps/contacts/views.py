@@ -123,26 +123,12 @@ def merge_contact(request, destination_id, source_id=None):
     return render_to_response(
         'contacts/merge_contact.html',
         {
+            'object_name': 'contact',
+            'object_name_plural': 'contacts',
             'destination': destination,
             'source': source,
             'form': form,
             'media': form.media,
-            'destination_fk_refs': map(
-                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
-                form.destination_fk_refs
-            ),
-            'source_fk_refs': map(
-                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
-                form.source_fk_refs
-            ),
-            'destination_m2m_refs': map(
-                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
-                form.destination_m2m_refs
-            ),
-            'source_m2m_refs': map(
-                lambda t: (t[0]._meta.verbose_name, t[1].verbose_name, t[2]),
-                form.source_m2m_refs
-            ),
         },
         context_instance= RequestContext(request),
     )
