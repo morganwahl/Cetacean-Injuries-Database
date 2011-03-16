@@ -1,9 +1,15 @@
 from django.utils.safestring import mark_safe
 
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import (
+    redirect,
+    render_to_response,
+)
+from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required
 
+from cetacean_incidents.apps.incidents.forms import CaseMergeSourceForm
 from cetacean_incidents.apps.incidents.models import Animal
 from cetacean_incidents.apps.incidents.views import (
     _change_case,
@@ -16,6 +22,7 @@ from models import Shipstrike
 from forms import (
     AddShipstrikeForm,
     ShipstrikeForm,
+    ShipstrikeMergeForm,
     ShipstrikeObservationForm,
     StrikingVesselInfoForm,
 )
@@ -165,4 +172,48 @@ def get_shipstrikeobservation_view_data(ss_oe):
         'form_saving': saving,
         'tabs': [tab],
     }
+
+@login_required
+@permission_required('incidents.change_shipstrike')
+@permission_required('incidents.delete_shipstrike')
+def shipstrike_merge(request, destination_id, source_id=None):
+    #pprint(('shipstrike_merge', destination_id, source_id))
+    # the "source" case will be deleted and references to it will be change to
+    # the "destination" case
+    
+    destination = Shipstrike.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = CaseMergeSourceForm(destination, request.GET)
+        if not merge_form.is_valid():
+            return redirect('shipstrike_detail', destination.id)
+        source = merge_form.cleaned_data['source'].specific_instance()
+    else:
+        source = Case.objects.get(id=source_id).specific_instance()
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = ShipstrikeMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('shipstrike_detail', destination.id)
+    else:
+        form = ShipstrikeMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/case_merge.html',
+        {
+            'object_name': 'case',
+            'object_name_plural': 'cases',
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'media': form.media,
+        },
+        context_instance= RequestContext(request),
+    )
 

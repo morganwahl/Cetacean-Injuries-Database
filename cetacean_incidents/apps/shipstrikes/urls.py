@@ -9,6 +9,9 @@ urlpatterns = patterns('cetacean_incidents.apps.incidents.views',
 urlpatterns += patterns('',
     (r'^(\d+)/edit$', views.edit_shipstrike, {}, 'edit_shipstrike'),
     (r'^(?P<shipstrike_id>\d+)/add_observation$', views.add_shipstrikeobservation, {}, 'add_shipstrikeobservation'),
+    (r'^(?P<destination_id>\d+)/merge$', views.shipstrike_merge, {}, 'shipstrike_merge'),
+    (r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.shipstrike_merge, {}, 'shipstrike_merge'),
+
     # TODO make a permanent redirect to generic observation detail
     # No longer makes sense now that ShipstrikeObservation is an ObservationExtension
     #(r'^observations/(\d+)/$', views.shipstrikeobservation_detail, {}, 'shipstrikeobservation_detail'),

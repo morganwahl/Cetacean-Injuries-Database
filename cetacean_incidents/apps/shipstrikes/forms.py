@@ -3,7 +3,10 @@ from django import forms
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.contacts.models import Contact
 
-from cetacean_incidents.apps.incidents.forms import CaseForm
+from cetacean_incidents.apps.incidents.forms import (
+    CaseForm,
+    CaseMergeForm,
+)
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
@@ -169,6 +172,14 @@ class ShipstrikeForm(CaseForm):
     class Meta(CaseForm.Meta):
         model = Shipstrike
         exclude = CaseForm.Meta.exclude
+
+class ShipstrikeMergeForm(CaseMergeForm):
+    
+    class Meta:
+        model = Shipstrike
+        # don't even include this field so that a ShipstrikeMergeForm can't 
+        # change the animal of the destination case
+        exclude = ('animal',)
 
 class AddShipstrikeForm(ShipstrikeForm):
     
