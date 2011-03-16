@@ -1,3 +1,4 @@
+from base64 import standard_b64encode
 import re
 
 try:
@@ -61,7 +62,12 @@ def taxon_search_json(request):
     if 'q' in request.GET:
         get_query = request.GET['q']
     
-    cache_key = 'taxon_search_json: %s' % get_query
+    cache_key = get_query.lower().strip()
+    # some cache backends are picky about characters, so use Base64-encoded
+    # UTF-8
+    cache_key = cache_key.encode('utf-8')
+    cache_key = standard_b64encode(cache_key)
+    cache_key = 'taxon_search_json_%s' % cache_key
     cached_json = cache.get(cache_key)
     if cached_json:
         return HttpResponse(cached_json)

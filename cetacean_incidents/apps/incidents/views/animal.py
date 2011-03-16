@@ -1,3 +1,4 @@
+from base64 import standard_b64encode
 import operator
 
 try:
@@ -117,7 +118,13 @@ def animal_search_json(request):
     if 'q' in request.GET:
         query = request.GET['q']
     
-    cache_key = 'animal_search_json: %s' % query
+    # we only do case-less matching that ignore whitespace, so use a case-less, stripped key
+    cache_key = query.lower().strip()
+    # some cache backends are picky about characters, so use Base64-encoded
+    # UTF-8
+    cache_key = cache_key.encode('utf-8')
+    cache_key = standard_b64encode(cache_key)
+    cache_key = 'animal_search_json_' + cache_key
     cached_json = cache.get(cache_key)
     if cached_json:
         return HttpResponse(cached_json)
