@@ -224,17 +224,13 @@ def _get_itis(funcname, get_args={}):
     '''Given an ITIS WebServices function name and a dictionary of args, returns a parse xml document of the results. Raises an ITIS_Error Exception on errors.'''
     # TODO can't urllib compose a document and get-string for us?
     url = 'http://www.itis.gov/ITISWebService/services/ITISService/' + funcname + '?' + urllib.urlencode(get_args)
-    #print "getting %s" % url
     url_handle = urllib2.urlopen(url)
-    #print "\topened"
     # ITIS doesn't send HTTP error codes when its database is down. :-(
     # check for a mimetype of text/html instead
     if url_handle.info().gettype() == 'text/html':
         raise ITIS_Error(render_to_string('taxons/itis_error_include.html', {'error_url': url}))
     
-    #print "\tparsing..."
     result = etree.parse(url_handle)
-    #print "\tdone"
     
     return result
 

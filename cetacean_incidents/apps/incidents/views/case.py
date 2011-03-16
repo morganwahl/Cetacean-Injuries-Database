@@ -273,18 +273,11 @@ def _change_case(
     ):
 
     if request.method == 'POST':
-        print '_change_case: POST'
         animal_form = AnimalForm(request.POST, prefix='animal', instance=case.animal)
         if animal_form.is_valid() and case_form.is_valid():
-            print '_change_case: valid'
             animal_form.save()
             case_form.save()
             return redirect(case)
-        else:
-            print repr({
-                'animal_form': animal_form.errors,
-                'case_form': case_form.errors,
-            })
             
     else:
         animal_form = AnimalForm(prefix='animal', instance=case.animal)
@@ -330,7 +323,6 @@ def edit_case(request, case_id):
     case = Case.objects.get(id=case_id).specific_instance()
 
     if request.method == 'POST':
-        print "post!"
         form = CaseForm(request.POST, prefix='case', instance=case)
     else:
         form = CaseForm(prefix='case', instance=case)

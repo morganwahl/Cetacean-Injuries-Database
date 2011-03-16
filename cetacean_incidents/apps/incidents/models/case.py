@@ -406,7 +406,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # Animal.taxon, which would change Case.animal.taxon for all cases
         # in Animal.case_set
         a = kwargs['instance']
-        #print "Animal post_save"
         for c in a.case_set.all():
             c.save()
         
@@ -442,7 +441,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     #    ycn = kwargs['instance']
     #    # ycn.current should only have one case in it, but we'll loop over it
     #    # just in case
-    #    print "YearCaseNumber post_save"
     #    for c in ycn.current.all():
     #       c.save()
     
@@ -456,8 +454,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # sender should be Observation
         
         #if kwargs['created']:
-            #print "Observation post_save"
-        
             cases = set()
             o = kwargs['instance']
             
@@ -487,8 +483,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # the probable_taxon of the observation's animal may have changed,
         # which could change the name of any case for the animal
         
-        #print "Observation post_delete"
-
         cases = set()
         o = kwargs['instance']
         
@@ -506,19 +500,16 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         # sender should be Observation.cases.through
         action, reverse = kwargs['action'], kwargs['reverse']
         if action in ('post_add', 'post_remove') and not reverse:
-            #print "Observation.cases change add/remove"
             # cases were added to or removed from an observation
             case_ids = kwargs['pk_set']
             for c in Case.objects.filter(id__in=case_ids):
                 c.save()
         if action == 'post_clear' and not reverse:
-            #print "Observation.cases change clear"
             o = kwargs['instance']
             for c in o.animal.case_set.all():
                 c.save()
 
         if action in ('post_add', 'post_remove', 'post_clear') and reverse:
-            #print "Observation.cases change reverse"
             # observations were added to or removed from a case or a case's
             # observations were cleared
             case = kwargs['instance']
