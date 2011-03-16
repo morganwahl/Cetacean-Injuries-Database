@@ -1,5 +1,6 @@
 import os
 from os import path
+import urllib
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -105,7 +106,7 @@ class RepositoryFileTestCase(TestCase):
                 a.save()
                 
                 self.assertEqual(a.path, path.join(_repos_dir, r, f))
-                self.assertEqual(a.url, _repos_url + r + '/' + f)
+                self.assertEqual(urllib.unquote(a.url), _repos_url + r + '/' + f)
                 
             finally:
                 fh.close()
