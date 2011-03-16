@@ -1,0 +1,12 @@
+{% load taxon_extras %}
+{% if value %}
+{% if link %}
+{% taxon_link value %}
+{% else %}
+{% taxon_display value %}
+{% endif %}
+({{ value.common_names }})
+{% else %}
+<i>undetermined</i>{% if probable %} (probably <i>{{ probable }}</i>){% endif %}
+{% endif %}
+

@@ -44,6 +44,19 @@ def display_chosen_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'chosen_cell', **kwargs)
 
 @register.simple_tag
+def display_taxon_cell(instance, fieldname, link=True, probable=None, **kwargs):
+    kwargs.update({'link': link})
+    if not probable is None:
+        kwargs.update({'probable': probable})
+    return display_cell(instance, fieldname, 'taxon_cell', **kwargs)
+
+@register.simple_tag
+def display_gender_cell(instance, fieldname, probable=None, **kwargs):
+    if not probable is None:
+        kwargs.update({'probable': probable})
+    return display_cell(instance, fieldname, 'gender_cell', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,
@@ -102,6 +115,19 @@ def display_yesnounk_row(instance, fieldname, label=None, choices= "yes,no,unkno
 @register.simple_tag
 def display_chosen_row(instance, fieldname, label=None, **kwargs):
     return display_row(instance, fieldname, label, 'chosen_row', **kwargs)
+
+@register.simple_tag
+def display_taxon_row(instance, fieldname, probable=None, link=True, label=None, **kwargs):
+    kwargs.update({'link': link})
+    if not probable is None:
+        kwargs.update({'probable': probable})
+    return display_row(instance, fieldname, label, 'taxon_row', **kwargs)
+
+@register.simple_tag
+def display_gender_row(instance, fieldname, probable=None, label=None, **kwargs):
+    if not probable is None:
+        kwargs.update({'probable': probable})
+    return display_row(instance, fieldname, label, 'gender_row', **kwargs)
 
 @register.simple_tag
 def display_div(instance, fieldname, label=None, template_name=None, colon=True, **kwargs):

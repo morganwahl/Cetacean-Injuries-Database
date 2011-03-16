@@ -4,7 +4,6 @@
 {% load observation_extras %}
 {% load contact_extras %}
 {% load generic_field_display %}
-{% load taxon_extras %}
 {% load observation_extras %}
 
 {% block head %}
@@ -70,27 +69,9 @@
             </td>
         </tr>
         {% endwith %}
-        <tr class="field">
-            <th style="text-align:right;">taxon</th>
-            <td>
-                {% if animal.determined_taxon %}
-                {% taxon_link animal.determined_taxon %} ({{ animal.determined_taxon.common_names }})
-                {% else %}
-                <i>undetermined{% if animal.probable_taxon %} (probably {% taxon_link animal.probable_taxon %})</i>{% endif %}
-                {% endif %}
-            </td>
-        </tr>
+        {% display_taxon_row animal 'determined_taxon' '1' animal.probable_taxon %}
         {% if animal.determined_gender or animal.probable_gender %}
-        <tr class="field">
-            <th style="text-align:right;">gender</th>
-            <td>
-                {% if animal.determined_gender %}
-                {{ animal.get_determined_gender_display|default:"unknown" }}
-                {% else %}
-                <i>undetermined</i>{% if animal.probable_gender %} (probably {{ animal.get_probable_gender_display }}){% endif %}
-                {% endif %}
-            </td>
-        </tr>
+        {% display_gender_row animal 'determined_gender' animal.get_probable_gender_display %}
         {% endif %}
         {% if animal.determined_dead_before %}
         {% display_row animal "determined_dead_before" %}

@@ -1,0 +1,6 @@
+{% if value %}
+{{ value_display }}
+{% else %}
+<i>undetermined</i>{% if probable %} (probably {{ probable }}){% endif %}
+{% endif %}
+
