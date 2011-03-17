@@ -1,5 +1,6 @@
 {% extends "merge_form/merge.html" %}
 {% load generic_field_display %}
+{% load merge_display %}
 
 {% comment %}
 This template is an amalgam of editing and viewing.
@@ -19,42 +20,10 @@ This template is an amalgam of editing and viewing.
     </td>
     {% display_cell source 'animal' %}
 </tr>
-<tr>
-    {% display_chosen_cell destination 'valid' %}
-    <td>
-        {% with form.valid as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_chosen_cell source 'valid' %}
-</tr>
-<tr>
-    {% display_cell destination 'happened_after' %}
-    <td>
-        {% with form.happened_after as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_cell source 'happened_after' %}
-</tr>
-<tr>
-    {% display_chosen_cell destination 'human_interaction' %}
-    <td>
-        {% with form.human_interaction as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_chosen_cell source 'human_interaction' %}
-</tr>
-<tr>
-    {% display_yesnounk_cell destination 'ole_investigation' %}
-    <td>
-        {% with form.ole_investigation as f %}
-        {% include "labeled_field.html" %}
-        {% endwith %}
-    </td>
-    {% display_yesnounk_cell source 'ole_investigation' %}
-</tr>
+{% display_merge_chosen_row destination source form 'valid' %}
+{% display_merge_row destination source form 'happened_after' %}
+{% display_merge_chosen_row destination source form 'human_interaction' %}
+{% display_merge_yesnounk_row destination source form 'ole_investigation' %}
 {% block additional_form_rows %}
 {% endblock %}
 <tr>
