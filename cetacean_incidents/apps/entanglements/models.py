@@ -17,6 +17,7 @@ from cetacean_incidents.apps.locations.models import Location
 
 from cetacean_incidents.apps.incidents.models import (
     Case,
+    Observation,
     ObservationExtension,
 )
 
@@ -291,6 +292,56 @@ class EntanglementObservation(ObservationExtension):
     class Meta:
         verbose_name = "Observation entanglement-data"
         verbose_name_plural = verbose_name
+
+# TODO generalize this for all ObservationExtensions
+def add_entanglement_extension_handler(sender, **kwargs):
+    # sender shoulde be Observation.cases.through
+    action = kwargs['action']
+    if action == 'post_add':
+        reverse = kwargs['reverse']
+        if not reverse:
+            # observation.cases.add(<some cases>)
+            # kwargs['instance'] is observation
+            # kwargs['model'] is Case
+            # kwargs['pk_set'] is a iterable of Case PK's
+            obs = kwargs['instance']
+            # do we already have an E.OE.
+            try:
+                obs.entanglements_entanglementobservation
+                return
+            except EntanglementObservation.DoesNotExist:
+                # are any of the cases Entanglements
+                if Entanglement.objects.filter(pk__in=kwargs['pk_set']):
+                    # be sure not to overwrite an existing extension
+                    try:
+                        obs.entanglements_entanglementobservation
+                    except EntanglementObservation.DoesNotExist:
+                        EntanglementObservation.objects.create(
+                            observation_ptr=obs,
+                        )
+        else:
+            # entanglement.observation_set.add(<some observations>)
+            # kwargs['instance'] is entanglement
+            # kwargs['model'] is Observation
+            # kwargs['pk_set'] is a iterable of Observation PK's
+            case = kwargs['instance']
+            if not isinstance(case, Entanglement):
+                return
+            # add E.OE. to any obs that don't already have them
+            for o in Observation.objects.filter(pk__in=kwargs['pk_set']):
+                # be sure not to overwrite an existing extension
+                try:
+                    o.entanglements_entanglementobservation
+                except EntanglementObservation.DoesNotExist:
+                    EntanglementObservation.objects.create(
+                        observation_ptr=o,
+                    )
+    
+models.signals.m2m_changed.connect(
+    sender= Observation.cases.through,
+    receiver= add_entanglement_extension_handler,
+    dispatch_uid= 'observation_cases__add_entanglement_extension__m2m_changed',
+)
 
 class GearBodyLocation(models.Model):
     observation = models.ForeignKey(EntanglementObservation)

@@ -38,6 +38,7 @@ from cetacean_incidents.apps.entanglements.forms import (
     AnimalNMFSIDLookupForm,
     EntanglementNMFSIDLookupForm,
 )
+from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 
 from cetacean_incidents.apps.incidents.forms import (
@@ -56,6 +57,7 @@ from cetacean_incidents.apps.incidents.models import (
 )
 from cetacean_incidents.apps.incidents.views import add_observation
 
+from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.shipstrikes.views import add_shipstrikeobservation
 
 from cetacean_incidents.apps.taxons.views import import_search as unsecured_import_taxon
@@ -423,6 +425,11 @@ def odd_entries(request):
     no_cases = Animal.objects.filter(case__id__isnull=True)
     
     no_obs = Case.objects.filter(observation__id__isnull=True)
+    
+    ent_ids = Entanglement.objects.values_list('pk', flat=True)
+    ss_ids = Shipstrike.objects.values_list('pk', flat=True)
+    no_ent_obs_ext = Observation.objects.filter(cases__pk__in=ent_ids).filter(entanglements_entanglementobservation__isnull=True)
+    no_ss_obs_ext = Observation.objects.filter(cases__pk__in=ss_ids).filter(shipstrikes_shipstrikeobservation__isnull=True)
 
     return render_to_response(
         'odd_entries.html',
@@ -431,6 +438,8 @@ def odd_entries(request):
             'animals_same_name': same_name,
             'animals_no_cases': no_cases,
             'cases_no_observations': no_obs,
+            'observations_no_ent': no_ent_obs_ext,
+            'observations_no_ss': no_ss_obs_ext,
         },
         context_instance= RequestContext(request),
     )

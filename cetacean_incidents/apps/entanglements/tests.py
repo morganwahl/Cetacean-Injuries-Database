@@ -175,4 +175,29 @@ class EntanglementObservationTestCase(TestCase):
         )
         
         self.assertEqual(self.o.entanglements_entanglementobservation, eo)
+        
+    def test_add_entanglement_extension_handler(self):
+        a = Animal.objects.create()
+        e = Entanglement.objects.create(
+            animal= a
+        )
+        o1 = Observation.objects.create(
+            animal= a,
+            datetime_observed= UncertainDateTime(2009),
+            datetime_reported= UncertainDateTime(2009),
+        )
+        self.assertRaises(EntanglementObservation.DoesNotExist, getattr, o1, 'entanglements_entanglementobservation')
+        o1.cases.add(e)
+        o1.entanglements_entanglementobservation
+        
+        o2 = Observation.objects.create(
+            animal= a,
+            datetime_observed= UncertainDateTime(2008),
+            datetime_reported= UncertainDateTime(2008),
+        )
+        self.assertRaises(EntanglementObservation.DoesNotExist, getattr, o2, 'entanglements_entanglementobservation')
+        e.observation_set.add(o2)
+        # reload o2
+        o2 = Observation.objects.get(pk=o2.pk)
+        o2.entanglements_entanglementobservation
 

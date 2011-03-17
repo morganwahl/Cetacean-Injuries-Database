@@ -435,6 +435,9 @@ class ObservationExtension(models.Model):
     def get_observation_view_data(self):
         return {}
     
+    def __unicode__(self):
+        return "additional data for %s" % (self.observation_ptr)
+    
     class Meta:
         abstract = True
 

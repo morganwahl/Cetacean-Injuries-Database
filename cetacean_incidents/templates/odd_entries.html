@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load animal_extras %}
 {% load case_extras %}
+{% load observation_extras %}
 
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
 
@@ -55,6 +56,26 @@
         <li>
             {% case_link c %}
         </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if observations_no_ent %}
+<div>
+    <h3>Observations for Entanglement cases without entanglement data</h3>
+    <ul>
+        {% for o in observations_no_ent %}
+        <li>{% observation_link o %}</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
+{% if observations_no_ss %}
+<div>
+    <h3>Observations for Shipstrike cases without shipstrike data</h3>
+    <ul>
+        {% for o in observations_no_ss %}
+        <li>{% observation_link o %}</li>
         {% endfor %}
     </ul>
 </div>
