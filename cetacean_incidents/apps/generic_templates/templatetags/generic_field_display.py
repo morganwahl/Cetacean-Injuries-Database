@@ -31,7 +31,7 @@ def display_yesunk_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'yesunk_cell', **kwargs)
 
 @register.simple_tag
-def display_yesnounk_cell(instance, fieldname, choices= "yes,no,unknown", **kwargs):
+def display_yesnounk_cell(instance, fieldname, choices="yes,no,unknown", **kwargs):
     kwargs.update({'choices': choices})
     return display_cell(instance, fieldname, 'yesnounk_cell', **kwargs)
 

@@ -1,10 +1,9 @@
-from django.utils.safestring import mark_safe
-
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import (
     redirect,
     render_to_response,
 )
+from django.utils.safestring import mark_safe
 from django.template import RequestContext
 
 from cetacean_incidents.decorators import permission_required

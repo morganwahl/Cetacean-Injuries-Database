@@ -78,7 +78,7 @@ class CaseMergeForm(DocumentableMergeForm):
         self.destination.import_notes += self.source.import_notes
 
         # TODO SI&M !
-       
+        
         # prepend source names to destination names
         if self.destination.names:
             if self.source.names:
