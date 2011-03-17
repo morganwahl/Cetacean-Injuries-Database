@@ -287,7 +287,7 @@ def parse_animal(row):
     # name
     if row['Individual']:
         # filter 'unknown'
-        if row['Individual'] not in set(('U',)):
+        if row['Individual'] not in set(('U','Unknown')):
             a['name'] = row['Individual']
     
     # determined_taxon
@@ -394,7 +394,7 @@ def parse_case(row):
     
     # case_type
     cls = row['Classification']
-    cls, resight = re.subn(r'(?i)\s*\(?Resight\)?', '', cls)
+    cls, resight = re.subn(r'(?i)\s*\(?(likely )?resight\??\)?', '', cls)
     resight = bool(resight)
     
     c['__class__'] = {
