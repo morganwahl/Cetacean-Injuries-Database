@@ -56,24 +56,7 @@
     {% endif %}
     {% endif %}
 </div>
-{% if case.gear_types.count %}
-<div>
-    <span class="fieldname">gear types:</span>
-    <ul>
-        {% for geartype in case.gear_types.all %}
-        <li>{{ geartype }}</li>
-        {% endfor %}
-    </ul>
-    {% if case.implied_gear_types %}
-    <i>implied gear types:</i>
-    <ul>
-        {% for geartype in case.implied_gear_types %}
-        <li>{{ geartype }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
-</div>
-{% endif %}
+{% display_geartypes_div case "gear_types" case.implied_gear_types %}
 {% endblock %}
 
 {% block extra_case_fields %}

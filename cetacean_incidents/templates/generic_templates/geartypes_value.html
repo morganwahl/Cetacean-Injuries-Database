@@ -1,0 +1,18 @@
+{% if value.count %}
+<ul>
+    {% for geartype in value.all %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% if implied %}
+<i>implied gear types:</i>
+<ul>
+    {% for geartype in implied %}
+    <li>{{ geartype }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% else %}
+<i>none</i>
+{% endif %}
+

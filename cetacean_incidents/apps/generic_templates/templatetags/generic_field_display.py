@@ -57,6 +57,12 @@ def display_gender_cell(instance, fieldname, probable=None, **kwargs):
     return display_cell(instance, fieldname, 'gender_cell', **kwargs)
 
 @register.simple_tag
+def display_geartype_cell(instance, fieldname, implied=None, **kwargs):
+    if not implied is None:
+        kwargs['implied'] = implied
+    return display_cell(instance, fieldname, 'geartype_row', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,
@@ -130,6 +136,12 @@ def display_gender_row(instance, fieldname, probable=None, label=None, **kwargs)
     return display_row(instance, fieldname, label, 'gender_row', **kwargs)
 
 @register.simple_tag
+def display_geartype_row(instance, fieldname, implied=None, label=None, **kwargs):
+    if not implied is None:
+        kwargs['implied'] = implied
+    return display_row(instance, fieldname, label, 'geartype_row', **kwargs)
+
+@register.simple_tag
 def display_div(instance, fieldname, label=None, template_name=None, colon=True, **kwargs):
     if template_name is None:
         template_name = 'div'
@@ -152,4 +164,10 @@ def display_yesnounk_div(instance, fieldname, label=None, choices= "yes,no,unkno
 @register.simple_tag
 def display_chosen_div(instance, fieldname, label=None, **kwargs):
     return display_div(instance, fieldname, label, 'chosen_div', **kwargs)
+
+@register.simple_tag
+def display_geartypes_div(instance, fieldname, implied=None, label=None, **kwargs):
+    if not implied is None:
+        kwargs['implied'] = implied
+    return display_div(instance, fieldname, label, 'geartypes_div', **kwargs)
 
