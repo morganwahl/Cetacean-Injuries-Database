@@ -1,12 +1,16 @@
 <tr{% if differ %} class="differ"{% endif %}>
-    {{ destination_cell }}
-    <td>
+    {{ destination_cell.0 }}
+    <td rowspan="2">
         {% block form_field %}
         {% with field as f %}
         {% include "labeled_field.html" %}
         {% endwith %}
         {% endblock %}
     </td>
-    {{ source_cell }}
+    {{ source_cell.0 }}
+</tr>
+<tr{% if differ %} class="differ"{% endif %}>
+    {{ destination_cell.1 }}
+    {{ source_cell.1 }}
 </tr>
 

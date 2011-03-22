@@ -1,0 +1,4 @@
+{% extends "generic_templates/display_cell.html" %}
+{% block value_block %}
+{{ value.all|join:" &#x2022; "|default:"<i>none</i>" }}
+{% endblock %}

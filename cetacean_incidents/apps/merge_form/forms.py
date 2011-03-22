@@ -55,8 +55,11 @@ class MergeForm(forms.ModelForm):
                     except ObjectDoesNotExist:
                         pass
                 else:
-                    other_instance_pk = getattr(instance, rel_obj.get_accessor_name())
-                    _results_add(rel_obj.model, other_instance, rel_obj.field)
+                    try:
+                        other_instance = getattr(instance, rel_obj.get_accessor_name())
+                        _results_add(rel_obj.model, other_instance, rel_obj.field)
+                    except ObjectDoesNotExist:
+                        pass
             else:
                 other_queryset = getattr(instance, rel_obj.get_accessor_name())
                 for other_instance in other_queryset.all():

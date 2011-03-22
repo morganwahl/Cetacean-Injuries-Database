@@ -22,5 +22,6 @@ from observation import (
     add_observation,
     edit_observation,
     observation_detail,
+    observation_merge,
 )
 

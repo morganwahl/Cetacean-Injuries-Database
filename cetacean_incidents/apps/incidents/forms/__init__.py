@@ -14,6 +14,8 @@ from case import (
 from observation import (
     ObservationCasesForm,
     ObservationForm,
+    ObservationMergeForm,
+    ObservationMergeSourceForm,
 )
 from search import (
     SubmitDetectingForm,

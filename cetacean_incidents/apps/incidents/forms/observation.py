@@ -4,6 +4,8 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.forms.util import ErrorList
 
+from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
@@ -153,11 +155,9 @@ class ObservationDateField(UncertainDateTimeField):
 
         return dt
 
-class ObservationForm(forms.ModelForm):
+class BaseObservationForm(forms.ModelForm):
     '''\
-    This class merely handles commonalities between the different observation
-    types. Should be accopanied by forms for Location, two Datetimes, a 
-    VesselInfo, and two Contacts.
+    Abstract class for common elements between ObservationForm and ObservationMergeForm
     '''
 
     # ModelForm won't fill in all the handy args for us if we specify our own
@@ -196,6 +196,45 @@ class ObservationForm(forms.ModelForm):
         label= _f.verbose_name.capitalize(),
     )
 
+    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList, label_suffix=':', empty_permitted=False, instance=None):
+
+        if instance:
+            if not instance.animal_length is None:
+                if initial is None:
+                    initial = {}
+                if 'animal_length' not in initial:
+                    initial['animal_length'] = instance.animal_length
+            if not instance.animal_length_sigdigs is None:
+                if initial is None:
+                    initial = {}
+                if 'animal_length_sigdigs' not in initial:
+                    initial['animal_length_sigdigs'] = instance.animal_length_sigdigs
+
+        if not initial is None and 'animal_length' in initial:
+            if 'animal_length_sigdigs' in initial:
+                initial['animal_length_and_sigdigs'] = (initial['animal_length'] * 100, 'cm', initial['animal_length_sigdigs'])
+
+        super(BaseObservationForm, self).__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance)
+    
+    def save(self, commit=True):
+        obs = super(BaseObservationForm, self).save(commit=False)
+        obs.animal_length = self.cleaned_data['animal_length_and_sigdigs'][0]
+        obs.animal_length_sigdigs = self.cleaned_data['animal_length_and_sigdigs'][1]
+        if commit:
+            obs.save()
+            self.save_m2m()
+        
+        return obs
+    
+    class Meta:
+        model = Observation
+        exclude = ('animal_length', 'animal_length_sigdigs') # these are handled by a LengthField
+
+class ObservationForm(BaseObservationForm):
+    '''\
+    Should be accopanied by forms for Location, a VesselInfo, and two Contacts.
+    '''
+
     observer_on_vessel = forms.BooleanField(
         required= False,
         help_text= "Was the observer on a vessel?"
@@ -225,36 +264,6 @@ class ObservationForm(forms.ModelForm):
         #help_text= "create a new contact for the observer?",
         # help_text isn't really necessary; the choices are self-explanitory
     )
-    
-    def __init__(self, data=None, files=None, auto_id='id_%s', prefix=None, initial=None, error_class=ErrorList, label_suffix=':', empty_permitted=False, instance=None):
-
-        if instance:
-            if not instance.animal_length is None:
-                if initial is None:
-                    initial = {}
-                if 'animal_length' not in initial:
-                    initial['animal_length'] = instance.animal_length
-            if not instance.animal_length_sigdigs is None:
-                if initial is None:
-                    initial = {}
-                if 'animal_length_sigdigs' not in initial:
-                    initial['animal_length_sigdigs'] = instance.animal_length_sigdigs
-
-        if not initial is None and 'animal_length' in initial:
-            if 'animal_length_sigdigs' in initial:
-                initial['animal_length_and_sigdigs'] = (initial['animal_length'] * 100, 'cm', initial['animal_length_sigdigs'])
-
-        super(ObservationForm, self).__init__(data, files, auto_id, prefix, initial, error_class, label_suffix, empty_permitted, instance)
-    
-    def save(self, commit=True):
-        obs = super(ObservationForm, self).save(commit=False)
-        obs.animal_length = self.cleaned_data['animal_length_and_sigdigs'][0]
-        obs.animal_length_sigdigs = self.cleaned_data['animal_length_and_sigdigs'][1]
-        if commit:
-            obs.save()
-            self.save_m2m()
-        
-        return obs
     
     class Meta:
         model = Observation
@@ -288,4 +297,60 @@ class ObservationCasesForm(forms.Form):
                 'required': u"You must select at least one case."
             }
         )
+
+class ObservationMergeSourceForm(forms.Form):
+    
+    def __init__(self, destination, *args, **kwargs):
+        super(ObservationMergeSourceForm, self).__init__(*args, **kwargs)
         
+        self.fields['source'] = forms.ModelChoiceField(
+            queryset= Observation.objects.exclude(id=destination.id).filter(animal=destination.animal),
+            label= 'other %s' % Observation._meta.verbose_name,
+            required= True, # ensures an observation is selected
+            initial= None,
+            help_text= u"""Choose an observation to merge into this one. That observation will be deleted and references to it will refer to this observation instead.""",
+            error_messages= {
+                'required': u"You must select an observation."
+            },
+        )
+
+class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
+    '''\
+    Should be accopanied by merge forms for Location and a VesselInfo.
+    '''
+
+    def __init__(self, source, destination, data=None, **kwargs):
+        # don't merge observations that aren't already for the same animal
+        if source.animal != destination.animal:
+            raise ValueError("can't merge observations for different animals!")
+        
+        # TODO location data
+        #if source.location or destination.location:
+        #    raise NotImplementedError("can't merge observations with location data")
+        # TODO observer vessel
+        if source.observer_vessel or destination.observer_vessel:
+            raise NotImplementedError("can't merge observations with observer-vessel info")
+        # TODO observation extensions
+        #if source.get_observation_extensions() or destination.get_observation_extensions():
+        #    raise NotImplementedError("can't merge observations with ObservationExtensions")
+
+        super(ObservationMergeForm, self).__init__(source, destination, data, **kwargs)
+    
+    def save(self, commit=True):
+        # append source import_notes to destination import_notes
+        self.destination.import_notes += self.source.import_notes
+
+        # TODO location data
+        # TODO observer vessel
+        # TODO observation extensions
+
+        return super(ObservationMergeForm, self).save(commit)
+
+    class Meta:
+        model = Observation
+        # don't even include this field so that a CaseMergeForm can't change the
+        # animal of the destination case
+        exclude = ('animal', 'cases', 'location', 'observer_vessel',
+            'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
+        )
+

@@ -7,12 +7,15 @@ from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.entanglements.models import Entanglement
 
-from cetacean_incidents.apps.generic_templates.templatetags.generic_field_display import display_cell
+from cetacean_incidents.apps.generic_templates.templatetags.generic_field_display import (
+    display_cell,
+    display_animal_length_cell,
+)
 
 register = template.Library()
 
 @register.simple_tag
-def display_merge_row(destination, source, merge_form, field_name, cell_template_name=None, cell_kwargs={}):
+def display_merge_row(destination, source, merge_form, field_name, cell_template_name=None, cell_kwargs={}, template='display_merge_row.html'):
     # comparing m2m fields is a little more complicated
     destination_value = getattr(destination, field_name)
     # the source may not have all the fields of the destination
@@ -43,7 +46,7 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
         source_cell = mark_safe(u'<td class="added"><i>no field</i></td>')
     
     return render_to_string(
-        'display_merge_row.html',
+        template,
         {
             'differ': differ,
             'in_source': in_source,
@@ -52,6 +55,10 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
             'field': merge_form[field_name],
         },
     )
+
+@register.simple_tag
+def display_defined_merge_row(destination, source, merge_form, field_name):
+    return display_merge_row(destination, source, merge_form, field_name, cell_template_name='chosen_cell', cell_kwargs={}, template='display_defined_merge_row.html')
 
 @register.simple_tag
 def display_merge_yesunk_row(destination, source, merge_form, field_name):
@@ -85,5 +92,49 @@ def display_merge_geartypes_row(destination, source, merge_form, field_name):
             {'implied': destination.implied_gear_types},
             {'implied': source.implied_gear_types} if isinstance(source, Entanglement) else {},
         )
+    )
+
+@register.simple_tag
+def display_merge_animal_length_row(destination, source, merge_form, form_field_name, length_field_name, sigdigs_field_name):
+    
+    destination_value = [None, None]
+    source_value = [None, None]
+    in_source = [False, False]
+    differ = False
+    destination_cell = [None, None]
+    source_cell = [None, None]
+    # the source may not have all the fields of the destination
+    for i, f in enumerate((length_field_name, sigdigs_field_name)):
+        destination_value[i] = getattr(destination, f)
+        try:
+            source_value[i] = getattr(source, f)
+            in_source[i] = True
+        except AttributeError:
+            pass
+    
+        if in_source[i]:
+            differ |= not bool(destination_value[i] == source_value[i])
+    
+    destination_cell[0] = display_animal_length_cell(destination, length_field_name, destination_value[1])
+    if in_source[0]:
+        source_cell[0] = display_animal_length_cell(source, length_field_name, source_value[1])
+    else:
+        source_cell[0] = mark_safe(u'<td class="added"><i>no field</i></td>')
+
+    destination_cell[1] = display_cell(destination, f)
+    if in_source[1]:
+        source_cell[1] = display_cell(source, f)
+    else:
+        source_cell[1] = mark_safe(u'<td class="added"><i>no field</i></td>')
+    
+    return render_to_string(
+        'display_animal_length_merge_row.html',
+        {
+            'differ': differ,
+            'in_source': in_source,
+            'destination_cell': destination_cell,
+            'source_cell': source_cell,
+            'field': merge_form[form_field_name],
+        },
     )
 

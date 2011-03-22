@@ -56,5 +56,7 @@ urlpatterns += patterns('',
 
     (r'^observations/(\d+)/$', views.observation_detail, {}, 'observation_detail'),
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
+    (r'^observations/(?P<destination_id>\d+)/merge$', views.observation_merge, {}, 'observation_merge'),
+    (r'^observations/(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.observation_merge, {}, 'observation_merge'),
 )
 

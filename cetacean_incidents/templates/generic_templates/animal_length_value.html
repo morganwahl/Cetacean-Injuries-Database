@@ -1,0 +1,34 @@
+{% load observation_extras %}
+
+{% if value %}
+<div id="{{ animal_length_prefix }}m">
+    {% display_length value "m" sigdigs %}
+</div>
+<div id="{{ animal_length_prefix }}cm">
+    {% display_length value "cm" sigdigs %}
+</div>
+<div id="{{ animal_length_prefix }}ft">
+    {% display_length value "ft" sigdigs %}
+</div>
+<div id="{{ animal_length_prefix }}in">
+    {% display_length value "in" sigdigs %}
+</div>
+{% if animal_length_prefix %}
+<form id="{{ animal_length_prefix }}animal_length_form">
+    <input type="radio" name="{{ animal_length_prefix }}unit" value="m">m
+    <input type="radio" name="{{ animal_length_prefix }}unit" checked="checked" value="cm">cm
+    <input type="radio" name="{{ animal_length_prefix }}unit" value="ft">ft
+    <input type="radio" name="{{ animal_length_prefix }}unit" value="in">in
+</form>
+<script type="text/javascript">
+    RadioHider.init('{{ animal_length_prefix }}unit', {
+        'm': '{{ animal_length_prefix }}m',
+        'cm': '{{ animal_length_prefix }}cm',
+        'ft': '{{ animal_length_prefix }}ft',
+        'in': '{{ animal_length_prefix }}in'
+    });
+</script>
+{% endif %}
+{% else %}
+<i>unknown</i>
+{% endif %}

@@ -45,6 +45,33 @@
     </form>
 </div>
 {% endif %}
+{% block merge_link %}
+{% if perms.incidents.change_observation and perms.incidents.delete_observation %}
+<script type="text/javascript">
+    jQuery(document).ready(function(){
+	    $('.accordion .header').click(function() {
+		    $(this).next().toggle('fast');
+		    return false;
+	    }).next().hide();
+    });
+</script>
+<div class="accordion">
+    <div class="header">
+        <a href="#">merge another observation into this one...</a>
+    </div>
+    <form action="{% url observation_merge observation.id %}" method="GET">
+        <div style="margin-left:2em;">
+            {% if observation.animal.observation_set.count > 1 %}
+            {{ merge_form.as_p }}
+            <button type="submit">view merge</button>
+            {% else %}
+            There are no other observations for this animal.
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endif %}
+{% endblock merge_link %}
 {% with observation.tag_set.all as tags %}
 {% include "tags/tags_detail_include.html" %}
 {% endwith %}
@@ -132,34 +159,7 @@
                     {% display_chosen_row observation "gender" %}
                     {% endif %}
                     {% if observation.animal_length %}
-                    <tr class="field"><th>animal length</th><td>
-                        <div id="length_m">
-                            {% display_length observation.animal_length "m" observation.animal_length_sigdigs %}
-                        </div>
-                        <div id="length_cm">
-                            {% display_length observation.animal_length "cm" observation.animal_length_sigdigs %}
-                        </div>
-                        <div id="length_ft">
-                            {% display_length observation.animal_length "ft" observation.animal_length_sigdigs %}
-                        </div>
-                        <div id="length_in">
-                            {% display_length observation.animal_length "in" observation.animal_length_sigdigs %}
-                        </div>
-                        <form>
-                            <input type="radio" name="unit" value="m">m
-                            <input type="radio" name="unit" checked="checked" value="cm">cm
-                            <input type="radio" name="unit" value="ft">ft
-                            <input type="radio" name="unit" value="in">in
-                        </form>
-                        <script type="text/javascript">
-                            RadioHider.init('unit', {
-                                'm': 'length_m',
-                                'cm': 'length_cm',
-                                'ft': 'length_ft',
-                                'in': 'length_in'
-                            });
-                        </script>
-                    </td></tr>
+                    {% display_animal_length_row observation "animal_length" observation.animal_length_sigdigs "animal_length" %}
                     {% endif %}
                     {% if observation.age_class %}
                     {% display_chosen_row observation "age_class" %}

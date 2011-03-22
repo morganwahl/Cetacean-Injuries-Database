@@ -40,6 +40,10 @@ def display_bigtext_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'bigtext_cell', **kwargs)
 
 @register.simple_tag
+def display_set_cell(instance, fieldname, label=None, **kwargs):
+    return display_cell(instance, fieldname, 'set_cell', **kwargs)
+
+@register.simple_tag
 def display_chosen_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'chosen_cell', **kwargs)
 
@@ -61,6 +65,13 @@ def display_geartype_cell(instance, fieldname, implied=None, **kwargs):
     if not implied is None:
         kwargs['implied'] = implied
     return display_cell(instance, fieldname, 'geartype_row', **kwargs)
+
+@register.simple_tag
+def display_animal_length_cell(instance, length_field, sigdigs, prefix=None, **kwargs):
+    kwargs['sigdigs'] = sigdigs
+    if not prefix is None:
+        kwargs['animal_length_prefix'] = prefix + '-'
+    return display_cell(instance, length_field, 'animal_length_cell', **kwargs)
 
 @register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
@@ -140,6 +151,13 @@ def display_geartype_row(instance, fieldname, implied=None, label=None, **kwargs
     if not implied is None:
         kwargs['implied'] = implied
     return display_row(instance, fieldname, label, 'geartype_row', **kwargs)
+
+@register.simple_tag
+def display_animal_length_row(instance, length_field, sigdigs, prefix=None, label=None, **kwargs):
+    kwargs['sigdigs'] = sigdigs
+    if not prefix is None:
+        kwargs['animal_length_prefix'] = prefix
+    return display_row(instance, length_field, label, 'animal_length_row', **kwargs)
 
 @register.simple_tag
 def display_div(instance, fieldname, label=None, template_name=None, colon=True, **kwargs):

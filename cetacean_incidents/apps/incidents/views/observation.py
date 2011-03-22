@@ -41,6 +41,8 @@ from ..forms import (
     AnimalForm,
     AddCaseForm,
     CaseForm,
+    ObservationMergeForm,
+    ObservationMergeSourceForm,
 )
 
 from ..models import (
@@ -66,6 +68,11 @@ from tabs import (
 def observation_detail(request, observation_id):
     observation = Observation.objects.get(id=observation_id)
     
+    # the observation_detail.html template needs jQuery
+    extra_context = {
+        'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
+    }
+    
     show_cases_form = False
     if request.method == 'POST':
         cases_form = ObservationCasesForm(observation, data=request.POST)
@@ -78,12 +85,18 @@ def observation_detail(request, observation_id):
             show_cases_form = True
     else:
         cases_form = ObservationCasesForm(observation)
-    
-    extra_context = {
-        'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js')),
+
+    extra_context['media'] += cases_form.media
+    extra_context.update({
         'show_cases_form': show_cases_form,
         'cases_form': cases_form,
-    }
+    })
+    
+    if request.user.has_perms(('incidents.change_observation', 'incidents.delete_observation')):
+        merge_form = ObservationMergeSourceForm(destination=observation)
+        extra_context['merge_form'] = merge_form
+        extra_context['media'] += merge_form.media
+
     # TODO generify
     for oe_attr in (
         'entanglements_entanglementobservation', 
@@ -493,5 +506,48 @@ def edit_observation(request, observation_id):
         additional_model_instances= model_instances,
         additional_form_saving= saving,
         additional_observation_tabs= tabs,
+    )
+
+@login_required
+@permission_required('incidents.change_observation')
+@permission_required('incidents.delete_observation')
+def observation_merge(request, destination_id, source_id=None):
+    # the "source" observation will be deleted and references to it will be change to
+    # the "destination" observation
+    
+    destination = Observation.objects.get(id=destination_id)
+    
+    if source_id is None:
+        merge_form = ObservationMergeSourceForm(destination, request.GET)
+        if not merge_form.is_valid():
+            return redirect('observation_detail', destination.id)
+        source = merge_form.cleaned_data['source']
+    else:
+        source = Observation.objects.get(id=source_id)
+
+    form_kwargs = {
+        'source': source,
+        'destination': destination,
+    }
+    
+    if request.method == 'POST':
+        form = ObservationMergeForm(data=request.POST, **form_kwargs)
+        if form.is_valid():
+            form.save()
+            return redirect('observation_detail', destination.id)
+    else:
+        form = ObservationMergeForm(**form_kwargs)
+    
+    return render_to_response(
+        'incidents/observation_merge.html',
+        {
+            'object_name': 'observation',
+            'object_name_plural': 'observations',
+            'destination': destination,
+            'source': source,
+            'form': form,
+            'media': form.media,
+        },
+        context_instance= RequestContext(request),
     )
 
