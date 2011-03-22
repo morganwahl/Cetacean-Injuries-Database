@@ -36,6 +36,7 @@
             </td>
          </tr>
          {% display_bigtext_row eo "entanglement_details" %}
+         {% display_yesnounk_row eo "disentanglement_attempted" %}
          {% if eo.disentanglement_outcome %}
          {% display_chosen_row eo "disentanglement_outcome" %}
          {% endif %}

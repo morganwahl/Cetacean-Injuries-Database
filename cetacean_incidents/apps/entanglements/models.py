@@ -238,6 +238,12 @@ class EntanglementObservation(ObservationExtension):
         verbose_name= 'gear retrieved?',
         help_text= "Was gear removed from the animal for later analysis?"
     )
+    disentanglement_attempted = models.NullBooleanField(
+        blank= True,
+        null= True,
+        verbose_name= u'disentanglement attempted?',
+        help_text= u'''Was the animal disentangled or the entangling gear in any way altered?''',
+    )
     disentanglement_outcome = models.CharField(
         max_length= 4,
         choices= (
