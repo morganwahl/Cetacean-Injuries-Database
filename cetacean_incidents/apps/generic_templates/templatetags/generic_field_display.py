@@ -12,7 +12,14 @@ def display_cell(instance, fieldname, template_name=None, **kwargs):
     
     field = instance._meta.get_field(fieldname)
     
-    context['value'] = getattr(instance, fieldname)
+    if isinstance(field, models.ManyToManyField):
+        if not instance.pk:
+            context['value'] = tuple()
+        else:
+            context['value'] = getattr(instance, fieldname)
+        template_name= 'set_cell'
+    else:
+        context['value'] = getattr(instance, fieldname)
     display_func = getattr(instance, 'get_' + fieldname + '_display', None)
     if display_func:
         context['value_display'] = display_func()
@@ -25,6 +32,11 @@ def display_cell(instance, fieldname, template_name=None, **kwargs):
     context.update(kwargs)
     
     return render_to_string('generic_templates/display_%s.html' % template_name, context)
+
+@register.simple_tag
+def display_yesno_cell(instance, fieldname, choices="yes,no", **kwargs):
+    kwargs.update({'choices': choices})
+    return display_cell(instance, fieldname, 'yesnounk_cell', **kwargs)
 
 @register.simple_tag
 def display_yesunk_cell(instance, fieldname, **kwargs):

@@ -1,0 +1,45 @@
+{% extends "merge_form/merge.html" %}
+{% load merge_display %}
+{% load generic_field_display %}
+
+{% block form_rows %}
+<tr>
+    {% display_cell destination 'animal' %}
+    <td>
+		<span class="fieldname">Animal</span>
+        Both observations should already have the same animal.
+    </td>
+    {% display_cell source 'animal' %}
+</tr>
+<tr>
+    {% display_set_cell destination 'cases' %}
+    <td>
+        <span class="fieldname">Cases</span>
+        The merged observation with be marked as relevant to all the cases of
+        both observations
+    </td>
+    {% display_set_cell source 'cases' %}
+</tr>
+{% display_merge_row destination source form 'narrative' %}
+{% display_merge_row destination source form 'observer' %}
+{% display_o2o_merge_row destination source form 'location' 'has_location' %}
+{% display_merge_row destination source form 'datetime_observed' %}
+{% display_o2o_merge_row destination source form 'observer_vessel' 'has_observer_vessel' %}
+{% display_merge_row destination source form 'reporter' %}
+{% display_merge_row destination source form 'datetime_reported' %}
+{% display_merge_row destination source form 'taxon' %}
+{% display_merge_animal_length_row destination source form 'animal_length_and_sigdigs' 'animal_length' 'animal_length_sigdigs' %}
+{% display_merge_chosen_row destination source form 'age_class' %}
+{% display_merge_chosen_row destination source form 'gender' %}
+{% display_merge_row destination source form 'animal_description' %}
+{% display_merge_yesnounk_row destination source form 'ashore' %}
+{% display_defined_merge_row destination source form 'condition' %}
+{% display_merge_yesnounk_row destination source form 'indication_entanglement' %}
+{% display_merge_yesnounk_row destination source form 'indication_shipstrike' %}
+{% display_merge_yesnounk_row destination source form 'wounded' %}
+{% display_merge_row destination source form 'wound_description' %}
+{% display_merge_yesnounk_row destination source form 'documentation' %}
+{% display_merge_yesnounk_row destination source form 'tagged' %}
+{% display_merge_yesnounk_row destination source form 'biopsy' %}
+{% display_merge_yesnounk_row destination source form 'genetic_sample' %}
+{% endblock %}

@@ -1,0 +1,21 @@
+<script type="text/javascript">
+    $().ready(function(){
+        CheckboxHider.init(
+            "{{ has_field.html_name}}",
+            '{{ subform.prefix }}_rows'
+        );
+    });
+</script>
+<tr{% if has_differ %} class="differ"{% endif %}>
+    {{ has_destination_cell }}
+    <td>
+        {% with has_field as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+    </td>
+    {{ has_source_cell }}
+</tr>
+<tbody id="{{ subform.prefix }}_rows">
+{{ subform.as_table }}
+</tbody>
+

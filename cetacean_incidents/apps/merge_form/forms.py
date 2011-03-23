@@ -1,6 +1,14 @@
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django import forms
+from django.utils.safestring import mark_safe
+
+from templatetags.merge_display import display_merge_row
+
+class FieldlessModel(models.Model):
+    class Meta:
+        abstract= True
 
 class MergeForm(forms.ModelForm):
     '''
@@ -91,18 +99,20 @@ class MergeForm(forms.ModelForm):
     @classmethod
     def _get_o2o_refs_from(cls, instance):
         '''
-        Get all the OneToOne references _from_ an instance. Returns a tuple of 
-        fields.
+        Get all the OneToOne references _from_ an instance. Returns a 
+        dictionary of fields keyed to their names.
         '''
         
-        results = []
+        results = {}
         inheritance_fields = instance._meta.parents.values()
         for field in instance._meta.fields:
             if isinstance(field, models.OneToOneField):
                 if not field.auto_created:
-                    results.append(field)
+                    ro = field.related
+                    other_instance = getattr(instance, field.name)
+                    results[field.name] = field
         
-        return tuple(results)
+        return results
     
     def __init__(self, source, destination, data=None, **kwargs):
         if not isinstance(source, models.Model):
@@ -113,8 +123,10 @@ class MergeForm(forms.ModelForm):
             # around.
         if not isinstance(destination, source.__class__):
             raise TypeError("destination type %s can't have source type %s merged into it!"% (destination.__class__, source.__class__))
-        if source == destination:
-            raise ValueError("can't merge something with itself!")
+        # allow passing in of unsaved instances
+        if destination.pk and source.pk:
+            if source.pk == destination.pk:
+                raise ValueError("can't merge something with itself!")
         
         super(MergeForm, self).__init__(data, instance=destination, **kwargs)
         self.source = source
@@ -122,16 +134,86 @@ class MergeForm(forms.ModelForm):
         
         # TODO start the transaction here! We're getting queryset of other
         # instances to display, then later saving changes to those instances.
-    
-        self.source_fk_refs = self._get_fk_refs(self.source)
-        self.destination_fk_refs = self._get_fk_refs(self.destination)
-    
-        self.source_m2m_refs = self._get_m2m_refs(self.source)
-        self.destination_m2m_refs = self._get_m2m_refs(self.destination)
+        
+        # allow passing in of unsaved instances
+        if self.source.pk:
+            self.source_fk_refs = self._get_fk_refs(self.source)
+            self.source_m2m_refs = self._get_m2m_refs(self.source)
+        
+        if self.destination.pk:
+            self.destination_fk_refs = self._get_fk_refs(self.destination)
+            self.destination_m2m_refs = self._get_m2m_refs(self.destination)
 
-        self.source_o2o_from_refs = self._get_o2o_refs_from(self.source)
-        self.destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
-    
+        # OneToOneFields in the model we're merging need special handling. Since
+        # they can only point to one other instance, we need merge forms for
+        # the instance pointed to by the field in destination and source. We
+        # also need to add a boolean field to the form to mark the 
+        # OneToOneField as simply null in the destination.
+        source_o2o_from_refs = self._get_o2o_refs_from(self.source)
+        destination_o2o_from_refs = self._get_o2o_refs_from(self.destination)
+        self.subforms = {}
+        self.has_field_names = {}
+        # avoid circular imports
+        # TODO better place for this
+        from cetacean_incidents.apps.locations.models import Location
+        from cetacean_incidents.apps.locations.forms import LocationMergeForm
+        from cetacean_incidents.apps.vessels.forms import VesselInfoMergeForm
+        from cetacean_incidents.apps.vessels.models import VesselInfo
+        subform_classes = {
+            Location: LocationMergeForm,
+            VesselInfo: VesselInfoMergeForm,
+        }
+        
+        # note that source_o2o_from_refs.key() will always be a subset of 
+        # destination_o2o_from_refs.keys(), since we insured destination is an
+        # instance of source.__class__
+        for fieldname, field in destination_o2o_from_refs.items():
+            destination_instance = getattr(destination, fieldname)
+            if fieldname in source_o2o_from_refs.keys():
+                source_instance = getattr(source, fieldname)
+            else:
+                source_instance = None
+            subform_prefix = fieldname
+            if self.prefix:
+                subform_prefix = self.prefix + '-' + subform_prefix
+            
+            bool_field_name = 'has_' + fieldname
+            while bool_field_name in self.fields.keys():
+                bool_field_name = bool_field_name + '_o2o'
+            self.fields[bool_field_name] = forms.BooleanField(
+                required= False,
+                initial= destination_instance is not None,
+                label= 'has ' + field.verbose_name + ' info',
+            )
+            self.has_field_names[fieldname] = bool_field_name
+
+            # TODO is parent_model the the best way to get the Model at the 
+            # other end of a OneToOneField?
+            other_model = field.related.parent_model
+
+            # the 'has_*' field will take care of null-values for the o2o field.
+            # If these are None, go ahead and instantiate them.
+            if destination_instance is None:
+                destination_instance = other_model()
+            if source_instance is None:
+                source_instance = other_model()
+            
+            if not other_model in subform_classes.keys():
+                raise NotImplementedError("%s needs a MergeForm subclass" % field.related.parent_model)
+            
+            # TODO this is a recursive call! need some check to avoid infinite
+            # recursion
+            self.subforms[fieldname] = subform_classes[other_model](
+                destination= destination_instance,
+                source= source_instance,
+                data= data,
+                prefix= subform_prefix,
+            )
+            
+    # display_o2o_merge_row.html uses checkboxhider.js
+    class Media:
+        js = (settings.JQUERY_FILE, 'checkboxhider.js')
+            
     @staticmethod
     def _get_fk_refs_display(fk_refs):
         result = {}
@@ -187,10 +269,20 @@ class MergeForm(forms.ModelForm):
                 other_instance = other_model.objects.get(pk=other_instance_pk)
                 for f in fields:
                     if isinstance(f, models.OneToOneField):
-                        raise NotImplementedError("saving o2o references to the merged instance isn't implemented yet")
+                        # set o2o refs to the source to None
+                        setattr(other_instance, f.name, None)
                     else:
+                        # switch fk refs from the source to the destination
                         setattr(other_instance, f.name, self.destination)
                 other_instance.save()
+        
+        # handle o2o refs from this model
+        for fieldname in self.subforms.keys():
+            has_field_name = self.has_field_names[fieldname]
+            if self.cleaned_data[has_field_name]:
+                saved_instance = self.subforms[fieldname].save()
+            else:
+                self.cleaned_data[fieldname] = None
         
         self.source.delete()
         

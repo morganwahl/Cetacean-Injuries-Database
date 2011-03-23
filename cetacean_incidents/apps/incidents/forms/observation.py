@@ -324,12 +324,6 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         if source.animal != destination.animal:
             raise ValueError("can't merge observations for different animals!")
         
-        # TODO location data
-        #if source.location or destination.location:
-        #    raise NotImplementedError("can't merge observations with location data")
-        # TODO observer vessel
-        if source.observer_vessel or destination.observer_vessel:
-            raise NotImplementedError("can't merge observations with observer-vessel info")
         # TODO observation extensions
         #if source.get_observation_extensions() or destination.get_observation_extensions():
         #    raise NotImplementedError("can't merge observations with ObservationExtensions")
@@ -340,8 +334,6 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         # append source import_notes to destination import_notes
         self.destination.import_notes += self.source.import_notes
 
-        # TODO location data
-        # TODO observer vessel
         # TODO observation extensions
 
         return super(ObservationMergeForm, self).save(commit)

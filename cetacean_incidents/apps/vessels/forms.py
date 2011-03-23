@@ -2,12 +2,15 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django import forms
 from django.forms.util import flatatt
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.contacts.models import Contact
 
 from cetacean_incidents.apps.countries.models import Country
+
+from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from models import VesselInfo
 
@@ -194,4 +197,21 @@ class VesselInfoForm(forms.ModelForm):
         # existing_contact is used instead
         # TODO why?
         exclude = ('contact')
+
+class VesselInfoMergeForm(MergeForm):
+    
+    def as_table(self):
+        return render_to_string(
+            'vesselinfo_merge_form_as_table.html',
+            {
+                'object_name': VesselInfo._meta.verbose_name,
+                'object_name_plural': VesselInfo._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+    
+    class Meta:
+        model = VesselInfo
 

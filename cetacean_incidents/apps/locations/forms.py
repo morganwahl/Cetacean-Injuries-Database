@@ -2,6 +2,9 @@ from decimal import Decimal
 import re
 
 from django import forms
+from django.template.loader import render_to_string
+
+from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from models import Location
 from utils import dms_to_dec
@@ -11,6 +14,25 @@ class LocationForm(forms.ModelForm):
     
     class Meta:
         model = Location
+
+class LocationMergeForm(MergeForm):
+    
+    def as_table(self):
+        return render_to_string(
+            'location_merge_form_as_table.html',
+            {
+                'object_name': Location._meta.verbose_name,
+                'object_name_plural': Location._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+    
+    class Meta:
+        model = Location
+
+Location.merge_form_class = LocationMergeForm
 
 class NiceLocationForm(LocationForm):
     

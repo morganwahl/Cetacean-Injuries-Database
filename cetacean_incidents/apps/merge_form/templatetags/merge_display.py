@@ -9,6 +9,7 @@ from cetacean_incidents.apps.entanglements.models import Entanglement
 
 from cetacean_incidents.apps.generic_templates.templatetags.generic_field_display import (
     display_cell,
+    display_yesno_cell,
     display_animal_length_cell,
 )
 
@@ -16,11 +17,26 @@ register = template.Library()
 
 @register.simple_tag
 def display_merge_row(destination, source, merge_form, field_name, cell_template_name=None, cell_kwargs={}, template='display_merge_row.html'):
-    # comparing m2m fields is a little more complicated
-    destination_value = getattr(destination, field_name)
+    if isinstance(destination._meta.get_field(field_name), models.ManyToManyField):
+        # comparing m2m fields is a little more complicated
+        # unsaved instances may not have PKs yet
+        if not destination.pk:
+            destination_value = tuple()
+        else:
+            destination_value = getattr(destination, field_name)
+    else:
+        destination_value = getattr(destination, field_name)
     # the source may not have all the fields of the destination
     try:
-        source_value = getattr(source, field_name)
+        if isinstance(source._meta.get_field(field_name), models.ManyToManyField):
+            # comparing m2m fields is a little more complicated
+            # unsaved instances may not have PKs yet
+            if not source.pk:
+                source_value = tuple()
+            else:
+                source_value = getattr(destination, field_name)
+        else:
+            source_value = getattr(source, field_name)
         in_source = True
     except AttributeError:
         in_source = False
@@ -135,6 +151,40 @@ def display_merge_animal_length_row(destination, source, merge_form, form_field_
             'destination_cell': destination_cell,
             'source_cell': source_cell,
             'field': merge_form[form_field_name],
+        },
+    )
+
+
+@register.simple_tag
+def display_o2o_merge_row(destination, source, merge_form, o2o_field_name, has_o2o_field_name):
+    destination_value = getattr(destination, o2o_field_name)
+    # the source may not have all the fields of the destination
+    try:
+        source_value = getattr(source, o2o_field_name)
+        in_source = True
+    except AttributeError:
+        in_source = False
+    
+    if in_source:
+        has_differ = not bool(destination_value) == bool(source_value)
+    else:
+        has_differ = None
+    
+    has_destination_cell = display_yesno_cell(destination, o2o_field_name)
+    if in_source:
+        has_source_cell = display_yesno_cell(source, o2o_field_name)
+    else:
+        has_source_cell = mark_safe(u'<td class="added"><i>no field</i></td>')
+    
+    return render_to_string(
+        'display_o2o_merge_row.html',
+        {
+            'has_differ': has_differ,
+            'in_source': in_source,
+            'has_destination_cell': has_destination_cell,
+            'has_source_cell': has_source_cell,
+            'has_field': merge_form[has_o2o_field_name],
+            'subform': merge_form.subforms[o2o_field_name],
         },
     )
 
