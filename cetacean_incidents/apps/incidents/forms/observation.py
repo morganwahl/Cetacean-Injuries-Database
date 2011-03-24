@@ -342,7 +342,7 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         model = Observation
         # don't even include this field so that a CaseMergeForm can't change the
         # animal of the destination case
-        exclude = ('animal', 'cases', 'location', 'observer_vessel',
+        exclude = ('animal', 'cases', 
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
 

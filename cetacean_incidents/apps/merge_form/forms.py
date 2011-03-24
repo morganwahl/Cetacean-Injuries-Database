@@ -186,6 +186,7 @@ class MergeForm(forms.ModelForm):
                 label= 'has ' + field.verbose_name + ' info',
             )
             self.has_field_names[fieldname] = bool_field_name
+            del self.fields[fieldname]
 
             # TODO is parent_model the the best way to get the Model at the 
             # other end of a OneToOneField?
