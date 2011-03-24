@@ -257,37 +257,44 @@ class MergeForm(forms.ModelForm):
         if not commit:
             raise NotImplementedError("uncommited saving of MergeForms is not yet implemented")
         
-        for (other_model, other_field, other_instance_pk) in self.source_m2m_refs:
-            other_instance = other_model.objects.get(pk=other_instance_pk)
-            accessor = getattr(other_instance, other_field.name)
-            # don't remove source; the references to it will disappear when it
-            # is deleted.
-            #accessor.remove(self.source)
-            accessor.add(self.destination)
-        
-        for other_model, model_dict in self.source_fk_refs.items():
-            for other_instance_pk, fields in model_dict.items():
+        if self.source.pk:
+            for (other_model, other_field, other_instance_pk) in self.source_m2m_refs:
                 other_instance = other_model.objects.get(pk=other_instance_pk)
-                for f in fields:
-                    if isinstance(f, models.OneToOneField):
-                        # set o2o refs to the source to None
-                        setattr(other_instance, f.name, None)
-                    else:
-                        # switch fk refs from the source to the destination
-                        setattr(other_instance, f.name, self.destination)
-                other_instance.save()
+                accessor = getattr(other_instance, other_field.name)
+                # don't remove source; the references to it will disappear when it
+                # is deleted.
+                #accessor.remove(self.source)
+                accessor.add(self.destination)
+        
+        if self.source.pk:
+            for other_model, model_dict in self.source_fk_refs.items():
+                for other_instance_pk, fields in model_dict.items():
+                    other_instance = other_model.objects.get(pk=other_instance_pk)
+                    for f in fields:
+                        if isinstance(f, models.OneToOneField):
+                            # set o2o refs to the source to None
+                            setattr(other_instance, f.name, None)
+                        else:
+                            # switch fk refs from the source to the destination
+                            setattr(other_instance, f.name, self.destination)
+                    other_instance.save()
         
         # handle o2o refs from this model
         for fieldname in self.subforms.keys():
             has_field_name = self.has_field_names[fieldname]
             if self.cleaned_data[has_field_name]:
                 saved_instance = self.subforms[fieldname].save()
+                setattr(self.destination, fieldname, saved_instance)
             else:
-                self.cleaned_data[fieldname] = None
+                setattr(self.destination, fieldname, None)
         
-        self.source.delete()
+        result = super(MergeForm, self).save(commit=commit)
         
-        return super(MergeForm, self).save(commit=commit)
+        if self.source.pk:
+            # before deleting self.source, re-instantiate it
+            self.source.__class__.objects.get(pk=self.source.pk).delete()
+        
+        return result
     
     # FIXME this method is never called
     def pre_save(self):

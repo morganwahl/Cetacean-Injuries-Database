@@ -45,7 +45,10 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
         if isinstance(destination_value, models.Manager):
             def _pks_set(manager):
                 return set(manager.values_list('pk', flat=True))
-            differ = not bool(_pks_set(destination_value) == _pks_set(source_value))
+            if isinstance(source_value, models.Manager):
+                differ = not bool(_pks_set(destination_value) == _pks_set(source_value))
+            else:
+                differ = not bool(_pks_set(destination_value) == set(source_value))
         else:
             differ = not bool(destination_value == source_value)
     else:
