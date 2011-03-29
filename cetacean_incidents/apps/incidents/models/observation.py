@@ -438,7 +438,7 @@ class ObservationExtension(models.Model):
         return {}
     
     def __unicode__(self):
-        return "additional data for %s" % (self.observation_ptr)
+        return "additional data for %s" % (self.observation_ptr if self.pk else "<nothing>")
     
     class Meta:
         abstract = True

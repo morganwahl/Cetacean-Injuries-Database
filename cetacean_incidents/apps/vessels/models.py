@@ -66,9 +66,14 @@ class VesselInfo(models.Model):
         ret = 'unnamed vessel'
         if self.name:
             ret = "%s" % self.name
-        ret += " (vessel %i" % self.id
+        ret += " ("
+        if self.id: # unsaved entries won't have IDs
+            ret += "vessel %i" % self.id
+        else:
+            ret += "unsaved vessel"
         if self.flag:
-            ret += ", %s" % self.flag.iso
+            ret += ", "
+            ret += "%s" % self.flag.iso
         ret += ')'
         return ret
 
