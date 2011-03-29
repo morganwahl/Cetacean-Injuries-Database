@@ -355,6 +355,7 @@ def case_merge(request, destination_id, source_id=None):
         form = CaseMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('case_detail', destination.id)
     else:
         form = CaseMergeForm(**form_kwargs)

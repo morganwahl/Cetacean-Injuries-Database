@@ -249,6 +249,7 @@ def animal_merge(request, destination_id, source_id=None):
         form = AnimalMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('animal_detail', destination.id)
     else:
         form = AnimalMergeForm(**form_kwargs)

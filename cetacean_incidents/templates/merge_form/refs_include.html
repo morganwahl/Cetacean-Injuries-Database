@@ -1,7 +1,7 @@
-{% if fk_refs %}
+{% if refs %}
 This {{ object_name }} is referenced by:
 <ul>
-    {% for other_model, other_instance_dict in fk_refs.items %}
+    {% for other_model, other_instance_dict in refs.items %}
     <li>
         <b>{{ other_model }}</b>
         <ul>

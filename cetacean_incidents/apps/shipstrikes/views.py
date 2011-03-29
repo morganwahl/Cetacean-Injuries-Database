@@ -199,6 +199,7 @@ def shipstrike_merge(request, destination_id, source_id=None):
         form = ShipstrikeMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('shipstrike_detail', destination.id)
     else:
         form = ShipstrikeMergeForm(**form_kwargs)

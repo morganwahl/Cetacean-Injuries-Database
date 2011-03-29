@@ -388,6 +388,7 @@ def entanglement_merge(request, destination_id, source_id=None):
         form = EntanglementMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('entanglement_detail', destination.id)
     else:
         form = EntanglementMergeForm(**form_kwargs)

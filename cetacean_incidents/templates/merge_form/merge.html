@@ -26,20 +26,14 @@ This template is an amalgam of editing and viewing.
     	{% endblock %}
         <tr>
             <td>
-                {% with form.destination_fk_refs_display as fk_refs %}
-                {% include "merge_form/fk_refs_include.html" %}
-                {% endwith %}
-                {% with form.destination_m2m_refs_display as m2m_refs %}
-                {% include "merge_form/m2m_refs_include.html" %}
+                {% with form.refs_to_destination_display as refs %}
+                {% include "merge_form/refs_include.html" %}
                 {% endwith %}
             </td>
             <td>the merged {{ object_name }} will have all the references of these two {{ object_name_plural }}</td>
             <td>
-                {% with form.source_fk_refs_display as fk_refs %}
-                {% include "merge_form/fk_refs_include.html" %}
-                {% endwith %}
-                {% with form.source_m2m_refs_display as m2m_refs %}
-                {% include "merge_form/m2m_refs_include.html" %}
+                {% with form.refs_to_source_display as refs %}
+                {% include "merge_form/refs_include.html" %}
                 {% endwith %}
             </td>
         </tr>

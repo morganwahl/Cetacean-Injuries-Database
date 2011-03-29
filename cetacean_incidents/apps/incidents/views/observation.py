@@ -534,6 +534,7 @@ def observation_merge(request, destination_id, source_id=None):
         form = ObservationMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('observation_detail', destination.id)
     else:
         form = ObservationMergeForm(**form_kwargs)
