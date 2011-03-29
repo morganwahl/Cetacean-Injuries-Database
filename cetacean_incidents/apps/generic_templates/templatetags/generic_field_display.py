@@ -60,7 +60,7 @@ def display_chosen_cell(instance, fieldname, **kwargs):
     return display_cell(instance, fieldname, 'chosen_cell', **kwargs)
 
 @register.simple_tag
-def display_taxon_cell(instance, fieldname, link=True, probable=None, **kwargs):
+def display_taxon_cell(instance, fieldname, probable=None, link=True, **kwargs):
     kwargs.update({'link': link})
     if not probable is None:
         kwargs.update({'probable': probable})

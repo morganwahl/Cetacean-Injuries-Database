@@ -69,7 +69,7 @@
             </td>
         </tr>
         {% endwith %}
-        {% display_taxon_row animal 'determined_taxon' '1' animal.probable_taxon %}
+        {% display_taxon_row animal 'determined_taxon' animal.probable_taxon %}
         {% if animal.determined_gender or animal.probable_gender %}
         {% display_gender_row animal 'determined_gender' animal.get_probable_gender_display %}
         {% endif %}
