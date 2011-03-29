@@ -284,6 +284,15 @@ class EntanglementObservation(ObservationExtension):
 
         return body_locations
 
+    def get_gear_body_locations_dict(self):
+        result = {}
+        for loc, gbl in self.get_gear_body_locations():
+            if gbl is None:
+                result[loc] = None
+            else:
+                result[loc] = gbl.gear_seen_here
+        return result
+
     def get_observation_view_data(self):
         # avoid circular imports
         from views import get_entanglementobservation_view_data

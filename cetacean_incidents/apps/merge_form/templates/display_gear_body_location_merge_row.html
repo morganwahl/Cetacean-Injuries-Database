@@ -1,0 +1,61 @@
+<tr{% if differ %} class="differ"{% endif %}>
+    <td>
+        <table>
+            {% for loc, gear_loc in destination.get_gear_body_locations %}
+            <tr class="field">
+                {# TODO this is abuse of the title attribute #}
+                <th title="{{ loc.definition }}">{{ loc.name }}</th>
+                <td>
+                    <i>
+                    {% if gear_loc %}
+                    {{ gear_loc.gear_seen_here|yesno }}
+                    {% else %}
+                    unknown
+                    {% endif %}
+                    </i>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+    <td>
+        <table>
+            <tr>
+                <td>
+                    {# TODO get this verbose-name and help-text from the actual EntanglementObservation.gear_body_location field #}
+                    <span class="fieldname">Gear Body Locations</span>
+                    <p>
+                        <i>where on the animal's body was gear seen or not seen</i>
+                    </p>
+                </td>
+                <td>
+                    <table class="bordered">
+                    {% for form in merge_form.gear_body_location_forms %}
+                        {{ form.as_table }}
+                    {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </td>
+    <td>
+        <table>
+            {% for loc, gear_loc in source.get_gear_body_locations %}
+            <tr class="field">
+                {# TODO this is abuse of the title attribute #}
+                <th title="{{ loc.definition }}">{{ loc.name }}</th>
+                <td>
+                    <i>
+                    {% if gear_loc %}
+                    {{ gear_loc.gear_seen_here|yesno }}
+                    {% else %}
+                    unknown
+                    {% endif %}
+                    </i>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </td>
+</tr>
+

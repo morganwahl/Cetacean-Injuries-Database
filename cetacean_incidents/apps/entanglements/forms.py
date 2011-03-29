@@ -187,9 +187,7 @@ Entanglement.form_class = AddEntanglementForm
 
 class EntanglementObservationForm(forms.ModelForm):
 
-    def __init__(self, *args, **kwargs):
-        super(EntanglementObservationForm, self).__init__(*args, **kwargs)
-
+    def _init_gear_body_location_forms(self):
         self.gear_body_location_forms = []
         for loc in BodyLocation.objects.all():
             subform_kwargs = {}
@@ -217,17 +215,23 @@ class EntanglementObservationForm(forms.ModelForm):
 
             self.gear_body_location_forms.append(GearBodyLocationForm(**subform_kwargs))
 
-    def is_valid(self):
+    def __init__(self, *args, **kwargs):
+        super(EntanglementObservationForm, self).__init__(*args, **kwargs)
+        self._init_gear_body_location_forms()
+
+    def _gear_body_location_forms_are_valid(self):
         return reduce(
             __and__,
             map(
                 lambda form: form.is_valid(),
-                [super(EntanglementObservationForm, self)] + self.gear_body_location_forms,
+                self.gear_body_location_forms,
             ),
         )
+        
+    def is_valid(self):
+        return super(EntanglementObservationForm, self).is_valid() and self._gear_body_location_forms_are_valid()
 
-    def save(self, commit=True):
-        result = super(EntanglementObservationForm, self).save(commit)
+    def _save_gear_body_location_forms(self, commit, result):
         if commit:
             for gblf in self.gear_body_location_forms:
                 gbl = gblf.save(commit=False)
@@ -246,7 +250,10 @@ class EntanglementObservationForm(forms.ModelForm):
                     gbl.save()
                     gblf.save_m2m()
             self.save_m2m = new_save_m2m
-        
+
+    def save(self, commit=True):
+        result = super(EntanglementObservationForm, self).save(commit)
+        self._save_gear_body_location_forms(commit, result)
         return result
     
     class Meta:
@@ -254,6 +261,45 @@ class EntanglementObservationForm(forms.ModelForm):
         # form submission fails if we even include this m2m field (since it 
         # uses an intermediary model)
         exclude = ('gear_body_location',)
+
+class EntanglementObservationMergeForm(MergeForm, EntanglementObservationForm):
+
+    def __init__(self, *args, **kwargs):
+        super(EntanglementObservationMergeForm, self).__init__(*args, **kwargs)
+        self._init_gear_body_location_forms()
+
+    def is_valid(self):
+        return super(EntanglementObservationMergeForm, self).is_valid() and self._gear_body_location_forms_are_valid()
+
+    def as_table(self):
+        return render_to_string(
+            'entanglementobservation_merge_form_as_table.html',
+            {
+                'object_name': EntanglementObservation._meta.verbose_name,
+                'object_name_plural': EntanglementObservation._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+
+    def save(self, commit=True):
+        # HACK temporarily change self.source's GBLs so that MergeForm.save doesn't make them point to self.destination
+        source_gbls = self.source.get_gear_body_locations_dict()
+        for gbl in self.source.gearbodylocation_set.all():
+            gbl.delete()
+        result = super(EntanglementObservationMergeForm, self).save(commit)
+        # restore self.source's GBLs
+        for loc, present in source_gbls.items():
+            if present is None:
+                continue
+            new_gbl = GearBodyLocation.objects.create(observation=self.source, location=loc, gear_seen_here=present)
+        self._save_gear_body_location_forms(commit, result)
+        return result
+    
+    class Meta:
+        model = EntanglementObservation
+        exclude = ('observation_ptr', 'gear_body_location')
 
 class GearOwnerDateField(UncertainDateTimeField):
     

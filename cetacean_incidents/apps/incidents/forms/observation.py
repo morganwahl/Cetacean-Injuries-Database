@@ -324,17 +324,68 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         if source.animal != destination.animal:
             raise ValueError("can't merge observations for different animals!")
         
-        # TODO observation extensions
-        #if source.get_observation_extensions() or destination.get_observation_extensions():
-        #    raise NotImplementedError("can't merge observations with ObservationExtensions")
-
         super(ObservationMergeForm, self).__init__(source, destination, data, **kwargs)
     
+        # handle ObservationExtensions as if they were referenced by a field
+        # in Observation, not the other way round
+        o2o_refs_to_source = self._get_other_model_o2o_refs_to(self.source)
+        o2o_refs_to_destination = self._get_other_model_o2o_refs_to(self.destination)
+
+        # TODO don't hard-code all this stranding and entanglement stuff
+        from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+        from cetacean_incidents.apps.entanglements.forms import EntanglementObservationMergeForm
+        from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
+        from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeObservationMergeForm
+        oe_subform_classes = {
+            EntanglementObservation: EntanglementObservationMergeForm,
+            ShipstrikeObservation: ShipstrikeObservationMergeForm,
+        }
+        
+        destination_oes = self.destination.get_observation_extensions()
+        source_oes = self.source.get_observation_extensions()
+        for oe_class in EntanglementObservation, ShipstrikeObservation:
+
+            destination_oe = None
+            # check for a matching destination_oe
+            for oe in destination_oes:
+                if isinstance(oe, oe_class):
+                    destination_oe = oe
+            source_oe = None
+            # check for a matching source_oe
+            for oe in source_oes:
+                if isinstance(oe, oe_class):
+                    source_oe = oe
+            
+            # the name of the field on Observation that accesses dest_oe
+            fieldname = oe_class._meta.get_field('observation_ptr').related.get_accessor_name()
+            
+            subform_prefix = fieldname
+            if self.prefix:
+                subform_prefix = self.prefix + '-' + subform_prefix
+            
+            if destination_oe is None:
+                destination_oe = oe_class(observation_ptr=self.destination)
+            if source_oe is None:
+                source_oe = oe_class(observation_ptr=self.source)
+            
+            if not oe_class in oe_subform_classes.keys():
+                raise NotImplementedError("%s needs a MergeForm subclass" % oe_class)
+            
+            # TODO this is a recursive call! need some check to avoid infinite
+            # recursion
+            self.subforms[fieldname] = oe_subform_classes[oe_class](
+                destination= destination_oe,
+                source= source_oe,
+                data= data,
+                prefix= subform_prefix,
+            )
+            
     def save(self, commit=True):
         # append source import_notes to destination import_notes
         self.destination.import_notes += self.source.import_notes
-
-        # TODO observation extensions
+        
+        for c in self.source.cases.all():
+            self.destination.cases.add(c)
 
         return super(ObservationMergeForm, self).save(commit)
 

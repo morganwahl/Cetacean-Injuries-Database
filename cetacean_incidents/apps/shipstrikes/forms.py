@@ -1,4 +1,5 @@
 from django import forms
+from django.template.loader import render_to_string
 
 from cetacean_incidents.apps.contacts.forms import ContactForm
 from cetacean_incidents.apps.contacts.models import Contact
@@ -7,6 +8,8 @@ from cetacean_incidents.apps.incidents.forms import (
     CaseForm,
     CaseMergeForm,
 )
+
+from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
@@ -167,6 +170,11 @@ class StrikingVesselInfoForm(VesselInfoForm):
         model = StrikingVesselInfo
         exclude = ('contact', 'captain')
 
+class StrikingVesselInfoMergeForm(MergeForm):
+    
+    class Meta:
+        model = StrikingVesselInfo
+
 class ShipstrikeForm(CaseForm):
     
     class Meta(CaseForm.Meta):
@@ -196,3 +204,21 @@ class ShipstrikeObservationForm(forms.ModelForm):
     class Meta:
         model = ShipstrikeObservation
 
+class ShipstrikeObservationMergeForm(MergeForm):
+    
+    def as_table(self):
+        return render_to_string(
+            'shipstrikeobservation_merge_form_as_table.html',
+            {
+                'object_name': self._meta.model._meta.verbose_name,
+                'object_name_plural': self._meta.model._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+    
+    class Meta:
+        model = ShipstrikeObservation
+        exclude = ('observation_ptr',)
+        

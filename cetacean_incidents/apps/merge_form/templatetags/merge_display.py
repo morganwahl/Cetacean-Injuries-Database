@@ -191,3 +191,30 @@ def display_o2o_merge_row(destination, source, merge_form, o2o_field_name, has_o
         },
     )
 
+@register.simple_tag
+def display_observationextension_merge_row(destination, source, merge_form, oe_field_name):
+    if not oe_field_name in merge_form.subforms.keys():
+        return 
+    
+    return render_to_string(
+        'display_oe_merge_row.html',
+        {
+            'subform': merge_form.subforms[oe_field_name],
+        },
+    )
+
+@register.simple_tag
+def display_gear_body_location_merge_row(destination, source, merge_form):
+    
+    differ = not bool(destination.get_gear_body_locations_dict() == source.get_gear_body_locations_dict())
+    
+    return render_to_string(
+        'display_gear_body_location_merge_row.html',
+        {
+            'differ': differ,
+            'destination': destination,
+            'source': source,
+            'merge_form': merge_form,
+        }
+    )
+
