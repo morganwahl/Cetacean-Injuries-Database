@@ -2,7 +2,7 @@
 
 {% spaceless %}
 {% block value_block %}
-{{ value|yesno:"yes,no" }}{% if not value %}<br>
+<i>{{ value|yesno:"yes,no" }}</i>{% if not value %}<br>
 <i>note that "no" is the same as "unknown" for this field</i>{% endif %}
 {% endblock %}
 {% endspaceless %}
