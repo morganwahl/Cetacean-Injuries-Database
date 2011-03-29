@@ -1,0 +1,7 @@
+{% load merge_display %}
+
+{% display_merge_row destination source form 'datetime_set' %}
+{% display_o2o_merge_row destination source form 'location_gear_set' 'has_location_gear_set' %}
+{% display_merge_row destination source form 'datetime_missing' %}
+{% display_merge_row destination source form 'missing_gear' %}
+

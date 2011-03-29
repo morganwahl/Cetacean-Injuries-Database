@@ -2,6 +2,7 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+nested TBODY in merge form for entanglements
 update poster!
 add interface for deleting ObservationExtensions that are no longer relevant
   because the cases an Observation is relevant to have changed

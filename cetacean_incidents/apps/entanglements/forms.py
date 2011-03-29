@@ -24,6 +24,8 @@ from cetacean_incidents.apps.incidents.models import (
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
+from cetacean_incidents.apps.merge_form.forms import MergeForm
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
@@ -290,6 +292,41 @@ class GearOwnerForm(forms.ModelForm):
     class Meta:
         model = GearOwner
         exclude = ('case', 'location_gear_set')
+
+class GearOwnerMergeForm(MergeForm):
+    
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = GearOwner._meta.get_field('datetime_set')
+    datetime_set = GearOwnerDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # ModelForm won't fill in all the handy args for us if we specify our own
+    # field
+    _f = GearOwner._meta.get_field('datetime_missing')
+    datetime_missing = GearOwnerDateField(
+        required= _f.blank != True,
+        help_text= _f.help_text,
+        label= _f.verbose_name.capitalize(),
+    )
+
+    def as_table(self):
+        return render_to_string(
+            'gearowner_merge_form_as_table.html',
+            {
+                'object_name': GearOwner._meta.verbose_name,
+                'object_name_plural': GearOwner._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+    
+    class Meta:
+        model = GearOwner
 
 class AnimalNMFSIDLookupForm(SubmitDetectingForm):
     nmfs_id = forms.CharField(
