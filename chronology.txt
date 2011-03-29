@@ -3,12 +3,17 @@ General order to do thing in (and a timeframe):
 TODO in order of importance:
 
 nested TBODY in merge form for entanglements
+make delete tag link bigger
+affiliation merging
+tag interface with color-coding of tags
+next, previous links for observations
+update search forms
+drop use of 'intial' and 'exam' fields of Observations
+define Observation.tagged
 update poster!
 add interface for deleting ObservationExtensions that are no longer relevant
   because the cases an Observation is relevant to have changed
 move SI&M editing to pop-up window
-make unit-selecting widget for displaying animal_length
-make unit-selecting widget for editing animal_length
 manual!
 importing an invalid taxon just gives an error message. should import valid taxon with feedback.
 display both field number and name of animals
@@ -21,14 +26,11 @@ add handy selectors for U.S. and Canada
 'federal waters' should include both territorial and EEZ
 add observation to shipstrike is adding a generic obs.
 poster of database structure, with definitions. also of workflow.
-OBSERVATIONS CAN BE FOR MORE THAN ONE CASE!
-per-case human-interaction: (yes, no, cbd, unk)
 'needs review' by a particular user field
 'case type' for ones that don't have fields specifc to them
 case.valid codes from national stranding database
 remove nmfs_id from case-ids-box
 use 'unknown' option throughout site
-'indication of entanglement/shipstrike' can be on any observation (not necessarily ones for entanglemnts)
 add 'needs verification by <user>' mechanism
 taxon merge doesn't work when Taxon.tsn is unique
 contact types (see to be making generic contacts)
