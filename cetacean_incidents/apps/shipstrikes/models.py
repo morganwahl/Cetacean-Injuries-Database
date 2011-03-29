@@ -82,6 +82,8 @@ class ShipstrikeObservation(ObservationExtension):
         verbose_name = "Observation shipstrike-data"
         verbose_name_plural = verbose_name
 
+guard_deletes(StrikingVesselInfo, ShipstrikeObservation, 'striking_vessel')
+
 # TODO generalize this for all ObservationExtensions
 def add_shipstrike_extension_handler(sender, **kwargs):
     # sender shoulde be Observation.cases.through

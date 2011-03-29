@@ -71,6 +71,8 @@ class GearOwner(AbstractContact):
             ("view_gear_owner", "Can view gear owner"),
         )
 
+guard_deletes(Location, GearOwner, 'location_gear_set')
+
 class Entanglement(Case):
     
     nmfs_id = models.CharField(
@@ -176,7 +178,7 @@ class Entanglement(Case):
                 raise ValidationError("NMFS ID '%s' is already in use by case '%s'" % (self.nmfs_id, unicode(cases[0])))
 
 guard_deletes(Contact, Entanglement, 'analyzed_by')
-
+guard_deletes(GearOwner, Entanglement, 'gear_owner_info')
 
 class BodyLocation(models.Model):
     '''\
@@ -369,5 +371,5 @@ class GearBodyLocation(models.Model):
     class Meta:
         unique_together = ('observation', 'location')
 
-# TODO should delete of a body-location delete data for that location too?
+guard_deletes(BodyLocation, GearBodyLocation, 'location')
 

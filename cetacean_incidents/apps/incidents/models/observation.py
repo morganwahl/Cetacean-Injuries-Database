@@ -405,6 +405,8 @@ for m, rm, fn in (
     (Contact, Observation, 'observer'),
     (Contact, Observation, 'reporter'),
     (Taxon, Observation, 'taxon'),
+    (Location, Observation, 'location'),
+    (VesselInfo, Observation, 'observer_vessel'),
 ):
     guard_deletes(m, rm, fn)
 
