@@ -244,7 +244,7 @@ class EntanglementObservation(ObservationExtension):
         blank= True,
         null= True,
         verbose_name= u'disentanglement attempted?',
-        help_text= u'''Was the animal disentangled or the entangling gear in any way altered?''',
+        help_text= u'''Was a disentanglement attempt made (would be considered a take under permit), entangling gear altered, or the animal disentangled?''',
     )
     disentanglement_outcome = models.CharField(
         max_length= 4,
