@@ -178,7 +178,7 @@ class NiceLocationForm(LocationForm):
         if bool(cleaned_data['coordinates_lat_input']) and bool(cleaned_data['coordinates_lng_input']):
             # act like the coordinates field wasn't hidden, then call super's 
             # clean
-            self.cleaned_data['coordinates'] = "%.16f,%16f" % (
+            self.cleaned_data['coordinates'] = "%s,%s" % (
                 dms_to_dec(self.cleaned_data['coordinates_lat_input']),
                 dms_to_dec(self.cleaned_data['coordinates_lng_input']),
             )
