@@ -10,11 +10,11 @@ from animal import (
 from case import (
     _change_case,
     case_detail,
+    case_merge,
     case_search,
     cases_by_year,
     edit_case,
     edit_case_animal,
-    case_merge,
 )
 
 from observation import (

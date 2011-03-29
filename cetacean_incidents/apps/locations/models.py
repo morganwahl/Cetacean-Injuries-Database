@@ -73,7 +73,7 @@ class Location(models.Model):
     coordinates = models.CharField(
         max_length = 127,
         blank= True,
-        help_text= "Comma separated latitude, longitude. In decimal degrees with south and west as negative. 180 degrees E or W is -180. conversion from/to other formats is handled elsewhere."
+        help_text= "Comma separated latitude, longitude. In decimal degrees with south and west as negative. 180 degrees E or W is -180." # conversion from/to other formats is handled elsewhere.
     )
     def _get_coords_pair(self):
         if not self.coordinates:
@@ -141,6 +141,6 @@ class Location(models.Model):
             return unicode(self.coordinates)
         
         return u"<#%s>" % unicode(self.pk)
-
+    
 guard_deletes(Country, Location, 'country')
-        
+

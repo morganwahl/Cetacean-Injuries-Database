@@ -58,7 +58,9 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
         destination_kwargs, source_kwargs = cell_kwargs
     else:
         destination_kwargs, source_kwargs = map(copy, (cell_kwargs, cell_kwargs))
+
     destination_cell = display_cell(destination, field_name, cell_template_name, **destination_kwargs)
+
     if in_source:
         source_cell = display_cell(source, field_name, cell_template_name, **source_kwargs)
     else:

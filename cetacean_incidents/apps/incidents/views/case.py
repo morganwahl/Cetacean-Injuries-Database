@@ -27,7 +27,6 @@ from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-
 from ..models import (
     Animal,
     Case,
@@ -55,7 +54,7 @@ def case_detail(request, case_id, extra_context={}):
     case_class = case.specific_class()
     # the case_detail.html template needs jQuery
     if not 'media' in extra_context:
-        extra_context['media'] = Media()
+        extra_context['media'] = Media(js=(settings.JQUERY_FILE,))
 
     if request.user.has_perms(('incidents.change_case', 'incidents.delete_case')):
         merge_form = CaseMergeSourceForm(destination=case)
@@ -63,7 +62,6 @@ def case_detail(request, case_id, extra_context={}):
         extra_context['media'] += merge_form.media
         extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
 
-    extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
     return generic_views.object_detail(
         request,
         object_id= case_id,

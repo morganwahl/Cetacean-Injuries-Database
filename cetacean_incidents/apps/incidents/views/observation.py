@@ -41,6 +41,8 @@ from ..forms import (
     AnimalForm,
     AddCaseForm,
     CaseForm,
+    ObservationCasesForm,
+    ObservationForm,
     ObservationMergeForm,
     ObservationMergeSourceForm,
 )
@@ -49,11 +51,6 @@ from ..models import (
     Observation,
     ObservationExtension,
 )
-from ..forms import (
-    ObservationForm,
-    ObservationCasesForm,
-)
-
 from tabs import (
     AnimalTab,
     CaseTab,

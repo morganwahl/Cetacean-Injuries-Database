@@ -52,11 +52,11 @@ class CaseMergeSourceForm(forms.Form):
         self.fields['source'] = forms.ModelChoiceField(
             queryset= Case.objects.exclude(id=destination.id).filter(animal=destination.animal),
             label= 'other %s' % Case._meta.verbose_name,
-            required= True, # ensures an animal is selected
+            required= True, # ensures a case is selected
             initial= None,
             help_text= u"""Choose a case to merge into this one. That case will be deleted and references to it will refer to this case instead.""",
             error_messages= {
-                'required': u"You must select an case."
+                'required': u"You must select a case."
             },
         )
 

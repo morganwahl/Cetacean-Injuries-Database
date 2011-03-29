@@ -40,14 +40,14 @@ class MergeForm(forms.ModelForm):
         results = {}
         def _results_add(other_model, other_instance, other_field):
             # It's important to store only the primary key since we 
-            # don't want to have multiple in-memory instance of the same
+            # don't want to have multiple in-memory instances of the same
             # object in the database
             pk = other_instance.pk
             if not other_model in results:
                 results[other_model] = {}
             if not pk in results[other_model]:
                 results[other_model][pk] = []
-            results[other_model][pk].append(other_field)        
+            results[other_model][pk].append(other_field)
         
         for ro in instance._meta.get_all_related_objects():
             # note that OneToOneFields are also ForeignKeys
@@ -247,7 +247,7 @@ class MergeForm(forms.ModelForm):
         self.source = source
         self.destination = destination
         
-        # TODO start the transaction here! We're getting queryset of other
+        # TODO start the transaction here? We're getting queryset of other
         # instances to display, then later saving changes to those instances.
         
         # OneToOneFields in the model we're merging need special handling. Since
