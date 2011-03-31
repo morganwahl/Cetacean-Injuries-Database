@@ -153,7 +153,8 @@ class CaseSearchForm(forms.Form):
     # TODO put this in entanglements app
     from cetacean_incidents.apps.entanglements.models import EntanglementObservation
     disentanglement_outcome = forms.ChoiceField(
-        choices= EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
+        choices= (('','<any or none>'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
+        initial= '',
         required= False,
         help_text= "search for Cases with an observation whose disentanglement outcome is this."
     )
