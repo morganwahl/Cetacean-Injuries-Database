@@ -125,6 +125,8 @@ def case_search(request, after_date=None, before_date=None):
     if form.is_valid():
 
         manager = Case.objects
+        query = Q()
+
         if form.cleaned_data['case_type']:
             # TODO go through different case types automatically
             ct = form.cleaned_data['case_type']
@@ -133,9 +135,7 @@ def case_search(request, after_date=None, before_date=None):
             if ct == 's':
                 manager = Shipstrike.objects
             if ct == 'c':
-                manager = Case.objects
-        
-        query = Q()
+                query &= Q(case_type='Case')
     
         if form.cleaned_data['observed_after_date']:
             
