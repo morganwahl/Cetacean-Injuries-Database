@@ -24,6 +24,8 @@ from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
+from cetacean_incidents.apps.taxons.models import Taxon
+
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
@@ -175,6 +177,10 @@ def case_search(request, after_date=None, before_date=None):
         if form.cleaned_data['observation_narrative']:
             on = form.cleaned_data['observation_narrative']
             query &= Q(observation__narrative__icontains=on)
+        
+        if form.cleaned_data['disentanglement_outcome']:
+            do = form.cleaned_data['disentanglement_outcome']
+            query &= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
 
         # TODO shoulde be ordering such that cases with no date come first
         case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
