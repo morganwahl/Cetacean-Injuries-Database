@@ -23,5 +23,7 @@ from observation import (
     edit_observation,
     observation_detail,
     observation_merge,
+    observation_search,
+    observations_by_year,
 )
 

@@ -1,0 +1,61 @@
+{# assumes a list of observations as 'observations' in the context #}
+{% load animal_extras %}
+{% load case_extras %}
+{% load observation_extras %}
+{% load contact_extras %}
+<i>{{ observations|length }} observation{{ observations|length|pluralize }}</i>
+<table class="bordered sortable">
+    <thead>
+        <tr>
+            {# the observations-editing page can also change animals and cases #}
+            {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
+            <th class="sorttable_nosort"><!-- case edit link --></th>
+            {% endif %}
+            <th>observation</th>
+            <th class="sorttable_nosort">animal</th>
+            <th class="sorttable_nosort">cases</th>
+            <th>observed</th>
+            <th>reported</th>
+            <th class="sorttable_nosort">observer</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for o in observations %}
+        <tr>
+            {# the obs-editing page can also change animals #}
+            {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
+            <td>
+                <a href="{{ o.specific_instance.get_edit_url }}">
+                    <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation">
+                </a>
+            </td>
+            {% endif %}
+            <td sorttable_customkey="{{ o.id|stringformat:"04d" }}">
+                {% observation_link o %}
+            </td>
+            <td>{% animal_link o.animal %}</td>
+            <td>
+                {% if o.cases.count > 1 %}
+                <ul>
+                    {% for c in o.cases.all %}
+                    <li>{% case_link c %}</li>
+                    {% endfor %}
+                <ul>
+                {% else %}
+                {% case_link o.cases.all.0 %}
+                {% endif %}
+            </td>
+	        {% with o.datetime_observed as date %}
+	        <td sorttable_customkey="{{ date.sortkey }}">{% date_observed_display date %}</td>
+	        {% endwith %}
+	        {% with o.datetime_reported as date %}
+	        <td sorttable_customkey="{{ date.sortkey }}">{% date_observed_display date %}</td>
+	        {% endwith %}
+	        <td sorttable_customkey="{{ o.observer.sort_name }}">
+                {% contact_link o.observer %}
+	        </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+

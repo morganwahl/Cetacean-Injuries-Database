@@ -17,6 +17,8 @@ from ..models import (
     Observation,
 )
 
+from case_extras import YearsForm
+
 register = template.Library()
 
 @register.simple_tag
@@ -140,6 +142,10 @@ models.signals.post_save.connect(
     receiver=  _contact_post_save,
     dispatch_uid= 'cache_clear__observation_extras__contact__post_save',
 )
+
+@register.inclusion_tag('observation_years_link.html')
+def observation_years_link():
+    return {'years_form': YearsForm()}
 
 @register.simple_tag
 def date_observed_display(dt):

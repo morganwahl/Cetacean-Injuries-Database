@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{% endblock %}
+
+{% block title %}Observations in {{ year }}{% endblock %}
+
+{% block header %}
+<h2 style="text-align:center;">
+    <div style="display: float; float:left;">
+        <a href="{% url observations_by_year year|add:"-1" %}">
+            &#x2190; year before
+        </a>
+    </div>
+    Observations in {{ year }}
+    <div style="display: float; float:right;">
+        <a href="{% url observations_by_year year|add:"1" %}">
+            year after &#x2192;
+        </a>
+    </div>
+</h2>
+{% endblock %}
+
+{% block content %}
+{% if observations %}
+{% include "incidents/observation_list_include.html" %}
+{% else %}
+<i>no observations in {{ year }}</i>
+{% endif %}
+{% endblock %}

@@ -27,8 +27,8 @@ from search import (
     CaseYearlyNumberLookupForm,
 
     AnimalSearchForm,
-
     CaseSearchForm,
+    ObservationSearchForm,
 )
 
 import tests

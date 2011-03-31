@@ -58,5 +58,9 @@ urlpatterns += patterns('',
     (r'^observations/(\d+)/edit$', views.edit_observation, {}, 'edit_observation'),
     (r'^observations/(?P<destination_id>\d+)/merge$', views.observation_merge, {}, 'observation_merge'),
     (r'^observations/(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.observation_merge, {}, 'observation_merge'),
+    (r'^observations/search$', views.observation_search, {}, 'observation_search'),
+    (r'^observations/by_year/now$', views.observations_by_year, {}, 'observations_this_year'),
+    (r'^observations/by_year/$', views.observations_by_year, {}, 'observations_by_year_get'),
+    (r'^observations/by_year/(\d+)/$', views.observations_by_year, {}, 'observations_by_year'),
 )
 

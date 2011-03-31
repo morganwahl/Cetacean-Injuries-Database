@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block head %}
+{{ block.super }}
+<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
+{% endblock %}
+
+{% block title %}{{ block.super }}: Observations{% endblock %}
+
+{% block header %}<h2>Observations</h2>{% endblock %}
+
+{% block content %}
+<form action="{% url observation_search %}" method="get">
+    <div class="section">
+        {% with form.non_field_errors as errors %}
+        {% if errors %}
+        <ul class="errorlist">
+            {% for e in errors %}
+            <li>{{ e }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        {% for f in form %}
+        {% include "labeled_field.html" %}
+        {% endfor %}
+        <button type="submit">search</button>
+    </div>
+</form>
+{% if form.is_bound %}
+<div style="text-align: center;">
+    ({{ observation_count|default:"no" }} matching observation{{ observation_count|pluralize }})
+</div>{# sorttable.js doesn't like empty tables #}
+{% if observation_count > 0 %}
+{% with observation_list as observations %}
+{% include "incidents/observation_list_include.html" %}
+{% endwith %}
+{% endif %} {# observation_count > 0 #}
+{% else %} {# form.is_bound #}
+<p>click 'search' to see a list of observations</p>
+{% endif %} {# form.is_bound #}
+{% endblock %}
+

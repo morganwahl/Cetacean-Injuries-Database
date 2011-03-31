@@ -149,15 +149,6 @@ class CaseSearchForm(forms.Form):
         required= False,
         help_text= "search for Cases with an observation whose narrative contains this phrase",
     )
-    
-    # TODO put this in entanglements app
-    from cetacean_incidents.apps.entanglements.models import EntanglementObservation
-    disentanglement_outcome = forms.ChoiceField(
-        choices= (('','<any or none>'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
-        initial= '',
-        required= False,
-        help_text= "search for Cases with an observation whose disentanglement outcome is this."
-    )
         
     def clean(self):
         earlier = self.cleaned_data.get('after_date')
@@ -165,4 +156,58 @@ class CaseSearchForm(forms.Form):
         if earlier and later and earlier > later:
             raise forms.ValidationError("the 'after date' should equal or precede the 'before date'")
         return super(CaseSearchForm, self).clean()
+
+class ObservationSearchForm(forms.Form):
+
+    observed_after_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or after"
+    )
+    observed_before_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Observed on or before"
+    )
+
+    reported_after_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or after"
+    )
+    reported_before_date = forms.DateTimeField(
+        required= False,
+        widget= Datepicker,
+        help_text= "enter year-month-day",
+        label= "Reported on or before"
+    )
+
+    # TODO check that after date is before before_date
+    
+    taxon = TaxonField(
+        required= False,
+    )
+    
+    observation_narrative = forms.CharField(
+        required= False,
+        help_text= "search for an observation whose narrative contains this phrase",
+    )
+    
+    # TODO put this in entanglements app
+    from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+    disentanglement_outcome = forms.ChoiceField(
+        choices= (('','<any or none>'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
+        initial= '',
+        required= False,
+    )
+
+    def clean(self):
+        earlier = self.cleaned_data.get('after_date')
+        later = self.cleaned_data.get('before_date')
+        if earlier and later and earlier > later:
+            raise forms.ValidationError("the 'after date' should equal or precede the 'before date'")
+        return super(ObservationSearchForm, self).clean()
 

@@ -1,6 +1,8 @@
 import operator
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.db import transaction
 from django.forms import Media
 from django.forms.formsets import formset_factory
@@ -31,6 +33,11 @@ from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
+from cetacean_incidents.apps.taxons.models import Taxon
+
+from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
+from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
+
 from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
 from ..models import (
@@ -45,7 +52,9 @@ from ..forms import (
     ObservationForm,
     ObservationMergeForm,
     ObservationMergeSourceForm,
+    ObservationSearchForm,
 )
+from ..templatetags.case_extras import YearsForm
 
 from ..models import (
     Observation,
@@ -548,4 +557,127 @@ def observation_merge(request, destination_id, source_id=None):
         },
         context_instance= RequestContext(request),
     )
+
+@login_required
+def observation_search(request, after_date=None, before_date=None):
+    # prefix should be the same as the homepage
+    prefix = 'observation_search'
+    form_kwargs = {
+        'prefix': prefix,
+    }
+    if request.GET:
+        form_kwargs['data'] = request.GET
+    else:
+        data = {}
+        if not after_date is None:
+            data[prefix + '-after_date'] = after_date
+        if not before_date is None:
+            data[prefix + '-before_date'] = before_date
+        if data:
+            form_kwargs['data'] = data
+    form = ObservationSearchForm(**form_kwargs)
+    
+    observation_list = tuple()
+
+    if form.is_valid():
+
+        query = Q()
+
+        if form.cleaned_data['observed_after_date']:
+            
+            date = form.cleaned_data['observed_after_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_after_q(date, 'datetime_observed')
+            
+        if form.cleaned_data['observed_before_date']:
+
+            date = form.cleaned_data['observed_before_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_before_q(date, 'datetime_observed')
+        
+        if form.cleaned_data['reported_after_date']:
+        
+            date = form.cleaned_data['reported_after_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_after_q(date, 'datetime_reported')
+            
+        if form.cleaned_data['reported_before_date']:
+
+            date = form.cleaned_data['reported_before_date']
+            date = UncertainDateTime.from_date(date)
+            
+            query &= UncertainDateTimeField.get_before_q(date, 'datetime_reported')
+
+        if form.cleaned_data['taxon']:
+            t = form.cleaned_data['taxon']
+            # TODO handle taxon uncertainty!
+            query &= Q(taxon__in=Taxon.objects.with_descendants(t))
+
+        if form.cleaned_data['observation_narrative']:
+            on = form.cleaned_data['observation_narrative']
+            query &= Q(narrative__icontains=on)
+        
+        if form.cleaned_data['disentanglement_outcome']:
+            do = form.cleaned_data['disentanglement_outcome']
+            query &= Q(entanglements_entanglementobservation__disentanglement_outcome=do)
+
+        observation_order_args = ('-datetime_observed', '-datetime_reported', 'id')
+
+        # TODO Oracle doesn't support distinct() on models with TextFields
+        #observations = Observation.objects.filter(query).distinct().order_by(*observation_order_args)
+        observations = Observation.objects.filter(query).order_by(*observation_order_args)
+        
+        # simulate distinct() for Oracle
+        # an OrderedSet in the collections library would be nice...
+        # TODO not even a good workaround, since we have to pass in the count
+        # seprately
+        seen = set()
+        observation_list = list()
+        for o in observations:
+            if not o in seen:
+                seen.add(o)
+                observation_list.append(o)
+    
+    return render_to_response(
+        "incidents/observation_search.html",
+        {
+            'form': form,
+            'media': form.media,
+            'observation_list': observation_list,
+            'observation_count': len(observation_list),
+        },
+        context_instance= RequestContext(request),
+    )
+
+@login_required
+def observations_by_year(request, year=None):
+    # handle the year in a GET arg:
+    yf = YearsForm(request.GET)
+    if yf.is_valid():
+        year = yf.cleaned_data['year']
+        return redirect(reverse('observations_by_year', args=[year]), permanent=True)
+    
+    if year is None:
+        year = datetime.now().year
+    year = int(year)
+    observations = Observation.objects.filter(datetime_observed__startswith=u"%04d" % year).order_by('datetime_observed', 'datetime_reported', 'pk')
+    # Oracle doesn't support distinct, so this is a work-around
+    obs_list = []
+    obs_set = set()
+    for o in observations:
+        if not o in obs_set:
+            obs_list.append(o)
+        obs_set.add(o)
+    return render_to_response(
+        "incidents/observations_by_year.html",
+        {
+            'year': year,
+            'observations': obs_list,
+        },
+        context_instance= RequestContext(request),
+    )
+
 

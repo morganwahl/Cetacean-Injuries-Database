@@ -1,5 +1,6 @@
 <!DOCTYPE html> <!-- the HTML5 doctype -->
 {% load case_extras %}
+{% load observation_extras %}
 <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -83,6 +84,16 @@
                         {% endif %}
                         &#x2022;
                         by year: {% case_years_link %}
+                    </td>
+                    <td>
+                        <div class="category">
+                            observations
+                        </div>
+                        <a class="action" href="{% url observation_search %}">
+                            search
+                        </a>
+                        &#x2022;
+                        by year: {% observation_years_link %}
                     </td>
                     <td>
                         <div class="category">
