@@ -60,6 +60,21 @@
     </ul>
 </div>
 {% endif %}
+{% if entanglements_same_nmfs %}
+<div>
+    <h3>Entanglements with the same NMFS ID</h3>
+    <ul>
+        {% for nmfs, ents in entanglements_same_nmfs.items %}
+        <li>
+            {{ nmfs }}
+            <div>
+                {% for e in ents %}{% case_link e %},{% endfor %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 {% if observations_no_ent %}
 <div>
     <h3>Observations for Entanglement cases without entanglement data</h3>

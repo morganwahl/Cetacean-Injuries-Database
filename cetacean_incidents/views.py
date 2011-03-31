@@ -424,6 +424,13 @@ def odd_entries(request):
         
     no_cases = Animal.objects.filter(case__id__isnull=True)
     
+    entanglement_numbers = set(Entanglement.objects.exclude(Q(nmfs_id='') | Q(nmfs_id__isnull=True)).values_list('nmfs_id', flat=True))
+    entanglements_same_nmfs = {}
+    for num in entanglement_numbers:
+        ents = Entanglement.objects.filter(nmfs_id=num)
+        if ents.count() > 1:
+            entanglements_same_nmfs[num] = ents
+    
     no_obs = Case.objects.filter(observation__id__isnull=True)
     
     ent_ids = Entanglement.objects.values_list('pk', flat=True)
@@ -438,6 +445,7 @@ def odd_entries(request):
             'animals_same_name': same_name,
             'animals_no_cases': no_cases,
             'cases_no_observations': no_obs,
+            'entanglements_same_nmfs': entanglements_same_nmfs,
             'observations_no_ent': no_ent_obs_ext,
             'observations_no_ss': no_ss_obs_ext,
         },
