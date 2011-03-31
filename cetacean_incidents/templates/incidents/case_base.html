@@ -108,6 +108,11 @@
     {% if case.human_interaction != 'unk' %}
     {% display_chosen_div case "human_interaction" %}
     {% endif %}
+    {% if case.gear_present %}
+    <div>
+        <b><i>gear present in any observations:</i></b> <i>{{ case.gear_present|yesno }}</i>
+    </div>
+    {% endif %}
     {% if case.si_n_m_info %}
     <div class="subsection">
         <h3>Serious Injury and Mortality determination</h3>

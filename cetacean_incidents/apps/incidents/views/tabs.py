@@ -135,6 +135,7 @@ class ObservationIncidentTab(Tab):
                         'ashore',
                         'condition',
                         'indication_entanglement',
+                        'gear_present',
                         'indication_shipstrike',
                         'wounded',
                         'wound_description',

@@ -257,6 +257,12 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     )
     
     @property
+    def gear_present(self):
+        if self.observation_set.filter(gear_present=True).exists():
+            return True
+        return False
+    
+    @property
     def yearly_number(self):
         "A number that's unique within cases whose case-dates have the same year. Note that this number can't be assigned until the case-date is defined, which doesn't happen until the a Observation is associated with it."
         if self.current_yearnumber:

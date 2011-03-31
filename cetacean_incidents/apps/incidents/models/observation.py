@@ -313,6 +313,14 @@ class Observation(Documentable, Importable):
         help_text= u"""Was there any indication the animal had been struck? Note that this may or may not fulfill the criterea for a shipstrike case.""",
     )
 
+    gear_present = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "Gear present?",
+        help_text= u"""Was there any gear on the animal at any time during the observation?""",
+    )
+    
     # note that wounded is for injuries, 'wound_description' is for maladies in
     # general
     wounded = models.NullBooleanField(

@@ -187,6 +187,11 @@ def display_unlabeled_bigtext_div(instance, fieldname, label=None, **kwargs):
     return display_div(instance, fieldname, label, 'unlabeled_bigtext_div', **kwargs)
 
 @register.simple_tag
+def display_yesno_div(instance, fieldname, label=None, choices= "yes,no", **kwargs):
+    kwargs.update({'choices': choices})
+    return display_div(instance, fieldname, label, 'yesno_div', colon=False, **kwargs)
+
+@register.simple_tag
 def display_yesnounk_div(instance, fieldname, label=None, choices= "yes,no,unknown", **kwargs):
     kwargs.update({'choices': choices})
     return display_div(instance, fieldname, label, 'yesnounk_div', colon=False, **kwargs)
