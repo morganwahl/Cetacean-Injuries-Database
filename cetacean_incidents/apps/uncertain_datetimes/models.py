@@ -188,6 +188,8 @@ class UncertainDateTimeField(models.Field):
         if lookup_type in ('exact',):
             return self.get_prep_value(value)
         elif lookup_type in ('regex','lte','gte','startswith'):
+            if isinstance(value, UncertainDateTime):
+                return value.sortkey()
             return value
         elif lookup_type in ('in',):
             return [self.get_prep_value(v) for v in value]
