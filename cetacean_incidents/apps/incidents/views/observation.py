@@ -620,9 +620,18 @@ def observation_search(request, after_date=None, before_date=None):
             on = form.cleaned_data['observation_narrative']
             query &= Q(narrative__icontains=on)
         
-        if form.cleaned_data['disentanglement_outcome']:
-            do = form.cleaned_data['disentanglement_outcome']
-            query &= Q(entanglements_entanglementobservation__disentanglement_outcome=do)
+        if 'disentanglement_outcome' in form.cleaned_data:
+            dos = form.cleaned_data['disentanglement_outcome']
+            if dos:
+                dos_query = Q()
+                for do in dos:
+                    # CheckboxSelectMultiple doesn't work with empty string 
+                    # values, so we have to translate the 'unknown' value to 
+                    # empty string.
+                    if do == u'unknown':
+                        do = u''
+                    dos_query |= Q(entanglements_entanglementobservation__disentanglement_outcome=do)
+                query &= dos_query
 
         observation_order_args = ('-datetime_observed', '-datetime_reported', 'id')
 
