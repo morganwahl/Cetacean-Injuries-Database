@@ -210,7 +210,7 @@ def case_search(request, after_date=None, before_date=None):
             if not c in seen:
                 seen.add(c)
                 case_list.append(c)
-
+    
     return render_to_response(
         "incidents/case_search.html",
         {

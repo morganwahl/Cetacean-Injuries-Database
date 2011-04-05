@@ -20,3 +20,4 @@ select * from incidents_case where case_type != 'Entanglement' and nmfs_id != ''
 
 -- remove nmfs_id column from incidents_case
 /* can't drop columns in sqlite */
+

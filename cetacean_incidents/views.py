@@ -404,11 +404,11 @@ def import_taxon(request):
 def odd_entries(request):
     
     field_numbers = set(Animal.objects.exclude(Q(field_number='') | Q(field_number__isnull=True)).values_list('field_number', flat=True))
-    same_number = {}
+    animals_same_number = {}
     for num in field_numbers:
         animals = Animal.objects.filter(field_number=num)
         if animals.count() > 1:
-            same_number[num] = animals
+            animals_same_number[num] = animals
     
     animal_names = set()
     for a in Animal.objects.exclude(Q(name='') | Q(name__isnull=True)):
@@ -416,11 +416,11 @@ def odd_entries(request):
             name = name.lower().strip()
             if not name == '':
                 animal_names.add(name)
-    same_name = {}
+    animals_same_name = {}
     for name in animal_names:
         animals = Animal.objects.filter(name__icontains=name)
         if animals.count() > 1:
-            same_name[name] = animals
+            animals_same_name[name] = animals
         
     no_cases = Animal.objects.filter(case__id__isnull=True)
     
@@ -441,8 +441,8 @@ def odd_entries(request):
     return render_to_response(
         'odd_entries.html',
         {
-            'animals_same_number': same_number,
-            'animals_same_name': same_name,
+            'animals_same_number': animals_same_number,
+            'animals_same_name': animals_same_name,
             'animals_no_cases': no_cases,
             'cases_no_observations': no_obs,
             'entanglements_same_nmfs': entanglements_same_nmfs,

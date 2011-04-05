@@ -95,7 +95,20 @@ class AnimalSearchForm(forms.Form):
     )
 
 class CaseSearchForm(forms.Form):
-    
+    # To be subclass for Entanglements, Shipstrikes, etc.
+
+    # TODO get the choices dynamically
+    # TODO change to include/exclude Entanglements/Shipstrikes
+    case_type = forms.ChoiceField(
+        choices= (
+            ('', '<any>'),
+            ('c', 'not Entanglement or Shipstrike (other stranding)'),
+            ('e', 'Entanglement'),
+            ('s', 'Shipstrike'),
+        ),
+        required= False,
+    )
+
     observed_after_date = forms.DateTimeField(
         required= False,
         widget= Datepicker,
@@ -124,30 +137,18 @@ class CaseSearchForm(forms.Form):
 
     # TODO check that after date is before before_date
     
-    # TODO get the choices dynamically
-    # TODO change to include/exclude Entanglements/Shipstrikes
-    case_type = forms.ChoiceField(
-        choices= (
-            ('', '<any>'),
-            ('c', 'not Entanglement or Shipstrike (other stranding)'),
-            ('e', 'Entanglement'),
-            ('s', 'Shipstrike'),
-        ),
-        required= False,
-    )
-    
     taxon = TaxonField(
         required= False,
     )
     
     case_name = forms.CharField(
         required= False,
-        help_text= "search for Cases whose current or past names contain this"
+        help_text= "search for cases whose current or past names contain this"
     )
     
     observation_narrative = forms.CharField(
         required= False,
-        help_text= "search for Cases with an observation whose narrative contains this phrase",
+        help_text= "search for cases with an observation whose narrative contains this phrase",
     )
         
     # TODO put this in entanglements app

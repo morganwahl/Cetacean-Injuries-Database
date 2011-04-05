@@ -179,7 +179,7 @@ class UncertainDateTimeField(models.Field):
         regex = udt.sortkey().replace(' ', '.')
         regex = re.sub(r'(\d)', r'[\1 ]', regex)
         return models.Q(**{field_lookup + '__regex': regex})
-
+    
     # django lookup types:
     # exact, iexact, contains, icontains, gt, gte, lt, lte, in, startswith,
     # istartswith, endswith, iendswith, range, year, month, day, isnull, search,

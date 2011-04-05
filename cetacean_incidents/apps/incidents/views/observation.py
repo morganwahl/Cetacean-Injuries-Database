@@ -43,6 +43,8 @@ from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 from ..models import (
     Animal,
     Case,
+    Observation,
+    ObservationExtension,
 )
 from ..forms import (
     AnimalForm,
@@ -56,10 +58,6 @@ from ..forms import (
 )
 from ..templatetags.case_extras import YearsForm
 
-from ..models import (
-    Observation,
-    ObservationExtension,
-)
 from tabs import (
     AnimalTab,
     CaseTab,
