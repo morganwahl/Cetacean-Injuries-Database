@@ -5,7 +5,11 @@
 {% block head %}
 {{ block.super }}
 <style type="text/css">
-    [name={{ forms.observation.narrative.html_name }}] { width: 100%; }
+    /* attribute selectors are a big lacuna in IE 6...
+     *
+     * [name={{ forms.observation.narrative.html_name }}] { width: 100%; }
+     */
+    #{{ forms.observation.narrative.id_for_label }} { width: 100%; }
 </style>
 {% endblock %}
 
