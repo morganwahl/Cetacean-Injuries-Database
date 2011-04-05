@@ -179,10 +179,19 @@ def case_search(request, after_date=None, before_date=None):
             query &= Q(observation__narrative__icontains=on)
         
         if 'disentanglement_outcome' in form.cleaned_data:
-            do = form.cleaned_data['disentanglement_outcome']
-            # empty string means "any or unknown"
-            if do != '':
-                query &= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
+            dos = form.cleaned_data['disentanglement_outcome']
+            if dos:
+                # at least one outcome was checked (including 'unknown'), so 
+                # restrict search to entanglements
+                query &= Q(case_type='Entanglement')
+            dos_query = Q()
+            for do in dos:
+                # CheckboxSelectMultiple doesn't work with empty string values,
+                # so we have to translate the 'unknown' value to empty string.
+                if do == u'unknown':
+                    do = u''
+                dos_query |= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
+            query &= dos_query
 
         # TODO shoulde be ordering such that cases with no date come first
         case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')

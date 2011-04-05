@@ -152,13 +152,17 @@ class CaseSearchForm(forms.Form):
         
     # TODO put this in entanglements app
     from cetacean_incidents.apps.entanglements.models import EntanglementObservation
-    disentanglement_outcome = forms.ChoiceField(
-        choices= (('','<any or unknown>'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
-        initial= '',
+    disentanglement_outcome = forms.MultipleChoiceField(
+        # Note that the empty string would be the ideal key for 'unknown', since
+        # that's how the value is represented in the database. However, 
+        # CheckboxSelectMultiple normalizes empty-string values to u'on'.
+        choices= (('unknown','unknown'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
+        initial= [],
         required= False,
-        help_text= "search for entanglement cases with an observation whose disentanglement outcome is this",
+        widget= forms.CheckboxSelectMultiple,
+        help_text= "search for entanglement cases with an observation whose disentanglement outcome is one of these",
     )
-
+    
     def clean(self):
         earlier = self.cleaned_data.get('after_date')
         later = self.cleaned_data.get('before_date')
