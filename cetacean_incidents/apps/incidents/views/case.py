@@ -178,9 +178,11 @@ def case_search(request, after_date=None, before_date=None):
             on = form.cleaned_data['observation_narrative']
             query &= Q(observation__narrative__icontains=on)
         
-        if form.cleaned_data['disentanglement_outcome']:
+        if 'disentanglement_outcome' in form.cleaned_data:
             do = form.cleaned_data['disentanglement_outcome']
-            query &= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
+            # empty string means "any or unknown"
+            if do != '':
+                query &= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
 
         # TODO shoulde be ordering such that cases with no date come first
         case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')

@@ -150,6 +150,15 @@ class CaseSearchForm(forms.Form):
         help_text= "search for Cases with an observation whose narrative contains this phrase",
     )
         
+    # TODO put this in entanglements app
+    from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+    disentanglement_outcome = forms.ChoiceField(
+        choices= (('','<any or unknown>'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
+        initial= '',
+        required= False,
+        help_text= "search for entanglement cases with an observation whose disentanglement outcome is this",
+    )
+
     def clean(self):
         earlier = self.cleaned_data.get('after_date')
         later = self.cleaned_data.get('before_date')
