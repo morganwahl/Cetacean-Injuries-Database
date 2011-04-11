@@ -249,7 +249,7 @@ class ObservationTestCase(TestCase):
         self.assertEqual(o1.get_next(), o2)
         self.assertEqual(o2.get_next(), o3)
         self.assertRaises(Observation.DoesNotExist, o3.get_next)
-        o2.datetime_reported = UncertainDateTime(2011, 1)
+        o2.datetime_observed = UncertainDateTime(2012, 1)
         o2.save()
         self.assertTrue(o3.pk > o2.pk)
         self.assertEqual(o1.get_next(), o3)
