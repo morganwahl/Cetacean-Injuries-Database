@@ -14,9 +14,29 @@
 {% include "incidents/ole-warning.html" %}
 {% endif %}
 {% endfor %}
-<h2>{% animal_link observation.animal %}</h2>
-{% for c in observation.cases.all %}
-<h2 style="margin-left:1em;">{% case_link c %}</h2>
+<h2>
+    {% with observation.get_animal_previous as previous_obs %}
+    {% if previous_obs %}
+    <a href="{% url observation_detail previous_obs.id %}" title="previous observation of this animal">&#x2190;</a>
+    {% endif %}
+    {% endwith %}
+    {% animal_link observation.animal %}
+    {% with observation.get_animal_next as next_obs %}
+    {% if next_obs %}
+    <a href="{% url observation_detail next_obs.id %}" title="next observation of this animal">&#x2192;</a>
+    {% endif %}
+    {% endwith %}
+</h2>
+{% for cd in case_data %}
+<h2 style="margin-left:1em;">
+    {% if cd.previous %}
+    <a href="{% url observation_detail cd.previous.id %}" title="previous observation in this case">&#x2190;</a>
+    {% endif %}
+    {% case_link cd.case %}
+    {% if cd.next %}
+    <a href="{% url observation_detail cd.next.id %}" title="next observation  in this case">&#x2192;</a>
+    {% endif %}
+</h2>
 {% endfor %}
 <h2 style="margin-left:2em;">{{ observation }}</h2>
 {# the observation-editing page change also change animals and cases #}

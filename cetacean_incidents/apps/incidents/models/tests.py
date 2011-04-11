@@ -225,6 +225,37 @@ class ObservationTestCase(TestCase):
             datetime(2011,1,1,0,0),
         )
     
+    def test_get_next(self):
+        self.assertEqual(Observation.objects.count(), 0)
+        o1 = Observation.objects.create(
+            animal= self.animal,
+            datetime_observed= UncertainDateTime(2011, 3, 8, 9, 38),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        self.assertRaises(Observation.DoesNotExist, o1.get_next)
+        o2 = Observation.objects.create(
+            animal= self.animal,
+            datetime_observed= UncertainDateTime(2011, 3, 8, 9, 39),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        self.assertEqual(o1.get_next(), o2)
+        self.assertRaises(Observation.DoesNotExist, o2.get_next)
+        o3 = Observation.objects.create(
+            animal= self.animal,
+            datetime_observed= UncertainDateTime(2011, 3, 8, 9, 39),
+            datetime_reported= UncertainDateTime(2011),
+        )
+        self.assertTrue(o3.pk > o2.pk)
+        self.assertEqual(o1.get_next(), o2)
+        self.assertEqual(o2.get_next(), o3)
+        self.assertRaises(Observation.DoesNotExist, o3.get_next)
+        o2.datetime_reported = UncertainDateTime(2011, 1)
+        o2.save()
+        self.assertTrue(o3.pk > o2.pk)
+        self.assertEqual(o1.get_next(), o3)
+        self.assertEqual(o3.get_next(), o2)
+        self.assertRaises(Observation.DoesNotExist, o2.get_next)
+    
     def test_get_oes(self):
         
         no_ext = Observation.objects.create(

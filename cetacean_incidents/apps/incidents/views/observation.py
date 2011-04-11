@@ -101,6 +101,20 @@ def observation_detail(request, observation_id):
         extra_context['merge_form'] = merge_form
         extra_context['media'] += merge_form.media
 
+    case_data = []
+    for c in observation.cases.all():
+        case_datum = {'case': c}
+        try:
+            case_datum['previous'] = observation.get_case_previous(c)
+        except Observation.DoesNotExist:
+            case_datum['previous'] = None
+        try:
+            case_datum['next'] = observation.get_case_next(c)
+        except Observation.DoesNotExist:
+            case_datum['next'] = None
+        case_data.append(case_datum)
+    extra_context['case_data'] = case_data
+
     # TODO generify
     for oe_attr in (
         'entanglements_entanglementobservation', 

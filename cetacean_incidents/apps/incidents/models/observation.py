@@ -96,6 +96,54 @@ class Observation(Documentable, Importable):
         verbose_name= 'observation date and time',
     )
     # TODO duration?
+    
+    def _get_next_or_previous(self, is_next, **kwargs):
+        qs = self.__class__.objects.filter(**kwargs)
+        
+        # 'gt' and 'lt' don't make sense on UncertainDateTime fields, so we 
+        # need to use 'gte' and 'lte'
+        if is_next:
+            op = 'gte'
+            order = ''
+        else:
+            op = 'lte'
+            order = '-'
+        try:
+            for f in ('datetime_observed', 'datetime_reported', 'pk'):
+                qs = qs.filter(**{f + '__' + op: getattr(self, f)}).order_by(order + f)
+                candidate = qs[1] # 0 will be self
+                if getattr(candidate, f) != getattr(self, f):
+                    return candidate
+
+        except IndexError:
+            raise self.DoesNotExist("%s matching query does not exist." % self.__class__._meta.object_name)
+    
+    def get_next(self, **kwargs):
+        return self._get_next_or_previous(is_next=True, **kwargs)
+
+    def get_previous(self, **kwargs):
+        return self._get_next_or_previous(is_next=False, **kwargs)
+    
+    # some predefined kwargs for use with templates
+    def get_animal_next(self, **kwargs):
+        kwargs['animal'] = self.animal
+        return self._get_next_or_previous(is_next=True, **kwargs)
+    
+    def get_animal_previous(self, **kwargs):
+        kwargs['animal'] = self.animal
+        return self._get_next_or_previous(is_next=False, **kwargs)
+    
+    def get_case_next(self, case, **kwargs):
+        if not self.cases.filter(pk=case.pk).exists():
+            raise ValueError("this observation isn't for case %s" % case)
+        kwargs['cases'] = case
+        return self.get_next(**kwargs)
+    
+    def get_case_previous(self, case, **kwargs):
+        if not self.cases.filter(pk=case.pk).exists():
+            raise ValueError("this observation isn't for case %s" % case)
+        kwargs['cases'] = case
+        return self.get_previous(**kwargs)
 
     location = models.OneToOneField(
         Location,
