@@ -60,3 +60,13 @@ unzip the instantclient packages to that lib directory before building
 cx_Oracle. To use a tnsnames.ora file you can then copy it to 
 ${ORACLE_HOME}/NETWORK/ADMIN/TNSNAMES.ORA
 
+IMPORTANT:
+
+Django's Oracle backend contains a bug in 
+
+django.db.backends.oracle.base.DatabaseOperations.field_cast_sql
+
+The call in SQL to DBMS_LOB.SUBSTR should be removed or else search Cases by name causes an error.
+
+This bug was still present at revision 16016 of Django (after version 1.3).
+
