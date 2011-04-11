@@ -30,9 +30,11 @@
                 </a>
             </td>
             {% endif %}
+            {% with case.current_yearnumber as ycn %}
             <td sorttable_customkey="{{ case.entanglement.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
                 {% case_link case %}
             </td>
+            {% endwith %}
             <td>{% animal_link case.animal %}</td>
 	        {% with case.earliest_observation.datetime_observed as first_obs_date %}
 	        <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% date_observed_display first_obs_date %}</td>
