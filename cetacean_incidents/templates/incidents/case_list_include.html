@@ -3,7 +3,9 @@
 {% load case_extras %}
 {% load observation_extras %}
 {% load contact_extras %}
-<i>{{ cases|length }} case{{ cases|length|pluralize }}</i>
+<div style="text-align: center;">
+    <i>{{ cases|length }} case{{ cases|length|pluralize }}</i>
+</div>
 <table class="bordered sortable">
     <thead>
         <tr>
