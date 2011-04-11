@@ -40,6 +40,12 @@
     {% endblock %}
 </div>
 {% endif %}
+{# note that changing the animal of this case will change the one for it's observations #}
+{% if perms.incidents.change_case and perms.incidents.change_observation %}
+<div>
+    <a href="{% url edit_case_animal case.id %}">change the animal this case is for</a>
+</div>
+{% endif %}
 {% block merge_link %}
 {% if perms.incidents.change_case and perms.incidents.delete_case %}
 <script type="text/javascript">
@@ -76,7 +82,7 @@
 <div class="section">
     {% block case_fields %}
     <div>
-        <span class="fieldname">Animal:</span> {% animal_link case.animal %} <a href="{% url edit_case_animal case.id %}">change...</a>
+        <span class="fieldname">Animal:</span> {% animal_link case.animal %}
     </div>
     {% if case.names_list|length > 1 %}
     <div>
