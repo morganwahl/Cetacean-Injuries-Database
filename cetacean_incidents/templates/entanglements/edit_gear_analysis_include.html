@@ -1,0 +1,98 @@
+{% csrf_token %}
+<div class="section">
+    <table class="layout">
+        <tr class="layout">
+            <td class="layout">
+                {% with forms.entanglement.gear_fieldnumber as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_analyzed as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.analyzed_date as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.analyzed_by as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                <script type="text/javascript">
+                    $().ready(function(){
+                        CheckboxHider.init(
+                            '{{ forms.entanglement.has_gear_owner_info.html_name }}',
+                            'gear_owner_info_section'
+                        );
+                    });
+                </script>
+                {% with forms.entanglement.has_gear_owner_info as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </td>
+            <td class="layout">
+                {% with forms.entanglement.gear_types as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </td>
+        </tr>
+    </table>
+</div>
+<div class="section" id="gear_owner_info_section">
+    <h3>Gear Owner Info</h3>
+    <table class="layout">
+        <tr class="layout">
+            <td class="layout" width="50%">
+                {% with forms.gear_owner.name as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.gear_owner.person as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.gear_owner.phone as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.gear_owner.email as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.gear_owner.address as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.gear_owner.notes as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+            </td>
+            <td class="layout" width="50%">
+                <div class="subform">
+                    {% with forms.gear_owner.datetime_set as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                </div>
+                <div class="subform">
+                    <script type="text/javascript">
+                        $().ready(function(){
+                            CheckboxHider.init(
+                                '{{ forms.gear_owner.location_set_known.html_name }}',
+                                'location_set_known'
+                            );
+                        });
+                    </script>
+                    {% with forms.gear_owner.location_set_known as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                    <div id="location_set_known">
+                        {% with forms.location_set as l_form %}
+                        {% include "locations/edit_location_include.html" %}
+                        {% endwith %}
+                    </div>
+                </div>
+                <div class="subform">
+                    {% with forms.gear_owner.datetime_missing as f %}
+                    {% include "labeled_field.html" %}
+                    {% endwith %}
+                </div>
+                {% with forms.gear_owner.missing_gear as f %}
+                {% include "bigtext_field.html" %}
+                {% endwith %}
+            </td>
+        </tr>
+    </table>
+</div>
+

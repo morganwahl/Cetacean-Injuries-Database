@@ -9,6 +9,49 @@
 {% endblock %}
 
 {% block merge_link %}
+{# TODO this is more than just a merge_link #}
+
+{% if perms.entanglements.view_gear_owner %}
+{% if perms.entanglements.add_gear_owner %}
+{% if perms.entanglements.change_gear_owner %}
+<script type="text/javascript">
+    $(function() {
+        // based on the example at
+        // http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/
+        var $gear_analysis_dialog = $('#edit_gear_analysis_dialog')
+		.dialog({
+			autoOpen: false,
+			width: 1100,
+			title: 'Gear Analysis',
+			buttons: {
+			    "save changes": function() {$("#edit_gear_analysis_dialog form").submit();},
+			    "cancel": function() {$(this).dialog("close");}
+		    }
+		});
+		{% if gear_analysis_forms.entanglement.is_bound %}
+		$gear_analysis_dialog.dialog('open');
+		{% endif %}
+	    $("#open_gear_analysis_dialog").click(function(e){
+	        $gear_analysis_dialog.dialog('open');
+	        return false; // prevent default behaviour
+	    });
+    });
+</script>
+<div>
+    <a href="" id="open_gear_analysis_dialog">edit gear analysis for this entanglement case</a> (will open in this window)
+</div>
+<div style="display:none;" id="edit_gear_analysis_dialog">
+    <form method="post" action="">
+    {% with gear_analysis_forms as forms %}
+    {% include "entanglements/edit_gear_analysis_include.html" %}
+    {% endwith %}
+    <!-- note thate the submit button is placed in the jQueryUI script above -->
+    </form>
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+
 {% if perms.incidents.change_case and perms.incidents.delete_case %}
 {% if perms.entanglements.change_entanglement and perms.entanglements.delete_entanglement %}
 <script type="text/javascript">
@@ -60,7 +103,6 @@
 <div class="section">
     <h3>gear owner info</h3>
     {% if perms.entanglements.view_gear_owner %}
-    {% block gear_owner_info %}
     {% if case.gear_owner_info %}
     <div class="confidential-box">
         <div class="confidential-warning">confidential!</div>
@@ -104,20 +146,9 @@
         </table>
         {% endwith %}
     </div>
-    {% if perms.entanglements.change_gear_owner %}
-    <div>
-        <a href="{% url edit_gear_owner case.id %}">edit gear owner info</a>
-    </div>
-    {% endif %}
     {% else %}
     <i>none</i>
-    {% if perms.entanglements.add_gear_owner %}
-    <div>
-        <a href="{% url add_gear_owner case.id %}">add gear owner info</a>
-    </div>
     {% endif %}
-    {% endif %}
-    {% endblock %}
     {% else %}
     <i>you don't have permission to view gear owner info</i>
     {% endif %}

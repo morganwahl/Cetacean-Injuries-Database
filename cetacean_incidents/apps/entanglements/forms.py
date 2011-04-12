@@ -141,6 +141,27 @@ class EntanglementForm(CaseForm):
             'analyzed_date': Datepicker,
         })
 
+class GearAnalysisForm(EntanglementForm):
+    '''\
+    Like EntanglementForm, but only has the fields relevant to gear-analysis.
+    '''
+    
+    has_gear_owner_info = forms.BooleanField(
+        initial= False,
+        required= False,
+        label= 'is there any gear owner info?',
+    )
+
+    class Meta(EntanglementForm.Meta):
+        exclude = []
+        fields = (
+            'gear_fieldnumber',
+            'gear_analyzed',
+            'analyzed_date',
+            'analyzed_by',
+            'gear_types',
+        )
+
 class EntanglementMergeForm(CaseMergeForm):
     
     def __init__(self, source, destination, data=None, **kwargs):

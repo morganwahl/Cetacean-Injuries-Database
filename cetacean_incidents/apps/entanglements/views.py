@@ -63,6 +63,7 @@ from forms import (
     EntanglementForm,
     EntanglementMergeForm,
     EntanglementObservationForm,
+    GearAnalysisForm,
     GearOwnerForm,
 )
 
@@ -105,8 +106,30 @@ def entanglement_detail(request, case_id, extra_context):
         extra_context['merge_form'] = merge_form
         extra_context['media'] += merge_form.media
         extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
+    
+    if request.user.has_perms((
+        'entanglements.change_entanglement',
+        'entanglements.view_gear_owner',
+        'entanglements.add_gear_owner',
+        'entanglements.change_gear_owner',
+    )):
+        extra_context['media'] += Media(
+            js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
+            css= {'all': (settings.JQUERYUI_CSS_FILE,)},
+        )
+        extra_context['gear_analysis_forms'] = _instantiate_gear_analysis_forms(request, case)
+        extra_context['media'] = reduce( lambda m, f: m + f.media, extra_context['gear_analysis_forms'].values(), extra_context['media'])
+    
+    if request.method == 'POST':
+        result = _process_gear_analysis_forms(extra_context['gear_analysis_forms'])
+        if not result is None:
+            return result
+    
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
+    )
 
-    extra_context['media'] += Media(js=(settings.JQUERY_FILE,))
+    extra_context['media'] += template_media
 
     return generic_views.object_detail(
         request,
@@ -220,6 +243,93 @@ def edit_gear_owner(request, entanglement_id):
         },
         context_instance= RequestContext(request),
     )
+
+def _instantiate_gear_analysis_forms(request, entanglement):
+    gear_owner = entanglement.gear_owner_info
+
+    form_classes = {
+        'entanglement': GearAnalysisForm,
+        'gear_owner': GearOwnerForm,
+        'location_set': NiceLocationForm,
+    }
+    model_instances = {
+        'entanglement': entanglement,
+    }
+    form_initials = {}
+
+    if not gear_owner is None:
+        model_instances['gear_owner'] = gear_owner
+        if not 'entanglement' in form_initials.keys():
+            form_initials['entanglement'] = {}
+        form_initials['entanglement']['has_gear_owner_info'] = True
+        if not gear_owner.location_gear_set is None:
+            model_instances['location_set'] = gear_owner.location_gear_set
+            if not 'gear_owner' in form_initials.keys():
+                form_initials['gear_owner'] = {}
+            form_initials['gear_owner']['location_set_known'] = True
+
+    forms = {}
+    for form_name, form_class in form_classes.items():
+        kwargs = {}
+        if request.method == 'POST':
+            kwargs['data'] = request.POST
+        if form_name in model_instances.keys():
+            kwargs['instance'] = model_instances[form_name]
+        if form_name in form_initials.keys():
+            kwargs['initial'] = form_initials[form_name]
+        forms[form_name] = form_class(prefix=form_name, **kwargs)
+            
+    return forms
+
+def _process_gear_analysis_forms(forms):
+    class _SomeValidationFailed(Exception):
+        pass
+    def _check(form_name):
+        if not forms[form_name].is_valid():
+            raise _SomeValidationFailed(form_name, forms[form_name])
+
+    # Revisions should always correspond to transactions!
+    @transaction.commit_on_success
+    @revision.create_on_success
+    def _try_saving():
+        _check('entanglement')
+        entanglement = forms['entanglement'].save(commit=False)
+        
+        if forms['entanglement'].cleaned_data['has_gear_owner_info']:
+            _check('gear_owner')
+            gear_owner = forms['gear_owner'].save(commit=False)
+            
+            if forms['gear_owner'].cleaned_data['location_set_known']:
+                _check('location_set')
+                gear_owner.location_gear_set = forms['location_set'].save()
+            else:
+                loc_set = gear_owner.location_gear_set
+                if not loc_set is None:
+                    gear_owner.location_gear_set = None
+                    # TODO saved again below
+                    gear_owner.save()
+                    loc_set.delete()
+
+            gear_owner.save()
+            entanglement.gear_owner_info = gear_owner
+        else:
+            gear_owner = entanglement.gear_owner_info
+            if not gear_owner is None:
+                entanglement.gear_owner_info = None
+                # TODO saved again below
+                entanglement.save()
+                gear_owner.delete()
+
+        entanglement.save()
+        
+        return entanglement
+
+    try:
+        return redirect(_try_saving())
+    except _SomeValidationFailed as (formname, form):
+        print "error in form %s: %s" % (formname, unicode(form.errors))
+    
+    return None
 
 @login_required
 @permission_required('entanglements.change_entanglement')
