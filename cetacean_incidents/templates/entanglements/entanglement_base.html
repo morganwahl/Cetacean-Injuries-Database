@@ -42,20 +42,17 @@
 {{ block.super }}
 {% display_div case "nmfs_id" %}
 <div>
-    <span class="fieldname">was gear recovered?</span> {{ case.gear_recovered|yesno:"yes,no,unknown" }}
+    <span class="fieldname">was gear recovered?</span> <i>{{ case.gear_recovered|yesno:"yes,no,unknown" }}</i>
 </div>
+{% display_yesnounk_div case "gear_analyzed" %}
+{% if case.analyzed_date %}
+{% display_div case "analyzed_date" %}
+{% endif %}
+{% if case.analyzed_by %}
 <div>
-    <span class="fieldname">was gear analyzed?</span>
-    {{ case.gear_analyzed|yesno:"yes,no,unknown" }}{% if case.analyzed_datetime or case.analyzed_by %},{% endif %}
-    {% if case.gear_analyzed %}
-    {% if case.analyzed_datetime %}
-        on {{ case.analyzed_datetime }}
-    {% endif %}
-    {% if case.analyzed_by %}
-        by {% contact_link case.analyzed_by %}
-    {% endif %}
-    {% endif %}
+    <span class="fieldname">analyzed by</span>: {% contact_link case.analyzed_by %}
 </div>
+{% endif %}
 {% display_geartypes_div case "gear_types" case.implied_gear_types %}
 {% endblock %}
 
