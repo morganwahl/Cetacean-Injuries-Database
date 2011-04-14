@@ -18,21 +18,20 @@
     $(function() {
         // based on the example at
         // http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/
-        var $gear_analysis_dialog = $('#edit_gear_analysis_dialog')
-		.dialog({
-			autoOpen: false,
-			width: 1100,
-			title: 'Gear Analysis',
-			buttons: {
-			    "save changes": function() {$("#edit_gear_analysis_dialog form").submit();},
-			    "cancel": function() {$(this).dialog("close");}
-		    }
+        var gear_analysis_dialog = $('#edit_gear_analysis_dialog').dialog({
+            autoOpen: false,
+            width: 775,
+            title: 'Gear Analysis',
+            buttons: {
+                "save changes": function() {$("#edit_gear_analysis_dialog form").submit();},
+                "cancel": function() {$(this).dialog("close");}
+            }
 		});
 		{% if gear_analysis_forms.entanglement.is_bound %}
-		$gear_analysis_dialog.dialog('open');
+		gear_analysis_dialog.dialog('open');
 		{% endif %}
 	    $("#open_gear_analysis_dialog").click(function(e){
-	        $gear_analysis_dialog.dialog('open');
+	        gear_analysis_dialog.dialog('open');
 	        return false; // prevent default behaviour
 	    });
     });
@@ -40,7 +39,7 @@
 <div>
     <a href="" id="open_gear_analysis_dialog">edit gear analysis for this entanglement case</a> (will open in this window)
 </div>
-<div style="display:none;" id="edit_gear_analysis_dialog">
+<div style="display:none; font-size:.75em;" id="edit_gear_analysis_dialog">
     <form method="post" action="">
     {% with gear_analysis_forms as forms %}
     {% include "entanglements/edit_gear_analysis_include.html" %}

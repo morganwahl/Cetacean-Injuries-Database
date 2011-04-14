@@ -120,13 +120,15 @@ def entanglement_detail(request, case_id, extra_context):
             js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
             css= {'all': (settings.JQUERYUI_CSS_FILE,)},
         )
-        extra_context['gear_analysis_forms'] = _instantiate_gear_analysis_forms(request, case)
-        extra_context['media'] = reduce( lambda m, f: m + f.media, extra_context['gear_analysis_forms'].values(), extra_context['media'])
+        forms = _instantiate_gear_analysis_forms(request, case)
+        form_media = reduce(lambda m, f: m + f.media, forms.values(), Media())
+        extra_context['gear_analysis_forms'] = forms
+        extra_context['media'] += form_media
     
-    if request.method == 'POST':
-        result = _process_gear_analysis_forms(extra_context['gear_analysis_forms'])
-        if not result is None:
-            return result
+        if request.method == 'POST':
+            result = _process_gear_analysis_forms(extra_context['gear_analysis_forms'])
+            if not result is None:
+                return result
     
     template_media = Media(
         js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
