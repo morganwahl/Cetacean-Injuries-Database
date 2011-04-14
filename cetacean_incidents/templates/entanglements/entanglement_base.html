@@ -47,6 +47,29 @@
     <!-- note thate the submit button is placed in the jQueryUI script above -->
     </form>
 </div>
+
+<script type="text/javascript">
+    // based on info at
+    // http://www.quirksmode.org/js/popup.html
+    $(function() {
+        $("#open_gear_analysis_popup").click(function(e){
+            {# TODO javascript string escaping? #}
+            var url = '{% url edit_gear_analysis_popup case.id %}';
+            var newwindow = window.open(
+                url,
+                'editing gear-analysis data for {{ case }}',
+                'height=700,width=775,resizable=yes,scrollbars=yes'
+            );
+            if (window.focus) {
+                newwindow.focus();
+            }
+            return false;
+        });
+    });
+</script>
+<div>
+    <a href="{% url edit_gear_analysis_popup case.id %}" id="open_gear_analysis_popup">edit gear analysis for this entanglement case</a> (will open in a new window)
+</div>
 {% endif %}
 {% endif %}
 {% endif %}

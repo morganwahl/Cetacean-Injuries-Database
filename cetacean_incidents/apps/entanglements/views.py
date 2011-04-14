@@ -128,7 +128,7 @@ def entanglement_detail(request, case_id, extra_context):
         if request.method == 'POST':
             result = _process_gear_analysis_forms(extra_context['gear_analysis_forms'])
             if not result is None:
-                return result
+                return redirect(result)
     
     template_media = Media(
         js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
@@ -332,11 +332,40 @@ def _process_gear_analysis_forms(forms):
         return entanglement
 
     try:
-        return redirect(_try_saving())
+        return _try_saving()
     except _SomeValidationFailed as (formname, form):
         print "error in form %s: %s" % (formname, unicode(form.errors))
     
     return None
+
+@login_required
+@permission_required('entanglements.view_gearowner')
+@permission_required('entanglements.add_gearowner')
+@permission_required('entanglements.change_gearowner')
+def edit_gear_analysis_popup(request, entanglement_id):
+    entanglement = Entanglement.objects.get(id=entanglement_id)
+    
+    forms = _instantiate_gear_analysis_forms(request, entanglement)
+    
+    success = False
+    if request.method == 'POST':
+        result = _process_gear_analysis_forms(forms)
+        success = not bool(result is None)
+
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
+    )
+    
+    return render_to_response(
+        'entanglements/edit_gear_analysis_popup.html',
+        {
+            'case': entanglement,
+            'forms': forms,
+            'success': success,
+            'media': reduce( lambda m, f: m + f.media, forms.values(), template_media),
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 @permission_required('entanglements.change_entanglement')

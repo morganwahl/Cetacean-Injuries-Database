@@ -17,6 +17,7 @@ urlpatterns = patterns('',
 
     (r'^(\d+)/add_gear_owner$', views.edit_gear_owner, {}, 'add_gear_owner'),
     (r'^(\d+)/edit_gear_owner$', views.edit_gear_owner, {}, 'edit_gear_owner'),
+    (r'^(\d+)/edit_gear_analysis_popup$', views.edit_gear_analysis_popup, {}, 'edit_gear_analysis_popup'),
     
     # TODO make a permanent redirect to generic observation detail
     #(r'^observations/(\d+)/$', views.entanglementobservation_detail, {}, 'entanglementobservation_detail'),
