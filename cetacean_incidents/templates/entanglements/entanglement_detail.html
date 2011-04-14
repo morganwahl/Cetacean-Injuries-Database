@@ -3,16 +3,14 @@
 {# TODO is this needed ? will the case-edit view delegate accordingly? #}
 {% block edit_case_link %}
 {% if perms.entanglements.change_entanglement %}
-{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
-<a href="{% url edit_entanglement case.id %}#case">edit this entanglement</a>
+<a href="{% url edit_entanglement case.id %}">edit this entanglement</a>
 {% endif %}
 {% endblock %}
 
 {# TODO is this needed ? will the add-observation view delegate accordingly? #}
 {% block add_observation_link %}
 {% if perms.entanglements.change_entanglement and perms.entanglements.add_entanglementobservation %}
-{# note that URL fragments (the bit after the '#') are the user-agents responsibility, not the servers. #}
-<a href="{% url add_entanglementobservation case.id %}#reporting">add an observation</a>
+<a href="{% url add_entanglementobservation case.id %}">add an observation</a>
 {% endif %}
 {% endblock %}
 
