@@ -160,6 +160,9 @@ class GearAnalysisForm(EntanglementForm):
             'analyzed_date',
             'analyzed_by',
             'gear_types',
+            'gear_description',
+            'gear_analysis_comments',
+            'gear_analysis_conclusions',
         )
 
 class EntanglementMergeForm(CaseMergeForm):

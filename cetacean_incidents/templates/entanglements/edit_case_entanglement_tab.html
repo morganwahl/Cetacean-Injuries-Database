@@ -37,4 +37,13 @@
 {% with case_form.gear_types as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
+{% with case_form.gear_description as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% with case_form.gear_analysis_comments as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
+{% with case_form.gear_analysis_conclusions as f %}
+{% include "bigtext_field.html" %}
+{% endwith %}
 

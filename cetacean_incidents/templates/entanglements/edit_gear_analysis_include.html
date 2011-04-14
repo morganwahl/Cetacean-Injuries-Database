@@ -15,6 +15,12 @@
                 {% with forms.entanglement.analyzed_by as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
+                {% with forms.entanglement.gear_analysis_comments as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_analysis_conclusions as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
                 <script type="text/javascript">
                     $().ready(function(){
                         CheckboxHider.init(
@@ -28,6 +34,9 @@
                 {% endwith %}
             </td>
             <td class="layout">
+                {% with forms.entanglement.gear_description as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
                 {% with forms.entanglement.gear_types as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}

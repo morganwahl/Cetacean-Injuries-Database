@@ -97,6 +97,11 @@
 </div>
 {% endif %}
 {% display_geartypes_div case "gear_types" case.implied_gear_types %}
+{% if case.gear_analyzed %}
+{% display_bigtext_div case "gear_description" %}
+{% display_bigtext_div case "gear_analysis_comments" %}
+{% display_bigtext_div case "gear_analysis_conclusions" %}
+{% endif %}
 {% endblock %}
 
 {% block extra_case_fields %}
@@ -139,7 +144,6 @@
                     <table>
                         {% display_row go "datetime_set" %}
                         {% display_row go "datetime_missing" %}
-                        {% display_bigtext_row go "missing_gear" %}
                     </table>
                 </td>
             </tr>

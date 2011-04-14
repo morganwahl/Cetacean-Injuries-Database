@@ -60,12 +60,6 @@ class GearOwner(AbstractContact):
         verbose_name= 'date gear went missing',
     )
 
-    missing_gear = models.TextField(
-        blank= True,
-        help_text= u"The owner's description of what gear they're missing.",
-        verbose_name= "missing gear description",
-    )
-    
     class Meta:
         permissions = (
             ("view_gearowner", "Can view gear owner"),
@@ -143,6 +137,22 @@ class Entanglement(Case):
         blank= True,
         null= True,
         help_text= "All the applicable gear types in the set of gear from this entanglement.",
+    )
+    
+    gear_description = models.TextField(
+        blank= True,
+        null= True,
+        help_text= u"""Detailed description of the gear that was analyzed. If the gear owner is known and their description of the gear they're missing differs from what was analyzed, note it here. Keep in mind that this field is not confidential, unlike the gear owner info.""",
+    )
+    
+    gear_analysis_comments = models.TextField(
+        blank= True,
+        null= True,
+    )
+    
+    gear_analysis_conclusions = models.TextField(
+        blank= True,
+        null= True,
     )
     
     gear_owner_info = models.OneToOneField(
