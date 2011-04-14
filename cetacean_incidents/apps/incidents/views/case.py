@@ -54,6 +54,11 @@ def case_detail(request, case_id, extra_context={}):
     # TODO this is quite inefficient
     case = Case.objects.get(id=case_id)
     case_class = case.specific_class()
+    
+    # TODO hack
+    if case.case_type == 'Entanglement':
+        return redirect(case.specific_instance())
+    
     # the case_detail.html template needs jQuery
     if not 'media' in extra_context:
         extra_context['media'] = Media(js=(settings.JQUERY_FILE,))
