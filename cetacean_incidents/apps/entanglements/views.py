@@ -109,9 +109,9 @@ def entanglement_detail(request, case_id, extra_context):
     
     if request.user.has_perms((
         'entanglements.change_entanglement',
-        'entanglements.view_gear_owner',
-        'entanglements.add_gear_owner',
-        'entanglements.change_gear_owner',
+        'entanglements.view_gearowner',
+        'entanglements.add_gearowner',
+        'entanglements.change_gearowner',
     )):
         extra_context['media'] += Media(
             js= (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE),
@@ -162,8 +162,8 @@ def edit_entanglement(request, entanglement_id):
     
 @login_required
 @permission_required('entanglements.change_entanglement')
-@permission_required('entanglements.view_gear_owner')
-@permission_required('entanglements.change_gear_owner')
+@permission_required('entanglements.view_gearowner')
+@permission_required('entanglements.change_gearowner')
 def edit_gear_owner(request, entanglement_id):
     entanglement = Entanglement.objects.get(id=entanglement_id)
     gear_owner = entanglement.gear_owner_info

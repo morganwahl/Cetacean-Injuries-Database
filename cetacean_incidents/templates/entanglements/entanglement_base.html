@@ -11,9 +11,9 @@
 {% block merge_link %}
 {# TODO this is more than just a merge_link #}
 
-{% if perms.entanglements.view_gear_owner %}
-{% if perms.entanglements.add_gear_owner %}
-{% if perms.entanglements.change_gear_owner %}
+{% if perms.entanglements.view_gearowner %}
+{% if perms.entanglements.add_gearowner %}
+{% if perms.entanglements.change_gearowner %}
 <script type="text/javascript">
     $(function() {
         // based on the example at
@@ -102,7 +102,7 @@
 {% block extra_case_fields %}
 <div class="section">
     <h3>gear owner info</h3>
-    {% if perms.entanglements.view_gear_owner %}
+    {% if perms.entanglements.view_gearowner %}
     {% if case.gear_owner_info %}
     <div class="confidential-box">
         <div class="confidential-warning">confidential!</div>

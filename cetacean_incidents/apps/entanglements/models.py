@@ -68,7 +68,7 @@ class GearOwner(AbstractContact):
     
     class Meta:
         permissions = (
-            ("view_gear_owner", "Can view gear owner"),
+            ("view_gearowner", "Can view gear owner"),
         )
 
 guard_deletes(Location, GearOwner, 'location_gear_set')
