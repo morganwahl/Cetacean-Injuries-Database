@@ -316,6 +316,7 @@ def _process_gear_analysis_forms(forms):
                     loc_set.delete()
 
             gear_owner.save()
+            forms['gear_owner'].save_m2m()
             entanglement.gear_owner_info = gear_owner
         else:
             gear_owner = entanglement.gear_owner_info
@@ -326,6 +327,7 @@ def _process_gear_analysis_forms(forms):
                 gear_owner.delete()
 
         entanglement.save()
+        forms['entanglement'].save_m2m()
         
         return entanglement
 
