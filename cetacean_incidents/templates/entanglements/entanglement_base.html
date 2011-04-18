@@ -57,7 +57,8 @@
             var url = '{% url edit_gear_analysis_popup case.id %}';
             var newwindow = window.open(
                 url,
-                'editing gear-analysis data for {{ case }}',
+                // IE is picky about what this string contains
+                "gear_analysis_window_for_{{ case.id }}",
                 'height=700,width=775,resizable=yes,scrollbars=yes'
             );
             if (window.focus) {
