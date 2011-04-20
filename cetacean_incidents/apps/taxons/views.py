@@ -217,7 +217,8 @@ class ITIS_Error(Exception):
 
 itis_namespaces = {
     'ns': "http://itis_service.itis.usgs.org",
-    'ax': "http://data.itis_service.itis.usgs.org/xsd"
+    'ax': "http://data.itis_service.itis.usgs.org/xsd",
+    'xsi': "http://www.w3.org/2001/XMLSchema-instance",
 }
     
 def _get_itis(funcname, get_args={}):
@@ -398,13 +399,13 @@ def add_taxon(tsn):
     
     taxon = Taxon(tsn=tsn)
     
-    name_xml = _get_itis('getScientificNameFromTSN', {'tsn': tsn})
-    name = None
+    sci_name_xml = _get_itis('getScientificNameFromTSN', {'tsn': tsn})
+    sci_name = None
     for i in range(1,5):
-        this_name = name_xml.xpath("//ns:return/ax:unitName%d" % i, namespaces=itis_namespaces)[0].text
+        this_name = sci_name_xml.xpath("//ns:return/ax:unitName%d" % i, namespaces=itis_namespaces)[0].text
         if this_name:
-            name = this_name
-    taxon.name = name
+            sci_name = this_name
+    taxon.name = sci_name
     
     rank_name_xml = _get_itis('getTaxonomicRankNameFromTSN', {'tsn': tsn})
     rank_name = rank_name_xml.xpath("//ns:return/ax:rankName", namespaces=itis_namespaces)[0].text
@@ -422,6 +423,10 @@ def add_taxon(tsn):
     common_names = []
     for name in common_names_elements:
         name = objectify.fromstring(etree.tostring(name))
+        nil_key = '{%s}nil' % itis_namespaces['xsi']
+        if nil_key in name.attrib:
+            if name.attrib[nil_key] == 'true':
+                continue
         if not len(name):
             continue
         if name.language != "English":

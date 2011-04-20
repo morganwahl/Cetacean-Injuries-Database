@@ -64,6 +64,7 @@ class Taxon(models.Model):
     MAIN_RANKS = (
         (-1.0, 'species'),
         (0.0, 'genus'),
+        (0.05, 'tribe'),
         (1.0, 'family'),
         (2.0, 'order'),
     )
@@ -97,6 +98,7 @@ class Taxon(models.Model):
         'Order':      2.0,
         'Suborder':   1.8,
         'Infraorder': 1.6,
+        'InfraOrder': 1.6, # to workaround a typo in ITIS
 
         'Superfamily': 1.4,
         'Family':      1.0,
@@ -180,15 +182,15 @@ class Taxon(models.Model):
 
     def is_binomial(self):
         if not self.rank is None:
-            return self.rank < 0
-        # go up ancestors until a ranked one is found, if it's 0 or below, this
-        # is a binomial taxon
+            return self.rank < self.ITIS_RANKS['Subgenus']
+        # go up ancestors until a ranked one is found, if it's subgenus or below, 
+        # this is a binomial taxon
         t = self
         while not t.rank:
             if not t.supertaxon:
                 return False
             t = t.supertaxon
-        if t.rank <= 0:
+        if t.rank <= self.ITIS_RANKS['Subgenus']:
             return True
 
     # TODO cycle detection!
@@ -215,17 +217,18 @@ class Taxon(models.Model):
         '''
 
         if self.is_binomial() and self.supertaxon:
-            # go up the taxon tree looking for a taxon with rank 0. if we find
-            # one, print out it's initial, plus the names of each taxon we found
-            # on the way.
+            # go up the taxon tree looking for a taxon with rank == Genus. if 
+            # we find one, print out it's initial, plus the names of each taxon 
+            # we found on the way with rank of Species or below.
             nomens = self.name
             t = self.supertaxon
-            while t.rank < 0:
-                nomens = t.name + ' ' + nomens
+            while t.rank < self.ITIS_RANKS['Genus']:
+                if t.rank <= self.ITIS_RANKS['Species']:
+                    nomens = t.name + ' ' + nomens
                 if not t.supertaxon:
                     break
                 t = t.supertaxon
-            if t.rank == 0:
+            if t.rank == self.ITIS_RANKS['Genus']:
                 return u'%s. %s' % (t.name[0], nomens)
         return self.name
 
