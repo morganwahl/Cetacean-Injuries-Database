@@ -39,3 +39,41 @@ from entanglements_gearowner0
 ;
 drop table entanglements_gearowner0;
 
+-- add the entanglements_gearattribute table
+CREATE TABLE "entanglements_gearattribute" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "name" varchar(512) NOT NULL
+)
+;
+-- add the entanglements_entanglement_gear_attributes table
+CREATE TABLE "entanglements_entanglement_gear_attributes" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "entanglement_id" integer NOT NULL,
+    "gearattribute_id" integer NOT NULL REFERENCES "entanglements_gearattribute" ("id"),
+    UNIQUE ("entanglement_id", "gearattribute_id")
+)
+;
+
+-- add the entanglements_entanglement_gear_targets table
+CREATE TABLE "entanglements_entanglement_gear_targets" (
+    "id" integer NOT NULL PRIMARY KEY,
+    "entanglement_id" integer NOT NULL,
+    "taxon_id" integer NOT NULL REFERENCES "taxons_taxon" ("id"),
+    UNIQUE ("entanglement_id", "taxon_id")
+)
+;
+
+-- add 4 fields to entanglements_entanglement
+alter table "entanglements_entanglement"
+add "num_gear_types" integer
+;
+alter table "entanglements_entanglement"
+add "gear_compliant" bool
+;
+alter table "entanglements_entanglement"
+add "gear_kept" bool
+;
+alter table "entanglements_entanglement"
+add "gear_kept_where" text
+;
+

@@ -21,6 +21,18 @@
                 {% with forms.entanglement.gear_analysis_conclusions as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
+                {% with forms.entanglement.gear_attributes as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_compliant as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_kept as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_kept_where as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
                 <script type="text/javascript">
                     $().ready(function(){
                         CheckboxHider.init(
@@ -37,7 +49,13 @@
                 {% with forms.entanglement.gear_description as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
+                {% with forms.entanglement.num_gear_types as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
                 {% with forms.entanglement.gear_types as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                {% with forms.entanglement.gear_targets as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
             </td>

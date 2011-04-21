@@ -227,3 +227,11 @@ def display_depth_div(instance, length_field, sigdigs, prefix=None, label=None, 
         kwargs['depth_prefix'] = prefix
     return display_div(instance, length_field, label, 'depth_div', **kwargs)
 
+@register.simple_tag
+def display_list_div(instance, fieldname, label=None, **kwargs):
+    return display_div(instance, fieldname, label, 'list_div', **kwargs)
+
+@register.simple_tag
+def display_set_div(instance, fieldname, label=None, **kwargs):
+    return display_div(instance, fieldname, 'set_div', **kwargs)
+

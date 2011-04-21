@@ -27,6 +27,8 @@ from cetacean_incidents.apps.incidents.models import (
     ObservationExtension,
 )
 
+from cetacean_incidents.apps.taxons.models import Taxon
+
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
 class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
@@ -39,6 +41,15 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
 
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     pass
+
+class GearAttribute(models.Model):
+    
+    name = models.CharField(
+        max_length= 512,
+    )
+    
+    def __unicode__(self):
+        return self.name
 
 class LocationGearSet(Location):
     '''\
@@ -182,6 +193,14 @@ class Entanglement(Case):
         null= True,
     )
     
+    num_gear_types = models.IntegerField(
+        blank= True,
+        null= True,
+        validators= [MinValueValidator(0)],
+        verbose_name= "# of gear types",
+        help_text= "Not necessarily the same as the number of gear types indicated below",
+    )
+    
     gear_types = models.ManyToManyField(
         'GearType',
         blank= True,
@@ -189,10 +208,32 @@ class Entanglement(Case):
         help_text= "All the applicable gear types in the set of gear from this entanglement.",
     )
     
+    gear_targets = models.ManyToManyField(
+        Taxon,
+        blank= True,
+        null= True,
+        help_text= "All the taxa targeted by this gear."
+    )
+    
+    gear_attributes = models.ManyToManyField(
+        GearAttribute,
+        blank= True,
+        null= True,
+        help_text= "All the applicable attributes of the gear.",
+    )
+
     gear_description = models.TextField(
         blank= True,
         null= True,
         help_text= u"""Detailed description of the gear that was analyzed. If the gear owner is known and their description of the gear they're missing differs from what was analyzed, note it here. Keep in mind that this field is not confidential, unlike the gear owner info.""",
+    )
+    
+    gear_compliant = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "gear compliant?",
+        help_text= "Was the gear compliant with regulations when and where it was set?",
     )
     
     gear_analysis_comments = models.TextField(
@@ -207,6 +248,20 @@ class Entanglement(Case):
     
     gear_owner_info = models.OneToOneField(
         'GearOwner',
+        blank= True,
+        null= True,
+    )
+    
+    # only makes sense if gear_analyzed = True
+    gear_kept = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "was the gear kept after analysis?",
+    )
+    
+    # only makes sense if gear_kept = True
+    gear_kept_where = models.TextField(
         blank= True,
         null= True,
     )

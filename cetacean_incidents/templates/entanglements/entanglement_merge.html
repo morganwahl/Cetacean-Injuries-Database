@@ -11,7 +11,14 @@ This template is an amalgam of editing and viewing.
 {% display_merge_yesnounk_row destination source form 'gear_analyzed' %}
 {% display_merge_row destination source form 'analyzed_date' %}
 {% display_merge_row destination source form 'analyzed_by' %}
+{% display_merge_row destination source form 'num_gear_types' %}
 {% display_merge_geartypes_row destination source form 'gear_types' %}
+{% display_merge_list_row destination source form 'gear_targets' %}
+{% display_merge_list_row destination source form 'gear_attributes' %}
+{% display_merge_row destination source form 'gear_description' %}
+{% display_merge_row destination source form 'gear_compliant' %}
+{% display_merge_row destination source form 'gear_analysis_comments' %}
+{% display_merge_row destination source form 'gear_analysis_conclusions' %}
 {% display_o2o_merge_row destination source form 'gear_owner_info' 'has_gear_owner_info' %}
 {% endblock %}
 

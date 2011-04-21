@@ -110,6 +110,10 @@
 <div>
     <span class="fieldname">was gear recovered?</span> <i>{{ case.gear_recovered|yesno:"yes,no,unknown" }}</i>
 </div>
+{% display_div case "num_gear_types" %}
+{% display_geartypes_div case "gear_types" case.implied_gear_types %}
+{% display_list_div case "gear_attributes" %}
+{% display_list_div case "gear_targets" %}
 {% display_yesnounk_div case "gear_analyzed" %}
 {% if case.analyzed_date %}
 {% display_div case "analyzed_date" %}
@@ -119,11 +123,15 @@
     <span class="fieldname">analyzed by</span>: {% contact_link case.analyzed_by %}
 </div>
 {% endif %}
-{% display_geartypes_div case "gear_types" case.implied_gear_types %}
 {% if case.gear_analyzed %}
 {% display_bigtext_div case "gear_description" %}
 {% display_bigtext_div case "gear_analysis_comments" %}
 {% display_bigtext_div case "gear_analysis_conclusions" %}
+{% endif %}
+{% display_yesnounk_div case "gear_compliant" %}
+{% display_yesnounk_div case "gear_kept" %}
+{% if case.gear_kept %}
+{% display_bigtext_div case "gear_kept_where" %}
 {% endif %}
 {% endblock %}
 

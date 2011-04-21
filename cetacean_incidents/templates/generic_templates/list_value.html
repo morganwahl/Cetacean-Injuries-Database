@@ -1,0 +1,9 @@
+{% if value.exists %}
+<ul>
+{% for v in value.all %}
+<li>{{ v }}</li>
+{% endfor %}
+</ul>
+{% else %}
+<i>none</i>
+{% endif %}

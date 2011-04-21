@@ -29,6 +29,7 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
@@ -38,6 +39,7 @@ from models import (
     BodyLocation,
     Entanglement,
     EntanglementObservation,
+    GearAttribute,
     GearBodyLocation,
     GearType,
     GearOwner,
@@ -134,6 +136,18 @@ class EntanglementForm(CaseForm):
         label= _f.verbose_name.capitalize(),
     )
     
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('gear_attributes')
+    gear_attributes = forms.ModelMultipleChoiceField(
+        queryset= GearAttribute.objects.all(),
+        required= _f.blank != True,
+        help_text= None,
+        label= _f.verbose_name.capitalize(),
+        widget= forms.CheckboxSelectMultiple,
+    )
+
     class Meta(CaseForm.Meta):
         model = Entanglement
         
@@ -178,6 +192,18 @@ class GearAnalysisForm(EntanglementForm):
         label= 'is there any gear owner info?',
     )
 
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('gear_targets')
+    gear_targets = forms.ModelMultipleChoiceField(
+        queryset= Taxon.objects.filter(rank__lte=0),
+        required= _f.blank != True,
+        help_text= None,
+        label= _f.verbose_name.capitalize(),
+        widget= forms.CheckboxSelectMultiple,
+    )
+
     class Meta(EntanglementForm.Meta):
         exclude = []
         fields = (
@@ -185,10 +211,16 @@ class GearAnalysisForm(EntanglementForm):
             'gear_analyzed',
             'analyzed_date',
             'analyzed_by',
+            'num_gear_types',
             'gear_types',
+            'gear_targets',
+            'gear_attributes',
             'gear_description',
+            'gear_compliant',
             'gear_analysis_comments',
             'gear_analysis_conclusions',
+            'gear_kept',
+            'gear_kept_where',
         )
 
 class EntanglementMergeForm(CaseMergeForm):
@@ -212,6 +244,18 @@ class EntanglementMergeForm(CaseMergeForm):
         required= _f.blank != True,
         help_text= 'selecting a type implies the ones above it in the hierarchy',
         label= _f.verbose_name.capitalize(),
+    )
+
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('gear_attributes')
+    gear_attributes = forms.ModelMultipleChoiceField(
+        queryset= GearAttribute.objects.all(),
+        required= _f.blank != True,
+        help_text= None,
+        label= _f.verbose_name.capitalize(),
+        widget= forms.CheckboxSelectMultiple,
     )
 
     def save(self, commit=True):

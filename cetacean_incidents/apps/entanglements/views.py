@@ -80,14 +80,11 @@ class EntanglementTab(CaseTab):
                     lambda f: self.context['case_form'][f].errors,
                     (
                         'nmfs_id',
-                        'gear_fieldnumber',
                         'gear_analyzed',
-                        'analyzed_date',
-                        'analyzed_by',
+                        'num_gear_types',
                         'gear_types',
+                        'gear_attributes',
                         'gear_description',
-                        'gear_analysis_comments',
-                        'gear_analysis_conclusions',
                     ),
                 ),
             )

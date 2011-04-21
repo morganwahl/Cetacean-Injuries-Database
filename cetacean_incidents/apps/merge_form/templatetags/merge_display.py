@@ -116,6 +116,16 @@ def display_merge_geartypes_row(destination, source, merge_form, field_name):
     )
 
 @register.simple_tag
+def display_merge_list_row(destination, source, merge_form, field_name):
+    return display_merge_row(
+        destination,
+        source,
+        merge_form,
+        field_name,
+        cell_template_name= 'list_cell',
+    )
+
+@register.simple_tag
 def display_merge_animal_length_row(destination, source, merge_form, form_field_name, length_field_name, sigdigs_field_name):
     
     destination_value = [None, None]

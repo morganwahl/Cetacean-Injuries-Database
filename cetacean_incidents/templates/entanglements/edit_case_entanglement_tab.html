@@ -19,31 +19,22 @@
 {% with case_form.nmfs_id as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
-{% with case_form.gear_fieldnumber as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with case_form.gear_retrieved as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with case_form.gear_analyzed as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with case_form.analyzed_date as f %}
-{% include "labeled_field.html" %}
-{% endwith %}
-{% with case_form.analyzed_by as f %}
+{% with case_form.num_gear_types as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
 {% with case_form.gear_types as f %}
+{% with case_form.gear_retrieved as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with case_form.gear_attributes as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
 {% with case_form.gear_description as f %}
 {% include "bigtext_field.html" %}
 {% endwith %}
-{% with case_form.gear_analysis_comments as f %}
-{% include "bigtext_field.html" %}
-{% endwith %}
-{% with case_form.gear_analysis_conclusions as f %}
-{% include "bigtext_field.html" %}
+{% with case_form.gear_analyzed as f %}
+{% include "labeled_field.html" %}
 {% endwith %}
 
