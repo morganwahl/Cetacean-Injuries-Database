@@ -172,6 +172,8 @@ METER = D('1')
 CENTIMETER = D('.01') * METER
 INCH = D('2.54') * CENTIMETER
 FOOT = D('12') * INCH
+YARD = D('3') * FOOT
+FATHOM = D('2') * YARD
 
 @register.simple_tag
 def display_length(length_in_meters, unit, sigdigs=None):
@@ -187,6 +189,7 @@ def display_length(length_in_meters, unit, sigdigs=None):
         'cm': CENTIMETER,
         'ft': FOOT,
         'in': INCH,
+        'ftm': FATHOM,
     }[unit]
     
     length = round_decimal(length_in_unit, sigdigs)

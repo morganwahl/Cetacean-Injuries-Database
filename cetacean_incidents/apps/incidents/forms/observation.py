@@ -26,6 +26,7 @@ class LengthWidget(forms.MultiWidget):
                     ('in', u'inches'),
                     ('ft', u'feet'),
                     ('m',  u'meters'),
+                    ('ftm', u'fathoms'),
                 ),
             ),
             forms.Select(
@@ -75,6 +76,7 @@ class LengthField(forms.MultiValueField):
                     ('in', u'inches'),
                     ('ft', u'feet'),
                     ('m',  u'meters'),
+                    ('ftm', u'fathoms'),
                 ),
             ),  
             forms.TypedChoiceField(
@@ -100,6 +102,8 @@ class LengthField(forms.MultiValueField):
     CENTIMETER = D('.01') * METER
     INCH = D('2.54') * CENTIMETER
     FOOT = D('12') * INCH
+    YARD = D('3') * FOOT
+    FATHOM = D('2') * YARD
     
     def compress(self, data_list):
         (length, unit, sigdigs) = data_list
@@ -118,6 +122,7 @@ class LengthField(forms.MultiValueField):
             'cm': LengthField.CENTIMETER,
             'in': LengthField.INCH,
             'ft': LengthField.FOOT,
+            'ftm': LengthField.FATHOM,
         }[unit]
 
         return (length, sigdigs)

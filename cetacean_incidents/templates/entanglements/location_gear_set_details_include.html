@@ -1,0 +1,11 @@
+{% extends "locations/location_details_include.html" %}
+{% load generic_field_display %}
+
+{% block extra_fields %}
+{% if l.depth %}
+{% display_depth_div l "depth" l.depth_sigdigs "depth" %}
+{% endif %}
+{% if l.bottom_type %}
+{% display_div l "bottom_type" %}
+{% endif %}
+{% endblock %}

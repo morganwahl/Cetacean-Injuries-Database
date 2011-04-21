@@ -10,6 +10,7 @@ from models import (
     GearOwner,
     GearType,
     GearTypeRelation,
+    LocationGearSet,
 )
 
 class EntanglementAdmin(VersionAdmin):
@@ -27,6 +28,10 @@ admin.site.register(GearType, GearTypeAdmin)
 class GearTypeRelationAdmin(VersionAdmin):
     pass
 admin.site.register(GearTypeRelation, GearTypeRelationAdmin)
+
+class LocationGearSetAdmin(VersionAdmin):
+    pass
+admin.site.register(LocationGearSet, LocationGearSetAdmin)
 
 class GearOwnerAdmin(VersionAdmin):
     pass

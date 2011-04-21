@@ -86,6 +86,13 @@ def display_animal_length_cell(instance, length_field, sigdigs, prefix=None, **k
     return display_cell(instance, length_field, 'animal_length_cell', **kwargs)
 
 @register.simple_tag
+def display_depth_cell(instance, length_field, sigdigs, prefix=None, **kwargs):
+    kwargs['sigdigs'] = sigdigs
+    if not prefix is None:
+        kwargs['depth_prefix'] = prefix + '-'
+    return display_cell(instance, length_field, 'depth_cell', **kwargs)
+
+@register.simple_tag
 def display_row(instance, fieldname, label=None, template_name=None, **kwargs):
     '''\
     Given an instance of a django Model and a name of one of it's fields,
@@ -172,6 +179,13 @@ def display_animal_length_row(instance, length_field, sigdigs, prefix=None, labe
     return display_row(instance, length_field, label, 'animal_length_row', **kwargs)
 
 @register.simple_tag
+def display_depth_row(instance, length_field, sigdigs, prefix=None, label=None, **kwargs):
+    kwargs['sigdigs'] = sigdigs
+    if not prefix is None:
+        kwargs['depth_prefix'] = prefix
+    return display_row(instance, length_field, label, 'depth_row', **kwargs)
+
+@register.simple_tag
 def display_div(instance, fieldname, label=None, template_name=None, colon=True, **kwargs):
     if template_name is None:
         template_name = 'div'
@@ -205,4 +219,11 @@ def display_geartypes_div(instance, fieldname, implied=None, label=None, **kwarg
     if not implied is None:
         kwargs['implied'] = implied
     return display_div(instance, fieldname, label, 'geartypes_div', **kwargs)
+
+@register.simple_tag
+def display_depth_div(instance, length_field, sigdigs, prefix=None, label=None, **kwargs):
+    kwargs['sigdigs'] = sigdigs
+    if not prefix is None:
+        kwargs['depth_prefix'] = prefix
+    return display_div(instance, length_field, label, 'depth_div', **kwargs)
 

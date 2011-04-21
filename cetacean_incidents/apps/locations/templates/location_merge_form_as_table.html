@@ -1,8 +1,9 @@
 {% load merge_display %}
 
+{% block rows %}
 {% display_merge_row destination source form 'description' %}
 {% display_merge_row destination source form 'country' %}
 {% display_merge_chosen_row destination source form 'waters' %}
 {% display_merge_chosen_row destination source form 'state' %}
 {% display_merge_row destination source form 'coordinates' %}
-
+{% endblock %}

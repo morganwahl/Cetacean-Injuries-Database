@@ -1,0 +1,29 @@
+{% load observation_extras %}
+
+{% if value %}
+<div id="{{ depth_prefix }}m">
+    {% display_length value "m" sigdigs %}
+</div>
+<div id="{{ depth_prefix }}ft">
+    {% display_length value "ft" sigdigs %}
+</div>
+<div id="{{ depth_prefix }}ftm">
+    {% display_length value "ftm" sigdigs %}
+</div>
+{% if depth_prefix %}
+<form id="{{ depth_prefix }}depth_form">
+    <input type="radio" name="{{ depth_prefix }}unit" value="m">m
+    <input type="radio" name="{{ depth_prefix }}unit" value="ft">ft
+    <input type="radio" name="{{ depth_prefix }}unit" checked="checked" value="ftm">ftm
+</form>
+<script type="text/javascript">
+    RadioHider.init('{{ depth_prefix }}unit', {
+        'm': '{{ depth_prefix }}m',
+        'ft': '{{ depth_prefix }}ft',
+        'ftm': '{{ depth_prefix }}ftm'
+    });
+</script>
+{% endif %}
+{% else %}
+<i>unknown</i>
+{% endif %}

@@ -269,11 +269,14 @@ class MergeForm(forms.ModelForm):
         from cetacean_incidents.apps.shipstrikes.models import StrikingVesselInfo
         from cetacean_incidents.apps.entanglements.forms import GearOwnerMergeForm
         from cetacean_incidents.apps.entanglements.models import GearOwner
+        from cetacean_incidents.apps.entanglements.forms import LocationGearSetMergeForm
+        from cetacean_incidents.apps.entanglements.models import LocationGearSet
         subform_classes = {
             Location: LocationMergeForm,
             VesselInfo: VesselInfoMergeForm,
             StrikingVesselInfo: StrikingVesselInfoMergeForm,
             GearOwner: GearOwnerMergeForm,
+            LocationGearSet: LocationGearSetMergeForm,
         }
         
         # note that source_o2o_from_refs.key() will always be a subset of 

@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 
 from decimal import Decimal
+import operator
 import re
 
 from django.db import models
@@ -135,6 +136,16 @@ class Location(models.Model):
         editable= False, # note that this only means it's not editable in the admin interface or ModelForm-generated forms
         help_text= "field to be filled in by import scripts for data they can't assign to a particular field",
     )
+    
+    @property
+    def has_data(self):
+        return reduce(operator.__or__, (
+            bool(self.description),
+            bool(self.country),
+            bool(self.waters),
+            bool(self.state),
+            bool(self.coordinates),
+        ))
     
     def __unicode__(self):
         if self.coordinates:

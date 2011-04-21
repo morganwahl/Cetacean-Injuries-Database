@@ -24,6 +24,8 @@ from cetacean_incidents.apps.incidents.models import (
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
+from cetacean_incidents.apps.locations.forms import NiceLocationForm
+
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
@@ -39,6 +41,7 @@ from models import (
     GearBodyLocation,
     GearType,
     GearOwner,
+    LocationGearSet,
 )
 
 class InlineRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
@@ -140,6 +143,29 @@ class EntanglementForm(CaseForm):
         widgets.update({
             'analyzed_date': Datepicker,
         })
+
+class LocationGearSetForm(NiceLocationForm):
+    
+    class Meta(NiceLocationForm.Meta):
+        model = LocationGearSet
+
+class LocationGearSetMergeForm(MergeForm):
+    
+    # TODO same as LocationMergeForm.as_table
+    def as_table(self):
+        return render_to_string(
+            'location_gear_set_merge_form_as_table.html',
+            {
+                'object_name': LocationGearSet._meta.verbose_name,
+                'object_name_plural': LocationGearSet._meta.verbose_name_plural,
+                'destination': self.destination,
+                'source': self.source,
+                'form': self,
+            }
+        )
+    
+    class Meta:
+        model = LocationGearSet
 
 class GearAnalysisForm(EntanglementForm):
     '''\

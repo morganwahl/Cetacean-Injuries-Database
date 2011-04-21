@@ -49,8 +49,6 @@ from cetacean_incidents.apps.incidents.views.tabs import CaseTab
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab
 
-from cetacean_incidents.apps.locations.forms import NiceLocationForm
-
 from models import (
     BodyLocation,
     Entanglement,
@@ -65,6 +63,7 @@ from forms import (
     EntanglementObservationForm,
     GearAnalysisForm,
     GearOwnerForm,
+    LocationGearSetForm,
 )
 
 class EntanglementTab(CaseTab):
@@ -175,7 +174,7 @@ def edit_gear_owner(request, entanglement_id):
 
     form_classes = {
         'gear_owner': GearOwnerForm,
-        'location_set': NiceLocationForm,
+        'location_set': LocationGearSetForm,
     }
     model_instances = {}
     form_initials = {}
@@ -255,7 +254,7 @@ def _instantiate_gear_analysis_forms(request, entanglement):
     form_classes = {
         'entanglement': GearAnalysisForm,
         'gear_owner': GearOwnerForm,
-        'location_set': NiceLocationForm,
+        'location_set': LocationGearSetForm,
     }
     model_instances = {
         'entanglement': entanglement,

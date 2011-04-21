@@ -1,3 +1,9 @@
+import operator
+
+from django.core.validators import (
+    MinValueValidator,
+    MaxValueValidator,
+)
 from django.core.urlresolvers import reverse
 from django.db import models
 
@@ -34,6 +40,51 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     pass
 
+class LocationGearSet(Location):
+    '''\
+    Everything in this table should be considered confidential!
+    '''
+    
+    # TODO enforce view permissions at the model level!
+    
+    
+    depth = models.DecimalField(
+        blank= True,
+        null= True,
+        # 99,999.999 
+        # the Mariana Trench is a bit over 10 km deep (possibly 11). 1
+        # millimeter precision is probably all you can expect for a depth.
+        max_digits= 8,
+        decimal_places= 3,
+        validators= [MinValueValidator(0)],
+        help_text= u"""Depth the gear was set at, in meters.""",
+    )
+        
+    depth_sigdigs = models.IntegerField(
+        blank= True,
+        null= True,
+        validators= [
+            MinValueValidator(1),
+            MaxValueValidator(6), # should equal depth.max_digits
+        ],
+        verbose_name= '# of significant digits in the depth',
+        help_text= u"""Defaults to # of digits in 'depth'. The depth is stored at millimeter precision; this is only used when rounding for display in different units.""",
+    )
+    
+    bottom_type = models.CharField(
+        max_length= 2048,
+        blank= True,
+        null= True,
+    )
+    
+    @property
+    def has_data(self):
+        return reduce(operator.__or__, (
+            super(LocationGearSet, self).has_data,
+            self.depth is not None, # zero-depth is still data
+            bool(self.bottom_type),
+        ))
+
 class GearOwner(AbstractContact):
     '''\
     Everything in this table should be considered confidential!
@@ -48,10 +99,9 @@ class GearOwner(AbstractContact):
     )
     
     location_gear_set = models.OneToOneField(
-        Location,
+        LocationGearSet,
         blank= True,
         null= True,
-        help_text= "please note depth as well"
     )    
         
     datetime_missing = UncertainDateTimeField(

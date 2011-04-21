@@ -1,0 +1,9 @@
+{% extends "location_merge_form_as_table.html" %}
+{% load merge_display %}
+
+{% block rows %}
+{{ block.super }}
+{% display_merge_row destination source form 'depth' %}
+{% display_merge_row destination source form 'depth_sigdigs' %}
+{% display_merge_row destination source form 'bottom_type' %}
+{% endblock %}
