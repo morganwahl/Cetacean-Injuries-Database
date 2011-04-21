@@ -77,3 +77,16 @@ alter table "entanglements_entanglement"
 add "gear_kept_where" text
 ;
 
+-- add 3 fields to "entanglements_entanglementobservation"
+alter table "entanglements_entanglementobservation"
+add "gear_retriever_id" integer REFERENCES "contacts_contact" ("id")
+;
+CREATE INDEX "entanglements_entanglementobservation_4c5c5f64" ON "entanglements_entanglementobservation" ("gear_retriever_id");
+alter table "entanglements_entanglementobservation"
+add "gear_given_date" date
+;
+alter table "entanglements_entanglementobservation"
+add "gear_giver_id" integer REFERENCES "contacts_contact" ("id")
+;
+CREATE INDEX "entanglements_entanglementobservation_6daf6b47" ON "entanglements_entanglementobservation" ("gear_giver_id");
+

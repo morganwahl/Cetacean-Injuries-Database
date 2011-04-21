@@ -355,6 +355,9 @@ class EntanglementObservationForm(forms.ModelForm):
         # form submission fails if we even include this m2m field (since it 
         # uses an intermediary model)
         exclude = ('gear_body_location',)
+        widgets = {
+            'gear_given_date': Datepicker,
+        }
 
 class EntanglementObservationMergeForm(MergeForm, EntanglementObservationForm):
 

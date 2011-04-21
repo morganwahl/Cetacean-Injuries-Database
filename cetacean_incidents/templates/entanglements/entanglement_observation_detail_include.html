@@ -1,5 +1,7 @@
 {# assumes an EntanglementObservation was passed in as eo #}
 {% load generic_field_display %}
+{% load contact_extras %}
+
 <div class="section">
     <h3>Entanglement</h3>
     <table>
@@ -11,6 +13,21 @@
                     {{ eo.gear_description|default:"<i>undescribed</i>" }}
                 </p>
                 <p><i>{{ eo.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
+                {% if eo.gear_retrieved and eo.gear_retriever %}
+                <p>
+                    <i>gear retrived by:<i> {% contact_link eo.gear_retriever %}
+                </p>
+                {% endif %}
+                {% if eo.gear_given_date %}
+                <p>
+                    <i>gear given over for analysis on:<i> {{ eo.gear_given_date }}
+                </p>
+                {% endif %}
+                {% if eo.gear_giver %}
+                <p>
+                    <i>given over by:<i> {% contact_link eo.gear_giver %}
+                </p>
+                {% endif %}
              </td>
          </tr>
          <tr class="field">

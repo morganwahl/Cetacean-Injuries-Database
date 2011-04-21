@@ -11,6 +11,15 @@
 {% with forms.entanglement_observation.gear_retrieved as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
+{% with forms.entanglement_observation.gear_retriever as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.entanglement_observation.gear_given_date as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
+{% with forms.entanglement_observation.gear_giver as f %}
+{% include "labeled_field.html" %}
+{% endwith %}
 <div class="field-wrapper">
     <table>
         <tr>

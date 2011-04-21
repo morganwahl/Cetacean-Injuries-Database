@@ -344,6 +344,30 @@ class EntanglementObservation(ObservationExtension):
         verbose_name= 'gear retrieved?',
         help_text= "Was gear removed from the animal for later analysis?"
     )
+    # TODO should be null if not gear_retrieved
+    gear_retriever = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+        related_name= 'retrieved_gear_during',
+        help_text= "Who retrieved the gear?",
+    )
+    # TODO should be null if not gear_retrieved
+    gear_given_date = models.DateField(
+        blank= True,
+        null= True,
+        verbose_name= 'date gear recevied for analysis',
+        help_text= "When was the gear retrived in this observation given to whoever analyzed it?"
+    )
+    # TODO should be null if not gear_retrieved
+    gear_giver = models.ForeignKey(
+        Contact,
+        blank= True,
+        null= True,
+        related_name= 'gave_gear_from',
+        verbose_name= 'gear received for analysis from',
+        help_text= "Who gave the gear retrieved in this observation to whoever analyzed it?",
+    )
     disentanglement_attempted = models.NullBooleanField(
         blank= True,
         null= True,
