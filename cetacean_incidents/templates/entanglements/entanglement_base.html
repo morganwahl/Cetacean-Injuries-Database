@@ -123,9 +123,13 @@
     <span class="fieldname">analyzed by</span>: {% contact_link case.analyzed_by %}
 </div>
 {% endif %}
-{% if case.gear_analyzed %}
+{% if case.gear_description %}
 {% display_bigtext_div case "gear_description" %}
+{% endif %}
+{% if case.gear_analysis_comments %}
 {% display_bigtext_div case "gear_analysis_comments" %}
+{% endif %}
+{% if case.gear_analysis_conclusions %}
 {% display_bigtext_div case "gear_analysis_conclusions" %}
 {% endif %}
 {% display_yesnounk_div case "gear_compliant" %}

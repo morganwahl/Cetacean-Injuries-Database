@@ -132,7 +132,7 @@ class EntanglementForm(CaseForm):
     gear_types = DAGField(
         queryset= GearType.objects.all(),
         required= _f.blank != True,
-        help_text= 'selecting a type implies the ones above it in the hierarchy',
+        help_text= 'Selecting a type implies the ones above it in the hierarchy.',
         label= _f.verbose_name.capitalize(),
     )
     

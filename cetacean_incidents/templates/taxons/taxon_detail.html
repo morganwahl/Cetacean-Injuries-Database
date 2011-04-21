@@ -42,7 +42,7 @@
     {% display_row taxon "tsn" %}
     {% display_row taxon "name" %}
     {% display_chosen_row taxon "rank" %}
-    <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>" }}</td></tr>
+    <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>"|default:"<i>none</i>" }}</td></tr>
 </table>
 
 <div>
