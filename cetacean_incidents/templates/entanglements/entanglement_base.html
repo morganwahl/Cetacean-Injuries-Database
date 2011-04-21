@@ -18,10 +18,10 @@
     $(function() {
         // based on the example at
         // http://blog.nemikor.com/2009/04/08/basic-usage-of-the-jquery-ui-dialog/
-        var gear_analysis_dialog = $('#edit_gear_analysis_dialog').dialog({
+        var gear_analysis_dialog = $("#edit_gear_analysis_dialog").dialog({
             autoOpen: false,
             width: 775,
-            title: 'Gear Analysis',
+            title: "Gear Analysis",
             buttons: {
                 "save changes": function() {$("#edit_gear_analysis_dialog form").submit();},
                 "cancel": function() {$(this).dialog("close");}
@@ -54,12 +54,12 @@
     $(function() {
         $("#open_gear_analysis_popup").click(function(e){
             {# TODO javascript string escaping? #}
-            var url = '{% url edit_gear_analysis_popup case.id %}';
+            var url = "{% url edit_gear_analysis_popup case.id %}";
             var newwindow = window.open(
                 url,
                 // IE is picky about what this string contains
                 "gear_analysis_window_for_{{ case.id }}",
-                'height=700,width=775,resizable=yes,scrollbars=yes'
+                "height=700,width=775,resizable=yes,scrollbars=yes"
             );
             if (window.focus) {
                 newwindow.focus();

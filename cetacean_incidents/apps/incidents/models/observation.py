@@ -360,7 +360,7 @@ class Observation(Documentable, Importable):
         verbose_name= "Indication of Shipstrike?",
         help_text= u"""Was there any indication the animal had been struck? Note that this may or may not fulfill the criterea for a shipstrike case.""",
     )
-
+    
     gear_present = models.NullBooleanField(
         blank= True,
         null= True,

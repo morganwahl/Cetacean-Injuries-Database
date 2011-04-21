@@ -423,14 +423,18 @@ def add_taxon(tsn):
     common_names = []
     for name in common_names_elements:
         name = objectify.fromstring(etree.tostring(name))
+
         nil_key = '{%s}nil' % itis_namespaces['xsi']
         if nil_key in name.attrib:
             if name.attrib[nil_key] == 'true':
                 continue
+
         if not len(name):
             continue
+
         if name.language != "English":
             continue
+
         common_names.append(unicode(name.commonName))
     taxon.common_names = ", ".join(common_names)
         

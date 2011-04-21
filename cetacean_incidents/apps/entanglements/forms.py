@@ -41,8 +41,8 @@ from models import (
     EntanglementObservation,
     GearAttribute,
     GearBodyLocation,
-    GearType,
     GearOwner,
+    GearType,
     LocationGearSet,
 )
 
