@@ -152,7 +152,18 @@ class EntanglementForm(CaseForm):
         model = Entanglement
         
         exclude = CaseForm.Meta.exclude
-        exclude += ('gear_owner_info',)
+        exclude += (
+            'gear_fieldnumber',
+            'analyzed_date',
+            'analyzed_by',
+            'gear_targets',
+            'gear_compliant',
+            'gear_analysis_comments',
+            'gear_analysis_conclusions',
+            'gear_kept',
+            'gear_kept_where',
+            'gear_owner_info',
+        )
         widgets = CaseForm.Meta.widgets
         widgets.update({
             'analyzed_date': Datepicker,

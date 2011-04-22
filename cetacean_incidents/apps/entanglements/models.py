@@ -83,7 +83,7 @@ class LocationGearSet(Location):
     )
     
     bottom_type = models.CharField(
-        max_length= 2048,
+        max_length= 1024,
         blank= True,
         null= True,
     )
