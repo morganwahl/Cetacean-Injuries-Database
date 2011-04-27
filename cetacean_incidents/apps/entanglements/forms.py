@@ -147,7 +147,7 @@ class EntanglementForm(CaseForm):
         label= _f.verbose_name.capitalize(),
         widget= forms.CheckboxSelectMultiple,
     )
-
+    
     class Meta(CaseForm.Meta):
         model = Entanglement
         

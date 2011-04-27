@@ -1,5 +1,6 @@
 from django.core.urlresolvers import reverse
 from django import forms
+from django.forms.formsets import formset_factory
 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
@@ -15,21 +16,22 @@ class EmailInput(forms.TextInput):
     Just like a django.forms.TextWidget, except with the 'type' attribute set
     to 'email' (a backward-compatible HTML5 input-element type).
     '''
-    
+
     input_type = 'email'
 
 class OrganizationForm(forms.ModelForm):
-    
+
     class Meta:
         model = Organization
 
 class ContactForm(forms.ModelForm):
-    
+
     # TODO should we preservere the args-ordering of ModelForm?
     def __init__(self, data=None, prefix=None, *args, **kwargs):
         super(ContactForm, self).__init__(data, prefix=prefix, *args, **kwargs)
-        
-        # the exisintg affiliations will be in the widget in for 'affiliations'.
+
+        # the exisintg affiliations will be in the widget in for 
+        # 'affiliations'. 
         # This is only for adding new Organizations from within the same page
         new_affs_prefix = 'new_affs'
         if not prefix is None:
@@ -37,9 +39,9 @@ class ContactForm(forms.ModelForm):
         # TODO take argument for 'extra'?
         # we're not using modelformset_factory since we're only creating new
         # Organizations, not editing existing ones.
-        new_affs_class = forms.formsets.formset_factory(OrganizationForm, extra=2)
+        new_affs_class = formset_factory(OrganizationForm, extra=2)
         self.new_affs = new_affs_class(data, prefix=new_affs_prefix)
-    
+
     def __unicode__(self):
         return super(ContactForm, self).__unicode__() + self.new_affs.__unicode__()
     

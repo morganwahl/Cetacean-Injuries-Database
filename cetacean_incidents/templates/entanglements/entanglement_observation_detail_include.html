@@ -12,7 +12,9 @@
                 <p>
                     {{ eo.gear_description|default:"<i>undescribed</i>" }}
                 </p>
-                <p><i>{{ eo.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i></p>
+                <p>
+                    <i>{{ eo.gear_retrieved|yesno:"gear retrieved,gear not retrieved," }}</i>
+                </p>
                 {% if eo.gear_retrieved and eo.gear_retriever %}
                 <p>
                     <i>gear retrived by:<i> {% contact_link eo.gear_retriever %}

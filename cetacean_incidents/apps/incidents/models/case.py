@@ -59,11 +59,10 @@ class CaseMeta(models.Model.__metaclass__):
 
 class SeriousInjuryAndMortality(models.Model):
     '''\
-    Abstract class to collect together all the Serious Injury and Mortality
-    fields.
+    Abstract class to collect together all the Serious Injury and Mortality 
+    Determination fields.
     '''
     
-    ## serious injury and mortality determination ##
     si_n_m_fieldnames = []
 
     review_1_date = models.DateField(

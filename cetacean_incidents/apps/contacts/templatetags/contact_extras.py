@@ -2,8 +2,10 @@ from django import template
 
 register = template.Library()
 
-# assumes the the django.template.loaders.app_directories.load_template_source 
-# is being used, which is the default.
+
+# TODO assumes the the
+# django.template.loaders.app_directories.load_template_source
+# is being used. (which is the default.)
 @register.inclusion_tag('contact_link.html')
 def contact_link(contact):
     '''\

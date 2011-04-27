@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import *
+from django.conf.urls.defaults import patterns
 
 from models import Contact
 import views
@@ -16,7 +16,17 @@ urlpatterns += patterns('',
     (r'^(?P<contact_id>\d+)/$', views.contact_detail, {}, 'contact_detail'),
     (r'^create$', views.create_contact, {}, 'create_contact'),
     (r'^(\d+)/edit$', views.edit_contact, {}, 'edit_contact'),
-    (r'^(?P<destination_id>\d+)/merge$', views.merge_contact, {}, 'merge_contact'),
-    (r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$', views.merge_contact, {}, 'merge_contact'),
+    (
+        r'^(?P<destination_id>\d+)/merge$',
+        views.merge_contact,
+        {},
+        'merge_contact',
+    ),
+    (
+        r'^(?P<destination_id>\d+)/merge/(?P<source_id>\d+)$',
+        views.merge_contact,
+        {},
+        'merge_contact',
+    ),
 )
 

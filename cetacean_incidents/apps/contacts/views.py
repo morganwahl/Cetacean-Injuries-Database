@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.forms import Media
-from django.forms.formsets import formset_factory
 from django.shortcuts import (
     redirect,
     render_to_response,
@@ -15,7 +14,6 @@ from cetacean_incidents.forms import merge_source_form_factory
 from forms import (
     ContactForm,
     ContactMergeForm,
-    OrganizationForm,
 )
 from models import Contact
 
@@ -33,7 +31,10 @@ def contact_detail(request, contact_id):
         'media': template_media,
     }
 
-    if request.user.has_perms(('contacts.change_contact', 'contacts.delete_contact')):
+    if request.user.has_perms((
+        'contacts.change_contact',
+        'contacts.delete_contact',
+    )):
         merge_form = merge_source_form_factory(Contact, contact)()
         context['media'] += merge_form.media
         context['merge_form'] = merge_form
