@@ -35,12 +35,7 @@ class CaseForm(forms.ModelForm):
         # don't edit model-relationship fields
         exclude = ('animal',)
 
-class AddCaseForm(CaseForm):
-    
-    class Meta(CaseForm.Meta):
-        exclude = ('animal',)
-
-Case.form_class = AddCaseForm
+Case.form_class = CaseForm
 
 class CaseMergeSourceForm(forms.Form):
     

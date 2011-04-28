@@ -48,7 +48,6 @@ from ..models import (
 )
 from ..forms import (
     AnimalForm,
-    AddCaseForm,
     CaseForm,
     ObservationCasesForm,
     ObservationForm,
@@ -140,7 +139,7 @@ def _change_incident(
         request,
         animal=None,
         cases=None,
-        new_case_form_class=AddCaseForm,
+        new_case_form_class=CaseForm,
         additional_new_case_tabs = [], # a list of tabs
         observation=None,
         template='incidents/add_observation.html',
@@ -293,7 +292,7 @@ def _change_incident(
             else: # we're adding a new case
                 _check('new_case')
                 new_case = forms['new_case'].save(commit=False)
-                # TODO move this to AddCaseForm.save?
+                # TODO move this to CaseForm.save?
                 new_case.animal = animal
                 new_case.save()
                 forms['new_case'].save_m2m()

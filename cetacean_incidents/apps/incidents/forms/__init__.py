@@ -5,7 +5,6 @@ from animal import (
     AnimalMergeSourceForm,
 )
 from case import (
-    AddCaseForm,
     CaseAnimalForm,
     CaseForm,
     CaseMergeForm,

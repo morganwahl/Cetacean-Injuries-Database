@@ -17,7 +17,6 @@ from cetacean_incidents.apps.entanglements.forms import (
 from cetacean_incidents.apps.entanglements.models import Entanglement
 
 from cetacean_incidents.apps.incidents.forms import (
-    AddCaseForm,
     AnimalAutocomplete,
     CaseForm,
 )
@@ -79,7 +78,7 @@ def CaseTypeForm_factory(user):
             'Shipstrike': ShipstrikeForm,
         }
         addcase_form_classes = {
-            'Case': AddCaseForm,
+            'Case': CaseForm,
             'Entanglement': AddEntanglementForm,
             'Shipstrike': AddShipstrikeForm,
         }
