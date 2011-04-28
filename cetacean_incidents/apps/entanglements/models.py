@@ -453,6 +453,9 @@ class EntanglementObservation(ObservationExtension):
         verbose_name = "Observation entanglement-data"
         verbose_name_plural = verbose_name
 
+guard_deletes(Contact, EntanglementObservation, 'gear_retriever')
+guard_deletes(Contact, EntanglementObservation, 'gear_giver')
+
 # TODO generalize this for all ObservationExtensions
 def add_entanglement_extension_handler(sender, **kwargs):
     # sender shoulde be Observation.cases.through
