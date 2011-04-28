@@ -34,6 +34,8 @@ class CaseForm(forms.ModelForm):
         }
         # don't edit model-relationship fields
         exclude = ('animal',)
+        # don't edit SI&MD fields
+        exclude += tuple(Case.si_n_m_fieldnames())
 
 Case.form_class = CaseForm
 

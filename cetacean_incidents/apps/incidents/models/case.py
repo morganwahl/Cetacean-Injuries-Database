@@ -63,14 +63,11 @@ class SeriousInjuryAndMortality(models.Model):
     Determination fields.
     '''
     
-    si_n_m_fieldnames = []
-
     review_1_date = models.DateField(
         blank= True,
         null= True,
         verbose_name = "1st reviewer date",
     )
-    si_n_m_fieldnames.append('review_1_date')
 
     review_1_inits = models.CharField(
         max_length= 5,
@@ -78,14 +75,12 @@ class SeriousInjuryAndMortality(models.Model):
         null= True,
         verbose_name = "1st reviewer initials",
     )
-    si_n_m_fieldnames.append('review_1_inits')
 
     review_2_date = models.DateField(
         blank= True,
         null= True,
         verbose_name = "2nd reviewer date",
     )
-    si_n_m_fieldnames.append('review_2_date')
 
     review_2_inits = models.CharField(
         max_length= 5,
@@ -94,7 +89,6 @@ class SeriousInjuryAndMortality(models.Model):
         null= True,
         verbose_name = "2nd reviewer initials",
     )
-    si_n_m_fieldnames.append('review_2_inits')
 
     case_confirm_criteria = models.IntegerField(
         blank= True,
@@ -102,7 +96,6 @@ class SeriousInjuryAndMortality(models.Model):
         verbose_name = "criteria for case confirmation",
         help_text= "a number in one of the ranges 11-14, 21-24, or 31-34",
     )
-    si_n_m_fieldnames.append('case_confirm_criteria')
 
     animal_fate = models.CharField(
         max_length= 2,
@@ -116,7 +109,6 @@ class SeriousInjuryAndMortality(models.Model):
         default= 'un',
         blank= True,
     )
-    si_n_m_fieldnames.append('animal_fate')
     
     fate_cause = models.CharField(
         max_length= 1,
@@ -130,7 +122,6 @@ class SeriousInjuryAndMortality(models.Model):
         blank= True,
         help_text= "Did the injury this case is concerned with lead to the animal's fate above? If the fate was 'no injury' or 'unknown' this should be 'not applicable'",
     )
-    si_n_m_fieldnames.append('fate_cause')
     
     fate_cause_indications = models.IntegerField(
         blank= True,
@@ -138,35 +129,35 @@ class SeriousInjuryAndMortality(models.Model):
         verbose_name= "indications of fate cause",
         help_text= "a number in one of the ranges 41-44, 51-54, or 61-66",
     )
-    si_n_m_fieldnames.append('fate_cause_indications')
 
     si_prevented = models.NullBooleanField(
         blank= True,
         null= True,
         verbose_name = "serious injury warranted if no intervention?",
     )
-    si_n_m_fieldnames.append('si_prevented')
 
     included_in_sar = models.NullBooleanField(
         blank= True,
         null= True,
         verbose_name = "included in SAR?"
     )
-    si_n_m_fieldnames.append('included_in_sar')
 
     review_1_notes = models.TextField(
         blank= True,
         null= True,
         verbose_name = "1st reviewer notes",
     )
-    si_n_m_fieldnames.append('review_1_notes')
 
     review_2_notes = models.TextField(
         blank= True,
         null= True,
         verbose_name = "2st reviewer notes",
     )
-    si_n_m_fieldnames.append('review_2_notes')
+
+    # TODO simpler way to do this?
+    @staticmethod
+    def si_n_m_fieldnames():
+        return SeriousInjuryAndMortality._meta.get_all_field_names()
 
     @property
     def si_n_m_info(self):
@@ -187,7 +178,11 @@ class SeriousInjuryAndMortality(models.Model):
             
             return False
                 
-        return reduce(lambda so_far, fieldname: so_far or not is_default(fieldname), self.si_n_m_fieldnames, False)
+        return reduce(
+            lambda so_far, fieldname: so_far or not is_default(fieldname),
+            self.si_n_m_fieldnames(),
+            False,
+        )
 
     class Meta:
         abstract = True
