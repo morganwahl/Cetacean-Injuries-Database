@@ -78,13 +78,10 @@ class EntanglementTab(CaseTab):
                 bool,
                 [self.context['case_form'].non_field_errors()] + map(
                     lambda f: self.context['case_form'][f].errors,
+                    # TODO duplicates the list of fields in the template
                     (
                         'nmfs_id',
                         'gear_analyzed',
-                        'num_gear_types',
-                        'gear_types',
-                        'gear_attributes',
-                        'gear_description',
                     ),
                 ),
             )

@@ -128,20 +128,11 @@ class GearOwner(AbstractContact):
 
 guard_deletes(Location, GearOwner, 'location_gear_set')
 
-class Entanglement(Case):
+class GearAnalysis(models.Model):
+    '''\
+    Abstract class to hold the fields related to gear-analysis.
+    '''
     
-    nmfs_id = models.CharField(
-        max_length= 255,
-        unique= False, # in case a NMFS case corresponds to multiple cases in
-                       # our database
-        blank= True,
-        verbose_name= "entanglement NMFS ID",
-        help_text= "An entanglement-specific case ID.",
-    )
-    
-    def _case_type_name(self):
-        return self.nmfs_id
-        
     gear_fieldnumber = models.CharField(
         max_length= 255,
         blank= True,
@@ -150,42 +141,19 @@ class Entanglement(Case):
         help_text= "The gear-analysis-specific case ID.",
     )
     
-    @staticmethod
-    def _yes_no_unk_reduce(thing1, thing2):
-        '''\
-        Given two items,
-            - if either of them is True, return True
-            - if both of them are False and not None, return False
-            - otherwise, return None (for unknown)
-        '''
-        
-        if bool(thing1) or bool(thing2):
-            return True
-        if thing1 is None or thing2 is None:
-            return None
-        return False
-    
-    @property
-    def gear_retrieved(self):
-        return reduce(
-            self._yes_no_unk_reduce,
-            map(
-                lambda o: o.entanglements_entanglementobservation.gear_retrieved,
-                self.observation_set.all()
-            )
-        )
-        
     gear_analyzed = models.NullBooleanField(
         default= False,
         blank= True,
         null= True,
         verbose_name= "Was the gear analyzed?",
     )
+
     analyzed_date = models.DateField(
         blank= True,
         null= True,
         help_text= "Date the gear was analyzed. Please use YYYY-MM-DD",
     )
+
     analyzed_by = models.ForeignKey(
         Contact,
         blank= True,
@@ -265,6 +233,11 @@ class Entanglement(Case):
         null= True,
     )
     
+    # TODO simpler way to do this?
+    @staticmethod
+    def gear_analysis_fieldnames():
+        return GearAnalysis._meta.get_all_field_names()
+    
     @property
     def implied_gear_types(self):
         if not self.gear_types.count():
@@ -274,15 +247,57 @@ class Entanglement(Case):
             implied_geartypes |= geartype.implied_supertypes
         return frozenset(implied_geartypes - set(self.gear_types.all()))
     
+    class Meta:
+        abstract = True
+
+guard_deletes(Contact, GearAnalysis, 'analyzed_by')
+guard_deletes(GearOwner, GearAnalysis, 'gear_owner_info')
+
+class Entanglement(Case, GearAnalysis):
+    
+    nmfs_id = models.CharField(
+        max_length= 255,
+        unique= False, # in case a NMFS case corresponds to multiple cases in
+                       # our database
+        blank= True,
+        verbose_name= "entanglement NMFS ID",
+        help_text= "An entanglement-specific case ID.",
+    )
+    
+    def _case_type_name(self):
+        return self.nmfs_id
+        
+    @staticmethod
+    def _yes_no_unk_reduce(thing1, thing2):
+        '''\
+        Given two items,
+            - if either of them is True, return True
+            - if both of them are False and not None, return False
+            - otherwise, return None (for unknown)
+        '''
+        
+        if bool(thing1) or bool(thing2):
+            return True
+        if thing1 is None or thing2 is None:
+            return None
+        return False
+    
+    @property
+    def gear_retrieved(self):
+        return reduce(
+            self._yes_no_unk_reduce,
+            map(
+                lambda o: o.entanglements_entanglementobservation.gear_retrieved,
+                self.observation_set.all()
+            )
+        )
+        
     @models.permalink
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])
 
     def get_edit_url(self):
         return reverse('edit_entanglement', args=[self.id])
-
-guard_deletes(Contact, Entanglement, 'analyzed_by')
-guard_deletes(GearOwner, Entanglement, 'gear_owner_info')
 
 class BodyLocation(models.Model):
     '''\
