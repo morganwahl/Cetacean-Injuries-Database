@@ -77,6 +77,7 @@ class ModelAutocomplete(Autocomplete):
         options = self.options.copy()
 
         # javascript doesn't like hyphenminuses
+        # TODO is a regex really needed here?
         import re
         func_prefix = re.sub('-', '_', name)
         

@@ -79,7 +79,11 @@ class LocationGearSet(Location):
             MaxValueValidator(6), # should equal depth.max_digits
         ],
         verbose_name= '# of significant digits in the depth',
-        help_text= u"""Defaults to # of digits in 'depth'. The depth is stored at millimeter precision; this is only used when rounding for display in different units.""",
+        help_text= u"""
+            Defaults to # of digits in 'depth'. The depth is stored at
+            millimeter precision; this is only used when rounding for display
+            in different units.
+        """,
     )
     
     bottom_type = models.CharField(
@@ -179,7 +183,8 @@ class GearAnalysis(models.Model):
         Taxon,
         blank= True,
         null= True,
-        help_text= "All the taxa targeted by this gear."
+        verbose_name= 'target species', # not really verbose, just a name change
+        help_text= "All the species that were intended to by caught by this gear.",
     )
     
     gear_attributes = models.ManyToManyField(

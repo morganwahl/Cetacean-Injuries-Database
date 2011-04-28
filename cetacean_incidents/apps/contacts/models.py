@@ -49,7 +49,8 @@ class AbstractContact(models.Model):
     
     notes = models.TextField(
         blank= True,
-        help_text= "anything to note about this contact info? e.g. office hours, alternative phone numbers, etc."
+        help_text= u"""anything to note about this contact info? e.g. office 
+            hours, alternative phone numbers, etc.""",
     )
    
     def __unicode__(self):
@@ -62,21 +63,24 @@ class AbstractContact(models.Model):
     class Meta:
         abstract = True
 
+
 class Contact(AbstractContact):
-    '''\
-    A contact is a name of a person _or_ organization, preferably with some way
-    of contacting them. 
+    """A contact is a name of a person _or_ organization, preferably with some
+    way of contacting them. 
     
-    Note that only one each of phone, email, etc. is given so that contacts just
-    have a primary phone or email to contact them at. Other ones could be noted
-    in the 'notes' field, if necessary.
-    '''
+    Note that only one each of phone, email, etc. is given so that contacts
+    just have a primary phone or email to contact them at. Other ones could be
+    noted in the 'notes' field, if necessary.
+
+    """
 
     # should default to name. see save() func below
     sort_name = models.CharField(
         max_length= 1023,
         blank= True,
-        help_text= "Used in sorting contacts. If left blank, will be filled in with the same value as 'name'.",
+        help_text= u"""Used in sorting contacts. If left blank, will be filled
+            in with the same value as 'name'.
+        """,
     )
 
     @property
