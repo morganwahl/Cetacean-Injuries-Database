@@ -34,7 +34,7 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
             if not source.pk:
                 source_value = tuple()
             else:
-                source_value = getattr(destination, field_name)
+                source_value = getattr(source, field_name)
         else:
             source_value = getattr(source, field_name)
         in_source = True
