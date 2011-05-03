@@ -50,7 +50,6 @@ class ShipstrikeObservationTestCase(TestCase):
             datetime_reported= UncertainDateTime(2008),
         )
         self.assertRaises(ShipstrikeObservation.DoesNotExist, getattr, o2, 'shipstrikes_shipstrikeobservation')
-        print "adding obs to case"
         ss.observation_set.add(o2)
         # reload o2
         o2 = Observation.objects.get(pk=o2.pk)
