@@ -1,0 +1,14 @@
+ul.hierarchical_checkbox_select_multiple {
+    margin: 0;
+}
+ul.hierarchical_checkbox_select_multiple li {
+    list-style-type: none;
+}
+
+ul.hierarchical_checkbox_select_multiple li.subchecked {
+    background-color: #fce94f;
+}
+ul.hierarchical_checkbox_select_multiple li.checked {
+    background-color: #8ae234;
+}
+

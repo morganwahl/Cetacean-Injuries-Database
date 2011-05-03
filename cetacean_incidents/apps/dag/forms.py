@@ -8,6 +8,7 @@ from django.utils.html import (
 from django.utils.safestring import mark_safe
 
 from django import forms
+from django.conf import settings
 from django.forms.models import (
     ModelChoiceIterator,
     ModelMultipleChoiceField,
@@ -52,6 +53,8 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
         ('value4', 'label4'),
     )
     
+    CSS_CLASS = u'hierarchical_checkbox_select_multiple'
+    
     def render(self, name, value, attrs=None, choices=()):
         if value is None: value = []
         # Normalize to strings
@@ -59,22 +62,41 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
 
         final_attrs = self.build_attrs(attrs, name=name)
         
-        return mark_safe(self._render_ul(chain(self.choices, choices), final_attrs, str_values))
+        ul = self._render_ul(
+            chain(self.choices, choices),
+            final_attrs,
+            str_values,
+        )[0]
+        return mark_safe(ul)
 
     def _render_ul(self, choices, final_attrs, str_values):
-        ul = [u'<ul>']
+        ul = [u'<ul class="%s">' % self.CSS_CLASS]
+        subchecked = False
+
         for i, (option_value, option_label) in enumerate(choices):
             if isinstance(option_value, tuple):
                 subchoices = option_label
                 (option_value, option_label) = option_value
-                ul.append(self._render_li(option_value, option_label, final_attrs, unicode(i), str_values, subchoices))
             else:
-                ul.append(self._render_li(option_value, option_label, final_attrs, unicode(i), str_values))
+                subchoices = ()
+            li, li_checked, li_subchecked = self._render_li(
+                option_value,
+                option_label,
+                final_attrs,
+                unicode(i),
+                str_values,
+                subchoices,
+            )
+            subchecked = subchecked or li_checked or li_subchecked
+            ul.append(li)
+
+        if subchecked:
+            ul[0] = u'<ul class="%s">' % self.CSS_CLASS
         ul.append(u'</ul>')
-        return u'\n'.join(ul)
+        return (u'\n'.join(ul), subchecked)
 
     def _render_li(self, option_value, option_label, final_attrs, suffix, str_values, subchoices=()):
-        li = [u'<li>']
+        
         # If an ID attribute was given, add the suffix,
         # so that the checkboxes don't all have the same ID attribute.
         has_id = 'id' in final_attrs
@@ -85,16 +107,39 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
             sub_attrs = final_attrs
             label_for = ''
 
-        cb = CheckboxInput(sub_attrs, check_test=lambda value: value in str_values)
         option_value = force_unicode(option_value)
+        checked = lambda value: value in str_values
+
+        li = [u'<li>']
+        li_classes = []
+        if checked(option_value):
+            li_classes.append('checked')
+
+        cb = CheckboxInput(sub_attrs, check_test=checked)
         rendered_cb = cb.render(sub_attrs['name'], option_value)
         option_label = conditional_escape(force_unicode(option_label))
         li.append(u'<label%s>%s %s</label>' % (label_for, rendered_cb, option_label))
+
+        subchecked = False
         if subchoices:
-            li.append(self._render_ul(subchoices, sub_attrs, str_values))
+            sublist, subchecked = self._render_ul(
+                subchoices,
+                sub_attrs,
+                str_values,
+            )
+            li.append(sublist)
+        if subchecked:
+            li_classes.append('subchecked')
+
         li.append(u'</li>')
-        return u'\n'.join(li)
-        
+        if li_classes:
+            li[0] = u'<li class=\"%s\">' % u' '.join(li_classes)
+        return (u'\n'.join(li), checked(option_value), subchecked)
+    
+    class Media:
+        js = (settings.JQUERY_FILE, 'hierarchical_checkbox_select_multiple.js')
+        css = {'all': ('hierarchical_checkbox_select_multiple.css',)}
+
 class DAGModelChoiceIterator(ModelChoiceIterator):
 
     def _qs_to_choices(self, qs):
