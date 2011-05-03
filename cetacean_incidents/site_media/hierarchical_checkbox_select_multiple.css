@@ -6,9 +6,12 @@ ul.hierarchical_checkbox_select_multiple li {
 }
 
 ul.hierarchical_checkbox_select_multiple li.subchecked {
-    background-color: #fce94f;
+    background-color: #fce94f; /* butter 1 */
+}
+ul.hierarchical_checkbox_select_multiple li.superchecked {
+    background-color: #a9e271; /* chameleon 1 */
 }
 ul.hierarchical_checkbox_select_multiple li.checked {
-    background-color: #8ae234;
+    background-color: #73d216; /* chameleon 2 */
 }
 
