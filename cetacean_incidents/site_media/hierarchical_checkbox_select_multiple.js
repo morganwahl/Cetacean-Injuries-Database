@@ -31,10 +31,8 @@ HierarchicalCheckboxSelectMultiple = {
                 }
                 
                 if (this.checked) {
-                    // add 'subchecked' class to all parent items that aren't children
-                    // of a checked item
-                    var checked_or_superchecked = ul.find('li.checked').add('li.superchecked');
-                    ul.find('li').has(this).not(checked_or_superchecked).addClass('subchecked');
+                    // add 'subchecked' class to all parent items
+                    ul.find('li').has(this).addClass('subchecked');
                 } else {
                     // removed 'subchecked' class from parents that don't still contain
                     // a checked input
