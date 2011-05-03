@@ -57,7 +57,16 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
             final_attrs,
             str_values,
         )[0]
-        return mark_safe(ul)
+        # TODO javascript-string escaping
+        js = u"""\
+            <script type="text/javascript">
+                HierarchicalCheckboxSelectMultiple.init("%(media_url)s", "%(ul_class)s");
+            </script>
+        """ % {
+            'media_url': settings.MEDIA_URL,
+            'ul_class': self.CSS_CLASS,
+        }
+        return mark_safe(js + ul)
 
     def _render_ul(self, choices, final_attrs, str_values, superchecked=False):
         ul = [u'<ul class="%s">' % self.CSS_CLASS]
