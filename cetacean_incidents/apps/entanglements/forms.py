@@ -28,7 +28,10 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
-from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.taxons.forms import (
+    TaxonField,
+    TaxonMultipleChoiceField,
+)
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
@@ -197,12 +200,11 @@ class GearAnalysisForm(EntanglementForm):
     # Django bug #9321. Ideally the help text would be part of our own Widget,
     # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_targets')
-    gear_targets = forms.ModelMultipleChoiceField(
-        queryset= Taxon.objects.filter(rank__lte=0),
+    gear_targets = TaxonMultipleChoiceField(
+        queryset= Taxon.objects.all(),
         required= _f.blank != True,
         help_text= None,
         label= _f.verbose_name.capitalize(),
-        widget= forms.CheckboxSelectMultiple,
     )
 
     class Meta(EntanglementForm.Meta):
