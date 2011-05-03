@@ -44,9 +44,9 @@ HierarchicalCheckboxSelectMultiple = {
             });
             
             // add the expand/contract links
-            var minus_url = media_url + 'icons/bullet_toggle_minus.png';
+            var minus_url = media_url + 'icons/contract.png';
             var minus_img = '<img class="button" title="contract" alt="&#x2212;" src="' + minus_url + '">';
-            var plus_url = media_url + 'icons/bullet_toggle_plus.png';
+            var plus_url = media_url + 'icons/expand.png';
             var plus_img = '<img class="button" title="expand" alt="&#x002b;" src="' + plus_url + '">';
             // only prepend to li that contain sublists
             ul.children('li').has('ul.' + ul_class).prepend('<a href="" class="heir_toggle"></a>');
