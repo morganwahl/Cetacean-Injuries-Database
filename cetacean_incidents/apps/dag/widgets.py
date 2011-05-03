@@ -61,8 +61,8 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
 
     def _render_ul(self, choices, final_attrs, str_values, superchecked=False):
         ul = [u'<ul class="%s">' % self.CSS_CLASS]
-        subchecked = False
 
+        subchecked = False
         for i, (option_value, option_label) in enumerate(choices):
             if isinstance(option_value, tuple):
                 subchoices = option_label
@@ -81,8 +81,6 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
             subchecked = subchecked or li_checked or li_subchecked
             ul.append(li)
 
-        if subchecked:
-            ul[0] = u'<ul class="%s">' % self.CSS_CLASS
         ul.append(u'</ul>')
         return (u'\n'.join(ul), subchecked)
 

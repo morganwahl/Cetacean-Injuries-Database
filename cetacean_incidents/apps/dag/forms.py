@@ -15,7 +15,7 @@ class DAGModelChoiceIterator(ModelChoiceIterator):
             if children.count():
                 choices.append((
                     self.choice(root),
-                    self._qs_to_choices(children.all())
+                    self._qs_to_choices(children.all()),
                 ))
             else:
                 choices.append(self.choice(root))
@@ -46,13 +46,13 @@ class DAGField(ModelMultipleChoiceField):
             return self._choices
 
         # Otherwise, execute the QuerySet in self.queryset to determine the
-        # choices dynamically. Return a fresh QuerySetIterator that has not been
-        # consumed. Note that we're instantiating a new QuerySetIterator *each*
-        # time _get_choices() is called (and, thus, each time self.choices is
-        # accessed) so that we can ensure the QuerySet has not been consumed. This
-        # construct might look complicated but it allows for lazy evaluation of
-        # the queryset.
+        # choices dynamically. Return a fresh QuerySetIterator that has not
+        # been consumed. Note that we're instantiating a new QuerySetIterator 
+        # *each* time _get_choices() is called (and, thus, each time 
+        # self.choices is accessed) so that we can ensure the QuerySet has not 
+        # been consumed. This construct might look complicated but it allows
+        # for lazy evaluation of the queryset.
         return DAGModelChoiceIterator(self)
 
     choices = property(_get_choices, ModelMultipleChoiceField._set_choices)
-    
+
