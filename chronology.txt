@@ -2,6 +2,8 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+vessel_type choices are too big in IE
+alphabatize gear types
 make sure entanglement editing isn't overwriting fields with blank
 add guard_deletes for new Entanglement models
 add interface for editing certain EntanglementObservation fields from the gear-analysis window
