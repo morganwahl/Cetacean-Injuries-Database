@@ -59,7 +59,7 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
         )[0]
         return mark_safe(ul)
 
-    def _render_ul(self, choices, final_attrs, str_values):
+    def _render_ul(self, choices, final_attrs, str_values, superchecked=False):
         ul = [u'<ul class="%s">' % self.CSS_CLASS]
         subchecked = False
 
@@ -76,6 +76,7 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
                 unicode(i),
                 str_values,
                 subchoices,
+                superchecked,
             )
             subchecked = subchecked or li_checked or li_subchecked
             ul.append(li)
@@ -92,6 +93,7 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
         suffix,
         str_values,
         subchoices=(),
+        superchecked=False,
     ):
         
         # If an ID attribute was given, add the suffix,
@@ -114,6 +116,8 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
         li_classes = []
         if checked(option_value):
             li_classes.append('checked')
+        if superchecked:
+            li_classes.append('superchecked')
 
         cb = CheckboxInput(sub_attrs, check_test=checked)
         rendered_cb = cb.render(sub_attrs['name'], option_value)
@@ -124,10 +128,13 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
 
         subchecked = False
         if subchoices:
+            if checked(option_value):
+                superchecked = True
             sublist, subchecked = self._render_ul(
                 subchoices,
                 sub_attrs,
                 str_values,
+                superchecked,
             )
             li.append(sublist)
         if subchecked:
