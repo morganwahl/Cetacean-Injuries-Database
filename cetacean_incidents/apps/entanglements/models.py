@@ -189,7 +189,8 @@ class GearAnalysis(models.Model):
         'GearType',
         blank= True,
         null= True,
-        help_text= "All the applicable gear types in the set of gear from this entanglement.",
+        verbose_name= 'gear attributes',
+        help_text= "All the applicable gear attributes in the set of gear from this entanglement.",
     )
     
     gear_targets = models.ManyToManyField(
