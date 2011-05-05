@@ -79,6 +79,32 @@ HierarchicalCheckboxSelectMultiple = {
             // prepend a span on the other LIs with the same width as the
             // toggle icons + the left-margin on a input[type="checkbox"]
             ul.children('li').not(sublisted_lis).prepend('<span style="padding-left: 20px;"></span>');
+            
+            // allow checkboxes with the same 'value' attribute to appear more
+            // than once, and all be checked/unchecked when just one of them is.
+            ul.find('input:checkbox').change(function(event){
+                // 'this' is the checkbox that was changed
+                var value = $(this).attr('value');
+            
+                // different widgets will have different meanings to their values,
+                // so be sure to only work within each widget.
+                // TODO pass in an ID for the widget so this trickery isn't
+                // necessary.
+                var root_ul = $(this).parents('ul.' + ul_class).last();
+                var same_value_boxes = $(root_ul).find('input:checkbox[value="' + value + '"]');
+
+                if (this.checked) {
+                    same_value_boxes.not(':checked').each(function(){
+                        $(this).attr('checked', 'checked');
+                        $(this).triggerHandler('change');
+                    });
+                } else {
+                    same_value_boxes.filter(':checked').each(function(){
+                        $(this).removeAttr('checked');
+                        $(this).triggerHandler('change');
+                    });
+                }
+            });
         });
     }
 }
