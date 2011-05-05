@@ -2,6 +2,7 @@ General order to do thing in (and a timeframe):
 
 TODO in order of importance:
 
+change 'probable' to 'observed' in 'probable taxon/gender'
 vessel_type choices are too big in IE
 alphabatize gear types
 make sure entanglement editing isn't overwriting fields with blank
