@@ -50,7 +50,7 @@ CURRENT_IMPORT_TAG = u"This entry was created by an automated import and has not
 
 IMPORT_TAGS = set((
     CURRENT_IMPORT_TAG,
-    u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details."
+    u"This entry was created by an automated import has not yet been reviewed by a human. See 'Import Notes' for details.",
 ))
 
 class UnrecognizedFieldError(ValueError):
@@ -309,7 +309,7 @@ def parse_animal(row):
             break
     if not name_key is None:
         # filter 'unknown'
-        if row[name_key] not in set(('U','Unknown')):
+        if row[name_key] not in set(('U', 'Unknown')):
             a['name'] = row[name_key]
     
     # determined_taxon
@@ -636,7 +636,7 @@ def parse_location(row, observation_data):
         try:
             lat = NiceLocationForm._clean_coordinate(row['LATITUDE'], is_lat=True)
             lat = dms_to_dec(lat)
-        except ValidationError as e:
+        except ValidationError:
             unknown_value(observation_data, 'LATITUDE')
     if 'LONGITUDE' in row and row['LONGITUDE']:
         try:
@@ -746,7 +746,7 @@ def parse_observation(row, case_data):
                 odd_value(o, age_key)
             if row[age_key] in set(('Y', 'Y*', 'S', 'M', 'First id in 1992', '6 tons*', 'Born in 2001')):
                 unknown_value(o, age_key)
-            break;
+            break
     
     # gender
     o['gender'] = {
@@ -1135,7 +1135,6 @@ def parse_csv(csv_file, commit=False):
             'observation': [],
             'location': [],
         }
-        changed = {}
         
         a = parse_animal(row)
         new['animal'] = a
@@ -1254,8 +1253,6 @@ def _make_tag(thing, user):
     tag.save()
 
 def _save_row(r, filename, user):
-    data = r['data']
-    
     ### animal
     a = r['data']['animal']
 
