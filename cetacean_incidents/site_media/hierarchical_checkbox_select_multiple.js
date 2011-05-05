@@ -46,18 +46,19 @@ HierarchicalCheckboxSelectMultiple = {
             var minus_img = '<img class="button" title="contract" alt="&#x2212;" src="' + minus_url + '">';
             var plus_url = media_url + 'icons/expand.png';
             var plus_img = '<img class="button" title="expand" alt="&#x002b;" src="' + plus_url + '">';
-            // only prepend to li that contain sublists
-            ul.children('li').has('ul.' + ul_class).prepend('<a href="" class="heir_toggle"></a>');
-            ul.find('a.heir_toggle').each(function(){
+            // prepend a span on LIs that contain sublists
+            var sublisted_lis = ul.children('li').has('ul.' + ul_class);
+            sublisted_lis.prepend('<span class="heir_toggle"></span>');
+            ul.find('span.heir_toggle').each(function(){
                 function expand(toggle) {
                     $(toggle).html(minus_img);
                     $(toggle).addClass('expanded');
-                    $(toggle).nextAll('ul.' + ul_class).show('fast');
+                    $(toggle).nextAll('ul.' + ul_class).show();
                 }
                 function contract(toggle) {
                     $(toggle).removeClass('expanded');
                     $(toggle).html(plus_img);
-                    $(toggle).nextAll('ul.' + ul_class).hide('fast');
+                    $(toggle).nextAll('ul.' + ul_class).hide();
                 }
                 // initialize the non-subchecked LIs to contracted
                 if ($(this).closest('li').hasClass('subchecked')) {
@@ -75,6 +76,9 @@ HierarchicalCheckboxSelectMultiple = {
                     return false;
                 });
             });
+            // prepend a span on the other LIs with the same width as the
+            // toggle icons + the left-margin on a input[type="checkbox"]
+            ul.children('li').not(sublisted_lis).prepend('<span style="padding-left: 20px;"></span>');
         });
     }
 }
