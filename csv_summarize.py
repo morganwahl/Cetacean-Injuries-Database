@@ -9,6 +9,8 @@ csv = csv.DictReader(open(filename))
 
 columns = {}
 
+INCLUDE_VALUES = False
+
 for row in csv:
     empty_row = True
     for col, val in row.items():
@@ -23,12 +25,18 @@ for row in csv:
     if empty_row:
         continue
 
-    for col, val in row.items():
-        if not col in columns.keys():
-            columns[col] = {}
-        if not val in columns[col].keys():
-            columns[col][val] = 0
-        columns[col][val] += 1
+    if INCLUDE_VALUES:
+        for col, val in row.items():
+            if not col in columns.keys():
+                columns[col] = {}
+            if not val in columns[col].keys():
+                columns[col][val] = 0
+            columns[col][val] += 1
+    else:
+        for col in row.keys():
+            if not col in columns.keys():
+                columns[col] = 0
+            columns[col] += 1
 
 pprint(columns)
 
