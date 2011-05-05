@@ -670,18 +670,6 @@ def parse_observation(row, case_data):
     # cases
     #o['cases'] = case_data['id']
     
-    # initial
-    # exam
-    condition_yes = set(('1', '2', '3', '3+', '4', '4+', '5', '6'))
-    condition_expected = set(('', '1', '2', '3', '4', '5', '6'))
-    for model_key, row_key in (
-        ('initial', 'Initial condtion'),
-        ('exam',    'Exam condtion'),
-    ):
-        o[model_key] = bool(row[row_key] in condition_yes)
-        if row[row_key] not in condition_expected:
-            odd_value(o, row_key)
-    
     # narrative
     if row['Comments']:
         o['narrative'] = row['Comments']
@@ -780,7 +768,17 @@ def parse_observation(row, case_data):
     
     # ashore
     o['ashore'] = get_ashore(row)
-        
+
+    # initial
+    # exam
+    # condition
+    #        (0, 'unknown'),
+    #        (1, 'alive'),
+    #        (6, 'dead, carcass condition unknown'),
+    #        (2, 'fresh dead'),
+    #        (3, 'moderate decomposition'),
+    #        (4, 'advanced decomposition'),
+    #        (5, 'skeletal'),
     conditions = {
          '': 0,
         '0': 0,
@@ -801,30 +799,8 @@ def parse_observation(row, case_data):
         '5': 5,
         '6': 6,
     }
-    odd_conditions = set((
-            'NE',
-           '1/2',
-            '3+',
-        '3 or 4',
-        '3 to 4',
-            '4+',
-            '4?',
-            '~4',
-    ))
-    # condition
-    #        (0, 'unknown'),
-    #        (1, 'alive'),
-    #        (6, 'dead, carcass condition unknown'),
-    #        (2, 'fresh dead'),
-    #        (3, 'moderate decomposition'),
-    #        (4, 'advanced decomposition'),
-    #        (5, 'skeletal'),
     o['initial_condition'] = conditions[row['Initial condtion']]
-    if row['Initial condtion'] in odd_conditions:
-        odd_value(o, 'Initial condtion')
     o['exam_condition'] = conditions[row['Exam condtion']]
-    if row['Exam condtion'] in odd_conditions:
-        odd_value(o, 'Exam condtion')
     o['alive_condition'] = {
         '': 0,
         '?': 0,
@@ -841,6 +817,14 @@ def parse_observation(row, case_data):
     o['condition'] = o['initial_condition']
     if o['initial_condition'] != o['exam_condition'] and o['exam_condition'] != 0:
         o['split'] = True
+    condition_expected = set(('', '1', '2', '3', '4', '5', '6'))
+    for model_key, row_key in (
+        ('initial', 'Initial condtion'),
+        ('exam',    'Exam condtion'),
+    ):
+        o[model_key] = bool(o[model_key + '_condition'])
+        if row[row_key] not in condition_expected:
+            odd_value(o, row_key)
     
     # wounded defaults to None
     
@@ -1361,6 +1345,9 @@ def _save_row(r, filename, user):
             e_kwargs['condition'] = o['exam_condition']
             e_kwargs['initial'] = False
             _make_observation(e_kwargs)
+
+        if len(observations) != 2:
+            raise ValueError("Observation data has 'split' but is missing 'exam' and 'initial'!")
     else:
         _make_observation(copy(o))
     
