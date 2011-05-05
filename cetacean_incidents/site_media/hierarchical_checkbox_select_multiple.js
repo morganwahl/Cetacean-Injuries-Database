@@ -11,8 +11,9 @@ HierarchicalCheckboxSelectMultiple = {
         HierarchicalCheckboxSelectMultiple.already_init = true;
 
         $().ready(function(){
-            // update 'checked' class
             var ul = $('ul.' + ul_class);
+
+            // update 'checked' class
             ul.children('li').find('input:checkbox').change(function(event){
                 // 'this' is the checkbox
                 // 'li' is the LI that contains the checkbox

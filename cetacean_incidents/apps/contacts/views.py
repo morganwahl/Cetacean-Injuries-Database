@@ -22,9 +22,7 @@ def contact_detail(request, contact_id):
     
     contact = Contact.objects.get(id=contact_id)
     
-    template_media = Media(
-        js= (settings.JQUERY_FILE,),
-    )
+    template_media = Media(js=(settings.JQUERY_FILE,))
     
     context = {
         'contact': contact,

@@ -9,4 +9,4 @@ class ContactFormTestCase(TestCase):
 
     def test_instantiation(self):
         f = ContactForm()
-        
+

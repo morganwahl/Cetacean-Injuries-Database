@@ -13,9 +13,9 @@ class Organization(models.Model):
     def __unicode__(self):
         return self.name
 
-# This exists so GearOwner can inherit all the fields from Contact but keep
-# them in a separate table.
 class AbstractContact(models.Model):
+    # This exists so GearOwner can inherit all the fields from Contact but keep
+    # them in a separate table.
 
     name = models.CharField(
         max_length= 1023,
@@ -62,7 +62,6 @@ class AbstractContact(models.Model):
 
     class Meta:
         abstract = True
-
 
 class Contact(AbstractContact):
     """A contact is a name of a person _or_ organization, preferably with some

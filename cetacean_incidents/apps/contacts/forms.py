@@ -70,7 +70,9 @@ class ContactForm(forms.ModelForm):
         return cleaned_data
     
     def has_changed(self):
-        raise NotImplementedError("has_changed not implemented for ContactForm.new_affs")
+        raise NotImplementedError(
+            "has_changed not implemented for ContactForm.new_affs",
+        )
     
     def is_multipart(self):
         return super(ContactForm, self).is_multipart() or self.new_affs.is_multipart()
@@ -165,4 +167,4 @@ class ContactMergeForm(MergeForm):
         widgets = {
             'email': EmailInput,
         }
-    
+

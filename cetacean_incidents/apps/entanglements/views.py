@@ -276,7 +276,7 @@ def _instantiate_gear_analysis_forms(request, entanglement):
         if form_name in form_initials.keys():
             kwargs['initial'] = form_initials[form_name]
         forms[form_name] = form_class(prefix=form_name, **kwargs)
-            
+
     return forms
 
 def _process_gear_analysis_forms(forms):

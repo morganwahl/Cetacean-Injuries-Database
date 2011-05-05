@@ -2,7 +2,6 @@ from django import template
 
 register = template.Library()
 
-
 # TODO assumes the the
 # django.template.loaders.app_directories.load_template_source
 # is being used. (which is the default.)
