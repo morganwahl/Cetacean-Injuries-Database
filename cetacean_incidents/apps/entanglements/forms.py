@@ -1,14 +1,9 @@
-from itertools import chain
 from operator import __and__
 
 from django import forms
-from django.forms import fields
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
-from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
-
-from cetacean_incidents.apps.contacts.models import Contact
 
 from cetacean_incidents.apps.dag.forms import DAGField
 
@@ -17,10 +12,7 @@ from cetacean_incidents.apps.incidents.forms import (
     CaseMergeForm,
     SubmitDetectingForm,
 )
-from cetacean_incidents.apps.incidents.models import (
-    Animal,
-    Case,
-)
+from cetacean_incidents.apps.incidents.models import Animal
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
@@ -28,15 +20,10 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
-from cetacean_incidents.apps.taxons.forms import (
-    TaxonField,
-    TaxonMultipleChoiceField,
-)
+from cetacean_incidents.apps.taxons.forms import TaxonMultipleChoiceField
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
-
-from cetacean_incidents.apps.vessels.forms import VesselInfoForm
 
 from models import (
     BodyLocation,
@@ -378,7 +365,7 @@ class EntanglementObservationMergeForm(MergeForm, EntanglementObservationForm):
         for loc, present in source_gbls.items():
             if present is None:
                 continue
-            new_gbl = GearBodyLocation.objects.create(observation=self.source, location=loc, gear_seen_here=present)
+            GearBodyLocation.objects.create(observation=self.source, location=loc, gear_seen_here=present)
         self._save_gear_body_location_forms(commit, result)
         return result
     
