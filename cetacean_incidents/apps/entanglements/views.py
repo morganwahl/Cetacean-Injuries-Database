@@ -437,6 +437,10 @@ def get_entanglementobservation_view_data(ent_oe):
 @login_required
 @permission_required('incidents.change_entanglement')
 @permission_required('incidents.delete_entanglement')
+@permission_required('entanglements.view_gearowner')
+@permission_required('entanglements.change_gearowner')
+@permission_required('entanglements.add_gearowner')
+@permission_required('entanglements.delete_gearowner')
 def entanglement_merge(request, destination_id, source_id=None):
     # the "source" case will be deleted and references to it will be change to
     # the "destination" case
