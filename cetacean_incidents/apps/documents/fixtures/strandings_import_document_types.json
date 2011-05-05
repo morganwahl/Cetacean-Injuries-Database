@@ -1,0 +1,50 @@
+[
+  {
+    "pk": 4, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "CCS web page", 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 1, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "Cetacean Data Record", 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 5, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "Histological Findings", 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 6, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "Human-Interaction Form", 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 2, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "Large Whale email", 
+      "description": ""
+    }
+  }, 
+  {
+    "pk": 3, 
+    "model": "documents.documenttype", 
+    "fields": {
+      "name": "Stranding Report (Level-A)", 
+      "description": ""
+    }
+  }
+]
