@@ -27,7 +27,6 @@ def animal_link(animal, block=False):
 
     cached = cache.get(cache_key)
     if cached:
-        #print "cache hit!: %s" % cache_key
         return cached
     
     # get any NMFS IDs for it's cases, since these are often used as ersatz 
@@ -63,7 +62,6 @@ def animal_display(animal, block=False):
 
     cached = cache.get(cache_key)
     if cached:
-        #print "cache hit!: %s" % cache_key
         return cached
     
     result = animal_display_inline(animal) if not block else animal_display_block(animal)
@@ -87,7 +85,6 @@ def _animal_post_save(sender, **kwargs):
         u'animal_display_%d' % animal.id,
         u'animal_display_%d_block' % animal.id,
     ]
-    #print "cache delete!: %s" % ', '.join(cache_keys)
     cache.delete_many(cache_keys)
 
 models.signals.post_save.connect(
@@ -115,7 +112,6 @@ def _tag_post_save_or_post_delete(sender, **kwargs):
         u'animal_link_%d' % tag.entry_id,
         u'animal_link_%d_block' % tag.entry_id,
     ]
-    #print "cache delete!: %s" % ', '.join(cache_keys)
     cache.delete_many(cache_keys)
 
 models.signals.post_save.connect(

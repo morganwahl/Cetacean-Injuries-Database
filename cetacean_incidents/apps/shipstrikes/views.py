@@ -176,7 +176,6 @@ def get_shipstrikeobservation_view_data(ss_oe):
 @permission_required('incidents.change_shipstrike')
 @permission_required('incidents.delete_shipstrike')
 def shipstrike_merge(request, destination_id, source_id=None):
-    #pprint(('shipstrike_merge', destination_id, source_id))
     # the "source" case will be deleted and references to it will be change to
     # the "destination" case
     

@@ -29,7 +29,6 @@ def case_link(case):
 
     cached = cache.get(cache_key)
     if cached:
-        #print "cache hit!: %s" % cache_key
         return cached
 
     # avoid circular imports
@@ -62,7 +61,6 @@ def _case_post_save(sender, **kwargs):
     case = kwargs['instance']
     # TODO we're repeating the cache_key above
     cache_key = u'case_link_%d' % case.id
-    #print "cache delete!: %s" % cache_key
     cache.delete(cache_key)
         
 models.signals.post_save.connect(
@@ -87,7 +85,6 @@ def _tag_post_save_or_post_delete(sender, **kwargs):
     # cache.delete_many(cache_keys)
     # TODO we're repeating the cache_key above
     cache_key = u'case_link_%d' % tag.entry_id
-    #print "cache delete!: %s" % cache_key
     cache.delete(cache_key)
 
 models.signals.post_save.connect(

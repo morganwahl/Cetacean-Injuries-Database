@@ -31,7 +31,6 @@ def observation_link(observation):
 
     cached = cache.get(cache_key)
     if cached:
-        #print "cache hit!: %s" % cache_key
         return cached
     
     # avoid circular imports
@@ -64,7 +63,6 @@ def _observation_post_save(sender, **kwargs):
     observation = kwargs['instance']
     # TODO we're repeating the cache_key above
     cache_key = u'observation_link_%d' % observation.id
-    #print "cache delete!: %s" % cache_key
     cache.delete(cache_key)
         
 models.signals.post_save.connect(
@@ -89,7 +87,6 @@ def _tag_post_save_or_post_delete(sender, **kwargs):
     # cache.delete_many(cache_keys)
     # TODO we're repeating the cache_key above
     cache_key = u'observation_link_%d' % tag.entry_id
-    #print "cache delete!: %s" % cache_key
     cache.delete(cache_key)
 
 models.signals.post_save.connect(
@@ -114,7 +111,6 @@ def _animal_post_save(sender, **kwargs):
     for observation_id in animal.observation_set.values_list('id', flat=True):
         # TODO we're repeating the cache_key above
         cache_key = u'observation_link_%d' % observation_id
-        #print "cache delete!: %s" % cache_key
         cache.delete(cache_key)
 
 models.signals.post_save.connect(
@@ -134,7 +130,6 @@ def _contact_post_save(sender, **kwargs):
     for observation_id in contact.observed.values_list('id', flat=True):
         # TODO we're repeating the cache_key above
         cache_key = u'observation_link_%d' % observation_id
-        #print "cache delete!: %s" % cache_key
         cache.delete(cache_key)
 
 models.signals.post_save.connect(
