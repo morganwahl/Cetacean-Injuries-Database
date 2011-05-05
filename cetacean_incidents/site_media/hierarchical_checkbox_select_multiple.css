@@ -1,15 +1,17 @@
 ul.hierarchical_checkbox_select_multiple {
     margin: 0;
+    /* should be the same as body{background-color} */
+    background-color: #eeeeec; /* aluminium 1 */
 }
 ul.hierarchical_checkbox_select_multiple li {
     list-style-type: none;
 }
 
 ul.hierarchical_checkbox_select_multiple li.subchecked {
-    background-color: #fce94f; /* butter 1 */
+    background-color: #a9e271; /* chameleon 1 */
 }
 ul.hierarchical_checkbox_select_multiple li.superchecked {
-    background-color: #a9e271; /* chameleon 1 */
+    background-color: #fce94f; /* butter 1 */
 }
 ul.hierarchical_checkbox_select_multiple li.checked {
     background-color: #73d216; /* chameleon 2 */
