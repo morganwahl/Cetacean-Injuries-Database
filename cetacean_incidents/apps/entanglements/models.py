@@ -41,11 +41,15 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
     
     class Meta:
         ordering = ('name',)
+        verbose_name = 'Gear Attribute (formerly Gear Type)'
+        verbose_name_plural = 'Gear Attributes (formerly Gear Types)'
 
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     
     class Meta:
         ordering = ('supertype__name', 'subtype__name')
+        verbose_name = 'Gear Attribute Implication (formerly Gear Type Relation)'
+        verbose_name_plural = 'Gear Attribute Implications (formerly Gear Type Relations)'
 
 class GearAttribute(models.Model):
     
@@ -55,6 +59,10 @@ class GearAttribute(models.Model):
     
     def __unicode__(self):
         return self.name
+    
+    class Meta:
+        verbose_name = 'Gear Attribute (old option)'
+        verbose_name_plural = 'Gear Attributes (old option)'
 
 class LocationGearSet(Location):
     '''\
