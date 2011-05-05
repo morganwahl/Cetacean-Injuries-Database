@@ -124,6 +124,7 @@ def DAGEdge_factory(node_model):
         class Meta:
             abstract = True
             unique_together = ('subtype', 'supertype')
+            ordering = ('supertype', 'subtype')
     
     # put the DAGException on the class itself, so you can catch just those
     # Exceptions

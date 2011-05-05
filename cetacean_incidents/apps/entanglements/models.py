@@ -38,6 +38,9 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
     
     def __unicode__(self):
         return self.name    
+    
+    class Meta:
+        ordering = ('name')
 
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     pass
