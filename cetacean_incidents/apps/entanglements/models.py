@@ -47,7 +47,8 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
     
     class Meta:
-        ordering = ('supertype__name', 'subtype__name')
+        # TODO this ordering seems to cause problems on Oracle
+        #ordering = ('supertype__name', 'subtype__name')
         verbose_name = 'Gear Attribute Implication (formerly Gear Type Relation)'
         verbose_name_plural = 'Gear Attribute Implications (formerly Gear Type Relations)'
 
