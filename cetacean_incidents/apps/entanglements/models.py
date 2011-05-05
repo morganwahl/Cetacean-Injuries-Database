@@ -43,7 +43,9 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
         ordering = ('name',)
 
 class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
-    pass
+    
+    class Meta:
+        ordering = ('supertype__name', 'subtype__name')
 
 class GearAttribute(models.Model):
     
