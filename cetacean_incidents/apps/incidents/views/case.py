@@ -183,6 +183,27 @@ def case_search(request, after_date=None, before_date=None):
             on = form.cleaned_data['observation_narrative']
             query &= Q(observation__narrative__icontains=on)
         
+        if 'gear_types' in form.cleaned_data:
+            gts = form.cleaned_data['gear_types']
+            if gts:
+                # at least one geartype was checked, so restrict search to 
+                # entanglements
+                manager = Entanglement.objects
+            # add all the subtypes of each type to the list
+            todo = set(list(gts)) # gts is a QuerySet, so turn it into a list first.
+            seen = set()
+            while todo:
+                gt = todo.pop()
+                seen.add(gt)
+                subs = set(gt.subtypes.all())
+                todo |= subs
+                todo = todo - seen
+            
+            gt_query = Q()
+            for gt in seen:
+                gt_query |= Q(gear_types__pk=gt.pk)
+            query &= gt_query
+        
         if 'disentanglement_outcome' in form.cleaned_data:
             dos = form.cleaned_data['disentanglement_outcome']
             if dos:

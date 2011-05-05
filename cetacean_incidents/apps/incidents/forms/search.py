@@ -150,7 +150,18 @@ class CaseSearchForm(forms.Form):
         required= False,
         help_text= "search for cases with an observation whose narrative contains this phrase",
     )
-        
+    
+    # TODO put this in entanglements app
+    from cetacean_incidents.apps.dag.forms import DAGField
+    from cetacean_incidents.apps.entanglements.models import Entanglement
+    from cetacean_incidents.apps.entanglements.models import GearType
+    _f = Entanglement._meta.get_field('gear_types')
+    gear_types = DAGField(
+        queryset= GearType.objects.all(),
+        required= _f.blank != True,
+        label= _f.verbose_name.capitalize(),
+    )
+    
     # TODO put this in entanglements app
     from cetacean_incidents.apps.entanglements.models import EntanglementObservation
     disentanglement_outcome = forms.MultipleChoiceField(
