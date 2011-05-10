@@ -1,4 +1,4 @@
-from os import path
+#from os import path
 try:
     from cetacean_incidents.local_settings import *
 except ImportError:
