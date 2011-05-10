@@ -52,19 +52,6 @@ class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
         verbose_name = 'Gear Attribute Implication (formerly Gear Type Relation)'
         verbose_name_plural = 'Gear Attribute Implications (formerly Gear Type Relations)'
 
-class GearAttribute(models.Model):
-    
-    name = models.CharField(
-        max_length= 512,
-    )
-    
-    def __unicode__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = 'Gear Attribute (old option)'
-        verbose_name_plural = 'Gear Attributes (old option)'
-
 class LocationGearSet(Location):
     '''\
     Everything in this table should be considered confidential!
@@ -214,14 +201,6 @@ class GearAnalysis(models.Model):
         help_text= "All the taxa that were intended to by caught by this gear.",
     )
     
-    gear_attributes = models.ManyToManyField(
-        GearAttribute,
-        blank= True,
-        null= True,
-        verbose_name= 'gear attributes (deprecated!)',
-        help_text= "All the applicable attributes of the gear.",
-    )
-
     gear_description = models.TextField(
         blank= True,
         null= True,
