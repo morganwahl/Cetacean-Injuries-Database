@@ -155,11 +155,11 @@ class CaseSearchForm(forms.Form):
     from cetacean_incidents.apps.dag.forms import DAGField
     from cetacean_incidents.apps.entanglements.models import Entanglement
     from cetacean_incidents.apps.entanglements.models import GearType
-    _f = Entanglement._meta.get_field('gear_types')
     gear_types = DAGField(
         queryset= GearType.objects.all(),
-        required= _f.blank != True,
-        label= _f.verbose_name.capitalize(),
+        required= False,
+        label= 'Gear attributes',
+        help_text= 'search for entanglements cases whose observed or analyzed gear has these attributes',
     )
     
     # TODO put this in entanglements app

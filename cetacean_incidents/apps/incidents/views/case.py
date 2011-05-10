@@ -202,6 +202,7 @@ def case_search(request, after_date=None, before_date=None):
             gt_query = Q()
             for gt in seen:
                 gt_query |= Q(gear_types__pk=gt.pk)
+                gt_query |= Q(observed_gear_attributes__pk=gt.pk)
             query &= gt_query
         
         if 'disentanglement_outcome' in form.cleaned_data:
