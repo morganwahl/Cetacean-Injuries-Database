@@ -52,9 +52,20 @@
                 {% with forms.entanglement.num_gear_types as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
-                {% with forms.entanglement.gear_types as f %}
-                {% include "labeled_field.html" %}
-                {% endwith %}
+                <table class="layout">
+                    <tr class="layout">
+                        <td class="layout">
+                            {% with forms.entanglement.observed_gear_attributes as f %}
+                            {% include "labeled_field.html" %}
+                            {% endwith %}
+                        </td>
+                        <td class="layout">
+                            {% with forms.entanglement.gear_types as f %}
+                            {% include "labeled_field.html" %}
+                            {% endwith %}
+                        </td>
+                    </tr>
+                </table>
                 {% with forms.entanglement.gear_targets as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}

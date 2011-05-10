@@ -128,7 +128,16 @@
 {% display_div case "num_gear_types" %}
 {% endif %}
 
-{% display_geartypes_div case "gear_types" case.implied_gear_types %}
+<table width="100%" class="layout">
+    <tr class="layout">
+        <td class="layout">
+            {% display_geartypes_div case "observed_gear_attributes" case.implied_observed_gear_attributes %}
+        </td>
+        <td class="layout">
+            {% display_geartypes_div case "gear_types" case.implied_gear_types %}
+        </td>
+    </tr>
+</table>
 
 {% if case.gear_targets.count > 0 %}
 {% display_taxa_list_div case "gear_targets" %}

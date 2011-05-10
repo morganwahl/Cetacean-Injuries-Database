@@ -129,6 +129,17 @@ class EntanglementForm(CaseForm):
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
     # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('observed_gear_attributes')
+    observed_gear_attributes = DAGField(
+        queryset= GearType.objects.all(),
+        required= _f.blank != True,
+        help_text= 'Selecting a type implies the ones above it in the hierarchy.',
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_attributes')
     gear_attributes = forms.ModelMultipleChoiceField(
         queryset= GearAttribute.objects.all(),
@@ -215,6 +226,17 @@ class EntanglementMergeForm(CaseMergeForm):
     # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('gear_types')
     gear_types = DAGField(
+        queryset= GearType.objects.all(),
+        required= _f.blank != True,
+        help_text= 'selecting a type implies the ones above it in the hierarchy',
+        label= _f.verbose_name.capitalize(),
+    )
+
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('observed_gear_attributes')
+    observed_gear_attributes = DAGField(
         queryset= GearType.objects.all(),
         required= _f.blank != True,
         help_text= 'selecting a type implies the ones above it in the hierarchy',

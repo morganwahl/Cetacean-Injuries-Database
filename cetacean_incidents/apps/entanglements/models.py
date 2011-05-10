@@ -186,12 +186,23 @@ class GearAnalysis(models.Model):
         help_text= "How many different kinds of gear were there?",
     )
     
+    observed_gear_attributes = models.ManyToManyField(
+        'GearType',
+        blank= True,
+        null= True,
+        related_name= 'observed_in',
+        verbose_name= 'observed gear attributes',
+        help_text= "All the applicable gear attributes in the observed set of gear from this entanglement. This includes any gear on the animal as described in observations or otherwise documented.",
+    )
+    
+    # would be called 'analyzed_gear_attributes', but isn't for backwards-compat
     gear_types = models.ManyToManyField(
         'GearType',
         blank= True,
         null= True,
-        verbose_name= 'gear attributes',
-        help_text= "All the applicable gear attributes in the set of gear from this entanglement.",
+        related_name= 'analyzed_in',
+        verbose_name= 'analyzed gear attributes',
+        help_text= "All the applicable gear attributes in the analyzed set of gear from this entanglement. This is only the gear that was brought in for analysis.",
     )
     
     gear_targets = models.ManyToManyField(
@@ -269,6 +280,15 @@ class GearAnalysis(models.Model):
             implied_geartypes |= geartype.implied_supertypes
         return frozenset(implied_geartypes - set(self.gear_types.all()))
     
+    @property
+    def implied_observed_gear_attributes(self):
+        if not self.observed_gear_attributes.count():
+            return set()
+        implied_attributes = set()
+        for attrib in self.observed_gear_attributes.all():
+            implied_attributes |= attrib.implied_supertypes
+        return frozenset(implied_attributes - set(self.observed_gear_attributes.all()))
+
     class Meta:
         abstract = True
 
