@@ -110,7 +110,7 @@
     <div>
         <span class="fieldname">was gear retrieved?</span> <i>{{ case.gear_retrieved|yesno:"yes,no,unknown" }}</i>
     </div>
-    {% if case.gear_analyzed != None and case.gear_analyzed != True %}
+    {% if case.gear_analyzed != None and not case.gear_analyzed %}
     <p>
         <i>gear was not analyzed</i>
     </p>
