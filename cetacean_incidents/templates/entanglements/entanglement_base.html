@@ -120,7 +120,7 @@
 {% endblock %}
 
 {% block extra_case_column %}
-{% if case.gear_analyzed == None or case.gear_analyzed == True %}
+{% if case.gear_analyzed == None or case.gear_analyzed %}
 
 {% display_yesnounk_div case "gear_analyzed" %}
 
