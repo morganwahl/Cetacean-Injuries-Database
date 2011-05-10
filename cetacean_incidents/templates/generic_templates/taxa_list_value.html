@@ -1,0 +1,16 @@
+{% load taxon_extras %}
+
+{% if value.exists %}
+<ul>
+{% for v in value.all %}
+<li>
+{% taxon_link v %}
+{% if v.common_names %}
+<br><span style="font-size: 90%;">{{ v.common_names }}</span>
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% else %}
+<i>none</i>
+{% endif %}

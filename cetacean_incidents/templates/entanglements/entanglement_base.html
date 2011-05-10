@@ -104,17 +104,36 @@
 {% endif %}
 {% endblock merge_link %}
 
-{% block case_fields %}
-{{ block.super }}
-{% display_div case "nmfs_id" %}
+{% block extra_case_fields %}
 <div>
-    <span class="fieldname">was gear recovered?</span> <i>{{ case.gear_recovered|yesno:"yes,no,unknown" }}</i>
+    {% display_div case "nmfs_id" %}
+    <div>
+        <span class="fieldname">was gear retrieved?</span> <i>{{ case.gear_retrieved|yesno:"yes,no,unknown" }}</i>
+    </div>
+    {% if case.gear_analyzed != None and case.gear_analyzed != True %}
+    <p>
+        <i>gear was not analyzed</i>
+    </p>
+    {% endif %}
+    
 </div>
-{% display_div case "num_gear_types" %}
-{% display_geartypes_div case "gear_types" case.implied_gear_types %}
-{% display_list_div case "gear_attributes" %}
-{% display_list_div case "gear_targets" %}
+{% endblock %}
+
+{% block extra_case_column %}
+{% if case.gear_analyzed == None or case.gear_analyzed == True %}
+
 {% display_yesnounk_div case "gear_analyzed" %}
+
+{% if case.num_gear_types != None %}
+{% display_div case "num_gear_types" %}
+{% endif %}
+
+{% display_geartypes_div case "gear_types" case.implied_gear_types %}
+
+{% if case.gear_targets.count > 0 %}
+{% display_taxa_list_div case "gear_targets" %}
+{% endif %}
+
 {% if case.analyzed_date %}
 {% display_div case "analyzed_date" %}
 {% endif %}
@@ -137,10 +156,7 @@
 {% if case.gear_kept %}
 {% display_bigtext_div case "gear_kept_where" %}
 {% endif %}
-{% endblock %}
-
-{% block extra_case_fields %}
-<div class="section">
+<div class="subsection">
     <h3>gear owner info</h3>
     {% if perms.entanglements.view_gearowner %}
     {% if case.gear_owner_info %}
@@ -192,6 +208,7 @@
     <i>you don't have permission to view gear owner info</i>
     {% endif %}
 </div>
+{% endif %}
 {% endblock %}
 
 {% block add_observation_link %}

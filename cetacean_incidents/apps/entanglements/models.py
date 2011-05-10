@@ -183,7 +183,7 @@ class GearAnalysis(models.Model):
         null= True,
         validators= [MinValueValidator(0)],
         verbose_name= "# of gear types",
-        help_text= "Not necessarily the same as the number of gear types indicated below",
+        help_text= "How many different kinds of gear were there?",
     )
     
     gear_types = models.ManyToManyField(
@@ -198,14 +198,16 @@ class GearAnalysis(models.Model):
         Taxon,
         blank= True,
         null= True,
-        verbose_name= 'target species', # not really verbose, just a name change
-        help_text= "All the species that were intended to by caught by this gear.",
+        related_name= 'targeted_by',
+        verbose_name= 'target taxa', # not really verbose, just a name change
+        help_text= "All the taxa that were intended to by caught by this gear.",
     )
     
     gear_attributes = models.ManyToManyField(
         GearAttribute,
         blank= True,
         null= True,
+        verbose_name= 'gear attributes (deprecated!)',
         help_text= "All the applicable attributes of the gear.",
     )
 

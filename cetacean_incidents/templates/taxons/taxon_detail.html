@@ -45,20 +45,17 @@
     <tr class="field"><th>common names</th><td>{{ taxon.common_names_list|join:"<br>"|default:"<i>none</i>" }}</td></tr>
 </table>
 
+{% if taxon.animal_set.count %}
 <div>
     <h3>Animals only determined to be {% taxon_display taxon %}</h3>
-    {% if taxon.animal_set.count %}
     <table>
         {% for a in taxon.animal_set.all %}
         <tr><td>{% animal_link a %}</td></tr>
         {% endfor %}
     </table>
-    {% else %}
-    <i>none</i>
-    {% endif %}
 </div>
+{% endif %}
 
-{% if taxon.descendants %}
 <div>
     <h3>Animals determined to be subtaxa of {% taxon_display taxon %}</h3>
     <table>
@@ -76,17 +73,25 @@
         {% endfor %}
     </table>
 </div>
+
+{% if taxon.observation_set.count %}
+<div>
+    <h3>Observations of {% taxon_display taxon %}</h3>
+    <table>
+        {% for o in taxon.observation_set.all %}
+        <tr><td>{% observation_link o %}</td></tr>
+        {% endfor %}
+    </table>
+</div>
 {% endif %}
 
-<h3>Observations of {% taxon_display taxon %}</h3>
-{% if taxon.observation_set.count %}
-<table>
-{% for o in taxon.observation_set.all %}
-<tr><td>{% observation_link o %}</td></tr>
-{% endfor %}
-</table>
-{% else %}
-<i>none</i>
+{% if taxon.targeted_by.count %}
+<div>
+    <h3>Entanglements in gear targeting {% taxon_display taxon %}</h3>
+    {% with taxon.targeted_by.all as cases %}
+    {% include "incidents/case_list_include.html" %}
+    {% endwith %}
+</div>
 {% endif %}
 
 {% endblock %}
