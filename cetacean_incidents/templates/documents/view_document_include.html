@@ -12,7 +12,7 @@
                 <img src="{{ MEDIA_URL }}icons/file_none.png" title="this document exists, somewhere...">
                 {% endif %}
                 {% endif %}
-                {% if d.document_type %}<b>{{ d.document_type }}</b>{% endif %}
+                <b>{{ d.document_type|default:"<i>no type</i>" }}</b>
             </td>
         </tr>
         {% if d.name %}

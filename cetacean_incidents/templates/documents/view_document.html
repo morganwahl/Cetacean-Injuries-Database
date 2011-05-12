@@ -8,9 +8,19 @@
 <table>
     {% block field_rows %}
     {% if d.attached_to %}
-    <tr class="field"><th>attached to:</th><td><a href="{{ d.attached_to.specific_instance.get_absolute_url }}">{{ d.attached_to.specific_instance }}</a></td>
+    <tr class="field">
+        <th>attached to:</th>
+        <td>
+            <a href="{{ d.attached_to.specific_instance.get_absolute_url }}">{{ d.attached_to.specific_instance }}</a>
+        </td>
+    </tr>
     {% endif %}
-    <tr class="field"><th>document type:</th><td>{{ d.document_type }}{% if d.document_type.description %}: {{ d.document_type.description }}{% endif %}</td></tr>
+    <tr class="field">
+        <th>document type:</th>
+        <td>
+            {{ d.document_type|default:"<i>no type</i>" }}{% if d.document_type.description %}: {{ d.document_type.description }}{% endif %}
+        </td>
+    </tr>
     {% endblock %}
 </table>
 <div>
