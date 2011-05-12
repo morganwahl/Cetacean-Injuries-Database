@@ -102,6 +102,8 @@ class Document(Specificable):
     def can_be_seen_by(self, user):
         if not self.visible_to.exists():
             return True
+        if user.is_superuser:
+            return True
         else:
             return user in self.visible_to.all()
     
