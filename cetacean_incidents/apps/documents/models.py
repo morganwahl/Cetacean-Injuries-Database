@@ -89,7 +89,22 @@ class Document(Specificable):
         null= True,
         editable= False,
     )
-
+    
+    visible_to = models.ManyToManyField(
+        User,
+        related_name= 'can_view_documents',
+        blank= True,
+        null= True,
+        verbose_name= 'restrict access to these users',
+        help_text= 'Note that selecting no users implies that this document is visible to all users.',
+    )
+    
+    def can_be_seen_by(self, user):
+        if not self.visible_to.exists():
+            return True
+        else:
+            return user in self.visible_to.all()
+    
     @property
     def url(self):
         return None

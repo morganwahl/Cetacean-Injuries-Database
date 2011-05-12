@@ -16,7 +16,7 @@ admin.site.register(DocumentType, DocumentTypeAdmin)
 class DocumentAdmin(VersionAdmin):
     list_display = ('__unicode__', 'document_type')
     list_display_links = ('__unicode__',)
-    list_filter = ('document_type',)
+    list_filter = ('document_type', 'visible_to')
 admin.site.register(Document, DocumentAdmin)
 
 class UploadedFileAdmin(DocumentAdmin):

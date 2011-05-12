@@ -1,5 +1,7 @@
 from django import forms
 
+from django.contrib.auth.models import User
+
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from models import (
@@ -33,6 +35,20 @@ class DocumentModelForm(forms.Form):
 
 class DocumentForm(forms.ModelForm):
     
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add visible_to to Meta.widgets.
+    _f = Document._meta.get_field('visible_to')
+    visible_to = forms.ModelMultipleChoiceField(
+        queryset= User.objects.all(),
+        required= _f.blank != True,
+        widget= forms.CheckboxSelectMultiple,
+        help_text= u'Note that selecting no users implies that this document is visible to all users.',
+        label= _f.verbose_name.capitalize(),
+    )
+    
+    # TODO don't allow users to make a document invisible to themselves
+    
     class Meta:
         model = Document
 
@@ -46,7 +62,7 @@ class RepositoryFileForm(DocumentForm):
     class Meta(DocumentForm.Meta):
         model = RepositoryFile
 
-class NewDocumentForm(forms.ModelForm):
+class NewDocumentForm(DocumentForm):
     
     is_uploadedfile = forms.BooleanField(
         required= False,

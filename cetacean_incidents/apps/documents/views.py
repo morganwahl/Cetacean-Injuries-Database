@@ -35,6 +35,9 @@ def view_document(request, d):
         d = Document.objects.get(id=d)
     d = d.specific_instance()
     
+    if not d.can_be_seen_by(request.user):
+        return redirect(settings.BAD_PERMISSION_URL)
+    
     if isinstance(d, UploadedFile):
         return redirect(view_uploadedfile, d.id, permanent=True)
     if isinstance(d, RepositoryFile):
@@ -54,6 +57,9 @@ def view_uploadedfile(request, d):
     if not isinstance(d, UploadedFile):
         d = UploadedFile.objects.get(id=d)
     
+    if not d.can_be_seen_by(request.user):
+        return redirect(settings.BAD_PERMISSION_URL)
+    
     return render_to_response(
         'documents/view_uploadedfile.html',
         {
@@ -67,6 +73,9 @@ def view_uploadedfile(request, d):
 def view_repositoryfile(request, d):
     if not isinstance(d, RepositoryFile):
         d = RepositoryFile.objects.get(id=d)
+    
+    if not d.can_be_seen_by(request.user):
+        return redirect(settings.BAD_PERMISSION_URL)
     
     return render_to_response(
         'documents/view_repositoryfile.html',
@@ -157,6 +166,9 @@ def edit_document(request, document_id):
     
     d = Document.objects.get(id=document_id).specific_instance()
     
+    if not d.can_be_seen_by(request.user):
+        return redirect(settings.BAD_PERMISSION_URL)
+    
     form_class = {
         Document: DocumentForm,
         UploadedFile: UploadedFileForm,
@@ -185,6 +197,9 @@ def edit_document(request, document_id):
 def delete_document(request, document_id):
     
     d = Document.objects.get(id=document_id)
+    
+    if not d.can_be_seen_by(request.user):
+        return redirect(settings.BAD_PERMISSION_URL)
     
     # requests that alter data must be posts
     if request.method == 'POST':

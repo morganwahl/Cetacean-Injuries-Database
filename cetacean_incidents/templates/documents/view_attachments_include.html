@@ -1,10 +1,19 @@
 {# assumes a Documentable instance has been passed in as 'documentable' #}
+{% load document_extras %}
 <!-- this is necessary since the div.section below's content width is the same as it's enclosing block, even though it has padding and margins and borders -->
 <div class="section" style="padding-right: 1.25em;"> <!-- equals padding+margins+borders of div.section below -->
     <h3>Documents</h3>
+    {% if user.is_authenticated %}
+    {% with documentable.documents.all|visible_to:user as visible_docs %}
+    {% with visible_docs|length as visible_docs_count %}
+    {% with documentable.documents.all|length as all_docs_count %}
+    <p>
+        {{ all_docs_count }} document{{ all_docs_count|pluralize }} attached{% if visible_docs_count != all_docs_count %}, {{ visible_docs_count }} visible{% endif %}
+    </p>
+
     <!-- see http://www.quirksmode.org/css/clearing.html for the method used here -->
     <div style="overflow:hidden; width:100%;">
-        {% for d in documentable.documents.all %}
+        {% for d in visible_docs %}
         <div style="float: left;">
         {% with d.specific_instance as d %}
         {% include "documents/view_document_include.html" %}
@@ -14,6 +23,11 @@
         <i>none</i>
         {% endfor %}
     </div>
+
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+    {% endif %}
     {% if perms.documents.add_document %}
     <div style="margin: .25em;">
         <a href="{% url add_document documentable.id %}"><img src="{{ MEDIA_URL }}icons/file_add.png">add a document</a>

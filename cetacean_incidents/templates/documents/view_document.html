@@ -15,6 +15,25 @@
         </td>
     </tr>
     {% endif %}
+    {% if d.visible_to.exists %}
+    <tr class="field permissions_warning">
+        <th>visible to:</th>
+        <td>
+            This document is only visible to:
+            <ul>
+                {% for u in d.visible_to.all %}
+                <li>
+                    {% if u == user %}
+                    <i>you</i>
+                    {% else %}
+                    {{ u }}
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
+    {% endif %}
     <tr class="field">
         <th>document type:</th>
         <td>

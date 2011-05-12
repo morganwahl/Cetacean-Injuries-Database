@@ -329,6 +329,11 @@ div.confidential-box div.confidential-warning {
 
     text-align: center;
 }
+.permissions_warning {
+    background-color: #eed6d6; /* aluminum 1 with 10x saturation and hue of scarlet red 1 */
+    border: thin solid #ef2929; /* scarlet red 1 */
+    color: #a40000;  /* scarlet red 3 */
+}
 
 .taxon {
     padding: .2em;
