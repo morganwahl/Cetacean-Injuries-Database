@@ -3,11 +3,16 @@ from django.contrib import admin
 from reversion.admin import VersionAdmin
 
 from models import (
+    Documentable,
     Document,
     DocumentType,
     RepositoryFile,
     UploadedFile,
 )
+
+class DocumentableAdmin(VersionAdmin):
+    pass
+admin.site.register(Documentable, DocumentableAdmin)
 
 class DocumentTypeAdmin(VersionAdmin):
     pass
