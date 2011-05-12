@@ -125,7 +125,7 @@ def add_document(request, documentable_id):
             forms[name] = form_classes[name](**form_kwargs[name])
         
         if forms['document'].is_valid() and (not is_upload or (is_upload and forms['uploaded_file'].is_valid())):
-
+            
             document = forms['document'].save(commit=False)
             document.attached_to = obj
             document.save()
