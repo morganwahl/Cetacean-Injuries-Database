@@ -197,14 +197,24 @@ class GearAnalysisForm(EntanglementForm):
         exclude = []
         fields = Entanglement.gear_analysis_fieldnames()
 
+# for use in the formset below
+class GearAnalysisObservationForm(forms.ModelForm):
+    
+    class Meta:
+        EntanglementObservation
+        fields = (
+            'gear_retrieved',
+            'gear_retriever',
+            'gear_given_date',
+            'gear_giver',
+        )
+        widgets = {
+            'gear_given_date': Datepicker,
+        }
+
 GearAnalysisObservationFormset = modelformset_factory(
     EntanglementObservation,
-    fields= (
-        'gear_retrieved',
-        'gear_retriever',
-        'gear_given_date',
-        'gear_giver',
-    ),
+    form= GearAnalysisObservationForm,
     extra= 0,
 )
 
