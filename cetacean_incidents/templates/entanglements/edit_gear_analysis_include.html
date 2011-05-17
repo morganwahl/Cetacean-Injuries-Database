@@ -30,34 +30,6 @@
                 {% with forms.entanglement.gear_kept_where as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
-                <div class="subform">
-                    <h3>Observation Data</h3>
-                    {% with forms.entanglement_observations as fs %}
-                    {{ fs.management_form }}
-                    <table>
-                        {% with fs.forms.0 as form %}
-                        <tr>
-                            <th>date</th>
-                            <th>observer</th>
-                            {% for field in form.visible_fields %}
-                            <th class="fieldname">{{ field.label_tag }}</th>
-                            {% endfor %}
-                        </tr>
-                        {% endwith %}
-                        {% for form in fs.forms %}
-                        <tr>
-                            <td>{{ form.instance.observation_ptr.datetime_observed }}</td>
-                            <td>{{ form.instance.observation_ptr.observer|default:"<i>unknown</i>" }}</td>
-                            {% for field in form %}
-                            <td>
-                                {{ field }}
-                            </td>
-                            {% endfor %}
-                        </tr>
-                        {% endfor %}
-                    </table>
-                    {% endwith %}
-                </div>
                 <script type="text/javascript">
                     $().ready(function(){
                         CheckboxHider.init(
@@ -97,6 +69,41 @@
             </td>
         </tr>
     </table>
+</div>
+<div class="section">
+    <h3>Observation Data</h3>
+    {% with forms.entanglement_observations as fs %}
+    {{ fs.management_form }}
+    <table>
+        {% with fs.forms.0 as form %}
+        <tr>
+            <th>date</th>
+            <th>observer</th>
+            {% for field in form.visible_fields %}
+            <th class="fieldname">{{ field.label_tag }}</th>
+            {% endfor %}
+        </tr>
+        <tr style="font-size: 90%;">
+            <td></td>
+            <td></td>
+            {% for field in form.visible_fields %}
+            <td><i>({{ field.help_text }})</i></td>
+            {% endfor %}
+        </tr>
+        {% endwith %}
+        {% for form in fs.forms %}
+        <tr>
+            <td>{{ form.instance.observation_ptr.datetime_observed }}</td>
+            <td>{{ form.instance.observation_ptr.observer|default:"<i>unknown</i>" }}</td>
+            {% for field in form %}
+            <td>
+                {{ field }}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    {% endwith %}
 </div>
 <div class="section" id="gear_owner_info_section">
     <h3>Gear Owner Info</h3>
