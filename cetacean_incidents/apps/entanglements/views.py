@@ -62,6 +62,7 @@ from forms import (
     EntanglementMergeForm,
     EntanglementObservationForm,
     GearAnalysisForm,
+    GearAnalysisObservationFormset,
     GearOwnerForm,
     LocationGearSetForm,
 )
@@ -249,6 +250,14 @@ def _instantiate_gear_analysis_forms(request, entanglement):
         'entanglement': GearAnalysisForm,
         'gear_owner': GearOwnerForm,
         'location_set': LocationGearSetForm,
+        'entanglement_observations': GearAnalysisObservationFormset,
+    }
+    form_kwargs = {
+        'entanglement_observations': {
+            # the EntanglementObservations for observation that are for 
+            # 'entanglement'
+            'queryset': EntanglementObservation.objects.filter(observation_ptr__cases=entanglement),
+        }
     }
     model_instances = {
         'entanglement': entanglement,
@@ -269,6 +278,8 @@ def _instantiate_gear_analysis_forms(request, entanglement):
     forms = {}
     for form_name, form_class in form_classes.items():
         kwargs = {}
+        if form_name in form_kwargs.keys():
+            kwargs = form_kwargs[form_name]
         if request.method == 'POST':
             kwargs['data'] = request.POST
         if form_name in model_instances.keys():
@@ -292,6 +303,8 @@ def _process_gear_analysis_forms(forms):
     def _try_saving():
         _check('entanglement')
         entanglement = forms['entanglement'].save(commit=False)
+        _check('entanglement_observations')
+        forms['entanglement_observations'].save()
         
         if forms['entanglement'].cleaned_data['has_gear_owner_info']:
             _check('gear_owner')

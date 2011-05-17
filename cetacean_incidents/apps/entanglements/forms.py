@@ -1,6 +1,7 @@
 from operator import __and__
 
 from django import forms
+from django.forms.models import modelformset_factory
 from django.template.loader import render_to_string
 from django.utils.encoding import force_unicode
 from django.utils.safestring import mark_safe
@@ -195,6 +196,17 @@ class GearAnalysisForm(EntanglementForm):
     class Meta(EntanglementForm.Meta):
         exclude = []
         fields = Entanglement.gear_analysis_fieldnames()
+
+GearAnalysisObservationFormset = modelformset_factory(
+    EntanglementObservation,
+    fields= (
+        'gear_retrieved',
+        'gear_retriever',
+        'gear_given_date',
+        'gear_giver',
+    ),
+    extra= 0,
+)
 
 class EntanglementMergeForm(CaseMergeForm):
     
