@@ -31,12 +31,14 @@
                 {% include "labeled_field.html" %}
                 {% endwith %}
                 <div class="subform">
+                    <h3>Observation Data</h3>
                     {% with forms.entanglement_observations as fs %}
                     {{ fs.management_form }}
                     <table>
                         {% with fs.forms.0 as form %}
                         <tr>
-                            <th>observation</th>
+                            <th>date</th>
+                            <th>observer</th>
                             {% for field in form.visible_fields %}
                             <th class="fieldname">{{ field.label_tag }}</th>
                             {% endfor %}
@@ -44,7 +46,8 @@
                         {% endwith %}
                         {% for form in fs.forms %}
                         <tr>
-                            <td>{{ form.instance.observation_ptr }}</td>
+                            <td>{{ form.instance.observation_ptr.datetime_observed }}</td>
+                            <td>{{ form.instance.observation_ptr.observer|default:"<i>unknown</i>" }}</td>
                             {% for field in form %}
                             <td>
                                 {{ field }}
