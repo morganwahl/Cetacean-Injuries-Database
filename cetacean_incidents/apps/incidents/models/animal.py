@@ -56,7 +56,7 @@ class Animal(Documentable, Importable):
         Taxon,
         blank= True,
         null= True,
-        help_text= 'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
+        help_text= u'The most specific taxon this animal is known to be. This will be the default taxon for new observations of this animal. This is seperate from the taxa listed in observations of it, since the observations may be mistaken or less specific.',
     )
     
     # observation_set is added to this class once Observation is initialized
@@ -105,12 +105,7 @@ class Animal(Documentable, Importable):
                                            # easier to change this than to alter 
                                            # the fieldname in the schema
         help_text= u"""\
-            A date when the animal was certainly dead, as determined from the
-            observations of this animal. If you're unsure of an exact date, just
-            put something certainly after it; e.g. if you know it was dead
-            sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If
-            you're totally unsure, just put the current date. Any animal with a
-            date before today is considered currently dead.
+            A date when the animal was certainly dead, as determined from the observations of this animal. If you're unsure of an exact date, just put something certainly after it; e.g. if you know it was dead sometime in July of 2008, just put 2008-07-31 (or 2008-08-01). If you're totally unsure, just put the current date. Any animal with a date before today is considered currently dead.
         """
     )
     

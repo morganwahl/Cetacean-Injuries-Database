@@ -295,4 +295,4 @@ class ObservationTestCase(TestCase):
         both_ent_oe = EntanglementObservation.objects.create(observation_ptr=both_ext)
         both_ss_oe = ShipstrikeObservation.objects.create(observation_ptr=both_ext)
         self.assertEqual(set(both_ext.get_observation_extensions()), set((both_ent_oe, both_ss_oe)))
-        
+
