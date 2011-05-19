@@ -18,9 +18,9 @@
     </script>
     <a href="" title="remove this tag" id="delete_tag_link_{{ t.id }}">x</a>
     <form id="delete_tag_form_{{ t.id }}" style="display:none;" action="{% url delete_tag t.id %}" method="post">
+        {% csrf_token %}
         <div class="warning">
             are you sure you want to remove this tag?
-            {% csrf_token %}
             <button type="submit">yes</button> <a href="" id="cancel_delete_tag_link_{{ t.id }}">no</a>
         </div>
     </form>

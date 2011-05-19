@@ -26,6 +26,7 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
             destination_value = getattr(destination, field_name)
     else:
         destination_value = getattr(destination, field_name)
+    
     # the source may not have all the fields of the destination
     try:
         if isinstance(source._meta.get_field(field_name), models.ManyToManyField):
