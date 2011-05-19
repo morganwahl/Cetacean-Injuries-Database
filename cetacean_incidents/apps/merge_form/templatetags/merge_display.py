@@ -38,7 +38,7 @@ def display_merge_row(destination, source, merge_form, field_name, cell_template
         else:
             source_value = getattr(source, field_name)
         in_source = True
-    except AttributeError:
+    except models.fields.FieldDoesNotExist:
         in_source = False
     
     if in_source:
