@@ -9,7 +9,7 @@ csv = csv.DictReader(open(filename))
 
 columns = {}
 
-INCLUDE_VALUES = False
+INCLUDE_VALUES = True
 
 for row in csv:
     empty_row = True

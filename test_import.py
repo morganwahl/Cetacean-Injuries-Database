@@ -15,7 +15,7 @@ response = c.post(
     follow=True,
     data= {
         'csv_file': csv_file,
-        #'test_run': True,
+        'test_run': True,
     },
 )
 csv_file.close()
