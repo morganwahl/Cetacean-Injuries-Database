@@ -32,7 +32,7 @@ def case_link(case):
         return cached
 
     # avoid circular imports
-    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    from cetacean_incidents.apps.csv_import.csv_import import IMPORT_TAGS
     needs_review = bool(Tag.objects.filter(entry=case, tag_text__in=IMPORT_TAGS))
 
     context = Context({
@@ -75,7 +75,7 @@ def _tag_post_save_or_post_delete(sender, **kwargs):
     tag = kwargs['instance']
 
     # avoid circular imports
-    from cetacean_incidents.apps.strandings_import.csv_import import IMPORT_TAGS
+    from cetacean_incidents.apps.csv_import.csv_import import IMPORT_TAGS
     if not tag.tag_text in IMPORT_TAGS:
         return
 

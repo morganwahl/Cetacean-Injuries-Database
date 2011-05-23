@@ -49,7 +49,7 @@ def import_csv(request):
         form = ImportCSVForm()
 
     return render_to_response(
-        'strandings_import/import.html',
+        'csv_import/import.html',
         {
             'form': form,
             'media': form.media,
@@ -86,7 +86,7 @@ def review_imports(request):
         animals = animal_pages.page(paginator.num_pages)
 
     return render_to_response(
-        'strandings_import/review.html',
+        'csv_import/review.html',
         {
             'animals': animals,
             'tagged': tagged,
