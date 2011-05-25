@@ -408,8 +408,11 @@ def import_taxon(request):
 @login_required
 def odd_entries(request):
     
-    contact_names = set(Contact.objects.exclude(Q(name='') | Q(name__isnull=True)).values_list('name', flat=True))
-    contact_names |= set(Organization.objects.exclude(Q(name='') | Q(name__isnull=True)).values_list('name', flat=True))
+    contact_names = set(Contact.objects.exclude(
+        Q(name='') | Q(name__isnull=True),
+    ).values_list('name', flat=True)) | set(Organization.objects.exclude(
+        Q(name='') | Q(name__isnull=True),
+    ).values_list('name', flat=True))
     contacts_same_name = {}
     for name in contact_names:
         contacts = Contact.objects.filter(name=name)
@@ -417,7 +420,9 @@ def odd_entries(request):
         if contacts.count() + orgs.count() > 1:
             contacts_same_name[name] = list(contacts.all()) + list(orgs.all())
     
-    field_numbers = set(Animal.objects.exclude(Q(field_number='') | Q(field_number__isnull=True)).values_list('field_number', flat=True))
+    field_numbers = set(Animal.objects.exclude(
+        Q(field_number='') | Q(field_number__isnull=True),
+    ).values_list('field_number', flat=True))
     animals_same_number = {}
     for num in field_numbers:
         animals = Animal.objects.filter(field_number=num)
@@ -438,7 +443,9 @@ def odd_entries(request):
         
     no_cases = Animal.objects.filter(case__id__isnull=True)
     
-    entanglement_numbers = set(Entanglement.objects.exclude(Q(nmfs_id='') | Q(nmfs_id__isnull=True)).values_list('nmfs_id', flat=True))
+    entanglement_numbers = set(Entanglement.objects.exclude(
+        Q(nmfs_id='') | Q(nmfs_id__isnull=True),
+    ).values_list('nmfs_id', flat=True))
     entanglements_same_nmfs = {}
     for num in entanglement_numbers:
         ents = Entanglement.objects.filter(nmfs_id=num)
@@ -449,8 +456,16 @@ def odd_entries(request):
     
     ent_ids = Entanglement.objects.values_list('pk', flat=True)
     ss_ids = Shipstrike.objects.values_list('pk', flat=True)
-    no_ent_obs_ext = Observation.objects.filter(cases__pk__in=ent_ids).filter(entanglements_entanglementobservation__isnull=True)
-    no_ss_obs_ext = Observation.objects.filter(cases__pk__in=ss_ids).filter(shipstrikes_shipstrikeobservation__isnull=True)
+    no_ent_obs_ext = Observation.objects.filter(
+        cases__pk__in= ent_ids,
+    ).filter(
+        entanglements_entanglementobservation__isnull= True,
+    )
+    no_ss_obs_ext = Observation.objects.filter(
+        cases__pk__in= ss_ids,
+    ).filter(
+        shipstrikes_shipstrikeobservation__isnull= True,
+    )
 
     return render_to_response(
         'odd_entries.html',
