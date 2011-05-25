@@ -1,7 +1,7 @@
 from difflib import SequenceMatcher
-
+import re
+from itertools import chain
 import json
-
 import numbers
 
 from django.db import models
@@ -15,6 +15,7 @@ from django.shortcuts import (
     render_to_response,
 )
 from django.template import RequestContext
+from django.utils.datastructures import SortedDict
 from django.utils.safestring import mark_safe
 
 from django.contrib.auth.decorators import (
@@ -405,37 +406,50 @@ def import_taxon(request):
     
     return unsecured_import_taxon(request)
 
+_unimportant = re.compile(r'\W', re.UNICODE)
+def _search_key(string):
+    # maps a string to a search key to find similiar ones
+    return _unimportant.sub('', string).lower()
+
+def _find_similiar(fields):
+    '''\
+    given an iterable of tuples of the form (Model, fieldname), returns a
+    dictionary keyed to a search key whose values are the instances of those models
+    whose fields match that search key.
+    '''
+    
+    all_objs = tuple()
+    for Model, fieldname in fields:
+        all_objs = chain(all_objs, Model.objects.exclude(
+            Q(**{fieldname: ''}) | Q(**{fieldname + '__isnull': True}),
+        ))
+    
+    search_keys = {}
+    for obj in all_objs:
+        key = _search_key(getattr(obj, fieldname))
+        if not key in search_keys.keys():
+            search_keys[key] = []
+        search_keys[key].append(obj)
+    
+    # same_value is just search_keys, but with the keys in order and the values
+    # below a certain length removed
+    same_value = SortedDict()
+    for key in sorted(search_keys.keys()):
+        objs = search_keys[key]
+        if len(objs) > 1:
+            same_value[key] = objs
+    
+    return same_value
+
 @login_required
 def odd_entries(request):
     
-    contact_names = set(Contact.objects.exclude(
-        Q(name='') | Q(name__isnull=True),
-    ).values_list('name', flat=True)) | set(Organization.objects.exclude(
-        Q(name='') | Q(name__isnull=True),
-    ).values_list('name', flat=True))
-    contacts_same_name = {}
-    for name in contact_names:
-        contacts = Contact.objects.filter(name=name)
-        orgs = Organization.objects.filter(name=name)
-        if contacts.count() + orgs.count() > 1:
-            contacts_same_name[name] = list(contacts.all()) + list(orgs.all())
+    contacts_same_name = _find_similiar(((Contact, 'name'), (Organization, 'name')))
     
-    field_numbers = set(Animal.objects.exclude(
-        Q(field_number='') | Q(field_number__isnull=True),
-    ).values_list('field_number', flat=True))
-    animals_same_number = {}
-    for num in field_numbers:
-        animals = Animal.objects.filter(field_number=num)
-        if animals.count() > 1:
-            animals_same_number[num] = animals
+    animals_same_number = _find_similiar(((Animal, 'field_number'),))
     
-    animal_names = set()
-    for a in Animal.objects.exclude(Q(name='') | Q(name__isnull=True)):
-        for name in a.names:
-            name = name.lower().strip()
-            if not name == '':
-                animal_names.add(name)
-    animals_same_name = {}
+    animal_names = sorted(map(_search_key, Animal.objects.exclude(Q(name='') | Q(name__isnull=True)).values_list('name', flat=True)))
+    animals_same_name = SortedDict()
     for name in animal_names:
         animals = Animal.objects.filter(name__icontains=name)
         if animals.count() > 1:
@@ -443,14 +457,7 @@ def odd_entries(request):
         
     no_cases = Animal.objects.filter(case__id__isnull=True)
     
-    entanglement_numbers = set(Entanglement.objects.exclude(
-        Q(nmfs_id='') | Q(nmfs_id__isnull=True),
-    ).values_list('nmfs_id', flat=True))
-    entanglements_same_nmfs = {}
-    for num in entanglement_numbers:
-        ents = Entanglement.objects.filter(nmfs_id=num)
-        if ents.count() > 1:
-            entanglements_same_nmfs[num] = ents
+    entanglements_same_nmfs = _find_similiar(((Entanglement, 'nmfs_id'),))
     
     no_obs = Case.objects.filter(observation__id__isnull=True)
     
