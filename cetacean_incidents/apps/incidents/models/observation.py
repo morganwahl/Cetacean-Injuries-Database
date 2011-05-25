@@ -90,6 +90,7 @@ class Observation(Documentable, Importable):
         related_name= 'observed',
         help_text= 'Whoever actually saw the animal.', 
     )
+    
     datetime_observed = UncertainDateTimeField(
         db_index=True,
         help_text= "When did the observer see it? (Strictly, when did the observation start?) The earliest observation date for a case's observations is the date used for the case itself, e.g. when assigning a case to a year.",
@@ -152,6 +153,7 @@ class Observation(Documentable, Importable):
         related_name= "observation",
         help_text= 'the observer\'s location at the time of observation. (strictly, where did the observation begin)',
     )
+    
     observer_vessel = models.OneToOneField(
         VesselInfo,
         blank= True,
@@ -173,6 +175,7 @@ class Observation(Documentable, Importable):
         related_name= 'reported',
         help_text= "This is who informed us of the observation. Same as observer if this is a firsthand report.",
     )
+    
     datetime_reported = UncertainDateTimeField(
         db_index=True,
         help_text = 'When did we first heard about the observation?',

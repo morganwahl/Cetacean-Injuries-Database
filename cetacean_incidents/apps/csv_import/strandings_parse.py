@@ -1038,10 +1038,11 @@ def parse_observation(row, case_data):
             (True, 'no gear'): ('cmpl', True),
             (True, 'unknown'): ('', False),
         }[(attempt, outcome)]
-        o['observation_extensions']['entanglement_observation'] = eo
         if not understood:
             unknown_values(o, (disent_attempt_key, disent_status_key))
-    
+
+        o['observation_extensions']['entanglement_observation'] = eo
+
     ## ShipstrikeObservation
     # striking_vessel defaults to None
     if case_data['__class__'] == 'Shipstrike' or isinstance(case_data['__class__'], set) and 'Shipstrike' in case_data['__class__']:
@@ -1076,20 +1077,14 @@ def parse_documents(row, animal_data, case_data):
 
     return docs
 
-def parse_csv(csv_file, commit=False):
+def parse_csv(csv_file):
     '''\
     Given a file-like object with CSV data, return a tuple with one item for
     each row. The items are a dictionary like so:
     {
-        'new': {
-            'animals': (<animal>,),
-            'cases': (<case>,),
-            etc...
-        }
-        'changed': {
-            'animals': {pk: <animal>},
-            etc...
-        }
+        'animals': (<animal>,),
+        'cases': (<case>,),
+        etc...
     }
     Where <animal>, <case> etc. are dictionaries with model fieldnames as keys.
     
@@ -1119,10 +1114,7 @@ def parse_csv(csv_file, commit=False):
         if row['Common Name'] == 'BEWH':
             continue
         
-        new = {
-            'observation': [],
-            'location': [],
-        }
+        new = {}
         
         a = parse_animal(row)
         new['animal'] = a
@@ -1130,7 +1122,6 @@ def parse_csv(csv_file, commit=False):
         c = parse_case(row)
         new['case'] = c
         
-        # observations are always new
         o = parse_observation(row, c)
         new['observation'] = o
         l = parse_location(row, o)

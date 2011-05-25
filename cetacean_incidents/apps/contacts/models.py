@@ -134,7 +134,7 @@ class Contact(AbstractContact, Documentable):
     @models.permalink
     def get_absolute_url(self):
         return ('contact_detail', [str(self.pk)]) 
-
+    
     class Meta:
         ordering = ('sort_name', 'name', 'documentable_ptr')
 

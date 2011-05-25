@@ -245,7 +245,6 @@ def _is_animal(tsn):
     return kingdom_id == 5
 
 def itis_get_rank(tsn):
-    
     # if it's already been imported just look it up locally
     q = Taxon.objects.filter(tsn=tsn)
     if q.exists():
@@ -306,7 +305,6 @@ def itis_search(request):
     )
 
 def import_search(request):
-
     template_media = Media(js=(settings.JQUERY_FILE,))
     
     return render_to_response(
@@ -316,7 +314,6 @@ def import_search(request):
     )
 
 def import_tsn(request, tsn):
-    
     if request.method == 'POST':
         tsn_list = request.POST['taxa']
         
