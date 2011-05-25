@@ -20,7 +20,7 @@ from models import Contact
 @login_required
 def contact_detail(request, contact_id):
     
-    contact = Contact.objects.get(id=contact_id)
+    contact = Contact.objects.get(pk=contact_id)
     
     template_media = Media(js=(settings.JQUERY_FILE,))
     
@@ -48,7 +48,7 @@ def _create_or_edit_contact(request, contact_id=None):
     # assme user has contacts.add_contact and contacts.change_contact
     if not contact_id is None:
         # we're editing an existing contact
-        contact = Contact.objects.get(id=contact_id)
+        contact = Contact.objects.get(pk=contact_id)
         template = 'contacts/edit_contact.html'
     else:
         # we're creating a new contact
@@ -60,7 +60,7 @@ def _create_or_edit_contact(request, contact_id=None):
         form = ContactForm(request.POST, instance=contact)
         if form.is_valid():
             contact = form.save()
-            return redirect('contact_detail', contact.id)
+            return redirect('contact_detail', contact.pk)
     else:
         form = ContactForm(instance=contact)
     
@@ -95,16 +95,16 @@ def merge_contact(request, destination_id, source_id=None):
     # the "source" contact will be deleted and references to it will be changed
     # to the "destination" contact
     
-    destination = Contact.objects.get(id=destination_id)
+    destination = Contact.objects.get(pk=destination_id)
 
     if source_id is None:
         merge_form = merge_source_form_factory(Contact, destination)(request.GET)
 
         if not merge_form.is_valid():
-            return redirect('contact_detail', destination.id)
+            return redirect('contact_detail', destination.pk)
         source = merge_form.cleaned_data['source']
     else:
-        source = Contact.objects.get(id=source_id)
+        source = Contact.objects.get(pk=source_id)
     
     form_kwargs = {
         'source': source,
@@ -115,7 +115,7 @@ def merge_contact(request, destination_id, source_id=None):
         form = ContactMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
-            return redirect('contact_detail', destination.id)
+            return redirect('contact_detail', destination.pk)
     else:
         form = ContactMergeForm(**form_kwargs)
     

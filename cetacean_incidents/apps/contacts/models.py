@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Q
 
+from cetacean_incidents.apps.documents.models import Documentable
+
 class Organization(models.Model):
     
     name = models.CharField(
@@ -63,7 +65,7 @@ class AbstractContact(models.Model):
     class Meta:
         abstract = True
 
-class Contact(AbstractContact):
+class Contact(AbstractContact, Documentable):
     """A contact is a name of a person _or_ organization, preferably with some
     way of contacting them. 
     
@@ -87,7 +89,6 @@ class Contact(AbstractContact):
         return self.observed.order_by(
             'datetime_observed',
             'datetime_reported',
-            'id',
         )
     
     # TODO properties probably shouldn't do queries
@@ -96,7 +97,6 @@ class Contact(AbstractContact):
         return self.reported.order_by(
             'datetime_reported',
             'datetime_observed',
-            'id',
         )
     
     def observed_or_reported_ordered(self):
@@ -107,7 +107,6 @@ class Contact(AbstractContact):
         return Observation.objects.filter(observed | reported).order_by(
             'datetime_observed',
             'datetime_reported',
-            'id',
         )
 
     affiliations = models.ManyToManyField(
@@ -135,8 +134,8 @@ class Contact(AbstractContact):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('contact_detail', [str(self.id)]) 
+        return ('contact_detail', [str(self.pk)]) 
 
     class Meta:
-        ordering = ('sort_name', 'name', 'id')
+        ordering = ('sort_name', 'name', 'documentable_ptr')
 
