@@ -271,9 +271,6 @@ class GearAnalysis(models.Model):
     class Meta:
         abstract = True
 
-guard_deletes(Contact, GearAnalysis, 'analyzed_by')
-guard_deletes(GearOwner, GearAnalysis, 'gear_owner_info')
-
 class Entanglement(Case, GearAnalysis):
     
     nmfs_id = models.CharField(
@@ -319,6 +316,11 @@ class Entanglement(Case, GearAnalysis):
 
     def get_edit_url(self):
         return reverse('edit_entanglement', args=[self.id])
+
+# conceptually these go on GearAnalysis, but guard_deletes doesn't work with
+# abstract models
+guard_deletes(Contact, Entanglement, 'analyzed_by')
+guard_deletes(GearOwner, Entanglement, 'gear_owner_info')
 
 class BodyLocation(models.Model):
     '''\
