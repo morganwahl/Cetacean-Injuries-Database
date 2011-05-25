@@ -115,6 +115,7 @@ def merge_contact(request, destination_id, source_id=None):
         form = ContactMergeForm(data=request.POST, **form_kwargs)
         if form.is_valid():
             form.save()
+            form.delete()
             return redirect('contact_detail', destination.pk)
     else:
         form = ContactMergeForm(**form_kwargs)
