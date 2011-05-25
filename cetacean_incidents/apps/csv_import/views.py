@@ -25,6 +25,9 @@ from . import IMPORT_TAGS
 
 from forms import ImportCSVForm
 
+import observations_parse
+from observations_parse import ImportObservationsCSVForm
+
 import strandings_parse
 
 # TODO perms
@@ -50,6 +53,34 @@ def import_stranding_csv(request):
     return render_to_response(
         'csv_import/import.html',
         {
+            'import_type': 'strandings',
+            'form': form,
+            'media': form.media,
+            'results': results,
+        },
+        context_instance= RequestContext(request),
+    )
+
+def import_observations_csv(request):
+    
+    results = None
+    if request.method == 'POST':
+        form = ImportObservationsCSVForm(request.POST, request.FILES)
+        if form.is_valid():
+            
+            results = observations_parse.parse_csv(form.cleaned_data['csv_file'], form.cleaned_data['original_observation'])
+    
+            if not form.cleaned_data['test_run']:
+                observations_parse.process_results(results, form.cleaned_data['csv_file'].name, request.user)
+                return redirect('home')
+            
+    else:
+        form = ImportObservationsCSVForm()
+
+    return render_to_response(
+        'csv_import/import.html',
+        {
+            'import_type': 'observations',
             'form': form,
             'media': form.media,
             'results': results,
