@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% load contact_extras %}
 {% load animal_extras %}
 {% load case_extras %}
 {% load observation_extras %}
@@ -6,6 +7,21 @@
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
 
 {% block content %}
+{% if contacts_same_name %}
+<div>
+    <h3>Contacts and Organizations with the same name</h3>
+    <ul>
+        {% for name, contacts in contacts_same_name.items %}
+        <li>
+            {{ name }}
+            <div>
+                {% for c in contacts %}{% contact_link c %},{% endfor %}
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endif %}
 {% if animals_same_number %}
 <div>
     <h3>Animals with the same field number</h3>

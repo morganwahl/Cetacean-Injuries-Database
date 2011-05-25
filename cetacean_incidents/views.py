@@ -34,6 +34,11 @@ from forms import (
     CaseTypeForm_factory,
 )
 
+from cetacean_incidents.apps.contacts.models import (
+    Contact,
+    Organization,
+)
+
 from cetacean_incidents.apps.entanglements.forms import (
     AnimalNMFSIDLookupForm,
     EntanglementNMFSIDLookupForm,
@@ -403,6 +408,15 @@ def import_taxon(request):
 @login_required
 def odd_entries(request):
     
+    contact_names = set(Contact.objects.exclude(Q(name='') | Q(name__isnull=True)).values_list('name', flat=True))
+    contact_names |= set(Organization.objects.exclude(Q(name='') | Q(name__isnull=True)).values_list('name', flat=True))
+    contacts_same_name = {}
+    for name in contact_names:
+        contacts = Contact.objects.filter(name=name)
+        orgs = Organization.objects.filter(name=name)
+        if contacts.count() + orgs.count() > 1:
+            contacts_same_name[name] = list(contacts.all()) + list(orgs.all())
+    
     field_numbers = set(Animal.objects.exclude(Q(field_number='') | Q(field_number__isnull=True)).values_list('field_number', flat=True))
     animals_same_number = {}
     for num in field_numbers:
@@ -441,6 +455,7 @@ def odd_entries(request):
     return render_to_response(
         'odd_entries.html',
         {
+            'contacts_same_name': contacts_same_name,
             'animals_same_number': animals_same_number,
             'animals_same_name': animals_same_name,
             'animals_no_cases': no_cases,
