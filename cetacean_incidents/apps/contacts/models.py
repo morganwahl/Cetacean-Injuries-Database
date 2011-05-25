@@ -56,11 +56,10 @@ class AbstractContact(models.Model):
     )
    
     def __unicode__(self):
-        if self.name:
-            return self.name
-        elif self.id:
-            return "contact #%05d" % self.id
-        return "contact (unsaved)"
+        return "%s (%s)" % (
+            self.name if self.name else '<unnamed contact>',
+            "#%06d" % self.pk if self.pk else 'unsaved',
+        )
 
     class Meta:
         abstract = True
