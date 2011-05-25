@@ -1,5 +1,6 @@
 from base64 import standard_b64encode
 import re
+from StringIO import StringIO
 
 try:
     import json
@@ -225,13 +226,19 @@ def _get_itis(funcname, get_args={}):
     '''Given an ITIS WebServices function name and a dictionary of args, returns a parse xml document of the results. Raises an ITIS_Error Exception on errors.'''
     # TODO can't urllib compose a document and get-string for us?
     url = 'http://www.itis.gov/ITISWebService/services/ITISService/' + funcname + '?' + urllib.urlencode(get_args)
-    url_handle = urllib2.urlopen(url)
-    # ITIS doesn't send HTTP error codes when its database is down. :-(
-    # check for a mimetype of text/html instead
-    if url_handle.info().gettype() == 'text/html':
-        raise ITIS_Error(render_to_string('taxons/itis_error_include.html', {'error_url': url}))
+    xml = cache.get(url)
+    if xml is None:
+        url_handle = urllib2.urlopen(url)
+        # ITIS doesn't send HTTP error codes when its database is down. :-(
+        # check for a mimetype of text/html instead
+        if url_handle.info().gettype() == 'text/html':
+            raise ITIS_Error(render_to_string('taxons/itis_error_include.html', {'error_url': url}))
+        xml = url_handle.read()
+        cache.set(url, xml, 7 * 24 * 60 * 60) # timeout of one week
     
-    result = etree.parse(url_handle)
+    # use parse instead of fromstring since it expects a full document, which
+    # is what we have
+    result = etree.parse(StringIO(xml))
     
     return result
 
