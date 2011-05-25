@@ -208,9 +208,10 @@ class GearAnalysisObservationForm(forms.ModelForm):
             'gear_given_date',
             'gear_giver',
         )
-        widgets = {
-            'gear_given_date': Datepicker,
-        }
+        # doesn't seem to be working...
+        #widgets = {
+        #    'gear_given_date': Datepicker,
+        #}
 
 GearAnalysisObservationFormset = modelformset_factory(
     EntanglementObservation,
