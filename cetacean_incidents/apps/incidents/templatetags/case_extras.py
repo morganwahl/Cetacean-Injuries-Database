@@ -111,13 +111,10 @@ class YearsForm(forms.Form):
     @staticmethod
     def _get_year_choices():
         # datetime_observed, not datetime_reported
-        return map(lambda y: (y, unicode(y)), reversed(sorted(list(set(map(
-            # values_list returns the raw values, not UncertainDateTimes
-            lambda dt: UncertainDateTime.from_sortkey(dt).year,
-            Observation.objects.filter(
-                datetime_observed__gte=unicode(_MIN_YEAR),
-            ).values_list('datetime_observed', flat=True)
-        ))))))
+        considered_obs = Observation.objects.filter(datetime_observed__gte=unicode(_MIN_YEAR)).only('datetime_observed')
+        lowest_year = considered_obs.order_by('datetime_observed')[0].datetime_observed.year
+        highest_year = considered_obs.order_by('-datetime_observed')[0].datetime_observed.year
+        return map(lambda y: (y, unicode(y)), reversed(range(lowest_year, highest_year + 1)))
 
     def __init__(self, *args, **kwargs):
         super(YearsForm, self).__init__(*args, **kwargs)
