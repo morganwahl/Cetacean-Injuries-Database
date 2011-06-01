@@ -78,10 +78,6 @@ def html(obj, link=False, use_cache=None):
     return mark_safe(html)
 
 @register.filter
-def html_cached(obj):
-    return html(obj, use_cache=True)
-
-@register.filter
 def htmls(objs, use_cache=None):
     '''\
     Applies the 'html' filter to an iterable of model instance and returns an
@@ -94,8 +90,4 @@ def htmls(objs, use_cache=None):
         # if not iterable, just return a list with one string for whatever was
         # passed in
         return [html(objs, use_cache)]
-
-@register.filter
-def htmls_cached(objs):
-    return htmls(objs, use_cache=True)
 

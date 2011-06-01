@@ -14,10 +14,6 @@ def link(obj, use_cache=None):
     return html(obj, link=True, use_cache=use_cache)
 
 @register.filter
-def link_cached(obj):
-    return link(obj, use_cache=True)
-
-@register.filter
 def links(objs, use_cache=None):
     '''\
     Applies the 'link' filter to an iterable of model instance and returns an
@@ -30,8 +26,4 @@ def links(objs, use_cache=None):
         # if not iterable, just return a list with one link to whatever was
         # passed in
         return [link(objs, use_cache)]
-
-@register.filter
-def links_cached(objs):
-    return links(objs, use_cache=True)
 
