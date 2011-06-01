@@ -42,7 +42,6 @@ def html(obj, link=False, use_cache=None):
             cache_key += '__link'
         cached = cache.get(cache_key)
         if cached:
-            print "cache hit: %s" % cache_key
             return mark_safe(cached)
     
     if 'template' in options:
@@ -72,7 +71,6 @@ def html(obj, link=False, use_cache=None):
     html = html.strip()
     
     if use_cache:
-        print "cache set: %s" % cache_key
         cache.set(cache_key, html, CACHE_TIMEOUT)
     
     return mark_safe(html)
