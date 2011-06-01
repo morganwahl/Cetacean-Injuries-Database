@@ -84,6 +84,7 @@ INSTALLED_APPS = (
     'django.contrib.databrowse',
     'django.contrib.humanize',
     'reversion',
+    'cetacean_incidents.apps.utils',
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
     'cetacean_incidents.apps.contacts',
