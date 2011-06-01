@@ -14,6 +14,8 @@ from django.contrib.auth.models import User
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
+from cetacean_incidents.apps.generic_templates.templatetags import html_filter
+
 from form_fields import DirectoryPathField as DirectoryPathFormField
 from utils import rand_string
 
@@ -95,6 +97,23 @@ class Documentable(Specificable):
         if not self.id:
             return "<new Documentable>"
         return "Documentable entry #%06d" % self.id
+    
+# remove stale cache entries
+def _documentable_post_save(sender, **kwargs):
+    # sender should be Documentable
+    
+    if kwargs['created']:
+        return
+    
+    documentable = kwargs['instance']
+    cache_keys = html_filter.cache_keys(documentable)
+    cache.delete_many(cache_keys)
+        
+models.signals.post_save.connect(
+    sender= Documentable,
+    receiver= _documentable_post_save,
+    dispatch_uid= 'cache_clear__documentable_html__documentable__post_save',
+)
 
 class Document(Specificable):
     

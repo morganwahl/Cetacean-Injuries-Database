@@ -9,6 +9,15 @@ register = template.Library()
 CACHE_TIMEOUT = 7 * 24 * 3600
 
 def cache_keys(obj):
+    if not isinstance(obj, Model):
+        return tuple()
+
+    app_name = obj._meta.app_label
+    model_name = obj._meta.object_name.lower()
+
+    if not hasattr(obj, 'id'):
+        return tuple()
+
     # TODO repeats the key definition in html()
     cache_key = u'%s__%s__%d__html' % (app_name, model_name, obj.id)
     return (cache_key, cache_key + '__link')
