@@ -1,5 +1,0 @@
-{% if contact %}
-<a href="{{ contact.get_absolute_url }}">{{ contact }}</a>{% if needs_review %}<img title="this entry needs review" src="{{ media_url }}icons/needs_review.png">{% endif %}
-{% else %}
-<i>unknown</i>
-{% endif %}

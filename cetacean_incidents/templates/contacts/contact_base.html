@@ -1,7 +1,7 @@
 {% extends "detail.html" %}
-{% load contact_extras %}
 {% load observation_extras %}
 {% load generic_field_display %}
+{% load link_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -76,9 +76,9 @@
                 {% for o in contact.observed_or_reported_ordered.reverse.all %}
                 <tr>
                     <td>{% observation_link o %}</td>
-                    <td>{% if o.observer %}{% contact_link o.observer %}{% else %}<i>none</i>{% endif %}</td>
+                    <td>{% if o.observer %}{{ o.observer|link }}{% else %}<i>none</i>{% endif %}</td>
                     <td sorttable_customkey="{{ o.datetime_observed.sortkey }}">{% datetime_observed_display o.datetime_observed %}</td>
-                    <td>{% if o.reporter %}{% contact_link o.reporter %}{% else %}<i>none</i>{% endif %}</td>
+                    <td>{% if o.reporter %}{{ o.reporter|link }}{% else %}<i>none</i>{% endif %}</td>
                     <td sorttable_customkey="{{ o.datetime_reported.sortkey }}">{% datetime_observed_display o.datetime_reported %}</td>
                     <td>{{ o.narrative|truncatewords:9 }}</td>
                 </tr>

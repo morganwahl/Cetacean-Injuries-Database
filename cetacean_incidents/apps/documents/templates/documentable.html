@@ -1,0 +1,1 @@
+{% if object %}{% if url %}<a href="{{ url }}">{% endif %}{% block name %}{{ object }}{% endblock %}{% if url %}</a>{% endif %}{% if needs_review %}&nbsp;<img title="this entry needs review" src="{{ media_url }}icons/needs_review.png">{% endif %}{% else %}<i>unknown</i>{% endif %}

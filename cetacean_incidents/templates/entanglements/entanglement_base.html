@@ -1,6 +1,6 @@
 {% extends "incidents/case_base.html" %}
-{% load contact_extras %}
 {% load generic_field_display %}
+{% link_filter %}
 
 {% block case_ids %}
 {% with case as c %}
@@ -148,7 +148,7 @@
 {% endif %}
 {% if case.analyzed_by %}
 <div>
-    <span class="fieldname">analyzed by</span>: {% contact_link case.analyzed_by %}
+    <span class="fieldname">analyzed by</span>: {{ case.analyzed_by|link }}
 </div>
 {% endif %}
 {% if case.gear_description %}

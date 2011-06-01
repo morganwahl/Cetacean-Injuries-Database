@@ -1,7 +1,7 @@
 {% extends "vessels/vessel_details_include.html" %}
 {# assumes vessel is 'v' #}
-{% load contact_extras %}
 {% load generic_field_display %}
+{% load link_filter %}
 
 {% block vessel_rows %}
 {{ block.super }}
@@ -10,7 +10,7 @@
         <th>captain (or officer on duty at the time)</th>
         <td>
             {% if v.captain %}
-            {% contact_link v.captain %}
+            {{ v.captain|link }}
             {% else %}
             <i>no contact info for captain</i>
             {% endif %}

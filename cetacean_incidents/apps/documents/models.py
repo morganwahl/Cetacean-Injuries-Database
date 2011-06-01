@@ -69,6 +69,28 @@ class Documentable(Specificable):
     Any class you want to attach documents to should inherit from this one.
     '''
     
+    # TODO could this be a property in a Meta class?
+    def get_html_options(self):
+        t = u'documentable.html'
+
+        # TODO belongs in import app
+        
+        # avoid circular imports
+        from cetacean_incidents.apps.csv_import import IMPORT_TAGS
+        
+        c = {
+            'needs_review': self.tag_set.filter(tag_text__in=IMPORT_TAGS).exists(),
+        }
+        if c['needs_review']:
+            c['media_url'] = settings.MEDIA_URL
+        
+        return {
+            'template': t,
+            'context': c,
+            # TODO when an import tag is removed, clear the cache for it's 'entry'
+            'use_cache': True, # cache by default, since we hit the database to check for import tags
+        }
+    
     def __unicode__(self):
         if not self.id:
             return "<new Documentable>"

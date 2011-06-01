@@ -1,8 +1,8 @@
 {% extends "page.html" %}
-{% load contact_extras %}
 {% load animal_extras %}
 {% load case_extras %}
 {% load observation_extras %}
+{% load link_filter %}
 
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
 
@@ -15,7 +15,7 @@
         <li>
             {{ name }}
             <div>
-                {% for c in contacts %}{% contact_link c %},{% endfor %}
+                {{ contacts|links|join:", " }}
             </div>
         </li>
         {% endfor %}

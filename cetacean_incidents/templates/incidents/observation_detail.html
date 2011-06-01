@@ -1,10 +1,10 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
-{% load contact_extras %}
 {% load case_extras %}
 {% load generic_field_display %}
 {% load taxon_extras %}
 {% load observation_extras %}
+{% load link_filter %}
 
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
@@ -131,7 +131,7 @@
                             {% endwith %}
                         </td>
                     </tr>
-                    <tr class="field"><th>observer</th><td>{% contact_link observation.observer %}</td></tr>
+                    <tr class="field"><th>observer</th><td>{{ observation.observer|link }}</td></tr>
                     {% if observation.observer_vessel %}
                     <tr class="field">
                         <th>vessel info for observer's vessel</th>
@@ -159,7 +159,7 @@
                             {% if observation.firsthand %}
                             <i>reported by the observer</i>
                             {% else %}
-                            {% contact_link observation.reporter %}
+                            {{ observation.reporter|link }}
                             {% endif %}
                         </td>
                     </tr>

@@ -2,7 +2,8 @@
 {% load animal_extras %}
 {% load case_extras %}
 {% load observation_extras %}
-{% load contact_extras %}
+{% load link_filter %}
+
 <div style="text-align: center;">
     <i>{{ cases|length }} case{{ cases|length|pluralize }}</i>
 </div>
@@ -46,7 +47,7 @@
 	        {% endwith %}
             <td>
                 {% for c in case.observation_set.observer_set %}
-                {% contact_link c %}
+                {{ c|link }}
                 {% empty %}
                 <i>no contact info for observers</i>
                 {% endfor %}

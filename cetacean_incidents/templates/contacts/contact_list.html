@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{% load contact_extras %}
+{% load link_filter %}
 {% load observation_extras %}
 
 {% block head %}
@@ -38,7 +38,7 @@
                     {% for contact in contact_list %}
                     <tr>
                         <td scope="row"{% if contact.sort_name %} sorttable_customkey="{{ contact.sort_name }}"{% endif %}>
-                            {% contact_link contact %}
+                            {{ contact|link }}
                         </td>
                         
                         <td>

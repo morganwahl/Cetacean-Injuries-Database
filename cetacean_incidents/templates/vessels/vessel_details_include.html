@@ -1,7 +1,7 @@
 {# assumes vessel is 'v' #}
-{% load contact_extras %}
 {% load vessel_extras %}
 {% load generic_field_display %}
+{% load link_filter %}
 
 <table>
 {% block vessel_rows %}
@@ -16,7 +16,7 @@
         <th>contact</th>
         <td>
             {% if v.contact %}
-            {% contact_link v.contact %}
+            {{ v.contact|link }}
             {% else %}
             <i>no contact info for this vessel</i>
             {% endif %}

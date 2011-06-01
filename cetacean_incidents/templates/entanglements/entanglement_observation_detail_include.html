@@ -1,6 +1,6 @@
 {# assumes an EntanglementObservation was passed in as eo #}
 {% load generic_field_display %}
-{% load contact_extras %}
+{% load link_filter %}
 
 <div class="section">
     <h3>Entanglement</h3>
@@ -17,7 +17,7 @@
                 </p>
                 {% if eo.gear_retrieved and eo.gear_retriever %}
                 <p>
-                    <i>gear retrived by:<i> {% contact_link eo.gear_retriever %}
+                    <i>gear retrived by:<i> {{ eo.gear_retriever|link }}
                 </p>
                 {% endif %}
                 {% if eo.gear_given_date %}
@@ -27,7 +27,7 @@
                 {% endif %}
                 {% if eo.gear_giver %}
                 <p>
-                    <i>given over by:<i> {% contact_link eo.gear_giver %}
+                    <i>given over by:<i> {{ eo.gear_giver|link }}
                 </p>
                 {% endif %}
              </td>
