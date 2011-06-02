@@ -28,6 +28,9 @@ def html(obj, link=False, use_cache=None):
     Given a model instance, return HTML an HTML representation of that model.
     '''
     
+    if obj is None:
+        return mark_safe(u"<i>none</i>")
+    
     if not isinstance(obj, Model):
         return unicode(obj)
     
