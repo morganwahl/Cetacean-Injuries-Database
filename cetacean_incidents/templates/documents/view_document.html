@@ -1,5 +1,6 @@
 {% extends "detail.html" %}
 {% load html_filter %}
+{% load link_filter %}
 
 {% block header %}
 <h2>{{ d|html }}</h2>
@@ -11,9 +12,7 @@
     {% if d.attached_to %}
     <tr class="field">
         <th>attached to:</th>
-        <td>
-            <a href="{{ d.attached_to.specific_instance.get_absolute_url }}">{{ d.attached_to.specific_instance }}</a>
-        </td>
+        <td>{{ d.attached_to.specific_instance|link }}</td>
     </tr>
     {% endif %}
     {% if d.visible_to.exists %}

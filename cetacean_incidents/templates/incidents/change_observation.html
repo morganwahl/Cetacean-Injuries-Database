@@ -1,6 +1,4 @@
 {% extends "detail.html" %}
-{% load animal_extras %}
-{% load case_extras %}
 {% load html_filter %}
 
 {% block head %}
@@ -14,7 +12,9 @@
 </style>
 {% endblock %}
 
-{% block title %}{{ block.super }}: {% if observation %}{{ observation }} [editing]{% else %}new observation{% endif %}{% endblock %}
+{% block title %}
+{{ block.super }}: {% if observation %}{{ observation }} [editing]{% else %}new observation{% endif %}
+{% endblock %}
 
 {% block ids %}
 {% if animal %}
