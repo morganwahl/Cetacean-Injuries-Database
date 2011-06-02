@@ -1,12 +1,13 @@
 {% extends "page.html" %}
+{% load html_filter %}
 
 {% block title %}
 {{ block.super }}: add document to {{ object }}
 {% endblock %}
 
 {% block header %}
-<h2>{{ object }}</h2>
-<h2>[adding a document ]</h2>
+<h2>{{ object|html }}</h2>
+<h2>[adding a document]</h2>
 {% endblock %}
 
 {% block content %}

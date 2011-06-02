@@ -1,3 +1,4 @@
 {% extends "entanglements/change_gear_owner.html" %}
+{% load html_filter %}
 
-{% block submit_button %}add gear owner info to {{ case }}{% endblock %}
+{% block submit_button %}add gear owner info to {{ case|html }}{% endblock %}

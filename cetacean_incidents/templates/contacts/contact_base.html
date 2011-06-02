@@ -2,6 +2,7 @@
 {% load generic_field_display %}
 {% load observation_extras %} {# for datetime_observed_display #}
 {% load link_filter %}
+{% load html_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -16,7 +17,7 @@
 
 {% block header %}
 <div>
-    <h2>{{ contact }}</h2>
+    <h2>{{ contact|html }}</h2>
 </div>
 {% endblock %}
 
@@ -46,7 +47,7 @@
                 {% if contact.affiliations.count %}
                 <ul>
                     {% for o in contact.affiliations.all %}
-                    <li>{{ o }}</li>
+                    <li>{{ o|html }}</li>
                     {% endfor %}
                 </ul>
                 {% else %}

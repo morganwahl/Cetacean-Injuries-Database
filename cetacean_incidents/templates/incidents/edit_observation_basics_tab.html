@@ -1,7 +1,6 @@
-<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+{% extends "incidents/edit_observation_tab.html" %}
 
-{{ forms.observation.non_field_errors }}
-
+{% block fields %}
 <div class="section">
     <h4>report date and time</h4>
     {% with forms.observation.datetime_reported as f %}
@@ -37,4 +36,5 @@
         {% endwith %}
     </div>
 </div>
+{% endblock %}
 

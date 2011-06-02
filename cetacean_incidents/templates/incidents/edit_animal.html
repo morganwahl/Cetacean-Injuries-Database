@@ -1,4 +1,5 @@
 {% extends "detail.html" %}
+{% load html_filter %}
 {% load animal_extras %}
 
 {% block title %}{{ block.super }}: {{ animal }} [editing] {% endblock %}
@@ -63,7 +64,7 @@
         {% include "labeled_field.html" %}
         {% endwith %}
     </div>
-	<button type="submit">save changes to {{ animal }}</button>
+	<button type="submit">save changes to {{ animal|html }}</button>
 </form>
 {% endblock %}
 

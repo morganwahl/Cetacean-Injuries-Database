@@ -1,6 +1,13 @@
 {# expects an Animal instance as 'animal' and a AnimalForm instance for that animal as 'animal_form' #}
+{% load html_filter %}
 
-<h3>{{ animal|default:"<i>new animal</i>" }}</h3>
+<h3>
+{% if animal %}
+{{ animal|html }}
+{% else %}
+<i>new animal</i>
+{% endif %}
+</h3>
 
 {% if animal.case_set.count > 1 or animal.observation_set.count > 1 %}
 <div class="edit-warning">

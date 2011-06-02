@@ -1,7 +1,8 @@
 {% extends "detail.html" %}
+{% load html_filter %}
 
 {% block header %}
-<h2>{{ d }}</h2>
+<h2>{{ d|html }}</h2>
 {% endblock %}
 
 {% block content %}

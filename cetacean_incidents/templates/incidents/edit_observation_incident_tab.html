@@ -1,7 +1,6 @@
-<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+{% extends "incidents/edit_observation_tab.html" %}
 
-{{ forms.observation.non_field_errors }}
-
+{% block fields %}
 <div class="section">
 {% with forms.observation.ashore as f %}
 {% include "labeled_field.html" %}
@@ -39,4 +38,4 @@
 {% include "labeled_field.html" %}
 {% endwith %}
 </div>
-
+{% endblock %}

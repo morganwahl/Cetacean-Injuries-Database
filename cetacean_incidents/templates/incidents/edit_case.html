@@ -1,4 +1,5 @@
 {% extends "detail.html" %}
+{% load html_filter %}
 
 {% block title %}{{ block.super }}: {{ case }} [editing]{% endblock %}
 
@@ -18,14 +19,20 @@
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}
-<h2>{{ animal|default:"<i>new animal</i>" }}</h2>
-<h2 style="margin-left:1em;">{{ case }}</h2>
+<h2>
+{% if animal %}
+{{ animal|html }}
+{% else %}
+<i>new animal</i>
+{% endif %}
+</h2>
+<h2 style="margin-left:1em;">{{ case|html }}</h2>
 {% endblock %}
 
 {% block content %}
 <form action="" method="post">
     <button type="submit">
-        save changes to {{ case }} and {{ animal }}
+        save changes to {{ case|html }} and {{ animal|html }}
     </button>
     {% csrf_token %}
     

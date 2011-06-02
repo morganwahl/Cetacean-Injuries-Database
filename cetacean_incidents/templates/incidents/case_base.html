@@ -4,6 +4,7 @@
 {% load generic_field_display %}
 {% load case_extras %}
 {% load link_filter %}
+{% load html_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -30,7 +31,7 @@
 {% include "incidents/ole-warning.html" %}
 {% endif %}
 <h2>{% animal_link case.animal %}</h2>
-<h2 style="margin-left:1em;">{{ case }}</h2>
+<h2 style="margin-left:1em;">{{ case|html }}</h2>
 {% if perms.incidents.change_animal and perms.incidents.change_case %}
 <div>
     {% block edit_case_link %}

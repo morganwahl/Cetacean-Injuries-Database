@@ -1,6 +1,7 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
 {% load case_extras %}
+{% load html_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -38,17 +39,29 @@
 {% block header %}
 {% for c in cases %}
 {% if c.ole_investigation %}
-{{ c }}: {% include "incidents/ole-warning.html" %}
+{{ c|html }}: {% include "incidents/ole-warning.html" %}
 {% endif %}
 {% endfor %}
-<h2>{{ animal|default:"<i>new animal</i>" }}</h2>
+<h2>
+{% if animal %}
+{{ animal|html }}
+{% else %}
+<i>new animal</i>
+{% endif %}
+</h2>
 {% for c in cases %}
-<h2 style="margin-left:1em;">{% block case_header %}{{ c }}{% endblock %}</h2>
+<h2 style="margin-left:1em;">{% block case_header %}{{ c|html }}{% endblock %}</h2>
 {% endfor %}
 {% if new_case %}
 <h2 style="margin-left:1em;"><i>new case</i></h2>
 {% endif %}
-<h2 style="margin-left:2em;">{{ observation|default:"<i>new observation</i>" }}</h2>
+<h2 style="margin-left:2em;">
+{% if observation %}
+{{ observation|html }}
+{% else %}
+<i>new observation</i>
+{% endif %}
+</h2>
 {% endblock %}
 
 {% block content %}
@@ -56,11 +69,11 @@
     <button type="submit">
         {% block submit_button %}
         {% if observation.id %}
-        save changes to this observation and {{ cases|join:", " }} and {{ animal }}
+        save changes to this observation and {{ cases|htmls|join:", " }} and {{ animal|html }}
         {% else %}{% if cases.0.id %}
-        add a new observation to {{ cases|join:", " }} and save changes to it and {{ animal }}
+        add a new observation to {{ cases|htmls|join:", " }} and save changes to it and {{ animal|html }}
         {% else %}{% if animal.id %}
-        add a new case and its initial observation for {{ animal }} and save changes to {{ animal }}
+        add a new case and its initial observation for {{ animal|html }} and save changes to {{ animal|html }}
         {% else %}
         add a new animal and its first case and that case's initial observation
         {% endif %}{% endif %}{% endif %}

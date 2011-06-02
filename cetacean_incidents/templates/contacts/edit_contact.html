@@ -1,4 +1,5 @@
 {% extends "contacts/contact_base.html" %}
+{% load html_filter %}
 
 {% block title %}{{ block.super }}: editing {{ contact }}{% endblock %}
 
@@ -11,7 +12,7 @@
 <form action="" method="post">
 {% csrf_token %}
 {% include "contacts/change_contact_include.html" %}
-<button type="submit">save changes to {{ contact }}</button>
+<button type="submit">save changes to {{ contact|html }}</button>
 </form>
 {% endblock %}
 

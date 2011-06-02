@@ -1,11 +1,12 @@
 {% extends "page.html" %}
+{% load html_filter %}
 
 {% block title %}
 {{ block.super }}: editing {{ d }}
 {% endblock %}
 
 {% block header %}
-<h2>editing {{ d }}</h2>
+<h2>{{ d|html }} [editing]</h2>
 {% endblock %}
 
 {% block content %}

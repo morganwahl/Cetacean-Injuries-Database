@@ -1,7 +1,6 @@
-<h3>{{ observation|default:"<i>new observation</i>" }}</h3>
+{% extends "incidents/edit_observation_tab.html" %}
 
-{{ forms.observation.non_field_errors }}
-
+{% block fields %}
 {% with forms.shipstrike_observation.striking_vessel_info as f %}
 {% include "labeled_field.html" %}
 {% endwith %}
@@ -24,4 +23,4 @@
     {% include "shipstrikes/edit_striking_vessel_include.html" %}
     {% endwith %}
 </div>
-
+{% endblock fields %}

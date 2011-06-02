@@ -4,6 +4,7 @@
 {% load generic_field_display %}
 {% load taxon_extras %}
 {% load link_filter %}
+{% load html_filter %}
 
 {% block title %}{{ block.super }}: {{ observation }}{% endblock %}
 
@@ -38,7 +39,7 @@
 </h2>
 {% endfor %}
 <h2 style="margin-left:2em;">
-    {{ observation }}
+    {{ observation|html }}
 </h2>
 {# the observation-editing page change also change animals and cases #}
 {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}

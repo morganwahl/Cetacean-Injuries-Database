@@ -1,9 +1,10 @@
 {% extends "detail.html" %}
+{% load html_filter %}
 
 {% block title %}{{ block.super }}: {{ case }}: [choosing animal]{% endblock %}
 
 {% block header %}
-<h2>{{ case }}</h2>
+<h2>{{ case|html }}</h2>
 <h2 style="margin-left:2em;">[choosing animal]</h2>
 {% endblock %}
 
@@ -12,7 +13,7 @@
 Note that this will change the animal for these observations:
 <ul>
     {% for o in observation_set %}
-    <li>{{ o }} ({{ o.cases.all|join:", " }})</li>
+    <li>{{ o|html }} ({{ o.cases.all|htmls|join:", " }})</li>
     {% endfor %}
 </ul>
 {% endif %}
@@ -21,7 +22,7 @@ Since some of these observations are relevant to other cases, this will
 change the animal for these cases:
 <ul>
     {% for c in case_set %}
-    <li>{{ c }}</li>
+    <li>{{ c|html }}</li>
     {% endfor %}
 </ul>
 {% endif %}
