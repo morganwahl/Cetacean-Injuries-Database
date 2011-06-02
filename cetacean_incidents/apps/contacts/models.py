@@ -86,13 +86,14 @@ class Contact(AbstractContact, Documentable):
         """,
     )
 
+    # TODO properties probably shouldn't do queries
     @property
     def observed_ordered(self):
         return self.observed.order_by(
             'datetime_observed',
             'datetime_reported',
         )
-    
+
     # TODO properties probably shouldn't do queries
     @property
     def reported_ordered(self):
