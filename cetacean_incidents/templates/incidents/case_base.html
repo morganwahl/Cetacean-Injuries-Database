@@ -197,7 +197,7 @@
                 </a>
             </td>
             {% endif %}
-            <td>{% observation_link o %}</td>
+            <td>{{ o|link }}</td>
             <td>{{ o.observer|link }}</td>
             <td sorttable_customkey="{{ o.datetime_observed.sortkey }}">{% datetime_observed_display o.datetime_observed %}</td>
             <td>{% if o.firsthand %}<i>reported by the observer</i>{% else %}{{ o.reporter|link }}{% endif %}</td>

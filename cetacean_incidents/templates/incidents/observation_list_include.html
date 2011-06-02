@@ -30,9 +30,7 @@
                 </a>
             </td>
             {% endif %}
-            <td sorttable_customkey="{{ o.id|stringformat:"04d" }}">
-                {% observation_link o %}
-            </td>
+            <td sorttable_customkey="{{ o.id|stringformat:"04d" }}">{{ o|link }}</td>
             <td>{% animal_link o.animal %}</td>
             <td>
                 {% if o.cases.count > 1 %}

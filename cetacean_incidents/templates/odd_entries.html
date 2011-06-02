@@ -1,7 +1,6 @@
 {% extends "page.html" %}
 {% load animal_extras %}
 {% load case_extras %}
-{% load observation_extras %}
 {% load link_filter %}
 
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
@@ -96,7 +95,7 @@
     <h3>Observations for Entanglement cases without entanglement data</h3>
     <ul>
         {% for o in observations_no_ent %}
-        <li>{% observation_link o %}</li>
+        <li>{{ o|link }}</li>
         {% endfor %}
     </ul>
 </div>
@@ -106,9 +105,10 @@
     <h3>Observations for Shipstrike cases without shipstrike data</h3>
     <ul>
         {% for o in observations_no_ss %}
-        <li>{% observation_link o %}</li>
+        <li>{{ o|link }}</li>
         {% endfor %}
     </ul>
 </div>
 {% endif %}
 {% endblock %}
+

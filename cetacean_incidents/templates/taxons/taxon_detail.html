@@ -1,7 +1,6 @@
 {% extends "page.html" %}
 {% load generic_field_display %}
 {% load animal_extras %}
-{% load observation_extras %}
 {% load taxon_extras %}
 
 {% block title %}{{ block.super }}: {{ taxon }}{% endblock %}
@@ -79,7 +78,7 @@
     <h3>Observations of {% taxon_display taxon %}</h3>
     <table>
         {% for o in taxon.observation_set.all %}
-        <tr><td>{% observation_link o %}</td></tr>
+        <tr><td>{{ o|link }}</td></tr>
         {% endfor %}
     </table>
 </div>

@@ -1,12 +1,8 @@
 from decimal import Decimal as D
 
-from django.conf import settings
 from django.core.cache import cache
 from django.db import models
 from django import template
-from django.template import Context
-from django.template.loader import get_template
-from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.contacts.models import Contact
 
@@ -21,38 +17,6 @@ from case_extras import YearsForm
 
 register = template.Library()
 
-@register.simple_tag
-def observation_link(observation):
-    '''\
-    Returns the link HTML for a observation.
-    '''
-    
-    cache_key = u'observation_link_%d' % observation.id
-
-    cached = cache.get(cache_key)
-    if cached:
-        return cached
-    
-    # avoid circular imports
-    from cetacean_incidents.apps.csv_import import IMPORT_TAGS
-    needs_review = bool(Tag.objects.filter(entry=observation, tag_text__in=IMPORT_TAGS))
-
-    context = Context({
-        'observation': observation,
-        'needs_review': needs_review,
-        'media_url': settings.MEDIA_URL,
-    })
-
-    # assumes the loader 
-    # django.template.loaders.app_directories.load_template_source is being
-    # used, which is the default.
-    template = get_template('observation_link.html')
-    result = template.render(context)
-    
-    cache.set(cache_key, result, 7 * 24 * 3600)
-
-    return result
-    
 # remove stale cache entries
 def _observation_post_save(sender, **kwargs):
     # sender should be Observation

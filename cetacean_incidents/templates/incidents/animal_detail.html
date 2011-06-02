@@ -139,7 +139,7 @@
             {% if perms.incidents.change_animal and perms.incidents.change_case and perms.incidents.change_observation %}
             <td><a href="{{ o.specific_instance.get_edit_url }}"><img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this observation"></a></td>
             {% endif %}
-            <td>{% observation_link o %}</td>
+            <td>{{ o|link }}</td>
             <td sorttable_customkey="{{ o.observer.sort_name }}">{{ o.observer|link }}</td>
             <td sorttable_customkey="{{ o.datetime_observed.sortkey }}">{% datetime_observed_display o.datetime_observed %}</td>
             <td sorttable_customkey="{{ o.reporter.sort_name }}">{% if o.firsthand %}<i>reported by the observer</i>{% else %}{{ o.reporter|link }}{% endif %}</td>

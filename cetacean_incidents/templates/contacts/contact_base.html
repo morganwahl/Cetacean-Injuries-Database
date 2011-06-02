@@ -75,7 +75,7 @@
             <tbody>
                 {% for o in contact.observed_or_reported_ordered.reverse.all %}
                 <tr>
-                    <td>{% observation_link o %}</td>
+                    <td>{{ o|link }}</td>
                     <td>{% if o.observer %}{{ o.observer|link }}{% else %}<i>none</i>{% endif %}</td>
                     <td sorttable_customkey="{{ o.datetime_observed.sortkey }}">{% datetime_observed_display o.datetime_observed %}</td>
                     <td>{% if o.reporter %}{{ o.reporter|link }}{% else %}<i>none</i>{% endif %}</td>

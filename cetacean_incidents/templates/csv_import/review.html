@@ -1,7 +1,6 @@
 {% extends "page.html" %}
 {% load animal_extras %}
 {% load case_extras %}
-{% load observation_extras %}
 
 {% block title %}{{ block.super }}: reviewing imported entries{% endblock %}
 
@@ -41,12 +40,12 @@
         <em>observations:</em>
         <ul>
             {% for o in a.observation_set.all %}
-            <li>{% observation_link o %}</li>
+            <li>{{ o|link }}</li>
             {% endfor %}
         </ul>
         {% else %}
         {% if a.observation_set.count == 1 %}
-        <em>observation:</em> {% observation_link a.observation_set.all.0 %}
+        <em>observation:</em> {{ a.observation_set.all.0|link }}
         {% endif %}
         {% endif %}
         </div>

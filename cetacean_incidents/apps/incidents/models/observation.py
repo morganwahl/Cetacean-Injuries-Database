@@ -422,7 +422,23 @@ class Observation(Documentable, Importable):
 
     def get_edit_url(self):
         return reverse('edit_observation', args=[self.id])
+    
+    def get_html_options(self):
+        options = super(Observation, self).get_html_options()
 
+        options['template'] = 'observation.html'
+
+        if not 'context' in options:
+            options['context'] = {}
+        dead = self.animal.determined_dead_before
+        if not dead is None:
+            start = self.earliest_datetime.date()
+            end = self.latest_datetime.date()
+            options['context']['dead'] = (dead <= end)
+            options['context']['dead_during'] = (dead >= start and dead <= end)
+
+        return options
+    
     def __unicode__(self):
         ret = 'observation '
         if self.datetime_observed:
