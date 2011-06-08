@@ -182,27 +182,31 @@ class Smidgen(object):
             # this Smidgen. Also, register signal handlers to clear the cache of
             # those patterns
             model = obj[0].model_class()
-            self.cache_key_patterns[model] = {}
             key_pattern = 'clean_cache__%s__%s__%%(pk)s' % (
                 model._meta.app_label,
                 model._meta.object_name.lower(),
             )
-            missing_key_pattern = key_pattern + '__missing'
-            self.cache_key_patterns[model]['missing'] = missing_key_pattern
-            register_cache_clear_post_create(model, missing_key_pattern)
+            # we may encound the same model more than once
+            if not model in self.cache_key_patterns:
+                missing_key_pattern = key_pattern + '__missing'
+                self.cache_key_patterns[model] = {
+                    'missing': missing_key_pattern,
+                    'fields': {},
+                }
+                register_cache_clear_post_create(model, missing_key_pattern)
 
             # copy over fieldnames one at a time just to ensure what was passed in is indeed an iterable
-            self.cache_key_patterns[model]['fields'] = {}
             for fieldname in fieldnames:
                 self.fields[obj].add(fieldname)
 
                 # create cache key patterns to be used by State objects created
                 # by this Smidgen. Also, register signal handlers to clear the
                 # cache of those patterns
-                value_key_pattern = key_pattern + '__' + fieldname
-                self.cache_key_patterns[model]['fields'][fieldname] = value_key_pattern
-                register_cache_clear_post_update(model, value_key_pattern)
-                register_cache_clear_post_delete(model, value_key_pattern)
+                if not fieldname in self.cache_key_patterns[model]['fields']:
+                    value_key_pattern = key_pattern + '__' + fieldname
+                    self.cache_key_patterns[model]['fields'][fieldname] = value_key_pattern
+                    register_cache_clear_post_update(model, value_key_pattern)
+                    register_cache_clear_post_delete(model, value_key_pattern)
         
     def __or__(self, other):
         if not isinstance(other, Smidgen):
