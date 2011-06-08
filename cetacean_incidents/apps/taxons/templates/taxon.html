@@ -1,0 +1,20 @@
+{% load pretty %}{% pretty %}
+{% with object as taxon %}
+
+{% if taxon %}
+{% if url %}
+<a href="{{ url }}">
+{% endif %}
+
+<i>{{ taxon.scientific_name }}</i>{% if not taxon.is_binomial %} {{ taxon.get_rank_display }}{% endif %}
+
+{% if url %}
+</a>
+{% endif %}
+
+{% else %}
+<i>unknown</i>
+{% endif %}
+
+{% endwith %}
+{% endpretty %}

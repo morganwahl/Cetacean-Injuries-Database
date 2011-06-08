@@ -1,5 +1,7 @@
 from django.db import models
 
+from cetacean_incidents.apps.clean_cache import Smidgen
+
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
 class TaxonManager(models.Manager):
@@ -207,6 +209,30 @@ class Taxon(models.Model):
         verbose_name = 'taxon'
         verbose_name_plural = 'taxa'
 
+    def get_html_options(self):
+        template = 'taxon.html'
+        
+        deps = Smidgen({
+            self: [
+                'id',
+                'rank',
+                'supertaxon',
+                'name',
+            ],
+        })
+        t = self
+        while t.supertaxon:
+            t = t.supertaxon
+            deps |= Smidgen({
+                t: ['rank', 'name']
+            })
+        
+        return {
+            'template': template,
+            'use_cache': True,
+            'cache_deps': deps,
+        }
+    
     @models.permalink
     def get_absolute_url(self):
         return ('taxon_detail', [str(self.id)]) 
