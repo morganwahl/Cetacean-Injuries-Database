@@ -31,6 +31,8 @@ from django.contrib.auth.decorators import login_required
 from cetacean_incidents.decorators import permission_required
 from cetacean_incidents.forms import merge_source_form_factory
 
+from cetacean_incidents.apps.generic_templates.templatetags.html_filter import html
+
 from forms import TaxonMergeForm
 from models import Taxon
 
@@ -110,7 +112,7 @@ def taxon_search_json(request):
         taxa.append({
             'id': result.id,
             'plain_name': result.scientific_name(),
-            'html_name': render_to_string('taxon_display.html', { 'taxon': result }),
+            'html_name': html(result),
             'common_names': result.common_names,
         })
     # TODO return 304 when not changed?

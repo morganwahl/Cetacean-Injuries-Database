@@ -1,7 +1,6 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
 {% load generic_field_display %}
-{% load taxon_extras %}
 {% load link_filter %}
 {% load html_filter %}
 
@@ -168,7 +167,7 @@
                 <h3>Animal identification</h3>
                 <table>
                     {% if observation.taxon %}
-                    <tr class="field"><th>taxon</th><td>{% taxon_link observation.taxon %}</td></tr>
+                    <tr class="field"><th>taxon</th><td>{{ observation.taxon|link }}</td></tr>
                     {% endif %}
                     {% if observation.gender %}
                     {% display_chosen_row observation "gender" %}

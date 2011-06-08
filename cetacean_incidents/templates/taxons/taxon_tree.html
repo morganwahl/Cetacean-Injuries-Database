@@ -1,5 +1,5 @@
 {% extends "page.html" %}
-{% load taxon_extras %}
+{% load link_filter %}
 
 {% block title %}{{ block.super}}: {{ taxa_name }}{% endblock %}
 
@@ -9,13 +9,13 @@
 <ul>
     {% for taxon in taxa %}
     <li>
-        {% taxon_link taxon %}
+        {{ taxon|link }}
         {% if taxon.subtaxa.count %}
         <a href="{% url taxon_tree taxon.id %}">+</a>
         <ul>
             {% for subtaxon in taxon.subtaxa.all %}
             <li>
-                {% taxon_link subtaxon %}
+                {{ subtaxon|link }}
                 {% if subtaxon.subtaxa.count %}
                 <a href="{% url taxon_tree subtaxon.id %}">...</a>
                 {% endif %}

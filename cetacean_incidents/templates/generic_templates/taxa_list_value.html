@@ -1,10 +1,10 @@
-{% load taxon_extras %}
+{% load link_filter %}
 
 {% if value.exists %}
 <ul>
 {% for v in value.all %}
 <li>
-{% taxon_link v %}
+{{ v|link }}
 {% if v.common_names %}
 <br><span style="font-size: 90%;">{{ v.common_names }}</span>
 {% endif %}

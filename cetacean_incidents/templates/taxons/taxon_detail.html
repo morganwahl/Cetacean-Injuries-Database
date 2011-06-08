@@ -1,17 +1,18 @@
 {% extends "page.html" %}
 {% load generic_field_display %}
+{% load link_filter %}
 {% load animal_extras %}
-{% load taxon_extras %}
+{% load html_filter %}
 
 {% block title %}{{ block.super }}: {{ taxon }}{% endblock %}
 
 {% block header %}
 {% if taxon.supertaxon %}
-<h3>{% taxon_link taxon.supertaxon %}</h3>
+<h3>{{ taxon.supertaxon|link }}</h3>
 {% endif %}
-<h2 style="margin-left:2em;">{% taxon_display taxon %}</h2>
+<h2 style="margin-left:2em;">{{ taxon|html }}</h2>
 {% for subtaxon in taxon.subtaxa.all %}
-<h3 style="margin-left:4em;">{% taxon_link subtaxon %}</h3>
+<h3 style="margin-left:4em;">{{ subtaxon|link }}</h3>
 {% endfor %}
 {% if perms.taxons.change_taxon and perms.taxons.delete_taxon %}
 <script type="text/javascript">
@@ -46,7 +47,7 @@
 
 {% if taxon.animal_set.count %}
 <div>
-    <h3>Animals only determined to be {% taxon_display taxon %}</h3>
+    <h3>Animals only determined to be {{ taxon|html }}</h3>
     <table>
         {% for a in taxon.animal_set.all %}
         <tr><td>{% animal_link a %}</td></tr>
@@ -56,14 +57,14 @@
 {% endif %}
 
 <div>
-    <h3>Animals determined to be subtaxa of {% taxon_display taxon %}</h3>
+    <h3>Animals determined to be subtaxa of {{ taxon|html }}</h3>
     <table>
         {% for subtaxon in taxon.descendants %}
         {% if subtaxon.animal_set.count %}
         {% for a in subtaxon.animal_set.all %}
         <tr>
             <th style="text-align: right;">
-                {% taxon_link subtaxon %}
+                {{ subtaxon|link }}
             </th>
             <td>{% animal_link a %}</td>
         </tr>
@@ -75,7 +76,7 @@
 
 {% if taxon.observation_set.count %}
 <div>
-    <h3>Observations of {% taxon_display taxon %}</h3>
+    <h3>Observations of {{ taxon|html }}</h3>
     <table>
         {% for o in taxon.observation_set.all %}
         <tr><td>{{ o|link }}</td></tr>
@@ -86,7 +87,7 @@
 
 {% if taxon.targeted_by.count %}
 <div>
-    <h3>Entanglements in gear targeting {% taxon_display taxon %}</h3>
+    <h3>Entanglements in gear targeting {{ taxon|html }}</h3>
     {% with taxon.targeted_by.all as cases %}
     {% include "incidents/case_list_include.html" %}
     {% endwith %}

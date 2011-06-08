@@ -1,9 +1,11 @@
-{% load taxon_extras %}
+{% load html_filter %}
+{% load link_filter %}
+
 {% if value %}
 {% if link %}
-{% taxon_link value %}
+{{ value|link }}
 {% else %}
-{% taxon_display value %}
+{{ value|html }}
 {% endif %}
 ({{ value.common_names }})
 {% else %}

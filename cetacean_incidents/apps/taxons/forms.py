@@ -9,6 +9,8 @@ from django.forms.models import (
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
+from cetacean_incidents.apps.generic_templates.templatetags.html_filter import html
+
 from cetacean_incidents.apps.dag.widgets import HierarchicalCheckboxSelectMultiple
 
 from cetacean_incidents.apps.jquery_ui.widgets import ModelAutocomplete
@@ -35,7 +37,7 @@ class TaxonAutocomplete(ModelAutocomplete):
     
     def id_to_html_display(self, id):
         taxon = Taxon.objects.get(id=id)
-        return render_to_string('taxon_display.html', { 'taxon': taxon })
+        return html(taxon)
 
     def render(self, name, value, attrs=None):
         return super(TaxonAutocomplete, self).render(
