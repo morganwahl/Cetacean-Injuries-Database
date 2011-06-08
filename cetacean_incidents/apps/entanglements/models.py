@@ -7,6 +7,8 @@ from django.core.validators import (
 from django.core.urlresolvers import reverse
 from django.db import models
 
+from cetacean_incidents.apps.clean_cache import Smidgen
+
 from cetacean_incidents.apps.contacts.models import (
     AbstractContact,
     Contact,
@@ -310,6 +312,17 @@ class Entanglement(Case, GearAnalysis):
             )
         )
         
+    def get_html_options(self):
+        options = super(Entanglement, self).get_html_options()
+
+        if not 'cache_deps' in options:
+            options['cache_deps'] = Smidgen()
+        options['cache_deps'] |= Smidgen({
+            self: ['nmfs_id'], # used in the case's name
+        })
+        
+        return options
+    
     @models.permalink
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])
