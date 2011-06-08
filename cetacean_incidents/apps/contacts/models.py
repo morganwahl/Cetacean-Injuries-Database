@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import Q
 
+from cetacean_incidents.apps.clean_cache import Smidgen
+
 from cetacean_incidents.apps.documents.models import Documentable
 
 class Organization(models.Model):
@@ -134,7 +136,19 @@ class Contact(AbstractContact, Documentable):
         # TODO make 'sort_name' blank in the interface if it's the same as name
         if not self.sort_name:
             self.sort_name = self.name
-
+    
+    def get_html_options(self):
+        options = super(Contact, self).get_html_options()
+        
+        # AbstractContact.__unicode__ uses name
+        if not 'cache_deps' in options:
+            options['cache_deps'] = Smidgen()
+        options['cache_deps'] = Smidgen({
+            self: ('name',)
+        })
+        
+        return options
+    
     @models.permalink
     def get_absolute_url(self):
         return ('contact_detail', [str(self.pk)]) 
