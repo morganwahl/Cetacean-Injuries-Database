@@ -1,6 +1,5 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
-{% load case_extras %}
 {% load generic_field_display %}
 {% load taxon_extras %}
 {% load link_filter %}
@@ -32,7 +31,7 @@
     {% if cd.previous %}
     <a href="{% url observation_detail cd.previous.id %}" title="previous observation in this case">&#x2190;</a>
     {% endif %}
-    {% case_link cd.case %}
+    {{ cd.case|link }}
     {% if cd.next %}
     <a href="{% url observation_detail cd.next.id %}" title="next observation  in this case">&#x2192;</a>
     {% endif %}

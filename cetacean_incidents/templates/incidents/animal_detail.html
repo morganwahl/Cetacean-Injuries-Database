@@ -1,9 +1,9 @@
 {% extends "detail.html" %}
 {% load animal_extras %}
-{% load case_extras %}
 {% load observation_extras %} {# for datetime_observed_display #}
 {% load generic_field_display %}
 {% load link_filter %}
+{% load html_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -99,7 +99,7 @@
                 <img src="{{ MEDIA_URL}}icons/edit.png" alt="edit" title="edit this case">
             </a>
             {% endif %}
-            {% case_link case %}
+            {{ case|link }}
         </li>
         {% endfor %}
     </ul>

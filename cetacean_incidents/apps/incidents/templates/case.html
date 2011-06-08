@@ -1,0 +1,26 @@
+{% extends "documentable.html" %}{% load pretty %}{% pretty %}
+
+{% block name %}
+{% with object as case %}
+{% if case.ole_investigation %}<span class="ole-true">{% endif %}
+{% if not case.valid %}<span class="invalid">{% endif %}
+{{ case }}
+{% if not case.valid %}</span>{% endif %}</a>
+{% endwith %}
+{% endblock %}
+
+{% block icons %}
+{% with object as case %}
+{% if case.ole_investigation %}
+<img
+    src="{{ media_url }}icons/OLE.png"
+    alt="OLE"
+    title="there's an OLE investigation for this case">
+{% endif %}
+{% include "incidents/case-valid-icon.html" %}
+{{ block.super }}
+{% if case.ole_investigation %}</span>{% endif %}
+{% endwith %}
+{% endblock %}
+
+{% endpretty %}

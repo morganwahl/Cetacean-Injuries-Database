@@ -1,6 +1,5 @@
 {# assumes a list of observations as 'observations' in the context #}
 {% load animal_extras %}
-{% load case_extras %}
 {% load observation_extras %} {# for date_observed_display #}
 {% load link_filter %}
 
@@ -37,11 +36,13 @@
                 {% if o.cases.count > 1 %}
                 <ul>
                     {% for c in o.cases.all %}
-                    <li>{% case_link c %}</li>
+                    <li>
+                        {{ c|link }}
+                    </li>
                     {% endfor %}
                 <ul>
                 {% else %}
-                {% case_link o.cases.all.0 %}
+                {{ o.cases.all.0|link }}
                 {% endif %}
             </td>
 	        {% with o.datetime_observed as date %}

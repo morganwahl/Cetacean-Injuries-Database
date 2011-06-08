@@ -1,6 +1,5 @@
 {% extends "page.html" %}
 {% load animal_extras %}
-{% load case_extras %}
 {% load link_filter %}
 
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
@@ -69,7 +68,7 @@
     <ul>
         {% for c in cases_no_observations %}
         <li>
-            {% case_link c %}
+            {{ c|link }}
         </li>
         {% endfor %}
     </ul>
@@ -82,9 +81,7 @@
         {% for nmfs, ents in entanglements_same_nmfs.items %}
         <li>
             {{ nmfs }}
-            <div>
-                {% for e in ents %}{% case_link e %},{% endfor %}
-            </div>
+            <div>{{ ents|links|join:", " }}</div>
         </li>
         {% endfor %}
     </ul>

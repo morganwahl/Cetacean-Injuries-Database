@@ -1,6 +1,6 @@
 {% extends "page.html" %}
+{% load link_filter %}
 {% load animal_extras %}
-{% load case_extras %}
 
 {% block title %}{{ block.super }}: reviewing imported entries{% endblock %}
 
@@ -25,12 +25,12 @@
         <em>cases:</em>
         <ul>
             {% for c in a.case_set.all %}
-            <li>{% case_link c %}</li>
+            <li>{{ c|link }}</li>
             {% endfor %}
         </ul>
         {% else %}
         {% if a.case_set.count == 1 %}
-        <em>case:</em> {% case_link a.case_set.all.0 %}
+        <em>case:</em> {{ a.case_set.all.0|link }}
         {% endif %}
         {% endif %}
         </div>

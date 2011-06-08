@@ -1,6 +1,5 @@
 {# assumes a list of cases as 'cases' in the context #}
 {% load animal_extras %}
-{% load case_extras %}
 {% load observation_extras %} {# for date_observed_dipsplay #}
 {% load link_filter %}
 
@@ -35,7 +34,7 @@
             {% endif %}
             {% with case.current_yearnumber as ycn %}
             <td sorttable_customkey="{{ case.entanglement.nmfs_id|default:"A00-00" }} {{ ycn.year|default:9999 }}{{ ycn.number|default:0|stringformat:"04d" }}{{ case.id|stringformat:"04d" }}">
-                {% case_link case %}
+                {{ case|link }}
             </td>
             {% endwith %}
             <td>{% animal_link case.animal %}</td>

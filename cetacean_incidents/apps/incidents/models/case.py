@@ -1,8 +1,11 @@
 # -*- encoding: utf-8 -*-
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
+
+from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -325,6 +328,24 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         
         return name
     
+    def _get_name_smidgen(self):
+        s = Smidgen({
+            self: ['id', 'observation_set', 'animal', 'current_yearnumber', 'case_type'],
+            self.animal: ['field_number', 'observation_set', 'determined_taxon'],
+            self.current_yearnumber: ['year', 'number'],
+        })
+        
+        for o in self.observation_set.all():
+            s |= Smidgen({
+                o: ['cases', 'datetime_observed'],
+            })
+        for o in self.animal.observation_set.all():
+            s |= Smidgen({
+                o: ['taxon'],
+            })
+        
+        return s
+    
     # names_list is intentially read-only, so that it can only be modified via
     # update_names
     def _get_names_list(self):
@@ -619,6 +640,27 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         null= False,
         help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
     )
+    
+    def get_html_options(self):
+        options = super(Case, self).get_html_options()
+
+        options['template'] = 'case.html'
+        
+        if not 'context' in options:
+            options['context'] = {}
+        options['context']['media_url'] = settings.MEDIA_URL
+        
+        if not 'cache_deps' in options:
+            options['cache_deps'] = Smidgen()
+        options['cache_deps'] |= Smidgen({
+            self: [
+                'ole_investigation',
+                'valid',
+            ],
+        })
+        options['cache_deps'] |= self._get_name_smidgen()
+        
+        return options
     
     def __unicode__(self):
         try:
