@@ -1,8 +1,10 @@
-from django.core.cache import cache
 from django.db.models import Model
 from django import template
 from django.utils.safestring import mark_safe
 from django.template.loader import select_template, get_template
+
+from cetacean_incidents.apps.clean_cache import clearing_cache as cache
+from cetacean_incidents.apps.clean_cache import Smidgen
 
 register = template.Library()
 
@@ -83,7 +85,14 @@ def html(obj, link=False, use_cache=None):
     html = html.strip()
     
     if use_cache:
-        cache.set(cache_key, html, CACHE_TIMEOUT)
+        # we can be sure the obj has an 'id' field since otherwise use_cache 
+        # would be False (see above)
+        deps = Smidgen({
+            obj: ('id',),
+        })
+        if 'cache_deps' in options:
+            deps |= options['cache_deps']
+        cache.set(cache_key, html, CACHE_TIMEOUT, deps)
     
     return mark_safe(html)
 
