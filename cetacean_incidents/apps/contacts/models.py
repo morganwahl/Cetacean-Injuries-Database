@@ -56,7 +56,7 @@ class AbstractContact(models.Model):
         help_text= u"""anything to note about this contact info? e.g. office 
             hours, alternative phone numbers, etc.""",
     )
-   
+    
     def __unicode__(self):
         if self.name:
             return self.name

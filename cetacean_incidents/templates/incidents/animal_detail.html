@@ -108,7 +108,7 @@
         <i>no cases yet</i>
     </div>
     {% endif %}
-    {# don't forget the case-adding page can also editing animals and adds an observation #}
+    {# don't forget the case-adding page can also edit animals and adds an observation #}
     {% if perms.incidents.change_animal and perms.incidents.add_case and perms.incidents.add_observation %}
     <a href="{% url add_case animal.id %}">add a new case for this animal</a>
     {% endif %}

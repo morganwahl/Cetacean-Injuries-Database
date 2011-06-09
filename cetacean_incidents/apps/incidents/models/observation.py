@@ -429,7 +429,7 @@ class Observation(Documentable, Importable):
         options = super(Observation, self).get_html_options()
 
         options['template'] = 'observation.html'
-
+        
         if not 'context' in options:
             options['context'] = {}
         dead = self.animal.determined_dead_before
@@ -438,7 +438,7 @@ class Observation(Documentable, Importable):
             end = self.latest_datetime.date()
             options['context']['dead'] = (dead <= end)
             options['context']['dead_during'] = (dead >= start and dead <= end)
-
+        
         # dead depends on animal.detertermined_dead_before,
         # earliest_datetime.date(), and latest_datetime.date()
         # also, __unicode__ depends on datetime_observed, observer, and id

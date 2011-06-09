@@ -25,3 +25,4 @@ def animal_field_number_display(field_number):
         return u"""<span title="the animal's field number" style="font-weight: bold;">%s</span>""" % field_number
     else:
         return u"""<i>no field number has been assigned to this animal yet</i>"""
+
