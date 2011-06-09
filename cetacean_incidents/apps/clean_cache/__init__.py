@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from django.core.cache import cache
 
 from django.db import models
@@ -40,14 +38,12 @@ def register_cache_clear(
         if not kwargs_filter(kwargs):
             return
         cache_key = key_pattern % kwargs_map(kwargs)
-        pprint(('cache clear', cache_key))
         cache.delete(cache_key)
     # set a nice name for introspection's sake
     signal_handler.__name__ = '%s_handler' % name
     
     signal = getattr(model_signals, signal_name)
     
-    #pprint(('connect', name))
     signal.connect(
         receiver= signal_handler,
         sender= model,
@@ -279,15 +275,12 @@ class State(object):
             missing_key_pattern = smidgen.cache_key_patterns[model]['missing']
             missing_key = missing_key_pattern % {'pk': pk}
             missing = cache.get(missing_key)
-            #if not missing is None:
-            #    pprint(("cache hit", missing_key))
             
             inst = None
             if not missing:
                 try:
                     inst = model.objects.get(pk=pk)
                 except model.DoesNotExist:
-                    pprint(("cache set", missing_key))
                     cache.set(missing_key, True, CACHE_TIMEOUT)
             
             if inst is None:
@@ -313,9 +306,6 @@ class State(object):
                         # use a set so State.__eq__ stays correct
                         value = set(value.all())
                     cache.set(value_key, value, CACHE_TIMEOUT)
-                    pprint(('cache set', value_key))
-                #else:
-                #    pprint(('cache hit', value_key))
 
                 fields[fn] = value
 
