@@ -1,4 +1,6 @@
 {# assumes the document was passed in as d #}
+{% load html_filter %}
+
 <div class="document">
     <table>
         <tr>
@@ -32,7 +34,7 @@
                         {% if u == user %}
                         <i>you</i>
                         {% else %}
-                        {{ u }}
+                        {{ u|html }}
                         {% endif %}
                     </li>
                     {% endfor %}
