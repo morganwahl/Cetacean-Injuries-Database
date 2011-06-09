@@ -51,7 +51,7 @@
 	        <td sorttable_customkey="{{ date.sortkey }}">{% date_observed_display date %}</td>
 	        {% endwith %}
 	        <td sorttable_customkey="{{ o.observer.sort_name }}">
-                {% contact_link o.observer %}
+                {{ o.observer|link }}
 	        </td>
         </tr>
         {% endfor %}
