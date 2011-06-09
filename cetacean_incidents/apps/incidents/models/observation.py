@@ -462,8 +462,13 @@ class Observation(Documentable, Importable):
         ret = 'observation '
         if self.datetime_observed:
             ret += "at %s " % self.datetime_observed.to_unicode(unknown_char=None)
-        if self.observer:
-            ret += "by %s " % self.observer
+        # using a reference to another model in the unicode representation of
+        # this one is a bit risky, so be cautious of inconsistent databases.
+        try:
+            if self.observer:
+                ret += "by %s " % self.observer
+        except Contact.DoesNotExist:
+            ret += "by <non-existant observer>"
         ret += ( "(#%06d)" % self.id if self.id else "(unsaved!)" )
         return ret
     
