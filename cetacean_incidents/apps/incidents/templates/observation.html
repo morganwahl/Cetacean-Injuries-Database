@@ -1,6 +1,6 @@
 {% extends "documentable.html" %}{% load pretty %}{% pretty %}
 
-{% block icons %}{{ block.super }}{% if dead %}&nbsp;<span    
+{% block icons %}{% if dead %}&nbsp;<span    
     {% if dead_during %}
     style="color:red;"
     title="the animal was determined dead during this observation"
@@ -8,6 +8,6 @@
     style="color:black;"
     title="the animal was determined dead before this observation"
     {% endif %}
->&#x2620;</span>{% endif %}{% endblock %}
+>&#x2620;</span>{% endif %}{{ block.super }}{% endblock %}
 
 {% endpretty %}
