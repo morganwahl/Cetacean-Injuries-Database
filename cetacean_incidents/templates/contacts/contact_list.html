@@ -40,11 +40,11 @@
                         <td scope="row"{% if contact.sort_name %} sorttable_customkey="{{ contact.sort_name }}"{% endif %}>
                             {{ contact|link }}
                         </td>
-                        
+                        {% with contact.observed.count as obs_count %}
                         <td>
-                            {{ contact.observed.count }}
+                            {{ obs_count }}
                         </td>
-                        {% if contact.observed.count %}
+                        {% if obs_count %}
                         {% with contact.observed_ordered|first as first_o %}
                         <td sorttable_customkey="{{ first_o.datetime_observed.sortkey }}">
                             <a href="{{ first_o.get_absolute_url }}">
@@ -63,6 +63,7 @@
                         <td>-</td>
                         <td>-</td>
                         {% endif %}
+                        {% endwith %}
 
                         <td>
                             {{ contact.reported.count }}
