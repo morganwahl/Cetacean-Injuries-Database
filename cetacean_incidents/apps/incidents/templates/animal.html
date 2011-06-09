@@ -1,0 +1,64 @@
+{% load animal_extras %}{% load pretty %}{% pretty %}
+
+{% if block %}<div>{% endif %}
+
+{% if url %}<a href="{{ url }}">{% endif %}
+
+{% with animal.field_number as fn %}
+{% with animal.names as names %}
+
+{% if multiple_ids and block %}
+
+<ul style="margin: 0;">
+{% if fn %}
+    <li style="margin-left: 0; list-style-type: none;">
+        {% animal_field_number_display fn %}
+    </li>
+{% endif %}
+{% for n in names %}
+    <li style="margin-left: {% if fn %}1{% else %}0{% endif %}em; list-style-type: none;">
+        {% animal_name_display n %}
+    </li>
+{% endfor %}
+</ul>
+
+{% else %}
+
+{% if fn %}
+{% animal_field_number_display fn %}
+{% endif %}
+{% if fn and names %}, {% endif %}
+{% if names %}
+{% animal_names_display names %}
+{% endif %}
+{% if not fn and not names %}
+<span style="font-style: italic;">{{ animal }}</span>
+{% endif %}
+
+{% endif %}
+
+{% endwith %}
+{% endwith %}
+
+{% if url %}</a>{% endif %}
+
+{% if animal.dead %}
+&nbsp;
+<span
+ title="animal is dead (died on or before {{ animal.determined_dead_before }})"
+>
+&#x2620;
+</span>
+{% endif %}
+
+{% if needs_review %}
+&nbsp;
+<img
+ title="this entry needs review"
+ src="{{ media_url }}icons/needs_review.png"
+>
+{% endif %}
+
+{% if block %}</div>{% endif %}
+
+{% endpretty %}

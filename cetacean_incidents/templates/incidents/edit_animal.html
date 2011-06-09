@@ -1,6 +1,5 @@
 {% extends "detail.html" %}
 {% load html_filter %}
-{% load animal_extras %}
 
 {% block title %}{{ block.super }}: {{ animal }} [editing] {% endblock %}
 
@@ -11,7 +10,7 @@
 {% endblock %}
 
 {% block header %}
-<h2>{% animal_display animal %} [editing]</h2>
+<h2>{{ animal|html }} [editing]</h2>
 {% endblock %}
 
 {% block content %}

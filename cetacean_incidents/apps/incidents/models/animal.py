@@ -2,8 +2,11 @@
 
 import datetime
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+
+from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -169,7 +172,31 @@ class Animal(Documentable, Importable):
 
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
-
+    
+    def get_html_options(self):
+        opts = super(Animal, self).get_html_options()
+        
+        opts['template'] = u'animal.html'
+        
+        if not 'context' in opts:
+            opts['context'] = {}
+        opts['context'].update({
+            'animal': self,
+            'multiple_ids': self.names and self.field_number or len(self.names) > 1,
+        })
+        
+        opts['use_cache'] = True
+        
+        if not 'cache_deps' in opts:
+            opts['cache_deps'] = Smidgen()
+        
+        # TODO block vs. inline
+        opts['cache_deps'] |= Smidgen({
+            self: ('id', 'field_number', 'name', 'determined_dead_before'),
+        })
+        
+        return opts
+    
     def __unicode__(self):
         if self.field_number:
             return self.field_number

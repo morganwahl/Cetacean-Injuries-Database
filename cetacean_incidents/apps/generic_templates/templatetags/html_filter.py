@@ -25,7 +25,7 @@ def cache_keys(obj):
     return (cache_key, cache_key + '__link')
 
 @register.filter
-def html(obj, link=False, use_cache=None):
+def html(obj, link=False, block=False, use_cache=None):
     '''\
     Given a model instance, return HTML an HTML representation of that model.
     '''
@@ -54,6 +54,8 @@ def html(obj, link=False, use_cache=None):
         cache_key = u'%s__%s__%d__html' % (app_name, model_name, obj.id)
         if link:
             cache_key += '__link'
+        if block:
+            cache_key += '__block'
         cached = cache.get(cache_key)
         if cached:
             return mark_safe(cached)
@@ -71,6 +73,7 @@ def html(obj, link=False, use_cache=None):
     
     context = template.Context({
         'object': obj,
+        'block': block,
     })
     
     if link:

@@ -1,5 +1,4 @@
 {% extends "page.html" %}
-{% load animal_extras %}
 {% load link_filter %}
 
 {% block header %}<h2>Entries with potential problems</h2>{% endblock %}
@@ -27,9 +26,7 @@
         {% for number, animals in animals_same_number.items %}
         <li>
             {{ number }}
-            <div>
-                {% for a in animals %}{% animal_link a %},{% endfor %}
-            </div>
+            <div>{{ animals|links|join:", " }}</div>
         </li>
         {% endfor %}
     </ul>
@@ -42,9 +39,7 @@
         {% for name, animals in animals_same_name.items %}
         <li>
             {{ name }}
-            <div>
-                {% for a in animals %}{% animal_link a %},{% endfor %}
-            </div>
+            <div>{{ animals|links|join:", " }}</div>
         </li>
         {% endfor %}
     </ul>
@@ -56,7 +51,7 @@
     <ul>
         {% for a in animals_no_cases %}
         <li>
-            {% animal_link a %}
+            {{ a|link }}
         </li>
         {% endfor %}
     </ul>

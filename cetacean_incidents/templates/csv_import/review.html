@@ -1,6 +1,5 @@
 {% extends "page.html" %}
 {% load link_filter %}
-{% load animal_extras %}
 
 {% block title %}{{ block.super }}: reviewing imported entries{% endblock %}
 
@@ -17,7 +16,7 @@
     {% ifchanged a.id %}
     <div>
         <div>
-            {{ a.id|stringformat:"06d" }} {% animal_link a %}
+            {{ a.id|stringformat:"06d" }} {{ a|link }}
         </div>
         
         <div>

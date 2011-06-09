@@ -21,6 +21,8 @@ from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
 
+from cetacean_incidents.apps.generic_templates.templatetags.html_filter import html
+
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from ..forms import (
@@ -30,7 +32,6 @@ from ..forms import (
     AnimalSearchForm,
 )
 from ..models import Animal
-from ..templatetags.animal_extras import animal_display
 
 @login_required
 def animal_detail(request, animal_id):
@@ -150,7 +151,7 @@ def animal_search_json(request):
         
         plain_name = unicode(result)
         
-        html_name = animal_display(result, block=True)
+        html_name = html(result, block=True)
 
         taxon = result.determined_taxon
         if taxon:

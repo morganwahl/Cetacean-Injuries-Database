@@ -1,7 +1,6 @@
 {% extends "page.html" %}
 {% load generic_field_display %}
 {% load link_filter %}
-{% load animal_extras %}
 {% load html_filter %}
 
 {% block title %}{{ block.super }}: {{ taxon }}{% endblock %}
@@ -50,7 +49,7 @@
     <h3>Animals only determined to be {{ taxon|html }}</h3>
     <table>
         {% for a in taxon.animal_set.all %}
-        <tr><td>{% animal_link a %}</td></tr>
+        <tr><td>{{ a|link }}</td></tr>
         {% endfor %}
     </table>
 </div>
@@ -66,7 +65,7 @@
             <th style="text-align: right;">
                 {{ subtaxon|link }}
             </th>
-            <td>{% animal_link a %}</td>
+            <td>{{ a|link }}</td>
         </tr>
         {% endfor %}
         {% endif %}

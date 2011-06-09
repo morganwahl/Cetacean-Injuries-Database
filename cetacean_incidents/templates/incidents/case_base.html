@@ -1,6 +1,5 @@
 {% extends "detail.html" %}
 {% load observation_extras %} {# for datetime_observed_display #}
-{% load animal_extras %}
 {% load generic_field_display %}
 {% load link_filter %}
 {% load html_filter %}
@@ -29,7 +28,7 @@
 {% if case.ole_investigation %}
 {% include "incidents/ole-warning.html" %}
 {% endif %}
-<h2>{% animal_link case.animal %}</h2>
+<h2>{{ case.animal|link }}</h2>
 <h2 style="margin-left:1em;">{{ case|html }}</h2>
 {% if perms.incidents.change_animal and perms.incidents.change_case %}
 <div>
@@ -82,7 +81,7 @@
         <tr class="layout">
             <td class="layout">
                 <div>
-                    <span class="fieldname">Animal:</span> {% animal_link case.animal %}
+                    <span class="fieldname">Animal:</span> {{ case.animal|link }}
                 </div>
                 {% if case.names_list|length > 1 %}
                 <div>

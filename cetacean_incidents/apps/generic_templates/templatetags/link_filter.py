@@ -27,3 +27,6 @@ def links(objs, use_cache=None):
         # passed in
         return [link(objs, use_cache)]
 
+@register.filter
+def link_block(obj, use_cache=None):
+    return html(obj, link=True, block=True, use_cache=use_cache)

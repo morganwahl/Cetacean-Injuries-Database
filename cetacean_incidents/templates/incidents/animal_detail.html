@@ -1,5 +1,5 @@
 {% extends "detail.html" %}
-{% load animal_extras %}
+{% load animal_extras %} {# for animal_field_number_display, animal_names_display #}
 {% load observation_extras %} {# for datetime_observed_display #}
 {% load generic_field_display %}
 {% load link_filter %}
@@ -14,7 +14,7 @@
 {% block title %}{{ block.super }}: {{ animal }}{% endblock %}
 
 {% block header %}
-<h2>{% animal_display animal %}</h2>
+<h2>{{ animal|html }}</h2>
 {% if perms.incidents.change_animal %}
 <div><a href="{% url edit_animal animal.id %}">edit this animal</a></div>
 {% endif %}

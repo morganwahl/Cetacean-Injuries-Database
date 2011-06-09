@@ -1,7 +1,7 @@
 {% extends "page.html" %}
 {% load taxon_extras %}
-{% load animal_extras %}
 {% load observation_extras %} {# for datetime_observed_display #}
+{% load link_filter %}
 
 {% block head %}
 {{ block.super }}
@@ -50,7 +50,7 @@
     </thead>
 	{% for animal in animal_list %}
 	<tr>
-	    <td>{% animal_link animal "True" %}</td>
+	    <td>{{ animal|link_block }}</td>
 	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
 	        {% if animal.determined_taxon %}
 	        {{ animal.determined_taxon }}

@@ -1,5 +1,4 @@
 {# assumes a list of cases as 'cases' in the context #}
-{% load animal_extras %}
 {% load observation_extras %} {# for date_observed_dipsplay #}
 {% load link_filter %}
 
@@ -37,7 +36,7 @@
                 {{ case|link }}
             </td>
             {% endwith %}
-            <td>{% animal_link case.animal %}</td>
+            <td>{{ case.animal|link_block }}</td>
 	        {% with case.earliest_observation.datetime_observed as first_obs_date %}
 	        <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% date_observed_display first_obs_date %}</td>
 	        {% endwith %}

@@ -1,5 +1,4 @@
 {% extends "detail.html" %}
-{% load animal_extras %}
 {% load generic_field_display %}
 {% load link_filter %}
 {% load html_filter %}
@@ -18,7 +17,7 @@
     <a href="{% url observation_detail previous_obs.id %}" title="previous observation of this animal">&#x2190;</a>
     {% endif %}
     {% endwith %}
-    {% animal_link observation.animal %}
+    {{ observation.animal|link }}
     {% with observation.get_animal_next as next_obs %}
     {% if next_obs %}
     <a href="{% url observation_detail next_obs.id %}" title="next observation of this animal">&#x2192;</a>

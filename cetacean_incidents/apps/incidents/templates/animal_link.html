@@ -1,1 +1,0 @@
-<a href="{{ animal.get_absolute_url }}">{{ animal_display }}</a>{% if animal.dead %} <span title="animal is dead (died on or before {{ animal.determined_dead_before }})">&#x2620;</span>{% endif %}{% if needs_review %}<img title="this entry needs review" src="{{ media_url }}icons/needs_review.png">{% endif %}

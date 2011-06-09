@@ -1,5 +1,4 @@
 {# assumes a list of observations as 'observations' in the context #}
-{% load animal_extras %}
 {% load observation_extras %} {# for date_observed_display #}
 {% load link_filter %}
 
@@ -31,7 +30,7 @@
             </td>
             {% endif %}
             <td sorttable_customkey="{{ o.id|stringformat:"04d" }}">{{ o|link }}</td>
-            <td>{% animal_link o.animal %}</td>
+            <td>{{ o.animal|link }}</td>
             <td>
                 {% if o.cases.count > 1 %}
                 <ul>
