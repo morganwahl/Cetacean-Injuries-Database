@@ -43,7 +43,7 @@ def html(obj, link=False, block=False, use_cache=None):
     if use_cache is None and 'use_cache' in options:
         use_cache = options['use_cache']
     
-    # TODO caching requires and 'id' field
+    # TODO caching requires an 'id' field
     if not hasattr(obj, 'id'):
         use_cache = False
     
@@ -51,7 +51,7 @@ def html(obj, link=False, block=False, use_cache=None):
     model_name = obj._meta.object_name.lower()
     
     if use_cache:
-        cache_key = u'%s__%s__%d__html' % (app_name, model_name, obj.id)
+        cache_key = '%s__%s__%d__html' % (app_name, model_name, obj.id)
         if link:
             cache_key += '__link'
         if block:
@@ -79,7 +79,7 @@ def html(obj, link=False, block=False, use_cache=None):
     if link:
         if hasattr(obj, 'get_absolute_url'):
             context['url'] = obj.get_absolute_url()
-
+    
     if 'context' in options:
         context.update(options['context'])
     
