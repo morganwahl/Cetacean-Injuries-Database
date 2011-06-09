@@ -8,6 +8,7 @@
  */
 alter sequence DOCUMENTS_DOCUMENTABLE_SQ increment by 2200;
 select DOCUMENTS_DOCUMENTABLE_SQ.nextval from dual;
+alter sequence DOCUMENTS_DOCUMENTABLE_SQ increment by 1;
 
 /*
  * change the trigger CONTACTS_CONTACT_TR to use DOCUMENTS_DOCUMENTABLE_SQ
