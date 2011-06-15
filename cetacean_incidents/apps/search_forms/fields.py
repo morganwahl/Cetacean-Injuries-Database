@@ -1,0 +1,85 @@
+from django import forms
+from django.db import models
+
+from widgets import (
+    QueryWidget,
+    HiddenQueryWidget,
+)
+
+class QueryField(forms.MultiValueField):
+    
+    widget = QueryWidget
+    hidden_widget = HiddenQueryWidget
+    
+    def __init__(self, lookup_choices, value_fields, *args, **kwargs):
+        '''\
+        Lookup_choices is Django choice tuple whose values are lookup types.
+        value_fields is a dictionary of fields keyed to lookup types. The query
+        value will be the value field that corresponds to the chosen lookup
+        type.
+        '''
+        #from pprint import pprint
+        #pprint(('QueryField.__init__', lookup_choices, value_fields, args, kwargs))
+
+        #defaults = {
+        #    'required': True,
+        #    'widget': None,
+        #    'label': None,
+        #    'initial': None,
+        #    'help_text': None,
+        #    'error_messages': None,
+        #    'show_hidden_initial': False,
+        #    'validators': [],
+        #    'localize': False,
+        #}
+        args_dict = dict(zip((
+            'required',
+            'widget',
+            'label',
+            'initial',
+            'help_text',
+            'error_messages',
+            'show_hidden_initial',
+            'validators',
+            'localize',
+        ), args))
+        given = {}
+        #given.update(defaults)
+        given.update(args_dict)
+        given.update(kwargs)
+        
+        passed = dict(given)
+        
+        lookup_field = forms.ChoiceField(choices=lookup_choices)
+
+        # TODO seperate out the args and kwargs, and pass some to value_fields, some to super
+        
+        fields = [
+            lookup_field,
+        ] + [value_fields[choice[0]] for choice in lookup_choices]
+        if not 'widget' in given:
+            passed['widget'] = self.widget(lookup_field.widget, dict([(lookup, field.widget) for lookup, field in value_fields.items()]))
+        
+        #pprint(('MultiValueField.__init__', fields, passed))
+        super(QueryField, self).__init__(fields, **passed)
+    
+    def compress(self, data_list):
+        from pprint import pprint
+        pprint(('compress', data_list))
+        
+        if data_list == []:
+            return None
+        
+        if data_list[0] == '':
+            return None
+        
+        lookup = data_list[0]
+        lookup_choices = self.widget.widgets[0].choices
+        value_index = 1
+        for choice in lookup_choices:
+            if choice[0] == lookup:
+                return (lookup, data_list[value_index])
+            value_index += 1
+        
+        raise NotImplementedError
+
