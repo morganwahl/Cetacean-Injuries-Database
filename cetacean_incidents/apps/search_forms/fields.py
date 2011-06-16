@@ -77,7 +77,30 @@ class MatchField(forms.MultiValueField):
     def lookup_field(self):
         return self.fields[0]
     
+    def clean(self, value):
+        # set all the value fields that don't correspond to lookup type to None
+        # This ensures their validation always succeeds, since QueryFields are
+        # never required.
         
+        # note that value could be just about anything, and value[0] may not
+        # be a string, much less a lookup type.
+        try:
+            lookup = value[0]
+        except TypeError: # value isn't subscriptable
+            lookup = None
+        except IndexError: # there is no value[0]
+            lookup = None
+        
+        # note that this may set all the other values to None if value[0] wasn't
+        # one of the lookup_choices. that's OK, since value[0] will then fail
+        # to validate.
+        if not lookup is None:
+            lookup_choices = self.lookup_field.choices
+            for i, choice in enumerate(lookup_choices, start=1):
+                if choice[0] != lookup:
+                    value[i] = None
+        
+        return super(QueryField, self).clean(value)
     
     def compress(self, data_list):
         from pprint import pprint
