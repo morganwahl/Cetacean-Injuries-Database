@@ -118,30 +118,17 @@ def field(self, form_class=QueryField, **kwargs):
     
     if self.choices:
         # Fields with choices get special treatment
-        defaults['choices'] = self.get_choices(include_blank=True)
-        defaults['coerce'] = self.to_python
+        choice_kwargs = {
+            'choices': self.get_choices(include_blank=True),
+            'coerce': self.to_python,
+        }
+        if self.null:
+            choice_kwargs['empty_value'] = None
+        defaults['value_fields'].update({
+            'exact': forms.TypedChoiceField(**choice_kwargs),
+        })
         if self.null:
             defaults['empty_value'] = None
-        # FIXME replace TypedChoiceField with a subclass of QueryField
-        raise NotImplementedError
-        form_class = forms.TypedChoiceField
-        # Many of the subclass-specific formfield arguments (min_value,
-        # max_value) don't apply for choice fields, so be sure to only pass the
-        # values that TypedChoiceField will understand.
-        for k in kwargs.keys():
-            if k not in (
-                'coerce',
-                'empty_value',
-                'choices',
-                'required',
-                'widget',
-                'label',
-                'initial',
-                'help_text',
-                'error_messages',
-                'show_hidden_initial',
-            ):
-                del kwargs[k]
     
     defaults.update(kwargs)
     return form_class(**defaults)
