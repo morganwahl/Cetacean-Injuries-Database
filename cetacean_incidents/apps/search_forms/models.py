@@ -72,6 +72,17 @@ from fields import QueryField
 # - OneToOneField
 # - ManyToManyField
 
+class IsnullValueField(forms.TypedChoiceField):
+    def __init__(self, **kwargs):
+        return super(IsnullValueField, self).__init__(
+            choices= (
+                ('yes', u'Yes'),
+                ('', u'No'),
+            ),
+            coerce= bool,
+            widget= forms.RadioSelect(renderer=InlineRadioFieldRenderer),
+            **kwargs
+        )
 
 # TODO is this kosher?
 _attr_name = 'searchformfield'
@@ -101,14 +112,7 @@ def field(self, form_class=QueryField, **kwargs):
         'value_fields': {
             '': forms.CharField(widget=forms.HiddenInput),
             'exact': forms.CharField(),
-            'isnull': forms.TypedChoiceField(
-                choices= (
-                    ('yes', 'Yes'),
-                    ('', 'No'),
-                ),
-                coerce= bool,
-                widget= forms.RadioSelect(renderer=InlineRadioFieldRenderer),
-            ),
+            'isnull': IsnullValueField(),
         },
     }
     
