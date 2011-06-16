@@ -110,7 +110,7 @@ def field(self, form_class=QueryField, **kwargs):
             ('isnull', 'is blank'),
         ),
         'value_fields': {
-            '': forms.CharField(widget=forms.HiddenInput),
+            '': forms.CharField(widget=forms.HiddenInput(attrs={'disabled': 'disabled'})),
             'exact': forms.CharField(),
             'isnull': IsnullValueField(),
         },
