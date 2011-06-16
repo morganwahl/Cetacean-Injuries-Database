@@ -1,5 +1,6 @@
 from django import forms
 from django.db import models
+from django.db.models import Q
 
 from widgets import (
     MatchWidget,
@@ -137,3 +138,12 @@ class QueryField(MatchField):
         pprint(('QueryField.__init__', lookup_choices, value_fields, args, kwargs))
         
         super(QueryField, self).__init__(lookup_choices, value_fields, *args, **kwargs)
+    
+    def query(self, fieldname, value):
+        if value is None:
+            return Q()
+        lookup_type, lookup_value = value
+        q = Q(**{fieldname + '__' + lookup_type: lookup_value})
+        from pprint import pprint
+        pprint(('QueryField.query', unicode(q)))
+        return q

@@ -116,12 +116,19 @@ class BaseSearchForm(BaseForm):
         opts = self._meta
         if opts.model is None:
             raise ValueError("SearchForm has no model class specified.")
-        self.query = Q()
         self.manager = opts.model.objects
         super(BaseSearchForm, self).__init__(*args, **kwargs)
     
-    def result(self):
-        return self.opts.model.objects.filter(self.query)
+    def _query(self):
+        q = Q()
+        for fieldname, field in self.fields.items():
+            if not hasattr(field, 'query'):
+                continue
+            q &= field.query(fieldname, self.cleaned_data[fieldname])
+        return q
+
+    def results(self):
+        return self.manager.filter(self._query())
     
 class SearchForm(BaseSearchForm):
     '''\
