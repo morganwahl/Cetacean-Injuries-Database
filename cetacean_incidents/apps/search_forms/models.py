@@ -100,12 +100,15 @@ def _searchformfield_method(cls):
 @_searchformfield_method(models.fields.Field)
 def field(self, form_class=QueryField, **kwargs):
     "Returns a django.forms.Field instance for searching this database Field."
+    
+    # TODO pass any relevant args from kwargs to the value_fields
+    
     defaults = {
         'required': False,
         'label': capfirst(self.verbose_name),
         'help_text': self.help_text,
         'lookup_choices': (
-            ('', '<ignore>'),
+            ('', '<anything>'),
             ('isnull', 'is blank'),
         ),
         'value_fields': {
