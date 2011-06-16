@@ -55,6 +55,9 @@ class MatchField(forms.MultiValueField):
         given.update(kwargs)
         
         passed = dict(given)
+        # TODO does this make sense? or is it more a QueryField thing?
+        # MatchFields are never required
+        passed['required'] = False
         
         lookup_field = forms.ChoiceField(choices=lookup_choices)
 
