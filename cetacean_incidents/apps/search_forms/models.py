@@ -150,4 +150,18 @@ def field(self, form_class=QueryField, **kwargs):
 def autofield(self, **kwargs):
     return None
 
+@_searchformfield_method(models.fields.CharField)
+def charfield(self, **kwargs):
+    return super(models.fields.CharField, self).searchformfield(
+        lookup_choices= (
+            ('', '<anything>'),
+            ('exact', 'is'),
+            ('isnull', 'is blank'),
+        ),
+        value_fields= {
+            '': forms.CharField(widget=forms.HiddenInput),
+            'exact': forms.CharField(),
+            'isnull': IsnullValueField(),
+        },
+    )
 
