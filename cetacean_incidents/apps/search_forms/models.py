@@ -106,12 +106,10 @@ def field(self, form_class=QueryField, **kwargs):
         'help_text': self.help_text,
         'lookup_choices': (
             ('', '<ignore>'),
-            ('exact', 'is'),
             ('isnull', 'is blank'),
         ),
         'value_fields': {
             '': forms.CharField(widget=forms.HiddenInput(attrs={'disabled': 'disabled'})),
-            'exact': forms.CharField(),
             'isnull': IsnullValueField(),
         },
     }
