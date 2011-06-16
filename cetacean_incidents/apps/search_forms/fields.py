@@ -72,6 +72,11 @@ class MatchField(forms.MultiValueField):
         
         pprint(('MultiValueField.__init__', fields, passed))
         super(MatchField, self).__init__(fields, **passed)
+    
+    @property
+    def lookup_field(self):
+        return self.fields[0]
+    
         
     
     def compress(self, data_list):
@@ -85,7 +90,7 @@ class MatchField(forms.MultiValueField):
             return None
         
         lookup = data_list[0]
-        lookup_choices = self.widget.widgets[0].choices
+        lookup_choices = self.lookup_field.choices
         for i, choice in enumerate(lookup_choices, start=1):
             if choice[0] == lookup:
                 return (lookup, data_list[i])
