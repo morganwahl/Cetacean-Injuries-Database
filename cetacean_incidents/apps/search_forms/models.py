@@ -148,7 +148,16 @@ def field(self, form_class=QueryField, **kwargs):
 
 @_searchformfield_method(models.fields.AutoField)
 def autofield(self, **kwargs):
-    return None
+    return super(models.fields.AutoField, self).searchformfield(
+        lookup_choices= (
+            ('', '<anything>'),
+            ('exact', 'is'),
+        ),
+        value_fields= {
+            '': forms.CharField(widget=forms.HiddenInput),
+            'exact': forms.IntegerField(),
+        },
+    )
 
 @_searchformfield_method(models.fields.CharField)
 def charfield(self, **kwargs):
