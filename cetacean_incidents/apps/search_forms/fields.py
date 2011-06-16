@@ -2,14 +2,14 @@ from django import forms
 from django.db import models
 
 from widgets import (
-    QueryWidget,
-    HiddenQueryWidget,
+    MatchWidget,
+    HiddenMatchWidget,
 )
 
 class QueryField(forms.MultiValueField):
     
-    widget = QueryWidget
-    hidden_widget = HiddenQueryWidget
+    widget = MatchWidget
+    hidden_widget = HiddenMatchWidget
     
     def __init__(self, lookup_choices, value_fields, *args, **kwargs):
         '''\

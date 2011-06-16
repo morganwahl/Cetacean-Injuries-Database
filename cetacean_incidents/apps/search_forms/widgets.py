@@ -3,20 +3,21 @@ from collections import Sequence
 from django.conf import settings
 from django.forms.widgets import MultiWidget
 
-class QueryWidget(MultiWidget):
+class MatchWidget(MultiWidget):
     '''\
-    A multiwidget that wraps another widget and adds a select widget for the
-    type of lookup.
+    A multiwidget that has a select widget for picking a match type, and a set
+    of other widgets that each correspond to a type, which are only display when
+    that type is selected.
     '''
     
     def __init__(self, lookup_widget, value_widgets, attrs=None):
         #from pprint import pprint
-        #pprint(('QueryWidget.__init__', lookup_widget, value_widgets, attrs))
+        #pprint(('MatchField.__init__', lookup_widget, value_widgets, attrs))
         widgets = [
             lookup_widget,
         ] + [value_widgets[choice[0]] for choice in lookup_widget.choices]
-        #pprint(('MultiWidget.__init__', widgets, attrs))
-        super(QueryWidget, self).__init__(widgets, attrs)
+        #pprint(('MatchWidget.__init__', widgets, attrs))
+        super(MatchWidget, self).__init__(widgets, attrs)
     
     @property
     def lookup_to_value_map(self):
@@ -68,11 +69,11 @@ class QueryWidget(MultiWidget):
             value_widgets.append(value_widget)
         
         # enclose the whole thing in a span to facilitate selection in JS        
-        return u'<span class="query_widget">\n\t%s\n</span>' % u'\n\t'.join([lookup_widget] + value_widgets)
+        return u'<span class="match_widget">\n\t%s\n</span>' % u'\n\t'.join([lookup_widget] + value_widgets)
     
     class Media:
-        js = (settings.JQUERY_FILE, 'query_widget.js')
+        js = (settings.JQUERY_FILE, 'match_widget.js')
 
-class HiddenQueryWidget(QueryWidget):
+class HiddenMatchWidget(MatchWidget):
     is_hidden = True
 
