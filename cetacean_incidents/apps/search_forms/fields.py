@@ -6,7 +6,12 @@ from widgets import (
     HiddenMatchWidget,
 )
 
-class QueryField(forms.MultiValueField):
+class MatchField(forms.MultiValueField):
+    '''\
+    A form field class with multiple subfields. One field is the match type and
+    each type has another field to supply arguments. Values are 2-tuples of the
+    lookup choice and the arg for that choice.
+    '''
     
     widget = MatchWidget
     hidden_widget = HiddenMatchWidget
@@ -19,7 +24,7 @@ class QueryField(forms.MultiValueField):
         type.
         '''
         #from pprint import pprint
-        #pprint(('QueryField.__init__', lookup_choices, value_fields, args, kwargs))
+        pprint(('MatchField.__init__', lookup_choices, value_fields, args, kwargs))
 
         #defaults = {
         #    'required': True,
@@ -60,8 +65,9 @@ class QueryField(forms.MultiValueField):
         if not 'widget' in given:
             passed['widget'] = self.widget(lookup_field.widget, dict([(lookup, field.widget) for lookup, field in value_fields.items()]))
         
-        #pprint(('MultiValueField.__init__', fields, passed))
-        super(QueryField, self).__init__(fields, **passed)
+        pprint(('MultiValueField.__init__', fields, passed))
+        super(MatchField, self).__init__(fields, **passed)
+        
     
     def compress(self, data_list):
         from pprint import pprint
@@ -83,3 +89,20 @@ class QueryField(forms.MultiValueField):
         
         raise NotImplementedError
 
+class QueryField(MatchField):
+    '''\
+    A form field class based on a model field class whose values are Q-objects
+    that filter on the model field class.
+    '''
+    
+    def __init__(self, lookup_choices, value_fields, *args, **kwargs):
+        '''\
+        Lookup_choices is Django choice tuple whose values are lookup types.
+        value_fields is a dictionary of fields keyed to lookup types. The query
+        value will be the value field that corresponds to the chosen lookup
+        type.
+        '''
+        from pprint import pprint
+        pprint(('QueryField.__init__', lookup_choices, value_fields, args, kwargs))
+        
+        super(QueryField, self).__init__(lookup_choices, value_fields, *args, **kwargs)
