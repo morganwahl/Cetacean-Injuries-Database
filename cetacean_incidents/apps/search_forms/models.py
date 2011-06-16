@@ -72,32 +72,6 @@ from fields import QueryField
 # - OneToOneField
 # - ManyToManyField
 
-# map from model fields to form fields to search that field's values
-identity_lookups = (
-    ('exact', 'is'),
-    ('in', 'is one of'),
-    ('isnull', 'is blank'),
-)
-
-order_lookups = (
-    ('gt', 'more than'),
-    ('gte', 'more than or equal to'),
-    ('lt', 'less than'),
-    ('lte', 'less than or equal to'),
-)
-
-text_lookups = (
-    ('iexact', 'is'),
-    ('icontains', 'contains'),
-    ('istartswith', 'starts with'),
-    ('iendswith', 'ends with'),
-)
-
-date_lookups = (
-    ('year', 'in year'),
-    ('month', 'in month'),
-    ('day', 'on day'),
-)
 
 # TODO is this kosher?
 _attr_name = 'searchformfield'
@@ -172,43 +146,4 @@ def field(self, form_class=QueryField, **kwargs):
 def autofield(self, **kwargs):
     return None
 
-# TODO we're replicated the python inheritance mechanisms here. Can we just set
-# the search_formfield functions as attributes of the model field classes?
-# Is it kosher to add methods to other people's classes?
-def search_formfield_dispatch(model_field_class):
-
-    def unimplemented(self, **kwargs):
-        from pprint import pprint
-        pprint(('unimplemented', self, kwargs))
-        
-        return None
-        raise NotImplementedError
-    
-    return {
-        models.AutoField: autofield,
-        models.BooleanField: unimplemented,
-        models.CharField: unimplemented,
-        models.CommaSeparatedIntegerField: unimplemented,
-        models.DateField: unimplemented,
-        models.DateTimeField: unimplemented,
-        models.DecimalField: unimplemented,
-        models.EmailField: unimplemented,
-        models.FilePathField: unimplemented,
-        models.FloatField: unimplemented,
-        models.IntegerField: unimplemented,
-        models.BigIntegerField: unimplemented,
-        models.IPAddressField: unimplemented,
-        models.NullBooleanField: unimplemented,
-        models.PositiveIntegerField: unimplemented,
-        models.PositiveSmallIntegerField: unimplemented,
-        models.SlugField: unimplemented,
-        models.SmallIntegerField: unimplemented,
-        models.TextField: unimplemented,
-        models.TimeField: unimplemented,
-        models.URLField: unimplemented,
-        models.XMLField: unimplemented,
-        models.OneToOneField: unimplemented,
-        models.ForeignKey: unimplemented,
-        models.ManyToManyField: unimplemented,
-    }[model_field_class]
 
