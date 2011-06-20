@@ -28,7 +28,7 @@ class MatchField(forms.MultiValueField):
         value will be the value field that corresponds to the chosen lookup
         type.
         '''
-        #from pprint import pprint
+        from pprint import pprint
         pprint(('MatchField.__init__', lookup_choices, value_fields, args, kwargs))
 
         #defaults = {
