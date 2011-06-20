@@ -111,8 +111,6 @@ class MatchField(forms.MultiValueField):
         return super(MatchField, self).clean(value)
     
     def compress(self, data_list):
-        from pprint import pprint
-        pprint(('compress', data_list))
         
         if data_list == []:
             return None
