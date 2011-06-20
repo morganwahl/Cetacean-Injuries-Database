@@ -21,7 +21,7 @@ class MatchField(forms.MultiValueField):
     widget = MatchWidget
     hidden_widget = HiddenMatchWidget
     
-    def __init__(self, lookup_choices, value_fields, *args, **kwargs):
+    def __init__(self, lookup_choices=(), value_fields={}, *args, **kwargs):
         '''\
         Lookup_choices is Django choice tuple whose values are lookup types.
         value_fields is a dictionary of fields keyed to lookup types. The query
