@@ -124,6 +124,72 @@ class MatchField(forms.MultiValueField):
         
         raise NotImplementedError
 
+# Which field lookups make sense for which database field types?
+#
+# Lookups can be grouped:
+#
+# - basic identity
+#   - exact
+#   - in
+#   - isnull
+# - order
+#   - gt(e)
+#   - lt(e)
+#   - range
+# - text
+#   - iexact
+#   - (i)contains
+#   - (i)startswith
+#   - (i)endswith
+#   - search (MySQL only)
+#   - (i)regex
+# - date
+#   - year
+#   - month
+#   - day
+#   - week_day
+#
+# All fields can use the basic identity lookups. The other groups make sense
+# as follows:
+#
+# - identity only
+#   - AutoField
+#   - BooleanField
+#   - CommaSeparatedIntegerField
+#   - EmailField
+#   - FileField
+#   - FileField and FieldFile
+#   - FilePathField
+#   - ImageField
+#   - IPAddressField
+#   - NullBooleanField
+#   - SlugField
+#   - TimeField
+#   - URLField
+#   - XMLField
+#
+# - order
+#   - BigIntegerField
+#   - DecimalField
+#   - FloatField
+#   - IntegerField
+#   - PositiveIntegerField
+#   - PositiveSmallIntegerField
+#   - SmallIntegerField
+#
+# - text
+#   - CharField
+#   - TextField
+#
+# - order and date
+#   - DateField 
+#   - DateTimeField
+#
+# reference fields are special.
+# - ForeignKey
+# - OneToOneField
+# - ManyToManyField
+
 class QueryField(MatchField):
     '''\
     A form field class based on a model field class whose values are Q-objects
