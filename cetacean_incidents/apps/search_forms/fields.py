@@ -269,6 +269,16 @@ class AutoFieldQuery(QueryField):
         'exact': forms.IntegerField(),
     }
 
+class BooleanFieldQuery(QueryField):
+    lookup_choices = (
+        ('', '<anything>'),
+        ('exact', 'is'),
+    )
+    value_fields = {
+        '': forms.CharField(widget=forms.HiddenInput),
+        'exact': YesNoField(),
+    }
+
 class NullBooleanFieldQuery(QueryField):
     lookup_choices = (
         ('', '<anything>'),
