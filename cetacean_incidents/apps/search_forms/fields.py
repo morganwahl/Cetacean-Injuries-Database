@@ -104,7 +104,7 @@ class MatchField(forms.MultiValueField):
                 if choice[0] != lookup:
                     value[i] = None
         
-        return super(QueryField, self).clean(value)
+        return super(MatchField, self).clean(value)
     
     def compress(self, data_list):
         from pprint import pprint
