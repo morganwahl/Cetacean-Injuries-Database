@@ -124,7 +124,7 @@ class BaseSearchForm(BaseForm):
         for fieldname, field in self.fields.items():
             if not hasattr(field, 'query'):
                 continue
-            q &= field.query(fieldname, self.cleaned_data[fieldname])
+            q &= field.query(self.cleaned_data[fieldname])
         return q
 
     def results(self):
