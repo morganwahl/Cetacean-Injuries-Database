@@ -4,6 +4,8 @@ from django.db.models import Q
 
 from cetacean_incidents.apps.utils.forms import (
     InlineRadioFieldRenderer,
+    InlineCheckboxSelectMultiple,
+    TypedMultipleChoiceField,
 )
 
 from widgets import (
@@ -138,6 +140,23 @@ class YesNoField(forms.TypedChoiceField):
             **kwargs
         )
 
+class YesNoUnknownField(TypedMultipleChoiceField):
+    def __init__(self, **kwargs):
+        return super(YesNoUnknownField, self).__init__(
+            choices= (
+                ('yes', u'Yes'),
+                ('no', u'No'),
+                ('unk', u'Unknown'),
+            ),
+            coerce= lambda v: {
+                'yes': True,
+                'no': False,
+                'unk': None,
+            }[v],
+            widget= InlineCheckboxSelectMultiple,
+            **kwargs
+        )
+
 # Which field lookups make sense for which database field types?
 #
 # Lookups can be grouped:
@@ -250,6 +269,30 @@ class AutoFieldQuery(QueryField):
         'exact': forms.IntegerField(),
     }
 
+class NullBooleanFieldQuery(QueryField):
+    lookup_choices = (
+        ('', '<anything>'),
+        ('in', 'is one of'),
+    )
+    value_fields = {
+        '': forms.CharField(widget=forms.HiddenInput),
+        'in': YesNoUnknownField()
+    }
+    
+    def query(self, value):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.get_attname()
+            
+            # None doesn't acutally work as a value for 'in'
+            if lookup_type == 'in' and None in lookup_value:
+                q = super(NullBooleanFieldQuery, self).query(value)
+                q |= Q(**{lookup_fieldname + '__' + 'isnull': True})
+                from pprint import pprint
+                pprint(('NullBooleanFieldQuery.query', unicode(q)))
+                return q
+
+        return super(NullBooleanFieldQuery, self).query(value)
 
 class CharFieldQuery(QueryField):
     

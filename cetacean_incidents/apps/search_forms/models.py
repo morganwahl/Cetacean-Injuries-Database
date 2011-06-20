@@ -5,6 +5,7 @@ from django.utils.text import capfirst
 from fields import (
     AutoFieldQuery,
     CharFieldQuery,
+    NullBooleanFieldQuery,
     QueryField,
 )
 
@@ -48,4 +49,7 @@ def autofield(self, **kwargs):
 def charfield(self, **kwargs):
     return super(models.fields.CharField, self).searchformfield(CharFieldQuery, **kwargs)
 
+@_searchformfield_method(models.fields.NullBooleanField)
+def autofield(self, **kwargs):
+    return super(models.fields.NullBooleanField, self).searchformfield(NullBooleanFieldQuery, **kwargs)
 
