@@ -11,12 +11,9 @@ class MatchWidget(MultiWidget):
     '''
     
     def __init__(self, lookup_widget, value_widgets, attrs=None):
-        #from pprint import pprint
-        #pprint(('MatchField.__init__', lookup_widget, value_widgets, attrs))
         widgets = [
             lookup_widget,
         ] + [value_widgets[choice[0]] for choice in lookup_widget.choices]
-        #pprint(('MatchWidget.__init__', widgets, attrs))
         super(MatchWidget, self).__init__(widgets, attrs)
     
     @property
@@ -47,15 +44,9 @@ class MatchWidget(MultiWidget):
             
             return out
         
-        from pprint import pprint
-        pprint(('decompress', value))
-        
         raise NotImplementedError
     
     def format_output(self, rendered_widgets):
-        #from pprint import pprint
-        #pprint(('format_output', rendered_widgets))
-        
         # enclose each widget in a span so we can select them in JS
         lookup_widget = u'<span class="lookup">%s</span>' % rendered_widgets[0]
         value_widgets = []

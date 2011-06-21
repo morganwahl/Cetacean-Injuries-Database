@@ -30,8 +30,6 @@ class MatchField(forms.MultiValueField):
         value will be the value field that corresponds to the chosen lookup
         type.
         '''
-        from pprint import pprint
-        pprint(('MatchField.__init__', lookup_choices, value_fields, args, kwargs))
 
         #defaults = {
         #    'required': True,
@@ -80,7 +78,6 @@ class MatchField(forms.MultiValueField):
             )
             passed['widget'] = self.widget(lookup_widget, arg_widgets)
         
-        pprint(('MultiValueField.__init__', fields, passed))
         super(MatchField, self).__init__(fields, **passed)
     
     @property
@@ -239,7 +236,6 @@ class QueryField(MatchField):
     }
     
     def __init__(self, model_field, *args, **kwargs):
-        from pprint import pprint
         
         self.model_field = model_field
 
@@ -257,8 +253,6 @@ class QueryField(MatchField):
         if not prefix is None:
             lookup_fieldname = prefix + '__' + lookup_fieldname
         q = Q(**{lookup_fieldname + '__' + lookup_type: lookup_value})
-        from pprint import pprint
-        pprint(('QueryField.query', unicode(q)))
         return q
 
 class AutoFieldQuery(QueryField):
@@ -302,8 +296,6 @@ class NullBooleanFieldQuery(QueryField):
             if lookup_type == 'in' and None in lookup_value:
                 q = super(NullBooleanFieldQuery, self).query(value)
                 q |= Q(**{lookup_fieldname + '__' + 'isnull': True})
-                from pprint import pprint
-                pprint(('NullBooleanFieldQuery.query', unicode(q)))
                 return q
 
         return super(NullBooleanFieldQuery, self).query(value, prefix)
