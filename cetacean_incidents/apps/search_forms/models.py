@@ -9,6 +9,7 @@ from fields import (
     NullBooleanFieldQuery,
     QueryField,
 )
+from related import ManyToManyFieldQuery
 
 # TODO is this kosher?
 _attr_name = 'searchformfield'
@@ -57,4 +58,8 @@ def autofield(self, **kwargs):
 @_searchformfield_method(models.fields.TextField)
 def charfield(self, **kwargs):
     return super(models.fields.TextField, self).searchformfield(CharFieldQuery, **kwargs)
+
+@_searchformfield_method(models.fields.related.ManyToManyField)
+def manytomany(self, **kwargs):
+    return super(models.fields.related.ManyToManyField, self).searchformfield(ManyToManyFieldQuery, **kwargs)
 

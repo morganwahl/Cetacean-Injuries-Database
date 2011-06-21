@@ -119,12 +119,12 @@ class BaseSearchForm(BaseForm):
         self.manager = opts.model.objects
         super(BaseSearchForm, self).__init__(*args, **kwargs)
     
-    def _query(self):
+    def _query(self, prefix=None):
         q = Q()
         for fieldname, field in self.fields.items():
             if not hasattr(field, 'query'):
                 continue
-            q &= field.query(self.cleaned_data[fieldname])
+            q &= field.query(self.cleaned_data[fieldname], prefix)
         return q
 
     def results(self):

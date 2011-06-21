@@ -249,11 +249,13 @@ class QueryField(MatchField):
     
         super(QueryField, self).__init__(self.lookup_choices, self.value_fields, *args, **kwargs)
     
-    def query(self, value):
+    def query(self, value, prefix=None):
         if value is None:
             return Q()
         lookup_type, lookup_value = value
         lookup_fieldname = self.model_field.get_attname()
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
         q = Q(**{lookup_fieldname + '__' + lookup_type: lookup_value})
         from pprint import pprint
         pprint(('QueryField.query', unicode(q)))
@@ -289,10 +291,12 @@ class NullBooleanFieldQuery(QueryField):
         'in': YesNoUnknownField()
     }
     
-    def query(self, value):
+    def query(self, value, prefix=None):
         if not value is None:
             lookup_type, lookup_value = value
             lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
             
             # None doesn't acutally work as a value for 'in'
             if lookup_type == 'in' and None in lookup_value:
@@ -302,7 +306,7 @@ class NullBooleanFieldQuery(QueryField):
                 pprint(('NullBooleanFieldQuery.query', unicode(q)))
                 return q
 
-        return super(NullBooleanFieldQuery, self).query(value)
+        return super(NullBooleanFieldQuery, self).query(value, prefix)
 
 class CharFieldQuery(QueryField):
     
@@ -330,10 +334,12 @@ class CharFieldQuery(QueryField):
             'exact': forms.TypedChoiceField(**choice_kwargs),
         }
     
-    def query(self, value):
+    def query(self, value, prefix=None):
         if not value is None:
             lookup_type, lookup_value = value
             lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
             
             # blank fields and null fields are equivalent
             if (lookup_type == 'isnull' and lookup_value) or (lookup_type == 'exact' and lookup_value == u''):
@@ -344,4 +350,4 @@ class CharFieldQuery(QueryField):
             if lookup_type == 'exact':
                 q = Q(**{lookup_fieldname + '__' + 'iexact': lookup_value})
                 return q
-        return super(CharFieldQuery, self).query(value)
+        return super(CharFieldQuery, self).query(value, prefix)
