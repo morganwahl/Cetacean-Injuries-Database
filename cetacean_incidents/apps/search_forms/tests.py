@@ -3,68 +3,118 @@ import unittest
 
 from django import forms
 
-from fields import QueryField, identity_lookups, text_lookups
+from fields import MatchField
+from related import SubqueryField
 
-class QueryFieldTestCase(unittest.TestCase):
+class MatchFieldTestCase(unittest.TestCase):
     
+    class TestForm(forms.Form):
+        f = MatchField(
+            lookup_choices= (
+                ('', '<ignore>'),
+                ('in', 'one of'),
+                ('exact', 'is'),
+            ),
+            value_fields= {
+                '': forms.CharField(widget=forms.HiddenInput),
+                'in': forms.CharField(),
+                'exact': forms.CharField(),
+            },
+            label='the field',
+            required= False,
+            initial= ('in', 'some value'),
+        )
+
     def setUp(self):
         pass
     
     def test_instantiation(self):
-        class TestForm(forms.Form):
-            f = QueryField(
-                lookup_choices= (
-                    ('', '<ignore>'),
-                    ('in', 'one of'),
-                    ('exact', 'is'),
-                ),
-                value_fields= {
-                    '': forms.CharField(widget=forms.HiddenInput),
-                    'in': forms.CharField(),
-                    'exact': forms.CharField(),
-                },
-                label='the field',
-                required= False,
-                initial= ('in', 'some value'),
-            )
-        
-        f = TestForm()
+        f = self.TestForm()
         #print f.as_p()
-        
         self.assertEqual(f.is_bound, False)
         self.assertEqual(f.is_valid(), False)
         
-        f = TestForm(data={'f_0': 'egzact', 'f_1': 'yadda'})
+        f = self.TestForm(data={'f_0': 'egzact', 'f_1': 'yadda'})
         #print f.as_p()
         self.assertEqual(f.is_bound, True)
         self.assertEqual(f.is_valid(), False)
         
-        f = TestForm(data={})
+        f = self.TestForm(data={})
         #print f.as_p()
         self.assertEqual(f.is_bound, True)
         self.assertEqual(f.is_valid(), True)
         self.assertEqual(f.cleaned_data['f'], None)
         
-        f = TestForm(data={'f_0': 'exact', 'f_3': ''})
+        f = self.TestForm(data={'f_0': 'exact', 'f_3': ''})
         #print f.as_p()
         self.assertEqual(f.is_bound, True)
         self.assertEqual(f.is_valid(), True)
         self.assertEqual(f.cleaned_data['f'], ('exact', ''))
 
-        f = TestForm(data={'f_0': '', 'f_1': 'blah blah'})
+        f = self.TestForm(data={'f_0': '', 'f_1': 'blah blah'})
         #print f.as_p()
         self.assertEqual(f.is_bound, True)
         self.assertEqual(f.is_valid(), True)
         self.assertEqual(f.cleaned_data['f'], None)
 
-        f = TestForm(data={'f_0': 'exact', 'f_3': 'test'})
+        f = self.TestForm(data={'f_0': 'exact', 'f_3': 'test'})
         #print f.as_p()
         self.assertEqual(f.is_bound, True)
         self.assertEqual(f.is_valid(), True)
         self.assertEqual(f.cleaned_data['f'], ('exact', 'test'))
 
-        f = TestForm(initial={'f': ('in', '1,2,3')})
+        f = self.TestForm(initial={'f': ('in', '1,2,3')})
+        #print f.media
+        #print f.as_p()
+        self.assertEqual(f.is_bound, False)
+
+class SubqueryFieldTestCase(unittest.TestCase):
+    
+    class TestForm(forms.Form):
+        superfield = SubqueryField(
+            MatchFieldTestCase.TestForm,
+            label= 'a superfield',
+            required= True,
+            initial= {
+                'f': ('in', 'other val'),
+            }
+        )
+
+    def setUp(self):
+        pass
+        
+    def test_instantiation(self):
+        f = self.TestForm()
+        self.assertEqual(f.is_bound, False)
+        
+        f = self.TestForm(initial={
+            'superfield': {
+                'f': ('in', '1,2,3'),
+            },
+        })
+        self.assertEqual(f.is_bound, False)
+
+        f = self.TestForm(data={})
         print f.media
         print f.as_p()
-        self.assertEqual(f.is_bound, False)
+        self.assertEqual(f.is_bound, True)
+        self.assertEqual(f.is_valid(), True)
+        self.assertEqual(f.cleaned_data['superfield'].is_bound, True)
+        self.assertEqual(f.cleaned_data['superfield'].is_valid(), True)
+
+        f = self.TestForm(data={
+            'superfield-f_0': 'exact',
+            'superfield-f_3': 'test',
+        })
+        self.assertEqual(f.is_bound, True)
+        self.assertEqual(f.is_valid(), True)
+        self.assertEqual(f.cleaned_data['superfield'].is_bound, True)
+        self.assertEqual(f.cleaned_data['superfield'].is_valid(), True)
+
+        f = self.TestForm(data={
+            'superfield-f_0': 'egzact',
+            'superfield-f_1': 'yadda',
+        })
+        self.assertEqual(f.is_bound, True)
+        self.assertEqual(f.is_valid(), False)
 
