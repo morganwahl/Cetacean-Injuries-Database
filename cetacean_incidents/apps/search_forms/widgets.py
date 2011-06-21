@@ -10,10 +10,8 @@ class MatchWidget(MultiWidget):
     that type is selected.
     '''
     
-    def __init__(self, lookup_widget, value_widgets, attrs=None):
-        widgets = [
-            lookup_widget,
-        ] + [value_widgets[choice[0]] for choice in lookup_widget.choices]
+    def __init__(self, match_options, attrs=None):
+        widgets = match_options.widgets()
         super(MatchWidget, self).__init__(widgets, attrs)
     
     @property

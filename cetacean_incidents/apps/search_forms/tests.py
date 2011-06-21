@@ -2,23 +2,18 @@ import unittest
 
 from django import forms
 
-from fields import MatchField
+from fields import MatchField, MatchOptions, MatchOption
 from related import SubqueryField
 
 class MatchFieldTestCase(unittest.TestCase):
     
     class TestForm(forms.Form):
         f = MatchField(
-            lookup_choices= (
-                ('', '<ignore>'),
-                ('in', 'one of'),
-                ('exact', 'is'),
-            ),
-            value_fields= {
-                '': forms.CharField(widget=forms.HiddenInput),
-                'in': forms.CharField(),
-                'exact': forms.CharField(),
-            },
+            match_options= MatchOptions([
+                MatchOption('', '<ignore>', forms.CharField(widget=forms.HiddenInput)),
+                MatchOption('in', 'one of', forms.CharField()),
+                MatchOption('exact', 'is', forms.CharField()),
+            ]),
             label='the field',
             required= False,
             initial= ('in', 'some value'),

@@ -1,6 +1,9 @@
+from collections import namedtuple
+
 from django import forms
 from django.db import models
 from django.db.models import Q
+from django.utils.datastructures import SortedDict
 
 from cetacean_incidents.apps.utils.forms import (
     InlineRadioFieldRenderer,
@@ -13,6 +16,31 @@ from widgets import (
     HiddenMatchWidget,
 )
 
+MatchOption = namedtuple('MatchOption', 'lookup lookup_name value_field')
+
+class MatchOptions(SortedDict):
+    
+    def __init__(self, match_options=()):
+        return super(MatchOptions, self).__init__([(o.lookup, o) for o in match_options])
+
+    def choices(self):
+        return tuple([(o.lookup, o.lookup_name) for o in self.values()])
+    
+    def fields(self):
+        return [self.lookup_field()] + self.value_fields()
+    
+    def lookup_field(self):
+        return forms.ChoiceField(choices=self.choices())
+
+    def value_fields(self):
+        return [o.value_field for o in self.values()]
+    
+    def widgets(self):
+        return [self.lookup_field().widget] + [vf.widget for vf in self.value_fields()]
+    
+    def value_field_widgets(self):
+        return [o.value_field.widget for o in self.values()]
+
 class MatchField(forms.MultiValueField):
     '''\
     A form field class with multiple subfields. One field is the match type and
@@ -23,14 +51,7 @@ class MatchField(forms.MultiValueField):
     widget = MatchWidget
     hidden_widget = HiddenMatchWidget
     
-    def __init__(self, lookup_choices=(), value_fields={}, *args, **kwargs):
-        '''\
-        Lookup_choices is Django choice tuple whose values are lookup types.
-        value_fields is a dictionary of fields keyed to lookup types. The query
-        value will be the value field that corresponds to the chosen lookup
-        type.
-        '''
-
+    def __init__(self, match_options=MatchOptions(), *args, **kwargs):
         #defaults = {
         #    'required': True,
         #    'widget': None,
@@ -63,21 +84,13 @@ class MatchField(forms.MultiValueField):
         # MatchFields are never required
         passed['required'] = False
         
-        lookup_field = forms.ChoiceField(choices=lookup_choices)
-
         # TODO seperate out the args and kwargs, and pass some to value_fields,
         # some to super
         
-        fields = [
-            lookup_field,
-        ] + [value_fields[choice[0]] for choice in lookup_choices]
         if not 'widget' in given:
-            lookup_widget = lookup_field.widget
-            arg_widgets = dict(
-                [(lookup, field.widget) for lookup, field in value_fields.items()]
-            )
-            passed['widget'] = self.widget(lookup_widget, arg_widgets)
+            passed['widget'] = self.widget(match_options)
         
+        fields = match_options.fields()
         super(MatchField, self).__init__(fields, **passed)
     
     @property
@@ -226,24 +239,23 @@ class QueryField(MatchField):
     that filter on the model field class.
     '''
     
-    lookup_choices = (
-        ('', '<anything>'),
-        ('isnull', 'is blank'),
-    )
-    value_fields = {
-        '': forms.CharField(widget=forms.HiddenInput(attrs={'disabled': 'disabled'})),
-        'isnull': YesNoField(),
-    }
+    default_match_options = MatchOptions([
+        MatchOption('', '<anything>',
+            forms.CharField(
+                widget=forms.HiddenInput(attrs={'disabled': 'disabled'}),
+            ),
+        ),
+    ])
     
-    def __init__(self, model_field, *args, **kwargs):
-        
+    def __init__(self, model_field, extra_match_options=None, *args, **kwargs):
         self.model_field = model_field
 
-        if self.model_field.choices and hasattr(self, '_choices_fields'):
-            # Fields with choices get special treatment
-            self.value_fields.update(self._choices_fields())
-    
-        super(QueryField, self).__init__(self.lookup_choices, self.value_fields, *args, **kwargs)
+        match_options = MatchOptions()
+        for c in reversed(self.__class__.__mro__):
+            match_options.update(getattr(c, 'default_match_options', {}))
+        match_options.update(extra_match_options or {})
+        
+        super(QueryField, self).__init__(match_options, *args, **kwargs)
     
     def query(self, value, prefix=None):
         if value is None:
@@ -256,34 +268,26 @@ class QueryField(MatchField):
         return q
 
 class AutoFieldQuery(QueryField):
-    lookup_choices = (
-        ('', '<anything>'),
-        ('exact', 'is'),
-    )
-    value_fields = {
-        '': forms.CharField(widget=forms.HiddenInput),
-        'exact': forms.IntegerField(),
-    }
+    default_match_options = MatchOptions([
+        MatchOption('exact', 'is',
+            forms.IntegerField(),
+        ),
+    ])
 
 class BooleanFieldQuery(QueryField):
-    lookup_choices = (
-        ('', '<anything>'),
-        ('exact', 'is'),
-    )
-    value_fields = {
-        '': forms.CharField(widget=forms.HiddenInput),
-        'exact': YesNoField(),
-    }
+    default_match_options = MatchOptions([
+        MatchOption('exact', 'is',
+            YesNoField(),
+        ),
+    ])
 
 class NullBooleanFieldQuery(QueryField):
-    lookup_choices = (
-        ('', '<anything>'),
-        ('in', 'is one of'),
-    )
-    value_fields = {
-        '': forms.CharField(widget=forms.HiddenInput),
-        'in': YesNoUnknownField()
-    }
+
+    default_match_options = MatchOptions([
+        MatchOption('in', 'is one of',
+            YesNoUnknownField(),
+        ),
+    ])
     
     def query(self, value, prefix=None):
         if not value is None:
@@ -302,30 +306,38 @@ class NullBooleanFieldQuery(QueryField):
 
 class CharFieldQuery(QueryField):
     
-    lookup_choices = (
-        ('', '<anything>'),
-        ('exact', 'is'),
-        ('isnull', 'is blank'),
-        ('icontains', 'contains'),
-    )
-    value_fields = {
-        '': forms.CharField(widget=forms.HiddenInput),
-        'exact': forms.CharField(),
-        'isnull': YesNoField(),
-        'icontains': forms.CharField(),
-    }
+    def __init__(self, model_field, *args, **kwargs):
+        
+        match_options = None
+        
+        if model_field.choices:
+            # Fields with choices get special treatment
+            choice_kwargs = {
+                'choices': model_field.get_choices(include_blank=True),
+                'coerce': model_field.to_python,
+                'required': True,
+            }
+            if model_field.null:
+                choice_kwargs['empty_value'] = None
+            match_options = MatchOptions([
+                MatchOption('exact', 'is',
+                    forms.TypedChoiceField(**choice_kwargs),
+                ),
+            ])
+        else:
+            match_options = MatchOptions([
+                MatchOption('iexact', 'is', forms.CharField()),
+                MatchOption('icontains', 'contains', forms.CharField()),
+            ])
 
-    def _choices_fields(self):
-        choice_kwargs = {
-            'choices': self.model_field.get_choices(include_blank=True),
-            'coerce': self.model_field.to_python,
-        }
-        if self.model_field.null:
-            choice_kwargs['empty_value'] = None
-        return {
-            'exact': forms.TypedChoiceField(**choice_kwargs),
-        }
-    
+        # QueryField will take care of this if model_field.null
+        if model_field.blank:
+            match_options.update(MatchOptions([
+                MatchOption('isnull', 'is blank', YesNoField()),
+            ]))
+
+        super(CharFieldQuery, self).__init__(model_field, match_options, *args, **kwargs)
+
     def query(self, value, prefix=None):
         if not value is None:
             lookup_type, lookup_value = value
@@ -334,12 +346,9 @@ class CharFieldQuery(QueryField):
                 lookup_fieldname = prefix + '__' + lookup_fieldname
             
             # blank fields and null fields are equivalent
-            if (lookup_type == 'isnull' and lookup_value) or (lookup_type == 'exact' and lookup_value == u''):
+            if (lookup_type == 'isnull' and lookup_value) or (lookup_type == 'iexact' and lookup_value == u''):
                 q = Q(**{lookup_fieldname + '__' + 'isnull': True})
-                q |= Q(**{lookup_fieldname + '__' + 'exact': ''})
-                return q
-            # do case-insensitive matching, even for 'exact'
-            if lookup_type == 'exact':
-                q = Q(**{lookup_fieldname + '__' + 'iexact': lookup_value})
+                q |= Q(**{lookup_fieldname + '__' + 'iexact': ''})
                 return q
         return super(CharFieldQuery, self).query(value, prefix)
+
