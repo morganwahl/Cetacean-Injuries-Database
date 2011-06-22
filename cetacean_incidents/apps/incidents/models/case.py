@@ -218,7 +218,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
     happened_after = models.DateField(
         blank= True,
         null= True,
-        help_text= "Please use \u2018<year>-<month>-<day>\u2019. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put \u20182009-07-01\u2019.",
+        help_text= u"Please use \u2018<year>-<month>-<day>\u2019. Injuring incidents themselves are rarely observed, so this is a day whose start is definitely _before_ the incident. For entanglements, this is the 'last seen unentangled' date. For shipstrikes this would usually be the date of the last observation without the relevant scar or wound. In those cases were the date of the incident is known, put it here. (You should also add an observation for that day to indicate the actual incident was observed.) For uncertain dates, put a date at the begining of the range of possible ones, i.e. if you know the animal was seen uninjured in July of 2009, put \u20182009-07-01\u2019.",
         verbose_name= 'incident was on or after',
     )
     
