@@ -160,6 +160,7 @@
 {% if case.gear_analysis_conclusions %}
 {% display_bigtext_div case "gear_analysis_conclusions" %}
 {% endif %}
+{% display_yesnounk_div case "gear_regulated" %}
 {% display_yesnounk_div case "gear_compliant" %}
 {% display_yesnounk_div case "gear_kept" %}
 {% if case.gear_kept %}

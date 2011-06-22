@@ -209,6 +209,14 @@ class GearAnalysis(models.Model):
         help_text= u"""Detailed description of the gear that was analyzed. If the gear owner is known and their description of the gear they're missing differs from what was analyzed, note it here. Keep in mind that this field is not confidential, unlike the gear owner info.""",
     )
     
+    gear_regulated = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "gear regulated?",
+        help_text= "Are there any regulations for the gear when and where it was set?",
+    )
+    
     gear_compliant = models.NullBooleanField(
         blank= True,
         null= True,
