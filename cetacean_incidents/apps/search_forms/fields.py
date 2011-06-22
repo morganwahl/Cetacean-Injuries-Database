@@ -128,10 +128,11 @@ class MatchField(forms.MultiValueField):
         return super(MatchField, self).clean(value)
     
     def compress(self, data_list):
-        
+        # TODO should we return (None, None)
         if data_list == []:
             return None
         
+        # TODO should we just return ('', '')?
         if data_list[0] == '':
             return None
         
@@ -286,29 +287,6 @@ class BooleanFieldQuery(QueryField):
         ),
     ])
 
-class NullBooleanFieldQuery(QueryField):
-
-    default_match_options = MatchOptions([
-        MatchOption('in', 'is one of',
-            YesNoUnknownField(),
-        ),
-    ])
-    
-    def query(self, value, prefix=None):
-        if not value is None:
-            lookup_type, lookup_value = value
-            lookup_fieldname = self.model_field.get_attname()
-            if not prefix is None:
-                lookup_fieldname = prefix + '__' + lookup_fieldname
-            
-            # None doesn't acutally work as a value for 'in'
-            if lookup_type == 'in' and None in lookup_value:
-                q = super(NullBooleanFieldQuery, self).query(value)
-                q |= Q(**{lookup_fieldname + '__' + 'isnull': True})
-                return q
-
-        return super(NullBooleanFieldQuery, self).query(value, prefix)
-
 class CharFieldQuery(QueryField):
     
     def __init__(self, model_field, *args, **kwargs):
@@ -376,3 +354,26 @@ class DateFieldQuery(QueryField):
         ),
     ])
     
+class NullBooleanFieldQuery(QueryField):
+
+    default_match_options = MatchOptions([
+        MatchOption('in', 'is one of',
+            YesNoUnknownField(),
+        ),
+    ])
+    
+    def query(self, value, prefix=None):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            # None doesn't acutally work as a value for 'in'
+            if lookup_type == 'in' and None in lookup_value:
+                q = super(NullBooleanFieldQuery, self).query(value)
+                q |= Q(**{lookup_fieldname + '__' + 'isnull': True})
+                return q
+
+        return super(NullBooleanFieldQuery, self).query(value, prefix)
+
