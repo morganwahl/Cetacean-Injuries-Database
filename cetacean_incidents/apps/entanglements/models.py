@@ -61,6 +61,12 @@ class LocationGearSet(Location):
     
     # TODO enforce view permissions at the model level!
     
+    exempt_waters = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= u"Was the gear set in exempt waters?",
+    )
     
     depth = models.DecimalField(
         blank= True,
@@ -99,6 +105,7 @@ class LocationGearSet(Location):
     def has_data(self):
         return reduce(operator.__or__, (
             super(LocationGearSet, self).has_data,
+            self.exempt_waters is not None,
             self.depth is not None, # zero-depth is still data
             bool(self.bottom_type),
         ))
