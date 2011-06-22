@@ -117,3 +117,25 @@ class ManyToManyFieldQuery(SubqueryField):
         q = value._query(prefix=lookup_fieldname)
         return q
 
+class ReverseForeignKeyQuery(SubqueryField):
+    
+    def __init__(self, model_field, *args, **kwargs):
+        # TODO model_field should be a ForeignKey instance
+        self.model_field = model_field
+        other_model = self.model_field.model
+        class other_model_search_form(SearchForm):
+            class Meta:
+                model = other_model
+        return super(ReverseForeignKeyQuery, self).__init__(other_model_search_form, *args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+            
+        lookup_fieldname = self.model_field.related_query_name()
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        q = value._query(prefix=lookup_fieldname)
+        return q
+
