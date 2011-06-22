@@ -6,6 +6,8 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+
 from models import (
     Contact,
     Organization,
@@ -168,3 +170,8 @@ class ContactMergeForm(MergeForm):
             'email': EmailInput,
         }
 
+class ContactSearchForm(SearchForm):
+    
+    class Meta:
+        model = Contact
+        

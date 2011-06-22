@@ -102,5 +102,6 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.documents',
     'cetacean_incidents.apps.csv_import',
     'cetacean_incidents.apps.clean_cache',
+    'cetacean_incidents.apps.search_forms',
 )
 

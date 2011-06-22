@@ -28,5 +28,6 @@ urlpatterns += patterns('',
         {},
         'merge_contact',
     ),
+    (r'^search$', views.contact_search, {}, 'contact_search'),
 )
 

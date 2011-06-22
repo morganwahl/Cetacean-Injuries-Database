@@ -38,7 +38,12 @@
     -->
     <table class="navlinks layout">
         <tr>
-            <td><a href="{% url all_contacts %}">contacts</a></td>
+            <td>
+                <div class="category">contacts</div>
+                <a class="action" href="{% url contact_search %}">
+                    search
+                </a>
+            </td>
             <td>
                 <div class="category">
                     animals
