@@ -2,6 +2,8 @@ from django import forms
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
+from cetacean_incidents.apps.search_forms.forms import SubmitDetectingForm
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from ..models import (
@@ -10,17 +12,6 @@ from ..models import (
     YearCaseNumber,
 )
 
-class SubmitDetectingForm(forms.Form):
-    '''\
-    A form with a hidden 'submitted' field with value 'yes' if the form was
-    submitted. Handy for detecting submission via GET method.
-    '''
-    
-    submitted = forms.CharField(
-        widget= forms.HiddenInput,
-        initial= 'yes',
-    )
-    
 class AnimalIDLookupForm(SubmitDetectingForm):
     local_id = forms.IntegerField(
         #help_text= u"lookup a particular case by numeric ID",
