@@ -3,6 +3,7 @@ from animal import (
     AnimalForm,
     AnimalMergeForm,
     AnimalMergeSourceForm,
+    AnimalSearchForm,
 )
 from case import (
     CaseAnimalForm,
@@ -25,7 +26,6 @@ from search import (
     CaseIDLookupForm,
     CaseYearlyNumberLookupForm,
 
-    AnimalSearchForm,
     CaseSearchForm,
     ObservationSearchForm,
 )

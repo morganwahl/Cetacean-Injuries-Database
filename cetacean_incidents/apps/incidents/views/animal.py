@@ -69,33 +69,35 @@ def animal_search(request):
     animal_list = tuple()
     
     if form.is_valid():
-        animal_order_args = ('id',)
+        #animal_order_args = ('id',)
         #animals = Animal.objects.all().distinct().order_by(*animal_order_args)
         # TODO Oracle doesn't support distinct() on models with TextFields
-        animals = Animal.objects.all().order_by(*animal_order_args)
+        #animals = Animal.objects.all().order_by(*animal_order_args)
         
-        if form.cleaned_data['taxon']:
-            t = form.cleaned_data['taxon']
-            descendants = Taxon.objects.with_descendants(t)
-            animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
+        #if form.cleaned_data['taxon']:
+        #    t = form.cleaned_data['taxon']
+        #    descendants = Taxon.objects.with_descendants(t)
+        #    animals = animals.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
         
         # empty string for name is same as None
-        if form.cleaned_data['name']:
-            name = form.cleaned_data['name']
-            name_q = Q(name__icontains=name)
-            field_number_q = Q(field_number__icontains=name)
-            animals = animals.filter(name_q | field_number_q)
+        #if form.cleaned_data['name']:
+        #    name = form.cleaned_data['name']
+        #    name_q = Q(name__icontains=name)
+        #    field_number_q = Q(field_number__icontains=name)
+        #    animals = animals.filter(name_q | field_number_q)
 
         # simulate distinct() for Oracle
         # an OrderedSet in the collections library would be nice...
         # TODO not even a good workaround, since we have to pass in the count
         # seprately
-        seen = set()
-        animal_list = list()
-        for a in animals:
-            if not a in seen:
-                seen.add(a)
-                animal_list.append(a)
+        #seen = set()
+        #animal_list = list()
+        #for a in animals:
+        #    if not a in seen:
+        #        seen.add(a)
+        #        animal_list.append(a)
+        
+        animal_list = form.results()
 
     return render_to_response(
         "incidents/animal_search.html",

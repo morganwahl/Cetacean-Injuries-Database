@@ -82,17 +82,17 @@ class CaseYearlyNumberLookupForm(SubmitDetectingForm):
                 raise forms.ValidationError("no case has been assigned that number for that year yet")
         return d
 
-class AnimalSearchForm(forms.Form):
-
-    taxon = TaxonField(
-        required= False,
-    )
-
-    name = forms.CharField(
-        required= False,
-        label= "Name or field number",
-        help_text= "search for Animals whose name or field number contains this",
-    )
+#class AnimalSearchForm(forms.Form):
+#
+#    taxon = TaxonField(
+#        required= False,
+#    )
+#
+#    name = forms.CharField(
+#        required= False,
+#        label= "Name or field number",
+#        help_text= "search for Animals whose name or field number contains this",
+#    )
 
 class CaseSearchForm(forms.Form):
     # To be subclass for Entanglements, Shipstrikes, etc.

@@ -9,9 +9,15 @@ from cetacean_incidents.apps.jquery_ui.widgets import (
     ModelAutocomplete,
 )
 
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.related import ReverseForeignKeyQuery
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
-from ..models import Animal
+from ..models import (
+    Animal,
+    Observation,
+)
 
 class AnimalAutocomplete(ModelAutocomplete):
     
@@ -100,4 +106,17 @@ class AnimalMergeForm(DocumentableMergeForm):
         widgets = {
             'determined_dead_before': Datepicker,
         }
+
+class AnimalSearchForm(SearchForm):
+    
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('animal')[0]
+    observations = ReverseForeignKeyQuery(
+        model_field= _f,
+        required= False,
+    )
+    
+    class Meta:
+        model = Animal
+        exclude = ('import_notes',)
 
