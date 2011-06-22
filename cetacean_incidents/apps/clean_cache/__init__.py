@@ -156,6 +156,10 @@ class Smidgen(object):
         # these are used by any State instance created by this Smidgen
         self.cache_key_patterns = {}
         for obj, fieldnames in description.items():
+            # ignore None objects
+            if obj is None:
+                continue
+            
             # validate and convert the key
             if isinstance(obj, Model):
                 obj = (ContentType.objects.get_for_model(obj), obj.pk)
