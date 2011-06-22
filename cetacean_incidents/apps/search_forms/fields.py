@@ -1,5 +1,3 @@
-from collections import namedtuple
-
 from django import forms
 from django.db import models
 from django.db.models import Q
@@ -16,7 +14,12 @@ from widgets import (
     HiddenMatchWidget,
 )
 
-MatchOption = namedtuple('MatchOption', 'lookup lookup_name value_field')
+class MatchOption(object):
+    
+    def __init__(self, lookup, lookup_name, value_field):
+        self.lookup = lookup
+        self.lookup_name = lookup_name
+        self.value_field = value_field
 
 class MatchOptions(SortedDict):
     
