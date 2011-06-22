@@ -24,6 +24,7 @@ class YearsForm(forms.Form):
         cache_key = 'incidents__case_extras__year_range'
         year_range = cache.get(cache_key)
         if year_range is None:
+            # TODO relys on UncertainDateTime's database representation starting with the year
             considered_obs = Observation.objects.filter(datetime_observed__gte=unicode(_MIN_YEAR)).only('datetime_observed')
             try:
                 lowest_year = considered_obs.order_by('datetime_observed')[0].datetime_observed.year
