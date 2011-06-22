@@ -16,8 +16,8 @@ import models # needed to add the searchformfield attribute to Django's models
 
 class SubmitDetectingForm(forms.Form):
     '''\
-    A form with a hidden 'submitted' field with value 'yes' if the form was
-    submitted. Handy for detecting submission via GET method.
+    A abstract 'mix-in' form with a hidden 'submitted' field with value 'yes' if
+    the form was submitted. Handy for detecting submission via GET method.
     '''
     
     submitted = forms.CharField(
@@ -106,12 +106,6 @@ class SearchFormMetaclass(type):
 class BaseSearchForm(BaseForm):
     # based on BaseModelForm, except without the 'instance' or 'object_data'
     
-    # copied from SubmitDetectingForm
-    submitted = forms.CharField(
-        widget= forms.HiddenInput,
-        initial= 'yes',
-    )
-
     def __init__(self, *args, **kwargs):
         opts = self._meta
         if opts.model is None:
@@ -125,6 +119,8 @@ class BaseSearchForm(BaseForm):
             if not hasattr(field, 'query'):
                 continue
             q &= field.query(self.cleaned_data[fieldname], prefix)
+        from pprint import pprint
+        pprint(unicode(q))
         return q
 
     def results(self):
