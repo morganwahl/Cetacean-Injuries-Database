@@ -3,6 +3,8 @@ from django.db import models
 from django.db.models import Q
 from django.utils.datastructures import SortedDict
 
+from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
+
 from cetacean_incidents.apps.utils.forms import (
     InlineRadioFieldRenderer,
     InlineCheckboxSelectMultiple,
@@ -355,3 +357,22 @@ class CharFieldQuery(QueryField):
                 return q
         return super(CharFieldQuery, self).query(value, prefix)
 
+class DateFieldQuery(QueryField):
+    default_match_options = MatchOptions([
+        MatchOption('lt', 'before',
+            forms.DateField(widget=Datepicker),
+        ),
+        MatchOption('lte', 'before or on',
+            forms.DateField(widget=Datepicker),
+        ),
+        MatchOption('exact', 'on',
+            forms.DateField(widget=Datepicker),
+        ),
+        MatchOption('gte', 'on or after',
+            forms.DateField(widget=Datepicker),
+        ),
+        MatchOption('gt', 'after',
+            forms.DateField(widget=Datepicker),
+        ),
+    ])
+    

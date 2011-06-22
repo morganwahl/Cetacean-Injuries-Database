@@ -6,6 +6,7 @@ from fields import (
     AutoFieldQuery,
     BooleanFieldQuery,
     CharFieldQuery,
+    DateFieldQuery,
     NullBooleanFieldQuery,
     QueryField,
 )
@@ -50,6 +51,10 @@ def autofield(self, **kwargs):
 @_searchformfield_method(models.fields.CharField)
 def charfield(self, **kwargs):
     return super(models.fields.CharField, self).searchformfield(CharFieldQuery, **kwargs)
+
+@_searchformfield_method(models.fields.DateField)
+def datefield(self, **kwargs):
+    return super(models.fields.DateField, self).searchformfield(DateFieldQuery, **kwargs)
 
 @_searchformfield_method(models.fields.NullBooleanField)
 def autofield(self, **kwargs):
