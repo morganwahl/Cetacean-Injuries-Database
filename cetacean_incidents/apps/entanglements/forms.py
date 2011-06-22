@@ -3,8 +3,6 @@ from operator import __and__
 from django import forms
 from django.forms.models import modelformset_factory
 from django.template.loader import render_to_string
-from django.utils.encoding import force_unicode
-from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.dag.forms import DAGField
 
@@ -26,6 +24,8 @@ from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
+from cetacean_incidents.apps.utils.forms import InlineRadioFieldRenderer
+
 from models import (
     BodyLocation,
     Entanglement,
@@ -35,15 +35,6 @@ from models import (
     GearType,
     LocationGearSet,
 )
-
-class InlineRadioFieldRenderer(forms.widgets.RadioFieldRenderer):
-    def render(self):
-        """Outputs a <ul> for this set of radio fields."""
-        return mark_safe(
-            u'<div>\n%s\n</div>' % u'\n'.join(
-                [u'<span>%s</span>' % force_unicode(w) for w in self]
-            )
-        )
 
 class GearBodyLocationForm(forms.ModelForm):
     '''\
