@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+#from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -187,13 +187,13 @@ class Animal(Documentable, Importable):
         
         opts['use_cache'] = True
         
-        if not 'cache_deps' in opts:
-            opts['cache_deps'] = Smidgen()
+        #if not 'cache_deps' in opts:
+        #    opts['cache_deps'] = Smidgen()
         
         # TODO block vs. inline
-        opts['cache_deps'] |= Smidgen({
-            self: ('id', 'field_number', 'name', 'determined_dead_before'),
-        })
+        #opts['cache_deps'] |= Smidgen({
+        #    self: ('id', 'field_number', 'name', 'determined_dead_before'),
+        #})
         
         return opts
     

@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+#from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -328,23 +328,23 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         
         return name
     
-    def _get_name_smidgen(self):
-        s = Smidgen({
-            self: ['id', 'observation_set', 'animal', 'current_yearnumber', 'case_type'],
-            self.animal: ['field_number', 'observation_set', 'determined_taxon'],
-            self.current_yearnumber: ['year', 'number'],
-        })
-        
-        for o in self.observation_set.all():
-            s |= Smidgen({
-                o: ['cases', 'datetime_observed'],
-            })
-        for o in self.animal.observation_set.all():
-            s |= Smidgen({
-                o: ['taxon'],
-            })
-        
-        return s
+    #def _get_name_smidgen(self):
+    #    s = Smidgen({
+    #        self: ['id', 'observation_set', 'animal', 'current_yearnumber', 'case_type'],
+    #        self.animal: ['field_number', 'observation_set', 'determined_taxon'],
+    #        self.current_yearnumber: ['year', 'number'],
+    #    })
+    #    
+    #    for o in self.observation_set.all():
+    #        s |= Smidgen({
+    #            o: ['cases', 'datetime_observed'],
+    #        })
+    #    for o in self.animal.observation_set.all():
+    #        s |= Smidgen({
+    #            o: ['taxon'],
+    #        })
+    #    
+    #    return s
     
     # names_list is intentially read-only, so that it can only be modified via
     # update_names
@@ -650,15 +650,15 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             options['context'] = {}
         options['context']['media_url'] = settings.MEDIA_URL
         
-        if not 'cache_deps' in options:
-            options['cache_deps'] = Smidgen()
-        options['cache_deps'] |= Smidgen({
-            self: [
-                'ole_investigation',
-                'valid',
-            ],
-        })
-        options['cache_deps'] |= self._get_name_smidgen()
+        #if not 'cache_deps' in options:
+        #    options['cache_deps'] = Smidgen()
+        #options['cache_deps'] |= Smidgen({
+        #    self: [
+        #        'ole_investigation',
+        #        'valid',
+        #    ],
+        #})
+        #options['cache_deps'] |= self._get_name_smidgen()
         
         return options
     

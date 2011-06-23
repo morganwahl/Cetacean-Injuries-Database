@@ -12,7 +12,7 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+#from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -80,29 +80,29 @@ class Documentable(Specificable):
         # TODO belongs in import app
         
         c = {}
-        deps = Smidgen()
+        #deps = Smidgen()
 
         # avoid circular imports
         from cetacean_incidents.apps.csv_import import IMPORT_TAGS
         
         c['needs_review'] = False
         review_tags = self.tag_set.filter(tag_text__in=IMPORT_TAGS)
-        deps |= Smidgen({
-            self: ('tag_set',),
-        })
+        #deps |= Smidgen({
+        #    self: ('tag_set',),
+        #})
         if review_tags.exists():
             c['needs_review'] = True
             c['media_url'] = settings.MEDIA_URL
-            for tag in review_tags:
-                deps |= Smidgen({
-                    tag: ('entry', 'tag_text'),
-                })
+            #for tag in review_tags:
+                #deps |= Smidgen({
+                #    tag: ('entry', 'tag_text'),
+                #})
 
         return {
             'template': t,
             'context': c,
             'use_cache': True, # cache by default, since we hit the database to check for import tags
-            'cache_deps': deps,
+            #'cache_deps': deps,
         }
     
     def __unicode__(self):

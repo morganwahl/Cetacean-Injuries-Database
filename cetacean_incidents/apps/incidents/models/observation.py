@@ -11,7 +11,7 @@ from django.core.validators import (
 )
 from django.db import models
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+#from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.contacts.models import Contact
 
@@ -442,19 +442,19 @@ class Observation(Documentable, Importable):
         # dead depends on animal.detertermined_dead_before,
         # earliest_datetime.date(), and latest_datetime.date()
         # also, __unicode__ depends on datetime_observed, observer, and id
-        if not 'cache_deps' in options:
-            options['cache_deps'] = Smidgen()
-        options['cache_deps'] |= Smidgen({
-            self: [
-                'animal',
-                # earliest_datetime and latest_datetime depend on
-                # datetime_observed and datetime_reported
-                'datetime_observed',
-                'datetime_reported',
-                'observer',
-            ],
-            self.animal: ['determined_dead_before'],
-        })
+        #if not 'cache_deps' in options:
+        #    options['cache_deps'] = Smidgen()
+        #options['cache_deps'] |= Smidgen({
+        #    self: [
+        #        'animal',
+        #        # earliest_datetime and latest_datetime depend on
+        #        # datetime_observed and datetime_reported
+        #        'datetime_observed',
+        #        'datetime_reported',
+        #        'observer',
+        #    ],
+        #    self.animal: ['determined_dead_before'],
+        #})
         
         return options
     

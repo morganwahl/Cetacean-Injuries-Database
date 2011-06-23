@@ -212,25 +212,25 @@ class Taxon(models.Model):
     def get_html_options(self):
         template = 'taxon.html'
         
-        deps = Smidgen({
-            self: [
-                'id',
-                'rank',
-                'supertaxon',
-                'name',
-            ],
-        })
-        t = self
-        while t.supertaxon:
-            t = t.supertaxon
-            deps |= Smidgen({
-                t: ['rank', 'name']
-            })
+        #deps = Smidgen({
+        #    self: [
+        #        'id',
+        #        'rank',
+        #        'supertaxon',
+        #        'name',
+        #    ],
+        #})
+        #t = self
+        #while t.supertaxon:
+        #    t = t.supertaxon
+        #    deps |= Smidgen({
+        #        t: ['rank', 'name']
+        #    })
         
         return {
             'template': template,
             'use_cache': True,
-            'cache_deps': deps,
+            #'cache_deps': deps,
         }
     
     @models.permalink
