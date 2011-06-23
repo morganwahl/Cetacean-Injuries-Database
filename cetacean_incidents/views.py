@@ -489,3 +489,12 @@ def odd_entries(request):
         context_instance= RequestContext(request),
     )
 
+@login_required
+def clear_cache(request):
+    
+    from django.core.cache import cache
+    cache.clear()
+    print "cache cleared!"
+    
+    return redirect('home')
+
