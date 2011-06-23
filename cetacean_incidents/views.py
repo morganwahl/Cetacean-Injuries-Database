@@ -494,7 +494,6 @@ def clear_cache(request):
     
     from django.core.cache import cache
     cache.clear()
-    print "cache cleared!"
     
-    return redirect('home')
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
 
