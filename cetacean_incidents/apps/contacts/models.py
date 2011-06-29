@@ -1,7 +1,10 @@
 from django.db import models
 from django.db.models import Q
 
-#from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 from cetacean_incidents.apps.documents.models import Documentable
 
@@ -137,17 +140,18 @@ class Contact(AbstractContact, Documentable):
         if not self.sort_name:
             self.sort_name = self.name
     
-    #def get_html_options(self):
-        #options = super(Contact, self).get_html_options()
+    def get_html_options(self):
+        options = super(Contact, self).get_html_options()
         
         # AbstractContact.__unicode__ uses name
-        #if not 'cache_deps' in options:
-        #    options['cache_deps'] = Smidgen()
-        #options['cache_deps'] = Smidgen({
-        #    self: ('name',)
-        #})
+        if not 'cache_deps' in options:
+            options['cache_deps'] = CacheDependency()
+        options['cache_deps'] = CacheDependency(
+            update= {self: TestList([True])},
+            delete= {self: TestList([True])},
+        )
         
-        #return options
+        return options
     
     @models.permalink
     def get_absolute_url(self):

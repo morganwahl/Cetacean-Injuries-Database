@@ -5,7 +5,10 @@ from django.core.exceptions import ValidationError
 from django.core.urlresolvers import reverse
 from django.db import models
 
-#from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -328,24 +331,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         
         return name
     
-    #def _get_name_smidgen(self):
-    #    s = Smidgen({
-    #        self: ['id', 'observation_set', 'animal', 'current_yearnumber', 'case_type'],
-    #        self.animal: ['field_number', 'observation_set', 'determined_taxon'],
-    #        self.current_yearnumber: ['year', 'number'],
-    #    })
-    #    
-    #    for o in self.observation_set.all():
-    #        s |= Smidgen({
-    #            o: ['cases', 'datetime_observed'],
-    #        })
-    #    for o in self.animal.observation_set.all():
-    #        s |= Smidgen({
-    #            o: ['taxon'],
-    #        })
-    #    
-    #    return s
-    
     # names_list is intentially read-only, so that it can only be modified via
     # update_names
     def _get_names_list(self):
@@ -641,6 +626,65 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         help_text= "A required field to be filled in by subclasses. Avoids using a database lookup just to determine the type of a case"
     )
     
+    def _get_deps(self, fieldname):
+        if fieldname == 'name':
+            tl = TestList([True])
+            kwargs = {
+                'create': {
+                    Observation: TestList([
+                        lambda o: o.cases.filter(pk=self.pk).exists(),
+                        lambda o: o.animal == self.animal,
+                    ]),
+                    YearCaseNumber: TestList([
+                        lambda inst: inst.case == self,
+                    ]),
+                },
+                'update': {
+                    self: tl,
+                    self.animal: tl,
+                    self.current_yearnumber: tl,
+                },
+                'delete': {
+                    self: tl,
+                    self.animal: tl,
+                    self.current_yearnumber: tl,
+                },
+            }
+
+            for o in self.observation_set.all():
+                kwargs['update'][o] = tl
+                kwargs['delete'][o] = tl
+            for o in self.animal.observation_set.all():
+                kwargs['update'][o] = tl
+                kwargs['delete'][o] = tl
+            
+            # TODO belongs in Specificable?
+            si = self.specific_instance()
+            kwargs['update'][si] = tl
+            kwargs['delete'][si] = tl
+            for subclass in self.__class__.__subclasses__():
+                kwargs['create'][subclass] = TestList([
+                    lambda i: i.pk == self.pk,
+                ])
+
+            deps = CacheDependency(**kwargs)
+            
+            deps |= self.animal._get_deps('taxon')
+            taxon = self.animal.taxon()
+            if not taxon is None:
+                deps |= taxon._get_deps('scientific_name')
+                
+            return deps
+        
+        return CacheDependency(
+            update= {
+                self: TestList([True]),
+            },
+            delete= {
+                self: TestList([True]),
+            },
+        )
+    
     def get_html_options(self):
         options = super(Case, self).get_html_options()
 
@@ -650,15 +694,17 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             options['context'] = {}
         options['context']['media_url'] = settings.MEDIA_URL
         
-        #if not 'cache_deps' in options:
-        #    options['cache_deps'] = Smidgen()
-        #options['cache_deps'] |= Smidgen({
-        #    self: [
-        #        'ole_investigation',
-        #        'valid',
-        #    ],
-        #})
-        #options['cache_deps'] |= self._get_name_smidgen()
+        if not 'cache_deps' in options:
+            options['cache_deps'] = CacheDependency()
+        options['cache_deps'] |= CacheDependency(
+            update= {
+                self: TestList([True]),
+            },
+            delete= {
+                self: TestList([True]),
+            },
+        )
+        options['cache_deps'] |= self._get_deps('name')
         
         return options
     

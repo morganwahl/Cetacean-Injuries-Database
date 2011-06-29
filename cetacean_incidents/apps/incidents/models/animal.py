@@ -6,7 +6,10 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
-#from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -173,6 +176,32 @@ class Animal(Documentable, Importable):
         if self.necropsy and not self.determined_dead_before:
             self.determined_dead_before = datetime.date.today()
     
+    def _get_deps(self, fieldname):
+        deps = CacheDependency(
+            update= {self: TestList([True])},
+            delete= {self: TestList([True])},
+        )
+        
+        if fieldname == 'taxon':
+            deps |= self._get_deps('probable_taxon')
+        
+        if fieldname == 'probable_taxon':
+            if not self.determined_taxon:
+                deps |= CacheDependency(
+                    create= {
+                        Observation: TestList([
+                            lambda o: o.animal == self,
+                        ]),
+                    },
+                )
+                for o in self.observation_set.all():
+                    deps |= CacheDependency(
+                        update= {o: TestList([True])},
+                        delete= {o: TestList([True])},
+                    )
+        
+        return deps
+    
     def get_html_options(self):
         opts = super(Animal, self).get_html_options()
         
@@ -187,13 +216,14 @@ class Animal(Documentable, Importable):
         
         opts['use_cache'] = True
         
-        #if not 'cache_deps' in opts:
-        #    opts['cache_deps'] = Smidgen()
+        if not 'cache_deps' in opts:
+            opts['cache_deps'] = CacheDependency()
         
-        # TODO block vs. inline
-        #opts['cache_deps'] |= Smidgen({
-        #    self: ('id', 'field_number', 'name', 'determined_dead_before'),
-        #})
+        # TODO animal.html uses animal.dead, which depends on today's date
+        opts['cache_deps'] |= CacheDependency(
+            update= {self: TestList([True])},
+            delete= {self: TestList([True])},
+        )
         
         return opts
     
