@@ -187,6 +187,7 @@ class Animal(Documentable, Importable):
         
         if fieldname == 'probable_taxon':
             if not self.determined_taxon:
+                from cetacean_incidents.apps.incidents.models import Observation
                 deps |= CacheDependency(
                     create= {
                         Observation: TestList([
