@@ -188,19 +188,7 @@ class Taxon(models.Model):
     ancestors = property(_get_ancestors)
 
     def is_binomial(self):
-        if not self.rank is None:
-            return self.rank < self.ITIS_RANKS['Subgenus']
-        # go up ancestors until a ranked one is found, if it's subgenus or below, 
-        # this is a binomial taxon
-        t = self
-        while not t.rank:
-            if not t.supertaxon:
-                return False
-            t = t.supertaxon
-        if t.rank <= self.ITIS_RANKS['Subgenus']:
-            return True
-
-    # TODO cycle detection!
+        return self.rank < self.ITIS_RANKS['Subgenus']
 
     objects = TaxonManager()
     def descendants(self):
