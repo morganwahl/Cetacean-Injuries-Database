@@ -32,6 +32,8 @@ urlpatterns = patterns('',
     # the permission_required decorator redirects on bad permissions
     url(r'^not_allowed/$', direct_to_template, {'template': 'not_allowed.html'}, 'not_allowed'),
     
+    (r'^clear_cache/', views.clear_cache, {}, 'clear_cache'),
+    
     (r'^$', views.home, {}, "home")
 )
 

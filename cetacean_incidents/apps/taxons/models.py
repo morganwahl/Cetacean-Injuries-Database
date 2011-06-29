@@ -1,6 +1,11 @@
+from copy import deepcopy
+
 from django.db import models
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -183,19 +188,7 @@ class Taxon(models.Model):
     ancestors = property(_get_ancestors)
 
     def is_binomial(self):
-        if not self.rank is None:
-            return self.rank < self.ITIS_RANKS['Subgenus']
-        # go up ancestors until a ranked one is found, if it's subgenus or below, 
-        # this is a binomial taxon
-        t = self
-        while not t.rank:
-            if not t.supertaxon:
-                return False
-            t = t.supertaxon
-        if t.rank <= self.ITIS_RANKS['Subgenus']:
-            return True
-
-    # TODO cycle detection!
+        return self.rank < self.ITIS_RANKS['Subgenus']
 
     objects = TaxonManager()
     def descendants(self):
@@ -208,24 +201,37 @@ class Taxon(models.Model):
         #order_with_respect_to = 'supertaxon'
         verbose_name = 'taxon'
         verbose_name_plural = 'taxa'
-
+    
+    def _get_deps(self, fieldname):
+        if fieldname == 'scientific_name':
+            taxa = set([self])
+            deps = self._get_deps('is_binomial')
+            if self.is_binomial() and self.supertaxon:
+                t = self.supertaxon
+                taxa.add(t)
+                while t.rank < self.ITIS_RANKS['Genus']:
+                    if not t.supertaxon:
+                        break
+                    t = t.supertaxon
+                    taxa.add(t)
+                taxa.add(t)
+            arg = dict(zip(taxa, [TestList([True])] * len(taxa)))
+            return CacheDependency(update=arg, delete=deepcopy(arg))
+                    
+        return CacheDependency(
+            update= {self: TestList([True])},
+            delete= {self: TestList([True])},
+        )
+    
     def get_html_options(self):
         template = 'taxon.html'
         
-        deps = Smidgen({
-            self: [
-                'id',
-                'rank',
-                'supertaxon',
-                'name',
-            ],
-        })
-        t = self
-        while t.supertaxon:
-            t = t.supertaxon
-            deps |= Smidgen({
-                t: ['rank', 'name']
-            })
+        deps = CacheDependency(
+            update= {self: TestList([True])},
+            delete= {self: TestList([True])},
+        )
+        for d in 'scientific_name':
+            deps |= self._get_deps(d)
         
         return {
             'template': template,

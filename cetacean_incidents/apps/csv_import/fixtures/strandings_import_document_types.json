@@ -1,6 +1,6 @@
 [
   {
-    "pk": 4, 
+    "pk": 21, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "CCS web page", 
@@ -8,7 +8,7 @@
     }
   }, 
   {
-    "pk": 1, 
+    "pk": 22, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "Cetacean Data Record", 
@@ -16,7 +16,7 @@
     }
   }, 
   {
-    "pk": 5, 
+    "pk": 23, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "Histological Findings", 
@@ -24,7 +24,7 @@
     }
   }, 
   {
-    "pk": 6, 
+    "pk": 24, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "Human-Interaction Form", 
@@ -32,7 +32,7 @@
     }
   }, 
   {
-    "pk": 2, 
+    "pk": 25, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "Large Whale email", 
@@ -40,7 +40,7 @@
     }
   }, 
   {
-    "pk": 3, 
+    "pk": 26, 
     "model": "documents.documenttype", 
     "fields": {
       "name": "Stranding Report (Level-A)", 

@@ -7,7 +7,7 @@ from django.core.validators import (
 from django.core.urlresolvers import reverse
 from django.db import models
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+#from cetacean_incidents.apps.clean_cache import Smidgen
 
 from cetacean_incidents.apps.contacts.models import (
     AbstractContact,
@@ -61,6 +61,12 @@ class LocationGearSet(Location):
     
     # TODO enforce view permissions at the model level!
     
+    exempt_waters = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= u"Was the gear set in exempt waters?",
+    )
     
     depth = models.DecimalField(
         blank= True,
@@ -99,6 +105,7 @@ class LocationGearSet(Location):
     def has_data(self):
         return reduce(operator.__or__, (
             super(LocationGearSet, self).has_data,
+            self.exempt_waters is not None,
             self.depth is not None, # zero-depth is still data
             bool(self.bottom_type),
         ))
@@ -209,6 +216,14 @@ class GearAnalysis(models.Model):
         help_text= u"""Detailed description of the gear that was analyzed. If the gear owner is known and their description of the gear they're missing differs from what was analyzed, note it here. Keep in mind that this field is not confidential, unlike the gear owner info.""",
     )
     
+    gear_regulated = models.NullBooleanField(
+        blank= True,
+        null= True,
+        default= None,
+        verbose_name= "gear regulated?",
+        help_text= "Are there any regulations for the gear when and where it was set?",
+    )
+    
     gear_compliant = models.NullBooleanField(
         blank= True,
         null= True,
@@ -312,17 +327,6 @@ class Entanglement(Case, GearAnalysis):
             )
         )
         
-    def get_html_options(self):
-        options = super(Entanglement, self).get_html_options()
-
-        if not 'cache_deps' in options:
-            options['cache_deps'] = Smidgen()
-        options['cache_deps'] |= Smidgen({
-            self: ['nmfs_id'], # used in the case's name
-        })
-        
-        return options
-    
     @models.permalink
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])

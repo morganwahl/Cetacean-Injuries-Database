@@ -21,9 +21,24 @@
                 {% with forms.entanglement.gear_analysis_conclusions as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
+                {% with forms.entanglement.gear_regulated as f %}
+                {% include "labeled_field.html" %}
+                {% endwith %}
+                <script type="text/javascript">
+                    $().ready(function(){
+                        SelectHider.init(
+                            '{{ forms.entanglement.gear_regulated.html_name }}',
+                            {
+                                '2': 'gear_compliant_field'
+                            }
+                        );
+                    });
+                </script>
+                <div id="gear_compliant_field">
                 {% with forms.entanglement.gear_compliant as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}
+                </div>
                 {% with forms.entanglement.gear_kept as f %}
                 {% include "labeled_field.html" %}
                 {% endwith %}

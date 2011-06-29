@@ -12,7 +12,10 @@ from django.db import models
 
 from django.contrib.auth.models import User
 
-from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
 
@@ -79,25 +82,35 @@ class Documentable(Specificable):
 
         # TODO belongs in import app
         
-        c = {}
-        deps = Smidgen()
-
         # avoid circular imports
         from cetacean_incidents.apps.csv_import import IMPORT_TAGS
+        from cetacean_incidents.apps.tags.models import Tag
         
-        c['needs_review'] = False
-        review_tags = self.tag_set.filter(tag_text__in=IMPORT_TAGS)
-        deps |= Smidgen({
-            self: ('tag_set',),
-        })
-        if review_tags.exists():
-            c['needs_review'] = True
-            c['media_url'] = settings.MEDIA_URL
-            for tag in review_tags:
-                deps |= Smidgen({
-                    tag: ('entry', 'tag_text'),
-                })
-
+        c = {'needs_review': False}
+        deps = CacheDependency(
+            create= {
+                Tag: TestList([
+                    lambda inst: inst.entry == self,
+                ])
+            },
+        )
+        
+        for tag in self.tag_set.all():
+            deps |= CacheDependency(
+                update= {
+                    tag: TestList([True]),
+                }
+            )
+            
+            if not c['needs_review'] and tag.tag_text in IMPORT_TAGS:
+                c['needs_review'] = True
+                c['media_url'] = settings.MEDIA_URL
+                deps |= CacheDependency(
+                    delete= {
+                        tag: TestList([True]),
+                    }
+                )
+        
         return {
             'template': t,
             'context': c,

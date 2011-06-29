@@ -125,7 +125,7 @@ def entanglement_detail(request, case_id, extra_context):
                 return redirect(result)
     
     template_media = Media(
-        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
 
     extra_context['media'] += template_media
@@ -359,7 +359,7 @@ def edit_gear_analysis_popup(request, entanglement_id):
         success = not bool(result is None)
 
     template_media = Media(
-        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js', 'selecthider.js'),
     )
     
     return render_to_response(

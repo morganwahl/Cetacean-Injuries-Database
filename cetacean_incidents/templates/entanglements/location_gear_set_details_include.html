@@ -2,6 +2,9 @@
 {% load generic_field_display %}
 
 {% block extra_fields %}
+{% if not l.exempt_waters == None %}
+{% display_yesnounk_div l "exempt_waters" %}
+{% endif %}
 {% if l.depth %}
 {% display_depth_div l "depth" l.depth_sigdigs "depth" %}
 {% endif %}

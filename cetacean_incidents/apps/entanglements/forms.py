@@ -465,13 +465,13 @@ class AnimalNMFSIDLookupForm(SubmitDetectingForm):
     
     def clean_nmfs_id(self):
         data = self.cleaned_data['nmfs_id']
-        animals = Animal.objects.filter(case__entanglement__nmfs_id__iexact=data)
+        animals = Animal.objects.filter(case__entanglement__nmfs_id__icontains=data)
         # nmfs_id isn't garanteed to be unique
         if animals.count() < 1:
-            raise forms.ValidationError("no entanglement case has been marked with that NMFS ID")
+            raise forms.ValidationError("no entanglement case has been marked with an NMFS ID like that")
         elif animals.count() > 1:
             animal_ids = animals.values_list('id', flat=True).order_by('id')
-            raise forms.ValidationError("Multiple animals have entanglement cases with that NMFS ID. The animals' local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
+            raise forms.ValidationError("Multiple animals have entanglement cases with NMFS IDs that contain that. The animals' local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
         return animals[0]
 
 class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
@@ -482,12 +482,23 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
     
     def clean_nmfs_id(self):
         data = self.cleaned_data['nmfs_id']
-        cases = Entanglement.objects.filter(nmfs_id__iexact=data)
+        cases = Entanglement.objects.filter(nmfs_id__icontains=data)
         # nmfs_id isn't garanteed to be unique
         if cases.count() < 1:
-            raise forms.ValidationError("no case has been marked with that NMFS ID")
+            raise forms.ValidationError("no case has been marked with an NMFS ID like that")
         elif cases.count() > 1:
-            case_ids = cases.values_list('id', flat=True).order_by('id')
-            raise forms.ValidationError("Multiple cases have that NMFS ID. Their local-IDs are: %s" % ', '.join(map(unicode, case_ids)))
+            case_ids = cases.values('id', 'nmfs_id').order_by('id')
+            # do any have the same nmfs_id?
+            dupes = (len(set([i['nmfs_id'] for i in case_ids])) != len(case_ids))
+            message = "Multiple cases have NMFS IDs that contain that. They are: %s"
+            if dupes:
+                message = message % u' \u2022 '.join(
+                    ["%(nmfs_id)s (#%(id)06d)" % i for i in case_ids]
+                )
+            else:
+                message = message % ', '.join(
+                    ["%(nmfs_id)s" % i for i in case_ids]
+                )
+            raise forms.ValidationError(message)
         return cases[0]
 

@@ -3,12 +3,15 @@ from django import template
 from django.utils.safestring import mark_safe
 from django.template.loader import select_template, get_template
 
-from cetacean_incidents.apps.clean_cache import clearing_cache as cache
-from cetacean_incidents.apps.clean_cache import Smidgen
+from cetacean_incidents.apps.clean_cache.clearing_cache import cache
+from cetacean_incidents.apps.clean_cache import (
+    CacheDependency,
+    TestList,
+)
 
 register = template.Library()
 
-CACHE_TIMEOUT = 7 * 24 * 3600
+CACHE_TIMEOUT = 7 * 24 * 60 * 60
 
 def cache_keys(obj):
     if not isinstance(obj, Model):
@@ -90,9 +93,14 @@ def html(obj, link=False, block=False, use_cache=None):
     if use_cache:
         # we can be sure the obj has an 'id' field since otherwise use_cache 
         # would be False (see above)
-        deps = Smidgen({
-            obj: ('id',),
-        })
+        deps = CacheDependency(
+            update= {
+                obj: TestList((True,)),
+            },
+            delete= {
+                obj: TestList((True,)),
+            },
+        )
         if 'cache_deps' in options:
             deps |= options['cache_deps']
         cache.set(cache_key, html, CACHE_TIMEOUT, deps)
