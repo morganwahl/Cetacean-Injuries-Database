@@ -52,9 +52,6 @@ class ClearingHandler(object):
             )
         )
         
-        from pprint import pprint
-        pprint(('handler.__init__', model, signal_name, kwargs_tests))
-    
     def add_cache_key(self, cache_key, instance_tests=TestList((True,)), pk=None):
         if pk is None:
             if not instance_tests in self.cache_keys['any']:
@@ -74,12 +71,8 @@ class ClearingHandler(object):
             keys.discard(cache_key)
     
     def __call__(self, sender, **kwargs):
-        from pprint import pprint
-        pprint(('called', self, kwargs))
         if not self.kwargs_tests.test(kwargs):
             return
-        from pprint import pprint
-        pprint(('passed', self, kwargs))
         
         to_remove = set()
         inst = kwargs['instance']
@@ -94,8 +87,6 @@ class ClearingHandler(object):
                     to_remove |= keys
         
         for cache_key in to_remove:
-            from pprint import pprint
-            pprint(('deleting', cache_key))
             django_cache.delete(cache_key)
             self.clearer.remove(cache_key)
     
@@ -167,9 +158,6 @@ class Cache(object):
         django_cache.set(key, stored_value, timeout)
 
     def get(self, key, default=None):
-        from pprint import pprint
-        pprint(('get', key))
-
         stored_value = django_cache.get(key, default)
         if stored_value == default:
             return default
