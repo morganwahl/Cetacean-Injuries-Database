@@ -1,13 +1,13 @@
 from django.db.models import Model
 from django import template
-from django.utils.safestring import mark_safe
 from django.template.loader import select_template, get_template
+from django.utils.safestring import mark_safe
 
-from cetacean_incidents.apps.clean_cache.clearing_cache import cache
 from cetacean_incidents.apps.clean_cache import (
     CacheDependency,
     TestList,
 )
+from cetacean_incidents.apps.clean_cache.clearing_cache import cache
 
 register = template.Library()
 

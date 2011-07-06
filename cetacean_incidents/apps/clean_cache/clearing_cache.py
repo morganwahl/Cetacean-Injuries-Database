@@ -1,6 +1,7 @@
-from copy import copy
-import uuid
 import base64
+from copy import copy
+from itertools import chain
+import uuid
 
 from django.core.cache import cache as django_cache
 from django.db.models import signals as model_signals
@@ -51,9 +52,6 @@ class ClearingHandler(object):
             )
         )
         
-        from pprint import pprint
-        pprint(('handler.__init__', model, signal_name, kwargs_tests))
-    
     def add_cache_key(self, cache_key, instance_tests=TestList((True,)), pk=None):
         if pk is None:
             if not instance_tests in self.cache_keys['any']:
@@ -67,21 +65,14 @@ class ClearingHandler(object):
             self.cache_keys['pks'][pk][instance_tests].add(cache_key)
     
     def remove_cache_key(self, cache_key):
-
-        raise NotImplementedError
-        for cache_keys in self.cache_keys.values():
-            if cache_key in cache_keys:
-                from pprint import pprint
-                pprint(('forgetting', cache_key))
-                cache_keys.remove(cache_key)
+        for keys in self.cache_keys['any'].values():
+            keys.discard(cache_key)
+        for keys in chain(*[d.values() for d in self.cache_keys['pks'].values()]):
+            keys.discard(cache_key)
     
     def __call__(self, sender, **kwargs):
-        from pprint import pprint
-        pprint(('called', self, kwargs))
         if not self.kwargs_tests.test(kwargs):
             return
-        from pprint import pprint
-        pprint(('passed', self, kwargs))
         
         to_remove = set()
         inst = kwargs['instance']
@@ -96,10 +87,8 @@ class ClearingHandler(object):
                     to_remove |= keys
         
         for cache_key in to_remove:
-            from pprint import pprint
-            pprint(('deleting', cache_key))
             django_cache.delete(cache_key)
-            #self.clearer.remove(cache_key)
+            self.clearer.remove(cache_key)
     
     def __repr__(self):
         return u"<ClearingHandler: %r->%r>" % (self.model, self.signal_name)
@@ -145,7 +134,6 @@ class CacheClearer(object):
         for h in self.handlers.values():
             h.remove_cache_key(key)
 
-
 class Cache(object):
     
     def __init__(self):
@@ -158,10 +146,9 @@ class Cache(object):
         'deps' is a CacheDependency instance that describes the fields that the
         cached value depends on.
         '''
-        
         from pprint import pprint
         pprint(('set', key, deps.create, deps.update, deps.delete))
-
+        
         self.clearer.add(key, deps)
         # since we keep info about the entires in memory, mark the value with
         # our UUID, and add the deps info with the entry
@@ -169,9 +156,6 @@ class Cache(object):
         django_cache.set(key, stored_value, timeout)
 
     def get(self, key, default=None):
-        from pprint import pprint
-        pprint(('get', key))
-
         stored_value = django_cache.get(key, default)
         if stored_value == default:
             return default
