@@ -1,4 +1,5 @@
 from copy import copy
+from itertools import chain
 import uuid
 import base64
 
@@ -67,13 +68,10 @@ class ClearingHandler(object):
             self.cache_keys['pks'][pk][instance_tests].add(cache_key)
     
     def remove_cache_key(self, cache_key):
-
-        raise NotImplementedError
-        for cache_keys in self.cache_keys.values():
-            if cache_key in cache_keys:
-                from pprint import pprint
-                pprint(('forgetting', cache_key))
-                cache_keys.remove(cache_key)
+        for keys in self.cache_keys['any'].values():
+            keys.discard(cache_key)
+        for keys in chain(*[d.values() for d in self.cache_keys['pks'].values()]):
+            keys.discard(cache_key)
     
     def __call__(self, sender, **kwargs):
         from pprint import pprint
@@ -99,7 +97,7 @@ class ClearingHandler(object):
             from pprint import pprint
             pprint(('deleting', cache_key))
             django_cache.delete(cache_key)
-            #self.clearer.remove(cache_key)
+            self.clearer.remove(cache_key)
     
     def __repr__(self):
         return u"<ClearingHandler: %r->%r>" % (self.model, self.signal_name)
