@@ -200,6 +200,7 @@ class Animal(Documentable, Importable):
                         update= {o: TestList([True])},
                         delete= {o: TestList([True])},
                     )
+                # TODO depend on the relationships of the taxa in those observations?
         
         return deps
     

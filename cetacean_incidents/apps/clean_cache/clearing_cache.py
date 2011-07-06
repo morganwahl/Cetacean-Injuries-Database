@@ -1,7 +1,7 @@
+import base64
 from copy import copy
 from itertools import chain
 import uuid
-import base64
 
 from django.core.cache import cache as django_cache
 from django.db.models import signals as model_signals
@@ -134,7 +134,6 @@ class CacheClearer(object):
         for h in self.handlers.values():
             h.remove_cache_key(key)
 
-
 class Cache(object):
     
     def __init__(self):
@@ -147,10 +146,9 @@ class Cache(object):
         'deps' is a CacheDependency instance that describes the fields that the
         cached value depends on.
         '''
-        
         from pprint import pprint
         pprint(('set', key, deps.create, deps.update, deps.delete))
-
+        
         self.clearer.add(key, deps)
         # since we keep info about the entires in memory, mark the value with
         # our UUID, and add the deps info with the entry
