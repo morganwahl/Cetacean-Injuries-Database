@@ -10,12 +10,17 @@ from cetacean_incidents.apps.jquery_ui.widgets import (
 )
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
-from cetacean_incidents.apps.search_forms.related import ReverseForeignKeyQuery
+from cetacean_incidents.apps.search_forms.related import (
+    HideableReverseForeignKeyQuery, 
+    ReverseForeignKeyQuery,
+    HideableField,
+)
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from ..models import (
     Animal,
+    Case,
     Observation,
 )
 
@@ -109,14 +114,33 @@ class AnimalMergeForm(DocumentableMergeForm):
 
 class AnimalSearchForm(SearchForm):
     
+    class AnimalCaseSearchForm(SearchForm):
+        class Meta:
+            model = Case
+            exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
+    
+    class AnimalObservationSearchForm(SearchForm):
+        class Meta:
+            model = Observation
+            exclude = ('id', 'import_notes', 'cases', 'initial', 'exam')
+
+    # TODO better way of finding ROs?
+    _f = Case._meta.get_field_by_name('animal')[0]
+    cases = HideableReverseForeignKeyQuery(
+        model_field= _f,
+        subform= AnimalCaseSearchForm,
+        help_text= "Only match animals with a case that matches this."
+    )
+
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('animal')[0]
-    observations = ReverseForeignKeyQuery(
+    observations = HideableReverseForeignKeyQuery(
         model_field= _f,
-        required= False,
+        subform= AnimalObservationSearchForm,
+        help_text= "Only match animals with an observation that matches this."
     )
     
     class Meta:
         model = Animal
-        exclude = ('import_notes',)
+        exclude = ('id', 'import_notes',)
 
