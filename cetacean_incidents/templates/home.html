@@ -109,29 +109,5 @@
             </form>
         </td>
     </tr>
-    <tr class="layout">
-        <td class="section layout">
-            <form action="{% url animal_search %}" method="get" class="subform">
-                <div>
-                    <h3>search animals</h3>
-                    {% for f in forms.animal_search %}
-                    {% include "labeled_field.html" %}
-                    {% endfor %}
-                    <button type="submit">search</button>
-                </div>
-            </form>
-        </td>
-        <td class="section layout">
-            <form action="{% url case_search %}" method="get" class="subform">
-                <div>
-                    <h3>search cases</h3>
-                    {% for f in forms.case_search %}
-                    {% include "labeled_field.html" %}
-                    {% endfor %}
-                    <button type="submit">search</button>
-                </div>
-            </form>
-        </td>
-    </tr>
 </table>
 {% endblock %}

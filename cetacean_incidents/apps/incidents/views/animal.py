@@ -57,11 +57,8 @@ def animal_detail(request, animal_id):
 
 @login_required
 def animal_search(request):
-    # prefix should be the same as the on used on the homepage
-    prefix = 'animal_search'
-    form_kwargs = {
-        'prefix': 'animal_search',
-    }
+
+    form_kwargs = {}
     if request.GET:
         form_kwargs['data'] = request.GET
     form = AnimalSearchForm(**form_kwargs)
