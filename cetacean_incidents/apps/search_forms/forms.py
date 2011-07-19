@@ -5,6 +5,7 @@ objects.
 
 # heavily based on django.forms.models
 
+from django.conf import settings
 from django.db.models import Q
 from django import forms
 from django.forms.forms import BaseForm, get_declared_fields
@@ -125,6 +126,9 @@ class BaseSearchForm(BaseForm):
 
     def results(self):
         return self.manager.filter(self._query())
+    
+    class Media:
+        js = (settings.JQUERY_FILE, 'getstring_reducer.js')
     
 class SearchForm(BaseSearchForm):
     '''\
