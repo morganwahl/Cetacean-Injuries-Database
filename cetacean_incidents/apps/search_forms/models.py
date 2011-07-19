@@ -83,6 +83,7 @@ def onetoone(self, **kwargs):
         # this was created as part of multi-table inheritance
         return None
     #raise NotImplementedError
+    return None
 
 @_searchformfield_method(models.fields.related.ForeignKey)
 def foreignkey(self, **kwargs):
@@ -91,5 +92,6 @@ def foreignkey(self, **kwargs):
 
 @_searchformfield_method(models.fields.related.ManyToManyField)
 def manytomany(self, **kwargs):
-    return super(models.fields.related.ManyToManyField, self).searchformfield(HideableManyToManyFieldQuery, **kwargs)
+    return None
+    #return super(models.fields.related.ManyToManyField, self).searchformfield(HideableManyToManyFieldQuery, **kwargs)
 

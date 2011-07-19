@@ -10,6 +10,7 @@ from cetacean_incidents.apps.incidents.forms import (
     CaseForm,
     CaseMergeForm,
     SubmitDetectingForm,
+    CaseSearchForm,
 )
 from cetacean_incidents.apps.incidents.models import Animal
 
@@ -501,4 +502,8 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
                 )
             raise forms.ValidationError(message)
         return cases[0]
+
+class EntanglementSearchForm(CaseSearchForm):
+    class Meta(CaseSearchForm.Meta):
+        model = Entanglement
 

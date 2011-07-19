@@ -179,43 +179,6 @@ class SubqueryField(Field):
     def query(self, value):
         raise NotImplementedError
 
-class ManyToManyFieldQuery(SubqueryField):
-    
-    def __init__(self, model_field, subform=None, *args, **kwargs):
-
-        self.model_field = model_field
-        
-        if subform is None:
-            other_model = model_field.rel.to
-            class other_model_search_form(SearchForm):
-                class Meta:
-                    model = other_model
-            subform = other_model_search_form
-        return super(ManyToManyFieldQuery, self).__init__(other_model_search_form, *args, **kwargs)
-    
-    def query(self, value, prefix=None):
-        if value is None:
-            return Q()
-            
-        lookup_fieldname = self.model_field.get_attname()
-        if not prefix is None:
-            lookup_fieldname = prefix + '__' + lookup_fieldname
-        
-        q = value._query(prefix=lookup_fieldname)
-        return q
-
-class HideableManyToManyFieldQuery(HideableField):
-    
-    def __init__(self, model_field, subform=None, *args, **kwargs):
-        subfield = ManyToManyFieldQuery(
-            model_field,
-            subform,
-        )
-        super(HideableManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
-
-    def query(self, *args, **kwargs):
-        return self.fields[1].query(*args, **kwargs)
-
 class ReverseForeignKeyQuery(SubqueryField):
     
     def __init__(self, model_field, subform=None, *args, **kwargs):
@@ -253,4 +216,80 @@ class HideableReverseForeignKeyQuery(HideableField):
 
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)
+
+class ManyToManyFieldQuery(SubqueryField):
     
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+
+        self.model_field = model_field
+        
+        if subform is None:
+            other_model = self.model_field.rel.to
+            class other_model_search_form(SearchForm):
+                class Meta:
+                    model = other_model
+            subform = other_model_search_form
+        return super(ManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+            
+        lookup_fieldname = self.model_field.get_attname()
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        q = value._query(prefix=lookup_fieldname)
+        return q
+
+class HideableManyToManyFieldQuery(HideableField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+        subfield = ManyToManyFieldQuery(
+            model_field,
+            subform,
+        )
+        super(HideableManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        return self.fields[1].query(*args, **kwargs)
+
+class ReverseManyToManyFieldQuery(SubqueryField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+
+        self.model_field = model_field
+        
+        # TODO subform should be a SearchForm subclass
+        if subform is None:
+            other_model = self.model_field.model
+            class other_model_search_form(SearchForm):
+                class Meta:
+                    model = other_model
+            subform = other_model_search_form
+
+        return super(ReverseManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+        
+        lookup_fieldname = self.model_field.related_query_name()
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        q = value._query(prefix=lookup_fieldname)
+        return q
+
+class HideableReverseManyToManyFieldQuery(HideableField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+        subfield = ReverseManyToManyFieldQuery(
+            model_field,
+            subform,
+        )
+        super(HideableReverseManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        return self.fields[1].query(*args, **kwargs)
+

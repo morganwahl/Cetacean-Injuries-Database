@@ -11,24 +11,33 @@
 {% block header %}<h2>Cases</h2>{% endblock %}
 
 {% block content %}
+
 <form action="{% url case_search %}" method="get">
-    <div class="section">
-        {% with form.non_field_errors as errors %}
-        {% if errors %}
-        <ul class="errorlist">
-            {% for e in errors %}
-            <li>{{ e }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% for f in form %}
-        {% include "labeled_field.html" %}
-        {% endfor %}
-        <button type="submit">search</button>
-    </div>
+    <script type="text/javascript">
+        $().ready(function(){
+            SelectHider.init(
+                {# TODO javascript-string escaping? #}
+                '{{ forms.case_type.case_type.html_name }}',
+                {
+                    {% for val, disp in forms.case_type.case_type.field.choices %}
+                    '{{ val }}': '{{ val }}_form'{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                }
+            );
+        });
+    </script>
+    {{ forms.case_type }}
+    {% for form_name, form in forms.items %}
+    {% if form_name != "case_type" %}
+    <table id="{{ form_name }}_form" class="section">
+        {{ form }}
+    </table>
+    {% endif %}
+    {% endfor %}
+    <button type="submit">search</button>
 </form>
-{% if form.is_bound %}
+
+{% if is_bound %}
 {% if case_count > 0 %}
 {% with case_list as cases %}
 {% include "incidents/case_list_include.html" %}
@@ -38,8 +47,8 @@
     <i>{{ case_count|default:"no" }} matching case{{ case_count|pluralize }}</i>
 </div>{# sorttable.js doesn't like empty tables #}
 {% endif %} {# case_count > 0 #}
-{% else %} {# form.is_bound #}
+{% else %} {# is_bound #}
 <p>click 'search' to see a list of cases</p>
-{% endif %} {# form.is_bound #}
+{% endif %} {# is_bound #}
 {% endblock %}
 

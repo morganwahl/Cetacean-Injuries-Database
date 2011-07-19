@@ -3,6 +3,7 @@ from datetime import datetime
 from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.db.models import Q
+from django import forms as django_forms
 from django.forms import Media
 from django.shortcuts import (
     render_to_response,
@@ -107,142 +108,59 @@ def cases_by_year(request, year=None):
     )
 
 @login_required
-def case_search(request, after_date=None, before_date=None):
-    # prefix should be the same as the homepage
-    prefix = 'case_search'
-    form_kwargs = {
-        'prefix': prefix,
+def case_search(request):
+    
+    # TODO get Case subclasses dynamicly
+
+    class CaseFormSelector(django_forms.Form):
+        case_type = django_forms.ChoiceField(
+            label= 'what type of cases to search?',
+            choices= (
+                ('case', 'all cases'),
+                ('entanglement', 'just entanglements'),
+                ('shipstrike', 'just shipstrikes'),
+            ),
+            initial= 'case',
+        )
+    
+    from cetacean_incidents.apps.entanglements.forms import EntanglementSearchForm
+    from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeSearchForm
+    form_classes = {
+        'case_type': CaseFormSelector,
+        'case': CaseSearchForm,
+        'entanglement': EntanglementSearchForm,
+        'shipstrike': ShipstrikeSearchForm,
     }
-    if request.GET:
-        form_kwargs['data'] = request.GET
-    else:
-        data = {}
-        if not after_date is None:
-            data[prefix + '-after_date'] = after_date
-        if not before_date is None:
-            data[prefix + '-before_date'] = before_date
-        if data:
-            form_kwargs['data'] = data
-    form = CaseSearchForm(**form_kwargs)
+    forms = {}
+    for name, cls in form_classes.items():
+        form_kwargs = {
+            'prefix': name
+        }
+        if request.GET:
+            form_kwargs['data'] = request.GET
+        forms[name] = cls(**form_kwargs)
     
     case_list = tuple()
-
-    if form.is_valid():
-
-        manager = Case.objects
-        query = Q()
-
-        if form.cleaned_data['case_type']:
-            # TODO go through different case types automatically
-            ct = form.cleaned_data['case_type']
-            if ct == 'e':
-                manager = Entanglement.objects
-            if ct == 's':
-                manager = Shipstrike.objects
-            if ct == 'c':
-                query &= Q(case_type='Case')
     
-        if form.cleaned_data['observed_after_date']:
-            
-            date = form.cleaned_data['observed_after_date']
-            date = UncertainDateTime.from_date(date)
-            
-            query &= UncertainDateTimeField.get_after_q(date, 'observation__datetime_observed')
-            
-        if form.cleaned_data['observed_before_date']:
-
-            date = form.cleaned_data['observed_before_date']
-            date = UncertainDateTime.from_date(date)
-            
-            query &= UncertainDateTimeField.get_before_q(date, 'observation__datetime_observed')
-        
-        if form.cleaned_data['reported_after_date']:
-        
-            date = form.cleaned_data['reported_after_date']
-            date = UncertainDateTime.from_date(date)
-            
-            query &= UncertainDateTimeField.get_after_q(date, 'observation__datetime_reported')
-            
-        if form.cleaned_data['reported_before_date']:
-
-            date = form.cleaned_data['reported_before_date']
-            date = UncertainDateTime.from_date(date)
-            
-            query &= UncertainDateTimeField.get_before_q(date, 'observation__datetime_reported')
-
-        if form.cleaned_data['taxon']:
-            t = form.cleaned_data['taxon']
-            # TODO handle taxon uncertainty!
-            query &= Q(observation__taxon__in=Taxon.objects.with_descendants(t))
-
-        if form.cleaned_data['case_name']:
-            name = form.cleaned_data['case_name']
-            query &= Q(names__icontains=name)
-
-        if form.cleaned_data['observation_narrative']:
-            on = form.cleaned_data['observation_narrative']
-            query &= Q(observation__narrative__icontains=on)
-        
-        if 'gear_types' in form.cleaned_data:
-            gts = form.cleaned_data['gear_types']
-            if gts:
-                # at least one geartype was checked, so restrict search to 
-                # entanglements
-                manager = Entanglement.objects
-            # add all the subtypes of each type to the list
-            todo = set(list(gts)) # gts is a QuerySet, so turn it into a list first.
-            seen = set()
-            while todo:
-                gt = todo.pop()
-                seen.add(gt)
-                subs = set(gt.subtypes.all())
-                todo |= subs
-                todo = todo - seen
-            
-            gt_query = Q()
-            for gt in seen:
-                gt_query |= Q(gear_types__pk=gt.pk)
-                gt_query |= Q(observed_gear_attributes__pk=gt.pk)
-            query &= gt_query
-        
-        if 'disentanglement_outcome' in form.cleaned_data:
-            dos = form.cleaned_data['disentanglement_outcome']
-            if dos:
-                # at least one outcome was checked (including 'unknown'), so 
-                # restrict search to entanglements
-                query &= Q(case_type='Entanglement')
-            dos_query = Q()
-            for do in dos:
-                # CheckboxSelectMultiple doesn't work with empty string values,
-                # so we have to translate the 'unknown' value to empty string.
-                if do == u'unknown':
-                    do = u''
-                dos_query |= Q(observation__entanglements_entanglementobservation__disentanglement_outcome=do)
-            query &= dos_query
-
-        # TODO shoulde be ordering such that cases with no date come first
-        case_order_args = ('-current_yearnumber__year', '-current_yearnumber__number', 'id')
-
-        # TODO Oracle doesn't support distinct() on models with TextFields
-        #cases = manager.filter(query).distinct().order_by(*case_order_args)
-        cases = manager.filter(query).order_by(*case_order_args)
-        
-        # simulate distinct() for Oracle
-        # an OrderedSet in the collections library would be nice...
-        # TODO not even a good workaround, since we have to pass in the count
-        # seprately
-        seen = set()
-        case_list = list()
-        for c in cases:
-            if not c in seen:
-                seen.add(c)
-                case_list.append(c)
+    search_done = False
+    if forms['case_type'].is_bound:
+        if forms['case_type'].is_valid():
+            query_form = forms[forms['case_type'].cleaned_data['case_type']]
+            if query_form.is_valid():
+                case_list = query_form.results()
+                search_done = True
+    
+    template_media = Media(
+        js=(settings.JQUERY_FILE, 'selecthider.js'),
+    )
+    media = reduce(lambda m, f: m + f.media, forms.values(), template_media)
     
     return render_to_response(
         "incidents/case_search.html",
         {
-            'form': form,
-            'media': form.media,
+            'forms': forms,
+            'is_bound': search_done,
+            'media': media,
             'case_list': case_list,
             'case_count': len(case_list),
         },

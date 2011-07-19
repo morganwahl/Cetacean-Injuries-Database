@@ -4,9 +4,13 @@ from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.related import HideableReverseManyToManyFieldQuery
+
 from ..models import (
     Animal,
     Case,
+    Observation,
     YearCaseNumber,
 )
 
@@ -94,4 +98,23 @@ class CaseMergeForm(DocumentableMergeForm):
         # don't even include this field so that a CaseMergeForm can't change the
         # animal of the destination case
         exclude = ('animal',)
+
+class CaseSearchForm(SearchForm):
+
+    class CaseObservationSearchForm(SearchForm):
+        class Meta:
+            model = Observation
+            exclude = ('id', 'import_notes', 'cases', 'initial', 'exam')
+
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('cases')[0]
+    observations = HideableReverseManyToManyFieldQuery(
+        model_field= _f,
+        subform= CaseObservationSearchForm,
+        help_text= "Only match cases with an observation that matches this."
+    )
+
+    class Meta:
+        model = Case
+        exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
 

@@ -10,6 +10,7 @@ from case import (
     CaseForm,
     CaseMergeForm,
     CaseMergeSourceForm,
+    CaseSearchForm,
 )
 from observation import (
     ObservationCasesForm,
@@ -26,7 +27,6 @@ from search import (
     CaseIDLookupForm,
     CaseYearlyNumberLookupForm,
 
-    CaseSearchForm,
     ObservationSearchForm,
 )
 

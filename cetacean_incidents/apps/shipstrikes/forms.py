@@ -7,6 +7,7 @@ from cetacean_incidents.apps.contacts.models import Contact
 from cetacean_incidents.apps.incidents.forms import (
     CaseForm,
     CaseMergeForm,
+    CaseSearchForm,
 )
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
@@ -192,6 +193,10 @@ class AddShipstrikeForm(ShipstrikeForm):
     
     class Meta(ShipstrikeForm.Meta):
         exclude = ('animal',)
+
+class ShipstrikeSearchForm(CaseSearchForm):
+    class Meta(CaseSearchForm.Meta):
+        model = Shipstrike
 
 class ShipstrikeObservationForm(forms.ModelForm):
 
