@@ -390,30 +390,54 @@ class NullBooleanFieldQuery(QueryField):
 
 class NumberFieldQuery(QueryField):
     
-    default_match_options = MatchOptions([
-        MatchOption('lt', 'less than',
-            forms.IntegerField(),
-        ),
-        MatchOption('lte', 'less than or equal to',
-            forms.IntegerField(),
-        ),
-        MatchOption('exact', 'is',
-            forms.IntegerField(),
-        ),
-        MatchOption('gte', 'greater than',
-            forms.IntegerField(),
-        ),
-        MatchOption('gt', 'greater than or equal to',
-            forms.IntegerField(),
-        ),
-        MatchOption('range', 'in the range (inclusive)',
-            forms.CharField(
-                help_text= 'Enter two numbers.',
-            ),
-        ),
-    ])
-    
     blank_option = True
+    
+    def __init__(self, model_field, *args, **kwargs):
+        
+        match_options = None
+        
+        if model_field.choices:
+            # Fields with choices get special treatment
+            choice_kwargs = {
+                'choices': model_field.get_choices(
+                    include_blank= model_field.blank, # TODO some way to respect self.blank_option?
+                    blank_choice= [(u'', u'<blank>')],
+                ),
+                'coerce': model_field.to_python,
+                'required': True,
+            }
+            if model_field.null:
+                choice_kwargs['empty_value'] = None
+            match_options = MatchOptions([
+                MatchOption('exact', 'is',
+                    forms.TypedChoiceField(**choice_kwargs),
+                ),
+            ])
+        else:
+            match_options = MatchOptions([
+                MatchOption('lt', 'less than',
+                    forms.IntegerField(),
+                ),
+                MatchOption('lte', 'less than or equal to',
+                    forms.IntegerField(),
+                ),
+                MatchOption('exact', 'is',
+                    forms.IntegerField(),
+                ),
+                MatchOption('gte', 'greater than',
+                    forms.IntegerField(),
+                ),
+                MatchOption('gt', 'greater than or equal to',
+                    forms.IntegerField(),
+                ),
+                MatchOption('range', 'in the range (inclusive)',
+                    forms.CharField(
+                        help_text= 'Enter two numbers.',
+                    ),
+                ),
+            ])
+
+        super(NumberFieldQuery, self).__init__(model_field, match_options, *args, **kwargs)
     
     # TODO This is really a job for some sort of localized number-parser
     _range_pattern = re.compile(r'[^0-9.]*([0-9.]+)[^0-9.]+([0-9.]+)')
