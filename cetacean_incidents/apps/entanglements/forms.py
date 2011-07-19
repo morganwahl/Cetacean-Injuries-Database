@@ -1,5 +1,6 @@
 from operator import __and__
 
+from django.db.models import Q
 from django import forms
 from django.forms.models import modelformset_factory
 from django.template.loader import render_to_string
@@ -514,14 +515,29 @@ class GearTypeQueryField(DAGField):
         if value is None:
             return Q()
         
+        gts = value
+        if not gts:
+            return Q()
+        
         lookup_fieldname = self.model_field.name
         if not prefix is None:
             lookup_fieldname = prefix + '__' + lookup_fieldname
+
+        # add all the subtypes of each type to the list
+        todo = set(list(gts)) # gts is a QuerySet, so turn it into a list first.
+        seen = set()
+        while todo:
+            gt = todo.pop()
+            seen.add(gt)
+            subs = set(gt.subtypes.all())
+            todo |= subs
+            todo = todo - seen
         
-        from pprint import pprint
-        pprint(('GearTypeQueryField.query', value, prefix, lookup_fieldname))
+        gt_query = Q()
+        for gt in seen:
+            gt_query |= Q(**{lookup_fieldname + '__pk': gt.pk})
         
-        return Q()
+        return gt_query
 
 class EntanglementSearchForm(CaseSearchForm):
     
