@@ -174,4 +174,5 @@ class ContactSearchForm(SearchForm):
     
     class Meta:
         model = Contact
+        exclude = ('id')
         

@@ -10,11 +10,7 @@ from cetacean_incidents.apps.jquery_ui.widgets import (
 )
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
-from cetacean_incidents.apps.search_forms.related import (
-    HideableReverseForeignKeyQuery, 
-    ReverseForeignKeyQuery,
-    HideableField,
-)
+from cetacean_incidents.apps.search_forms.related import HideableReverseForeignKeyQuery
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 

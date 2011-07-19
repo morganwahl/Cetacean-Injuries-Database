@@ -50,10 +50,8 @@ from cetacean_incidents.apps.entanglements.views import add_entanglementobservat
 from cetacean_incidents.apps.incidents.forms import (
     AnimalIDLookupForm,
     AnimalFieldNumberLookupForm,
-    AnimalSearchForm,
     CaseIDLookupForm,
     CaseYearlyNumberLookupForm,
-    CaseSearchForm,
 )
 from cetacean_incidents.apps.incidents.models import (
     Animal,
@@ -77,8 +75,6 @@ def home(request):
         'case_lookup_id': CaseIDLookupForm,
         'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
         'entanglement_lookup_nmfs': EntanglementNMFSIDLookupForm,
-        'animal_search': AnimalSearchForm,
-        'case_search': CaseSearchForm,
     }
     forms = {}
     for (form_name, form_class) in form_classes.items():

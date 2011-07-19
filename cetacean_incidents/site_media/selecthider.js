@@ -3,7 +3,7 @@ var SelectHider = {
         var select_sel = "[name=" + select_name + "]";
         $(select_sel).change(function(event){
             // multiple values can be used to show the same ID
-            shown_ids = {}
+            var shown_ids = {}
             for (var val in val_to_id_map) {
                 var id = val_to_id_map[val];
                 if ($(this).val() == val) {
