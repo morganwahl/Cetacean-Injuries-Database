@@ -1,3 +1,5 @@
+import re
+
 from django import forms
 from django.db import models
 from django.db.models import Q
@@ -387,4 +389,58 @@ class NullBooleanFieldQuery(QueryField):
                 return q
 
         return super(NullBooleanFieldQuery, self).query(value, prefix)
+
+class NumberFieldQuery(QueryField):
+    
+    default_match_options = MatchOptions([
+        MatchOption('lt', 'less than',
+            forms.IntegerField(),
+        ),
+        MatchOption('lte', 'less than or equal to',
+            forms.IntegerField(),
+        ),
+        MatchOption('exact', 'is',
+            forms.IntegerField(),
+        ),
+        MatchOption('gte', 'greater than',
+            forms.IntegerField(),
+        ),
+        MatchOption('gt', 'greater than or equal to',
+            forms.IntegerField(),
+        ),
+        MatchOption('range', 'in the range (inclusive)',
+            forms.CharField(
+                help_text= 'Enter two numbers.',
+            ),
+        ),
+    ])
+    
+    blank_option = True
+    
+    # TODO This is really a job for some sort of localized number-parser
+    _range_pattern = re.compile(r'[^0-9.]*([0-9.]+)[^0-9.]+([0-9.]+)')
+    
+    def query(self, value, prefix=None):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            if lookup_type == 'range':
+                # find the two numbers
+                match = self._range_pattern.search(lookup_value)
+                if not match:
+                    raise ValidationError("Must give two numbers.")
+                nums = match.groups()
+                low = min(nums)
+                high = max(nums)
+                q = Q(**{
+                    lookup_fieldname + '__gte': low,
+                    lookup_fieldname + '__lte': high,
+                })
+                
+                return q
+
+        return super(NumberFieldQuery, self).query(value, prefix)
 

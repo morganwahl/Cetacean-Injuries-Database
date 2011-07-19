@@ -8,6 +8,7 @@ from fields import (
     CharFieldQuery,
     DateFieldQuery,
     NullBooleanFieldQuery,
+    NumberFieldQuery,
     QueryField,
 )
 from related import ManyToManyFieldQuery
@@ -55,6 +56,18 @@ def charfield(self, **kwargs):
 @_searchformfield_method(models.fields.DateField)
 def datefield(self, **kwargs):
     return super(models.fields.DateField, self).searchformfield(DateFieldQuery, **kwargs)
+
+@_searchformfield_method(models.fields.DecimalField)
+def integerfield(self, **kwargs):
+    return super(models.fields.DecimalField, self).searchformfield(NumberFieldQuery, **kwargs)
+
+@_searchformfield_method(models.fields.FloatField)
+def integerfield(self, **kwargs):
+    return super(models.fields.FloatField, self).searchformfield(NumberFieldQuery, **kwargs)
+
+@_searchformfield_method(models.fields.IntegerField)
+def integerfield(self, **kwargs):
+    return super(models.fields.IntegerField, self).searchformfield(NumberFieldQuery, **kwargs)
 
 @_searchformfield_method(models.fields.NullBooleanField)
 def autofield(self, **kwargs):
