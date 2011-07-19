@@ -123,14 +123,16 @@ class SubqueryField(Field):
 
 class ManyToManyFieldQuery(SubqueryField):
     
-    def __init__(self, model_field, *args, **kwargs):
-        other_model = model_field.rel.to
+    def __init__(self, model_field, subform=None, *args, **kwargs):
 
         self.model_field = model_field
-
-        class other_model_search_form(SearchForm):
-            class Meta:
-                model = other_model
+        
+        if subform is None:
+            other_model = model_field.rel.to
+            class other_model_search_form(SearchForm):
+                class Meta:
+                    model = other_model
+            subform = other_model_search_form
         return super(ManyToManyFieldQuery, self).__init__(other_model_search_form, *args, **kwargs)
     
     def query(self, value, prefix=None):
@@ -146,14 +148,18 @@ class ManyToManyFieldQuery(SubqueryField):
 
 class ReverseForeignKeyQuery(SubqueryField):
     
-    def __init__(self, model_field, *args, **kwargs):
+    def __init__(self, model_field, subform=None, *args, **kwargs):
         # TODO model_field should be a ForeignKey instance
         self.model_field = model_field
-        other_model = self.model_field.model
-        class other_model_search_form(SearchForm):
-            class Meta:
-                model = other_model
-        return super(ReverseForeignKeyQuery, self).__init__(other_model_search_form, *args, **kwargs)
+        
+        # TODO subform should be a SearchForm subclass
+        if subform is None:
+            other_model = self.model_field.model
+            class other_model_search_form(SearchForm):
+                class Meta:
+                    model = other_model
+            subform = other_model_search_form
+        return super(ReverseForeignKeyQuery, self).__init__(subform, *args, **kwargs)
     
     def query(self, value, prefix=None):
         if value is None:
