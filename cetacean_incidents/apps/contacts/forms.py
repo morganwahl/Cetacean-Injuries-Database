@@ -7,6 +7,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.related import ManyToManyFieldQuery
 
 from models import (
     Contact,
@@ -172,7 +173,19 @@ class ContactMergeForm(MergeForm):
 
 class ContactSearchForm(SearchForm):
     
+    class ContactAffiliationsSearchForm(SearchForm):
+        class Meta:
+            model = Organization
+            exclude = ('id',)
+
+    # TODO better way of finding ROs?
+    _f = Contact._meta.get_field_by_name('affiliations')[0]
+    affiliations = ManyToManyFieldQuery(
+        model_field= _f,
+        subform= ContactAffiliationsSearchForm,
+    )
+
     class Meta:
         model = Contact
-        exclude = ('id')
-        
+        exclude = ('id', 'sort_name')
+

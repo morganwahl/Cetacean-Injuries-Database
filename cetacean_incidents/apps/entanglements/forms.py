@@ -503,7 +503,42 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
             raise forms.ValidationError(message)
         return cases[0]
 
+class GearTypeQueryField(DAGField):
+    
+    def __init__(self, model_field, *args, **kwargs):
+        # self.model_field should be a ManyToMany reference to GearType
+        self.model_field = model_field        
+        super(GearTypeQueryField, self).__init__(queryset=GearType.objects.all(), *args, **kwargs)
+        
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+        
+        lookup_fieldname = self.model_field.name
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        from pprint import pprint
+        pprint(('GearTypeQueryField.query', value, prefix, lookup_fieldname))
+        
+        return Q()
+
 class EntanglementSearchForm(CaseSearchForm):
+    
+    _f = Entanglement._meta.get_field_by_name('gear_types')[0]
+    gear_types = GearTypeQueryField(
+        model_field = _f,
+        required= False,
+        help_text= 'search for entanglements cases whose analyzed gear has these attributes',
+    )
+
+    _f = Entanglement._meta.get_field_by_name('observed_gear_attributes')[0]
+    observed_gear_attributes = GearTypeQueryField(
+        model_field = _f,
+        required= False,
+        help_text= 'search for entanglements cases whose observed gear has these attributes',
+    )
+
     class Meta(CaseSearchForm.Meta):
         model = Entanglement
 

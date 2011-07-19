@@ -4,12 +4,24 @@ from django.core.exceptions import ValidationError
 from django import forms
 from django.forms.util import ErrorList
 
+from cetacean_incidents.apps.contacts.forms import ContactSearchForm
+
 from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
-from cetacean_incidents.apps.search_forms.forms import SearchForm
-from cetacean_incidents.apps.search_forms.related import ReverseForeignKeyQuery
+from cetacean_incidents.apps.locations.models import Location
 
-from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.related import (
+    ReverseForeignKeyQuery,
+    HideableReverseForeignKeyQuery,
+    ForeignKeyQuery,
+    HideableForeignKeyQuery,
+)
+
+from cetacean_incidents.apps.taxons.forms import (
+    TaxonField,
+    TaxonQueryField,
+)
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
 
@@ -407,9 +419,40 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
 
 from cetacean_incidents.apps.entanglements.models import EntanglementObservation
 from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
+from cetacean_incidents.apps.shipstrikes.models import StrikingVesselInfo
     
 class ObservationSearchForm(SearchForm):
     
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('observer')[0]
+    observer = HideableForeignKeyQuery(
+        model_field= _f,
+        subform= ContactSearchForm,
+    )
+    
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('reporter')[0]
+    reporter = HideableForeignKeyQuery(
+        model_field= _f,
+        subform= ContactSearchForm,
+    )
+    
+    class LocationSearchForm(SearchForm):
+        class Meta:
+            model = Location
+            exclude = ('id', 'import_notes', 'roughness', 'coordinates')
+    
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('location')[0]
+    location = HideableForeignKeyQuery(
+        model_field= _f,
+        subform= LocationSearchForm,
+    )
+
+    # TODO better way of finding ROs?
+    _f = Observation._meta.get_field_by_name('taxon')[0]
+    taxon = TaxonQueryField(model_field= _f, required=False)
+
     # TODO dynamically get all the ObservationExtensions
     
     class EntanglementObservationSearchForm(SearchForm):
@@ -418,7 +461,7 @@ class ObservationSearchForm(SearchForm):
 
     # TODO better way of finding ROs?
     _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
-    eos = ReverseForeignKeyQuery(
+    eos = HideableReverseForeignKeyQuery(
         label= 'entanglement fields',
         model_field= _f,
         subform= EntanglementObservationSearchForm,
@@ -426,12 +469,25 @@ class ObservationSearchForm(SearchForm):
     )
     
     class ShipstrikeObservationSearchForm(SearchForm):
+        
+        class ShipstrikeObservationStrikingVesselSearchForm(SearchForm):
+            class Meta:
+                model = StrikingVesselInfo
+                exclude = ('id', 'import_notes')
+        
+        # TODO better way of finding ROs?
+        _f = ShipstrikeObservation._meta.get_field_by_name('striking_vessel')[0]
+        striking_vessel = ForeignKeyQuery(
+            model_field= _f,
+            subform= ShipstrikeObservationStrikingVesselSearchForm,
+        )
+        
         class Meta:
             model = ShipstrikeObservation
 
     # TODO better way of finding ROs?
     _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
-    ssos = ReverseForeignKeyQuery(
+    ssos = HideableReverseForeignKeyQuery(
         label= 'shipstrike fields',
         model_field= _f,
         subform= ShipstrikeObservationSearchForm,
@@ -440,5 +496,5 @@ class ObservationSearchForm(SearchForm):
 
     class Meta:
         model = Observation
-        exclude = ('id', 'import_notes', 'exam', 'initial')
+        exclude = ('id', 'import_notes', 'exam', 'initial', 'animal_length_sigdigs')
 

@@ -14,6 +14,8 @@ from ..models import (
     YearCaseNumber,
 )
 
+from observation import ObservationSearchForm
+
 class CaseAnimalForm(forms.Form):
     '''\
     Form to change the animal of a case. Provides one field to select an animal.
@@ -101,16 +103,11 @@ class CaseMergeForm(DocumentableMergeForm):
 
 class CaseSearchForm(SearchForm):
 
-    class CaseObservationSearchForm(SearchForm):
-        class Meta:
-            model = Observation
-            exclude = ('id', 'import_notes', 'cases', 'initial', 'exam')
-
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('cases')[0]
     observations = HideableReverseManyToManyFieldQuery(
         model_field= _f,
-        subform= CaseObservationSearchForm,
+        subform= ObservationSearchForm,
         help_text= "Only match cases with an observation that matches this."
     )
 

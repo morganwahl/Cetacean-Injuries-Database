@@ -1,6 +1,7 @@
 from django.core.validators import EMPTY_VALUES
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.db.models import Q
 from django import forms
 from django.forms.models import (
     ModelChoiceIterator,
@@ -149,4 +150,22 @@ class TaxonMergeForm(MergeForm):
     
     class Meta:
         model = Taxon
+
+class TaxonQueryField(TaxonField):
+    
+    def __init__(self, model_field, *args, **kwargs):
+        # TODO model_field should be a One2One or ForeignKey reference to a
+        # Taxon
+        self.model_field = model_field
+        return super(TaxonQueryField, self).__init__(*args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
         
+        lookup_fieldname = self.model_field.name
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        return Q(**{lookup_fieldname + '__in': value.with_descendants()})
+

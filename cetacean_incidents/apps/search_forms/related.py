@@ -293,3 +293,41 @@ class HideableReverseManyToManyFieldQuery(HideableField):
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)
 
+class ForeignKeyQuery(SubqueryField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+
+        self.model_field = model_field
+        
+        if subform is None:
+            other_model = self.model_field.rel.to
+            class other_model_search_form(SearchForm):
+                class Meta:
+                    model = other_model
+            subform = other_model_search_form
+        return super(ForeignKeyQuery, self).__init__(subform, *args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+            
+        lookup_fieldname = self.model_field.name
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        q = value._query(prefix=lookup_fieldname)
+        return q
+
+class HideableForeignKeyQuery(HideableField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+        subfield = ForeignKeyQuery(
+            model_field,
+            subform,
+        )
+        super(HideableForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        return self.fields[1].query(*args, **kwargs)
+
+

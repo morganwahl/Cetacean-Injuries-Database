@@ -10,15 +10,23 @@ from cetacean_incidents.apps.jquery_ui.widgets import (
 )
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
-from cetacean_incidents.apps.search_forms.related import HideableReverseForeignKeyQuery
+from cetacean_incidents.apps.search_forms.related import (
+    HideableReverseForeignKeyQuery,
+    ForeignKeyQuery,
+)
 
-from cetacean_incidents.apps.taxons.forms import TaxonField
+from cetacean_incidents.apps.taxons.forms import (
+    TaxonField,
+    TaxonQueryField,
+)
 
 from ..models import (
     Animal,
     Case,
     Observation,
 )
+
+from observation import ObservationSearchForm
 
 class AnimalAutocomplete(ModelAutocomplete):
     
@@ -115,11 +123,6 @@ class AnimalSearchForm(SearchForm):
             model = Case
             exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
     
-    class AnimalObservationSearchForm(SearchForm):
-        class Meta:
-            model = Observation
-            exclude = ('id', 'import_notes', 'cases', 'initial', 'exam')
-
     # TODO better way of finding ROs?
     _f = Case._meta.get_field_by_name('animal')[0]
     cases = HideableReverseForeignKeyQuery(
@@ -127,6 +130,10 @@ class AnimalSearchForm(SearchForm):
         subform= AnimalCaseSearchForm,
         help_text= "Only match animals with a case that matches this."
     )
+
+    class AnimalObservationSearchForm(ObservationSearchForm):
+        class Meta(ObservationSearchForm.Meta):
+            pass
 
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('animal')[0]
@@ -136,6 +143,10 @@ class AnimalSearchForm(SearchForm):
         help_text= "Only match animals with an observation that matches this."
     )
     
+    # TODO better way of finding ROs?
+    _f = Animal._meta.get_field_by_name('determined_taxon')[0]
+    determined_taxon = TaxonQueryField(model_field= _f, required=False)
+
     class Meta:
         model = Animal
         exclude = ('id', 'import_notes',)
