@@ -11,7 +11,7 @@ from fields import (
     NumberFieldQuery,
     QueryField,
 )
-from related import ManyToManyFieldQuery
+from related import HideableManyToManyFieldQuery
 
 # TODO is this kosher?
 _attr_name = 'searchformfield'
@@ -91,5 +91,5 @@ def foreignkey(self, **kwargs):
 
 @_searchformfield_method(models.fields.related.ManyToManyField)
 def manytomany(self, **kwargs):
-    return super(models.fields.related.ManyToManyField, self).searchformfield(ManyToManyFieldQuery, **kwargs)
+    return super(models.fields.related.ManyToManyField, self).searchformfield(HideableManyToManyFieldQuery, **kwargs)
 
