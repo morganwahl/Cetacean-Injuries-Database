@@ -130,8 +130,6 @@ class MatchField(forms.MultiValueField):
         return super(MatchField, self).clean(value)
     
     def validate(self, value):
-        #from pprint import pprint
-        #pprint(('->MatchField.validate', value))
         return value
     
     def compress(self, data_list):

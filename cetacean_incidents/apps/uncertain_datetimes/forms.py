@@ -341,9 +341,6 @@ class UncertainDateTimeFieldQuery(QueryField):
     ])
     
     def query(self, value, prefix=None):
-        from pprint import pprint
-        pprint(('UncertainDateTimeFieldQuery.query', value, prefix))
-        
         if not value is None:
             lookup_type, lookup_value = value
             lookup_fieldname = self.model_field.get_attname()

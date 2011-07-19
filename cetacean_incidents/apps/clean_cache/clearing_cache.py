@@ -146,9 +146,6 @@ class Cache(object):
         'deps' is a CacheDependency instance that describes the fields that the
         cached value depends on.
         '''
-        from pprint import pprint
-        pprint(('set', key, deps.create, deps.update, deps.delete))
-        
         self.clearer.add(key, deps)
         # since we keep info about the entires in memory, mark the value with
         # our UUID, and add the deps info with the entry
