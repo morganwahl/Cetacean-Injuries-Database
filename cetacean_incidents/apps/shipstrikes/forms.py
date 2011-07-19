@@ -225,4 +225,4 @@ class ShipstrikeObservationMergeForm(MergeForm):
     class Meta:
         model = ShipstrikeObservation
         exclude = ('observation_ptr',)
-        
+

@@ -43,7 +43,6 @@ class UncertainDateTimeField(models.Field):
         
         return value.sortkey()
     
-
     @classmethod
     def get_after_q(cls, udt, field_lookup):
         '''

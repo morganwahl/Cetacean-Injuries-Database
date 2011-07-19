@@ -115,13 +115,13 @@ class BaseSearchForm(BaseForm):
         super(BaseSearchForm, self).__init__(*args, **kwargs)
     
     def _query(self, prefix=None):
+        if not hasattr(self, 'cleaned_data'):
+            raise RuntimeError("called _query on a SearchForm that hasn't been validated!")
         q = Q()
         for fieldname, field in self.fields.items():
             if not hasattr(field, 'query'):
                 continue
             q &= field.query(self.cleaned_data[fieldname], prefix)
-        from pprint import pprint
-        pprint(unicode(q))
         return q
 
     def results(self):

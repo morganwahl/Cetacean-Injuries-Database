@@ -82,16 +82,13 @@ def onetoone(self, **kwargs):
     if self.rel and self.rel.parent_link:
         # this was created as part of multi-table inheritance
         return None
-    #raise NotImplementedError
     return None
 
 @_searchformfield_method(models.fields.related.ForeignKey)
 def foreignkey(self, **kwargs):
-    #raise NotImplementedError
     return None
 
 @_searchformfield_method(models.fields.related.ManyToManyField)
 def manytomany(self, **kwargs):
     return None
-    #return super(models.fields.related.ManyToManyField, self).searchformfield(HideableManyToManyFieldQuery, **kwargs)
 

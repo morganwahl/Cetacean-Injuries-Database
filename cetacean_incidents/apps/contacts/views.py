@@ -136,11 +136,8 @@ def merge_contact(request, destination_id, source_id=None):
 
 @login_required
 def contact_search(request):
-    # prefix should be the same as the on used on the homepage
-    prefix = 'contact_search'
-    form_kwargs = {
-        'prefix': 'contact_search',
-    }
+
+    form_kwargs = {}
     if request.GET:
         form_kwargs['data'] = request.GET
     form = ContactSearchForm(**form_kwargs)
@@ -148,36 +145,7 @@ def contact_search(request):
     contact_list = tuple()
     
     if form.is_valid():
-        # FIXME do the actual filtering
         contact_list = form.results()
-        
-        #contact_order_args = ('id',)
-        #contacts = Contact.objects.all().distinct().order_by(*contact_order_args)
-        # TODO Oracle doesn't support distinct() on models with TextFields
-        #contacts = Contact.objects.all().order_by(*contact_order_args)
-        
-        #if form.cleaned_data['taxon']:
-        #    t = form.cleaned_data['taxon']
-        #    descendants = Taxon.objects.with_descendants(t)
-        #    contacts = contacts.filter(Q(determined_taxon__in=descendants) | Q(case__observation__taxon__in=descendants))
-        
-        # empty string for name is same as None
-        #if form.cleaned_data['name']:
-        #    name = form.cleaned_data['name']
-        #    name_q = Q(name__icontains=name)
-        #    field_number_q = Q(field_number__icontains=name)
-        #    contacts = contacts.filter(name_q | field_number_q)
-
-        # simulate distinct() for Oracle
-        # an OrderedSet in the collections library would be nice...
-        # TODO not even a good workaround, since we have to pass in the count
-        # seprately
-        #seen = set()
-        #contact_list = list()
-        #for c in contacts:
-        #    if not c in seen:
-        #        seen.add(c)
-        #        contact_list.append(c)
 
     return render_to_response(
         "contacts/contact_search.html",

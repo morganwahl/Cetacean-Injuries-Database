@@ -45,13 +45,17 @@ class HierarchicalCheckboxSelectMultiple(CheckboxSelectMultiple):
     CSS_CLASS = u'hierarchical_checkbox_select_multiple'
     
     def render(self, name, value, attrs=None, choices=()):
+
         if value is None:
             value = []
         # Normalize to strings
         str_values = set([force_unicode(v) for v in value])
 
         final_attrs = self.build_attrs(attrs, name=name)
-
+        
+        if not (choices or len(self.choices)):
+            return mark_safe("<i>no choices</i>")
+        
         ul = self._render_ul(
             chain(self.choices, choices),
             final_attrs,
