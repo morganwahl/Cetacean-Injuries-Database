@@ -7,6 +7,7 @@ from django.forms.util import ErrorList
 from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.related import ReverseForeignKeyQuery
 
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
@@ -404,7 +405,39 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
 
+from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
+    
 class ObservationSearchForm(SearchForm):
+    
+    # TODO dynamically get all the ObservationExtensions
+    
+    class EntanglementObservationSearchForm(SearchForm):
+        class Meta:
+            model = EntanglementObservation
+
+    # TODO better way of finding ROs?
+    _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
+    eos = ReverseForeignKeyQuery(
+        label= 'entanglement fields',
+        model_field= _f,
+        subform= EntanglementObservationSearchForm,
+        #help_text= "Search entanglement-specific fields."
+    )
+    
+    class ShipstrikeObservationSearchForm(SearchForm):
+        class Meta:
+            model = ShipstrikeObservation
+
+    # TODO better way of finding ROs?
+    _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
+    ssos = ReverseForeignKeyQuery(
+        label= 'shipstrike fields',
+        model_field= _f,
+        subform= ShipstrikeObservationSearchForm,
+        #help_text= "Search entanglement-specific fields."
+    )
+
     class Meta:
         model = Observation
         exclude = ('id', 'import_notes', 'exam', 'initial')
