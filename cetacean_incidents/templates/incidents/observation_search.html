@@ -12,21 +12,10 @@
 
 {% block content %}
 <form action="{% url observation_search %}" method="get">
-    <div class="section">
-        {% with form.non_field_errors as errors %}
-        {% if errors %}
-        <ul class="errorlist">
-            {% for e in errors %}
-            <li>{{ e }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-        {% for f in form %}
-        {% include "labeled_field.html" %}
-        {% endfor %}
-        <button type="submit">search</button>
-    </div>
+    <table class="section">
+        {{ form.as_table }}
+    </table>
+    <button type="submit">search</button>
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">

@@ -6,6 +6,8 @@ from django.forms.util import ErrorList
 
 from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+
 from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from cetacean_incidents.apps.uncertain_datetimes.forms import UncertainDateTimeField
@@ -401,4 +403,9 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         exclude = ('animal', 'cases', 
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
+
+class ObservationSearchForm(SearchForm):
+    class Meta:
+        model = Observation
+        exclude = ('id', 'import_notes', 'exam', 'initial')
 

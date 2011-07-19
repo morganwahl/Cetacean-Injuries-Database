@@ -1,10 +1,6 @@
 from django import forms
 
-from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
-
 from cetacean_incidents.apps.search_forms.forms import SubmitDetectingForm
-
-from cetacean_incidents.apps.taxons.forms import TaxonField
 
 from ..models import (
     Animal,
@@ -72,63 +68,4 @@ class CaseYearlyNumberLookupForm(SubmitDetectingForm):
             except YearCaseNumber.DoesNotExist:
                 raise forms.ValidationError("no case has been assigned that number for that year yet")
         return d
-
-class ObservationSearchForm(forms.Form):
-
-    observed_after_date = forms.DateTimeField(
-        required= False,
-        widget= Datepicker,
-        help_text= "enter year-month-day",
-        label= "Observed on or after"
-    )
-    observed_before_date = forms.DateTimeField(
-        required= False,
-        widget= Datepicker,
-        help_text= "enter year-month-day",
-        label= "Observed on or before"
-    )
-
-    reported_after_date = forms.DateTimeField(
-        required= False,
-        widget= Datepicker,
-        help_text= "enter year-month-day",
-        label= "Reported on or after"
-    )
-    reported_before_date = forms.DateTimeField(
-        required= False,
-        widget= Datepicker,
-        help_text= "enter year-month-day",
-        label= "Reported on or before"
-    )
-
-    # TODO check that after date is before before_date
-    
-    taxon = TaxonField(
-        required= False,
-    )
-    
-    observation_narrative = forms.CharField(
-        required= False,
-        help_text= "search for an observation whose narrative contains this phrase",
-    )
-    
-    # TODO put this in entanglements app
-    from cetacean_incidents.apps.entanglements.models import EntanglementObservation
-    disentanglement_outcome = forms.MultipleChoiceField(
-        # Note that the empty string would be the ideal key for 'unknown', since
-        # that's how the value is represented in the database. However, 
-        # CheckboxSelectMultiple normalizes empty-string values to u'on'.
-        choices= (('unknown','unknown'),) + EntanglementObservation._meta.get_field('disentanglement_outcome').choices,
-        initial= [],
-        required= False,
-        widget= forms.CheckboxSelectMultiple,
-        help_text= "search for observations whose disentanglement outcome is one of these",
-    )
-
-    def clean(self):
-        earlier = self.cleaned_data.get('after_date')
-        later = self.cleaned_data.get('before_date')
-        if earlier and later and earlier > later:
-            raise forms.ValidationError("the 'after date' should equal or precede the 'before date'")
-        return super(ObservationSearchForm, self).clean()
 

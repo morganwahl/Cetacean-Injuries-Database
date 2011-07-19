@@ -17,6 +17,7 @@ from observation import (
     ObservationForm,
     ObservationMergeForm,
     ObservationMergeSourceForm,
+    ObservationSearchForm,
 )
 from search import (
     SubmitDetectingForm,
@@ -26,8 +27,6 @@ from search import (
 
     CaseIDLookupForm,
     CaseYearlyNumberLookupForm,
-
-    ObservationSearchForm,
 )
 
 import tests
