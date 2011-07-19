@@ -258,6 +258,8 @@ class QueryField(MatchField):
         ),
     ])
     
+    blank_option = False
+    
     def __init__(self, model_field, extra_match_options=None, *args, **kwargs):
         self.model_field = model_field
 
@@ -265,6 +267,11 @@ class QueryField(MatchField):
         for c in reversed(self.__class__.__mro__):
             match_options.update(getattr(c, 'default_match_options', {}))
         match_options.update(extra_match_options or {})
+        
+        if self.blank_option and model_field.blank:
+            match_options.update(MatchOptions([
+                MatchOption('isnull', 'is blank', YesNoField()),
+            ]))
         
         super(QueryField, self).__init__(match_options, *args, **kwargs)
     
@@ -301,7 +308,10 @@ class CharFieldQuery(QueryField):
         if model_field.choices:
             # Fields with choices get special treatment
             choice_kwargs = {
-                'choices': model_field.get_choices(include_blank=True),
+                'choices': model_field.get_choices(
+                    include_blank= model_field.blank, # TODO some way to respect self.blank_choice?
+                    blank_choice= [(u'', u'<blank>')],
+                ),
                 'coerce': model_field.to_python,
                 'required': True,
             }
@@ -317,12 +327,6 @@ class CharFieldQuery(QueryField):
                 MatchOption('iexact', 'is', forms.CharField()),
                 MatchOption('icontains', 'contains', forms.CharField()),
             ])
-
-        # QueryField will take care of this if model_field.null
-        if model_field.blank:
-            match_options.update(MatchOptions([
-                MatchOption('isnull', 'is blank', YesNoField()),
-            ]))
 
         super(CharFieldQuery, self).__init__(model_field, match_options, *args, **kwargs)
 
@@ -359,6 +363,8 @@ class DateFieldQuery(QueryField):
         ),
     ])
     
+    blank_option = True
+
 class NullBooleanFieldQuery(QueryField):
 
     default_match_options = MatchOptions([
