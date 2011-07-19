@@ -38,14 +38,15 @@ class FormWidget(Widget):
         super(FormWidget, self).__init__(*args, **kwargs)
     
     def render(self, name, value, attrs=None):
+        out = u''
         add_class(attrs, u'subform')
         final_attrs = self.build_attrs(attrs)
-        out = u'<div%s>' % flatatt(final_attrs)
+        out += u'<table%s>' % flatatt(final_attrs)
         if isinstance(value, self.form_class):
-            out += value.as_p()
+            out += value.as_table()
         else:
-            out += self.form_class(prefix=name, initial=value).as_p()
-        out += u'</div>'
+            out += self.form_class(prefix=name, initial=value).as_table()
+        out += u'</table>'
         return mark_safe(out)
     
     def value_from_datadict(self, data, files, name):
