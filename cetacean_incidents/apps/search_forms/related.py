@@ -6,6 +6,31 @@ from django.utils.safestring import mark_safe
 
 from forms import SearchForm
 
+HTML_SPACES = u'\u0020\u0009\u000a\u000c\u000d'
+
+# TODO this kinda belongs in utils.html
+def add_class(attrs, class_):
+    # class_ should be an HTML class name
+    for space_character in HTML_SPACES:
+        if space_character in class_:
+            raise ValueError("HTML classes can't have spaces in their names!")
+    if not 'class' in attrs:
+        attrs['class'] = class_
+        return
+    orig_classes = attrs['class']
+    new_classes = []
+    # split on whitespace.
+    # note that there may be empty strings in the resulting list.
+    for c in orig_classes.split(HTML_SPACES):
+        if c == '':
+            continue
+        if c == class_:
+            # it's already in there, so just return
+            return
+        new_classes.append(c)
+    new_classes.append(class_)
+    attrs['class'] = u' '.join(new_classes)
+
 class FormWidget(Widget):
     
     def __init__(self, form_class, *args, **kwargs):
@@ -13,6 +38,7 @@ class FormWidget(Widget):
         super(FormWidget, self).__init__(*args, **kwargs)
     
     def render(self, name, value, attrs=None):
+        add_class(attrs, u'subform')
         final_attrs = self.build_attrs(attrs)
         out = u'<div%s>' % flatatt(final_attrs)
         if isinstance(value, self.form_class):
