@@ -7,6 +7,7 @@ from django.db import models
 from . import UncertainDateTime
 
 from forms import UncertainDateTimeField as UncertainDateTimeFormField
+from forms import UncertainDateTimeFieldQuery as UncertainDateTimeFormFieldQuery
 
 class UncertainDateTimeField(models.Field):
     
@@ -203,6 +204,9 @@ class UncertainDateTimeField(models.Field):
         defaults = {'form_class': UncertainDateTimeFormField}
         defaults.update(kwargs)
         return super(UncertainDateTimeField, self).formfield(**defaults)
+
+    def searchformfield(self, **kwargs):
+        return super(UncertainDateTimeField, self).searchformfield(UncertainDateTimeFormFieldQuery, **kwargs)
 
     def value_to_string(self, obj):
         value = self._get_val_from_obj(obj)

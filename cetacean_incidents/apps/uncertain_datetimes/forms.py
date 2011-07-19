@@ -3,11 +3,18 @@ from copy import deepcopy
 import re
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django import forms
 from django.forms.util import ErrorList
 from django.template.loader import render_to_string
 from django.utils import copycompat as copy
 from django.utils.safestring import mark_safe
+
+from cetacean_incidents.apps.search_forms.fields import (
+    MatchOption,
+    MatchOptions,
+    QueryField,
+)
 
 from . import UncertainDateTime
 
@@ -261,7 +268,7 @@ class UncertainDateTimeField(forms.Field):
         super(UncertainDateTimeField, self).__init__(*args, **kwargs)
     
     def validate(self, value):
-        pass
+        return value
     
     def clean(self, value):
         '''\
@@ -271,6 +278,9 @@ class UncertainDateTimeField(forms.Field):
         '''
         clean_data = {}
         errors = ErrorList()
+        
+        if value is None:
+            return value
         
         if not isinstance(value, dict):
             raise ValidationError(self.error_messages['invalid'])
@@ -316,4 +326,37 @@ class UncertainDateTimeField(forms.Field):
         
     def compress(self, data_dict):
         return UncertainDateTime(**data_dict)
+
+class UncertainDateTimeFieldQuery(QueryField):
+    default_match_options = MatchOptions([
+        MatchOption('before', 'possibly during or before',
+            UncertainDateTimeField(),
+        ),
+        MatchOption('during', 'during',
+            UncertainDateTimeField(),
+        ),
+        MatchOption('after', 'possibly during or after',
+            UncertainDateTimeField(),
+        ),
+    ])
+    
+    def query(self, value, prefix=None):
+        from pprint import pprint
+        pprint(('UncertainDateTimeFieldQuery.query', value, prefix))
+        
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            from models import UncertainDateTimeField as UncertainDateTimeModelField            
+            if lookup_type == 'during':
+                return UncertainDateTimeModelField.get_sametime_q(lookup_value, lookup_fieldname)
+            elif lookup_type == 'before':
+                return UncertainDateTimeModelField.get_before_q(lookup_value, lookup_fieldname)
+            elif lookup_type == 'after':
+                return UncertainDateTimeModelField.get_after_q(lookup_value, lookup_fieldname)
+                
+        return Q()
 
