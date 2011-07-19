@@ -287,6 +287,22 @@ class UncertainDateTimeField(forms.Field):
             except ValidationError, e:
                 errors.extend(e.messages)
         
+        # TODO put this in a proper UncertainTimeField form field
+        if 'time' in clean_data.keys():
+            if clean_data['time']:
+                match = re.search(r'(?P<hour>\d*)(:(?P<minute>\d*))?(:(?P<second>\d*))?(\.(?P<microsecond>\d*))?', clean_data['time'])
+                if match:
+                    fields = match.groupdict()
+                    def int_or_none(i):
+                        if i is None or i == '':
+                            return None
+                        return int(i)
+                    clean_data['hour'] = int_or_none(fields['hour'])
+                    clean_data['minute'] = int_or_none(fields['minute'])
+                    clean_data['second'] = int_or_none(fields['second'])
+                    clean_data['microsecond'] = int_or_none(fields['microsecond'])
+            del clean_data['time']
+        
         try:
             out = self.compress(clean_data)
         except ValueError, e:
@@ -299,20 +315,5 @@ class UncertainDateTimeField(forms.Field):
         return out
         
     def compress(self, data_dict):
-        # TODO put this in a proper UncertainTimeField
-        if 'time' in data_dict.keys():
-            match = re.search(r'(?P<hour>\d*)(:(?P<minute>\d*))?(:(?P<second>\d*))?(\.(?P<microsecond>\d*))?', data_dict['time'])
-            if match:
-                fields = match.groupdict()
-                def int_or_none(i):
-                    if i is None or i == '':
-                        return None
-                    return int(i)
-                data_dict['hour'] = int_or_none(fields['hour'])
-                data_dict['minute'] = int_or_none(fields['minute'])
-                data_dict['second'] = int_or_none(fields['second'])
-                data_dict['microsecond'] = int_or_none(fields['microsecond'])
-            del data_dict['time']
-        
         return UncertainDateTime(**data_dict)
 
