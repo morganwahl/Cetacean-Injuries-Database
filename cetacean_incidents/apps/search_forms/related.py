@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
+from django import forms
 from django.forms.fields import Field
 from django.forms.widgets import Widget
 from django.forms.util import flatatt
+from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from forms import SearchForm
@@ -61,6 +64,60 @@ class FormWidget(Widget):
 
 class HiddenFormWidget(FormWidget):
     is_hidden = True
+
+class HideableWidget(forms.MultiWidget):
+    
+    def format_output(self, rendered_widgets):
+        return render_to_string(u'search_forms/hideable_widget.html', dict(zip(
+            ('checkbox', 'subwidget'),
+            rendered_widgets,
+        )))
+    
+    def decompress(self, value):
+        if value is None:
+            return (False, None)
+        return (True, value)
+        
+    class Media:
+        js = (settings.JQUERY_FILE, 'checkboxhider.js', 'hideable_widget.js')
+
+class HiddenHideableWidget(HideableWidget):
+    is_hidden = True
+
+class HideableField(forms.MultiValueField):
+    
+    widget = HideableWidget
+    hidden_widget = HiddenHideableWidget
+    
+    def __init__(self, subfield, *args, **kwargs):
+        fields = (
+            forms.BooleanField(
+                required= False,
+            ),
+            subfield,
+        )
+        self.widget = HideableWidget(
+            widgets= (
+                forms.CheckboxInput,
+                subfield.widget,
+            ),
+        )
+        super(HideableField, self).__init__(fields, *args, **kwargs)
+    
+    def validate(self, value):
+        # value has already been 'compressed', and so will a value for the
+        # subfield
+        if not value is None:
+            # MultiValueField set the subfield to not-required
+            self.fields[1].required = True
+            return self.fields[1].validate(value)
+        return value
+    
+    def compress(self, data_list):
+        show, subfield_data = data_list
+        if not show:
+            return None
+        return subfield_data
 
 class SubqueryField(Field):
     
@@ -146,6 +203,18 @@ class ManyToManyFieldQuery(SubqueryField):
         q = value._query(prefix=lookup_fieldname)
         return q
 
+class HideableManyToManyFieldQuery(HideableField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+        subfield = ManyToManyFieldQuery(
+            model_field,
+            subform,
+        )
+        super(HideableManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        return self.fields[1].query(*args, **kwargs)
+
 class ReverseForeignKeyQuery(SubqueryField):
     
     def __init__(self, model_field, subform=None, *args, **kwargs):
@@ -172,3 +241,15 @@ class ReverseForeignKeyQuery(SubqueryField):
         q = value._query(prefix=lookup_fieldname)
         return q
 
+class HideableReverseForeignKeyQuery(HideableField):
+    
+    def __init__(self, model_field, subform=None, *args, **kwargs):
+        subfield = ReverseForeignKeyQuery(
+            model_field,
+            subform,
+        )
+        super(HideableReverseForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
+
+    def query(self, *args, **kwargs):
+        return self.fields[1].query(*args, **kwargs)
+    
