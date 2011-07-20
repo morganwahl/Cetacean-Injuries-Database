@@ -114,6 +114,13 @@ class BaseSearchForm(BaseForm):
         self.manager = opts.model.objects
         super(BaseSearchForm, self).__init__(*args, **kwargs)
     
+    def _html_output(self, normal_row, error_row, row_ender, help_text_html, errors_on_separate_row):
+        """Slight adjustment to BaseForm's _html_output; the help text is put in a
+        <span> with class 'help_text'."""
+        # TODO is it kosher to override this? it's name does start with a '_'.
+        help_text_html = u'<span class="help_text">%s</span>' % help_text_html
+        return super(BaseSearchForm, self)._html_output(normal_row, error_row, row_ender, help_text_html, errors_on_separate_row)      
+    
     def _query(self, prefix=None):
         if not hasattr(self, 'cleaned_data'):
             raise RuntimeError("called _query on a SearchForm that hasn't been validated!")
@@ -128,7 +135,7 @@ class BaseSearchForm(BaseForm):
         return self.manager.filter(self._query())
     
     class Media:
-        js = (settings.JQUERY_FILE, 'getstring_reducer.js')
+        js = (settings.JQUERY_FILE, 'getstring_reducer.js', 'helptext_hider.js')
     
 class SearchForm(BaseSearchForm):
     '''\
