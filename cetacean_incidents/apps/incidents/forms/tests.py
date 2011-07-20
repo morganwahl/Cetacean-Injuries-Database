@@ -3,6 +3,7 @@ from django.test import TestCase
 
 from ..models.animal import Animal
 
+from animal import AnimalSearchForm
 from case import CaseAnimalForm
 from observation import ObservationDateField
 
@@ -71,3 +72,23 @@ class ObservationDateFieldTestCase(TestCase):
         form = self.form_class(self.month_data)
         self.assertEquals(form.is_valid(), False)
 
+class AnimalSearchFormTestCase(TestCase):
+    
+    def setUp(self):
+        pass
+    
+    def test_instantiation(self):
+        f = AnimalSearchForm()
+        f.as_p()
+    
+    def test_query(self):
+        # /incidents/animals/search?animal_search-observations_0=on&animal_search-observations_1-datetime_observed_0=during&animal_search-observations_1-datetime_observed_3_year=2003
+        data = {
+            'observations_0': 'on',
+            'observations_1-datetime_observed_0': 'during',
+            'observations_1-datetime_observed_3_year': '2003',
+        }
+        f = AnimalSearchForm(data=data)
+        self.assertEqual(f.is_valid(), True)
+        f._query()
+        
