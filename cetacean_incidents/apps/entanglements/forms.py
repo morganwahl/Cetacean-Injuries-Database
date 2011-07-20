@@ -545,6 +545,7 @@ class EntanglementSearchForm(CaseSearchForm):
     gear_types = GearTypeQueryField(
         model_field = _f,
         required= False,
+        label= 'Analyzed gear attributes',
         help_text= 'search for entanglements cases whose analyzed gear has these attributes',
     )
 
@@ -552,6 +553,7 @@ class EntanglementSearchForm(CaseSearchForm):
     observed_gear_attributes = GearTypeQueryField(
         model_field = _f,
         required= False,
+        label= 'Observed gear attributes',
         help_text= 'search for entanglements cases whose observed gear has these attributes',
     )
 
