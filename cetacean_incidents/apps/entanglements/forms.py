@@ -499,7 +499,7 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
                 )
             else:
                 message = message % ', '.join(
-                    ["%(nmfs_id)s" % i for i in case_ids]
+                    ["%(nmfs_id)s (#%(id)06d)" % i for i in case_ids]
                 )
             raise forms.ValidationError(message)
         return cases[0]
