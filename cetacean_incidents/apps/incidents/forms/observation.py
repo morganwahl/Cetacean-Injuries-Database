@@ -417,10 +417,6 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
 
-from cetacean_incidents.apps.entanglements.models import EntanglementObservation
-from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
-from cetacean_incidents.apps.shipstrikes.models import StrikingVesselInfo
-    
 class ObservationSearchForm(SearchForm):
     
     class ObservationContactSearchForm(ContactSearchForm):
@@ -453,44 +449,53 @@ class ObservationSearchForm(SearchForm):
     _f = Observation._meta.get_field_by_name('taxon')[0]
     taxon = TaxonQueryField(model_field= _f, required=False)
 
-    # TODO dynamically get all the ObservationExtensions
-    
-    class EntanglementObservationSearchForm(SearchForm):
-        class Meta:
-            model = EntanglementObservation
-
-    _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
-    eos = HideableReverseForeignKeyQuery(
-        label= 'entanglement fields',
-        model_field= _f,
-        subform= EntanglementObservationSearchForm,
-        #help_text= "Search entanglement-specific fields."
-    )
-    
-    class ShipstrikeObservationSearchForm(SearchForm):
+    def __init__(self, *args, **kwargs):
+        super(ObservationSearchForm, self).__init__(*args, **kwargs)
         
-        class ShipstrikeObservationStrikingVesselSearchForm(SearchForm):
+        # these fields have to be dynamic to avoid circular imports
+        # TODO dynamically get all the ObservationExtensions
+        
+        from cetacean_incidents.apps.entanglements.models import EntanglementObservation
+        class EntanglementObservationSearchForm(SearchForm):
             class Meta:
-                model = StrikingVesselInfo
-                exclude = ('id', 'import_notes')
+                model = EntanglementObservation
         
-        _f = ShipstrikeObservation._meta.get_field_by_name('striking_vessel')[0]
-        striking_vessel = ForeignKeyQuery(
+        _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
+        self.fields['eos'] = HideableReverseForeignKeyQuery(
+            label= 'entanglement fields',
             model_field= _f,
-            subform= ShipstrikeObservationStrikingVesselSearchForm,
+            subform= EntanglementObservationSearchForm,
+            #help_text= "Search entanglement-specific fields."
         )
         
-        class Meta:
-            model = ShipstrikeObservation
+        from cetacean_incidents.apps.shipstrikes.models import (
+            ShipstrikeObservation,
+            StrikingVesselInfo,
+        )
+        class ShipstrikeObservationSearchForm(SearchForm):
+            
+            class ShipstrikeObservationStrikingVesselSearchForm(SearchForm):
+                class Meta:
+                    model = StrikingVesselInfo
+                    exclude = ('id', 'import_notes')
+            
+            _f = ShipstrikeObservation._meta.get_field_by_name('striking_vessel')[0]
+            striking_vessel = ForeignKeyQuery(
+                model_field= _f,
+                subform= ShipstrikeObservationStrikingVesselSearchForm,
+            )
+            
+            class Meta:
+                model = ShipstrikeObservation
 
-    _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
-    ssos = HideableReverseForeignKeyQuery(
-        label= 'shipstrike fields',
-        model_field= _f,
-        subform= ShipstrikeObservationSearchForm,
-        #help_text= "Search entanglement-specific fields."
-    )
-
+        _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
+        self.fields['ssos'] = HideableReverseForeignKeyQuery(
+            label= 'shipstrike fields',
+            model_field= _f,
+            subform= ShipstrikeObservationSearchForm,
+            #help_text= "Search entanglement-specific fields."
+        )
+    
     class Meta:
         model = Observation
         exclude = ('id', 'import_notes', 'exam', 'initial', 'animal_length_sigdigs')
