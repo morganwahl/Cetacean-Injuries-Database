@@ -1,0 +1,36 @@
+{# assumes a PagingForm as paging_form, the ID of the form element that PagingForm in in as form_id, and a Page as page #}
+{# taken from https://docs.djangoproject.com/en/1.2/topics/pagination/ #}
+<div class="pagination">
+    <span class="step-links">
+        {% if page.has_previous %}
+            <script type="text/javascript">
+                $().ready(function(){
+                    $('div.pagination a.prev_page').click(function(){
+                        $('[name={{ paging_form.page_num.html_name }}]').val({{ page.previous_page_number }});
+                        $('#{{ form_id }}').submit();
+                        return false;
+                    });
+                });
+            </script>
+            <a class="prev_page" href="">&#x2190;</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page.number }} of {{ page.paginator.num_pages }}
+        </span>
+
+        {% if page.has_next %}
+            <script type="text/javascript">
+                $().ready(function(){
+                    $('div.pagination a.next_page').click(function(){
+                        $('[name={{ paging_form.page_num.html_name }}]').val({{ page.next_page_number }});
+                        $('#{{ form_id }}').submit();
+                        return false;
+                    });
+                });
+            </script>
+            <a class="next_page" href="">&#x2192;</a>
+        {% endif %}
+    </span>
+</div>
+

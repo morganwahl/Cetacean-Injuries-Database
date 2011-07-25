@@ -1,4 +1,9 @@
 from django.conf import settings
+from django.core.paginator import (
+    Paginator,
+    InvalidPage,
+    EmptyPage,
+)
 from django.forms import Media
 from django.shortcuts import (
     redirect,
@@ -9,7 +14,10 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
-from cetacean_incidents.forms import merge_source_form_factory
+from cetacean_incidents.forms import (
+    merge_source_form_factory,
+    PagingForm,
+)
 
 from forms import (
     ContactForm,
@@ -141,19 +149,38 @@ def contact_search(request):
     if request.GET:
         form_kwargs['data'] = request.GET
     form = ContactSearchForm(**form_kwargs)
-    
+    paging_form = PagingForm(prefix='paging', **form_kwargs)
+        
     contact_list = tuple()
     
     if form.is_valid():
         contact_list = form.results()
+        
+    per_page = 1
+    page = 1
+    if paging_form.is_valid():
+        if 'per_page' in paging_form.cleaned_data:
+            per_page = paging_form.cleaned_data['per_page']
+        if 'page_num' in paging_form.cleaned_data:
+            page = paging_form.cleaned_data['page_num']
 
+    paginator = Paginator(contact_list, per_page)
+
+    try:
+        contacts = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        contacts = paginator.page(paginator.num_pages)
+    
+    template_media = Media(js=(settings.JQUERY_FILE,))
+    
     return render_to_response(
         "contacts/contact_search.html",
         {
             'form': form,
-            'media': form.media,
-            'contact_list': contact_list,
-            'contact_count': len(contact_list),
+            'paging_form': paging_form,
+            'media': template_media + form.media,
+            'contacts': contacts,
+            'contact_count': paginator.count,
         },
         context_instance= RequestContext(request),
     )

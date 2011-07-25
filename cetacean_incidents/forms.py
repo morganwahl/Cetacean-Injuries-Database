@@ -147,3 +147,18 @@ def merge_source_form_factory(model, destination):
     
     return _MergeSourceForm
 
+class PagingForm(forms.Form):
+    
+    per_page = forms.IntegerField(
+        initial= 20,
+        min_value= 1,
+        required= False,
+        label= 'Results per page',
+    )
+    page_num = forms.IntegerField(
+        widget = forms.HiddenInput,
+        initial= 1,
+        min_value= 1,
+        required= False,
+    )
+
