@@ -1,11 +1,5 @@
 {% extends "page.html" %}
 
-{% block head %}
-{{ block.super }}
-<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
-<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
-{% endblock %}
-
 {% block title %}{{ block.super }}: Observations{% endblock %}
 
 {% block header %}<h2>Observations</h2>{% endblock %}
@@ -20,7 +14,7 @@
 {% if form.is_bound %}
 <div style="text-align: center;">
     ({{ observation_count|default:"no" }} matching observation{{ observation_count|pluralize }})
-</div>{# sorttable.js doesn't like empty tables #}
+</div>
 {% if observation_count > 0 %}
 {% with observation_list as observations %}
 {% include "incidents/observation_list_include.html" %}

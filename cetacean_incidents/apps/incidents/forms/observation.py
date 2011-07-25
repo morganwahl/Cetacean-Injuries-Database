@@ -423,18 +423,22 @@ from cetacean_incidents.apps.shipstrikes.models import StrikingVesselInfo
     
 class ObservationSearchForm(SearchForm):
     
+    class ObservationContactSearchForm(ContactSearchForm):
+        class Meta(ContactSearchForm.Meta):
+            sort_field = False
+    
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('observer')[0]
     observer = HideableForeignKeyQuery(
         model_field= _f,
-        subform= ContactSearchForm,
+        subform= ObservationContactSearchForm,
     )
     
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('reporter')[0]
     reporter = HideableForeignKeyQuery(
         model_field= _f,
-        subform= ContactSearchForm,
+        subform= ObservationContactSearchForm,
     )
     
     class LocationSearchForm(SearchForm):
@@ -497,4 +501,5 @@ class ObservationSearchForm(SearchForm):
     class Meta:
         model = Observation
         exclude = ('id', 'import_notes', 'exam', 'initial', 'animal_length_sigdigs')
+        sort_field = True
 
