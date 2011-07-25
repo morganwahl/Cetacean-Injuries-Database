@@ -17,7 +17,7 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-({{ contact_count|default:"no" }} matching contact{{ contact_count|pluralize }})
+{{ contact_count|default:"no" }} matching contact{{ contact_count|pluralize }}
 </div>
 {% with contacts as page %}
 {% with 'the_form' as form_id %}

@@ -178,7 +178,6 @@ class ContactSearchForm(SearchForm):
             model = Organization
             exclude = ('id',)
 
-    # TODO better way of finding ROs?
     _f = Contact._meta.get_field_by_name('affiliations')[0]
     affiliations = ManyToManyFieldQuery(
         model_field= _f,

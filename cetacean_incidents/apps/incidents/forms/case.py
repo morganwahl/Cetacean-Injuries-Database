@@ -103,7 +103,6 @@ class CaseMergeForm(DocumentableMergeForm):
 
 class CaseSearchForm(SearchForm):
 
-    # TODO better way of finding ROs?
     class CaseObservationSearchForm(ObservationSearchForm):
         class Meta(ObservationSearchForm.Meta):
             sort_field = False

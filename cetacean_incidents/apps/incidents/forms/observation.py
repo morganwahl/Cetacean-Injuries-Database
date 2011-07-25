@@ -427,14 +427,12 @@ class ObservationSearchForm(SearchForm):
         class Meta(ContactSearchForm.Meta):
             sort_field = False
     
-    # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('observer')[0]
     observer = HideableForeignKeyQuery(
         model_field= _f,
         subform= ObservationContactSearchForm,
     )
     
-    # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('reporter')[0]
     reporter = HideableForeignKeyQuery(
         model_field= _f,
@@ -446,14 +444,12 @@ class ObservationSearchForm(SearchForm):
             model = Location
             exclude = ('id', 'import_notes', 'roughness', 'coordinates')
     
-    # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('location')[0]
     location = HideableForeignKeyQuery(
         model_field= _f,
         subform= LocationSearchForm,
     )
 
-    # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('taxon')[0]
     taxon = TaxonQueryField(model_field= _f, required=False)
 
@@ -463,7 +459,6 @@ class ObservationSearchForm(SearchForm):
         class Meta:
             model = EntanglementObservation
 
-    # TODO better way of finding ROs?
     _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
     eos = HideableReverseForeignKeyQuery(
         label= 'entanglement fields',
@@ -479,7 +474,6 @@ class ObservationSearchForm(SearchForm):
                 model = StrikingVesselInfo
                 exclude = ('id', 'import_notes')
         
-        # TODO better way of finding ROs?
         _f = ShipstrikeObservation._meta.get_field_by_name('striking_vessel')[0]
         striking_vessel = ForeignKeyQuery(
             model_field= _f,
@@ -489,7 +483,6 @@ class ObservationSearchForm(SearchForm):
         class Meta:
             model = ShipstrikeObservation
 
-    # TODO better way of finding ROs?
     _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
     ssos = HideableReverseForeignKeyQuery(
         label= 'shipstrike fields',

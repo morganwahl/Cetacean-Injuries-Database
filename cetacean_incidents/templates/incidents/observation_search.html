@@ -14,7 +14,7 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-    ({{ observation_count|default:"no" }} matching observation{{ observation_count|pluralize }})
+    {{ observation_count|default:"no" }} matching observation{{ observation_count|pluralize }}
 </div>
 {% with observations as page %}
 {% with 'the_form' as form_id %}

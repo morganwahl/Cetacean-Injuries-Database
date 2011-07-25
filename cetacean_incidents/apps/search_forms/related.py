@@ -181,8 +181,6 @@ class SubqueryField(Field):
 
     def sort_choices(self, value_prefix=None, label_prefix=None):
         choices = make_sortfield(self.query_form_class.base_fields, value_prefix, label_prefix, recursed=True).choices
-        from pprint import pprint
-        pprint(('SubqueryField.sort_choices', choices))
         return choices
 
     def query(self, value):
@@ -248,7 +246,7 @@ class ManyToManyFieldQuery(SubqueryField):
                 class Meta:
                     model = other_model
             subform = other_model_search_form
-        return super(ManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+        super(ManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:
@@ -298,7 +296,7 @@ class ReverseManyToManyFieldQuery(SubqueryField):
                     model = other_model
             subform = other_model_search_form
 
-        return super(ReverseManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+        super(ReverseManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:

@@ -73,7 +73,6 @@ def animal_search(request):
     animal_list = tuple()
     
     if form.is_valid():
-        
         animal_list = form.results()
 
     per_page = 1

@@ -115,6 +115,7 @@ def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_c
             [(f, field_dict.get(f)) for f in fields
                 if ((not exclude) or (exclude and f not in exclude)) and (f not in ignored)]
         )
+
     return field_dict
 
 class SearchFormOptions(ModelFormOptions):
@@ -182,7 +183,7 @@ class BaseSearchForm(BaseForm):
                 continue
             q &= field.query(self.cleaned_data[fieldname], prefix)
         return q
-
+    
     def results(self):
         qs = self.manager.filter(self._query())
         if self.cleaned_data['sort_by']:

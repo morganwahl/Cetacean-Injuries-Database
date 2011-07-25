@@ -123,27 +123,24 @@ class AnimalSearchForm(SearchForm):
             model = Case
             exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
     
-    # TODO better way of finding ROs?
     _f = Case._meta.get_field_by_name('animal')[0]
     cases = HideableReverseForeignKeyQuery(
         model_field= _f,
         subform= AnimalCaseSearchForm,
-        help_text= "Only match animals with a case that matches this."
+        help_text= "Only match animals with a case that matches this.",
     )
 
     class AnimalObservationSearchForm(ObservationSearchForm):
         class Meta(ObservationSearchForm.Meta):
             sort_field = False
-
-    # TODO better way of finding ROs?
+    
     _f = Observation._meta.get_field_by_name('animal')[0]
     observations = HideableReverseForeignKeyQuery(
         model_field= _f,
         subform= AnimalObservationSearchForm,
-        help_text= "Only match animals with an observation that matches this."
+        help_text= "Only match animals with an observation that matches this.",
     )
     
-    # TODO better way of finding ROs?
     _f = Animal._meta.get_field_by_name('determined_taxon')[0]
     determined_taxon = TaxonQueryField(model_field= _f, required=False)
 

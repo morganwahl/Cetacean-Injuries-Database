@@ -19,7 +19,7 @@
 </form>
 {% if form.is_bound %}
 <div style="text-align: center;">
-({{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }})
+{{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }}
 </div>
 {% with animals as page %}
 {% with 'the_form' as form_id %}
