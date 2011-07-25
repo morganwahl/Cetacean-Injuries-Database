@@ -8,7 +8,10 @@ from django.forms.util import flatatt
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-from forms import SearchForm
+from forms import (
+    SearchForm,
+    make_sortfield,
+)
 
 HTML_SPACES = u'\u0020\u0009\u000a\u000c\u000d'
 
@@ -176,6 +179,12 @@ class SubqueryField(Field):
                 return None
         return value
 
+    def sort_choices(self, value_prefix=None, label_prefix=None):
+        choices = make_sortfield(self.query_form_class.base_fields, value_prefix, label_prefix, recursed=True).choices
+        from pprint import pprint
+        pprint(('SubqueryField.sort_choices', choices))
+        return choices
+
     def query(self, value):
         raise NotImplementedError
 
@@ -194,6 +203,14 @@ class ReverseForeignKeyQuery(SubqueryField):
             subform = other_model_search_form
         return super(ReverseForeignKeyQuery, self).__init__(subform, *args, **kwargs)
     
+    def sort_choices(self, value_prefix=None, label_prefix=None):
+        if value_prefix is not None:
+            value_prefix += '__'
+        else:
+            value_prefix = ''
+        value_prefix += self.model_field.related_query_name()
+        return super(ReverseForeignKeyQuery, self).sort_choices(value_prefix, label_prefix)
+
     def query(self, value, prefix=None):
         if value is None:
             return Q()
@@ -214,13 +231,15 @@ class HideableReverseForeignKeyQuery(HideableField):
         )
         super(HideableReverseForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
 
+    def sort_choices(self, *args, **kwargs):
+        return self.fields[1].sort_choices(*args, **kwargs)
+
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)
 
 class ManyToManyFieldQuery(SubqueryField):
     
     def __init__(self, model_field, subform=None, *args, **kwargs):
-
         self.model_field = model_field
         
         if subform is None:
@@ -231,6 +250,14 @@ class ManyToManyFieldQuery(SubqueryField):
             subform = other_model_search_form
         return super(ManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
     
+    def sort_choices(self, value_prefix=None, label_prefix=None):
+        if value_prefix is not None:
+            value_prefix += '__'
+        else:
+            value_prefix = ''
+        value_prefix += self.model_field.get_attname()
+        return super(ManyToManyFieldQuery, self).sort_choices(value_prefix, label_prefix)
+
     def query(self, value, prefix=None):
         if value is None:
             return Q()
@@ -251,6 +278,9 @@ class HideableManyToManyFieldQuery(HideableField):
         )
         super(HideableManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
 
+    def sort_choices(self, *args, **kwargs):
+        return self.fields[1].sort_choices(*args, **kwargs)
+
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)
 
@@ -270,6 +300,14 @@ class ReverseManyToManyFieldQuery(SubqueryField):
 
         return super(ReverseManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
     
+    def sort_choices(self, value_prefix=None, label_prefix=None):
+        if value_prefix is not None:
+            value_prefix += '__'
+        else:
+            value_prefix = ''
+        value_prefix += self.model_field.related_query_name()
+        return super(ReverseManyToManyFieldQuery, self).sort_choices(value_prefix, label_prefix)
+
     def query(self, value, prefix=None):
         if value is None:
             return Q()
@@ -290,6 +328,9 @@ class HideableReverseManyToManyFieldQuery(HideableField):
         )
         super(HideableReverseManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
 
+    def sort_choices(self, *args, **kwargs):
+        return self.fields[1].sort_choices(*args, **kwargs)
+
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)
 
@@ -307,6 +348,14 @@ class ForeignKeyQuery(SubqueryField):
             subform = other_model_search_form
         return super(ForeignKeyQuery, self).__init__(subform, *args, **kwargs)
     
+    def sort_choices(self, value_prefix=None, label_prefix=None):
+        if value_prefix is not None:
+            value_prefix += '__'
+        else:
+            value_prefix = ''
+        value_prefix += self.model_field.name
+        return super(ForeignKeyQuery, self).sort_choices(value_prefix, label_prefix)
+
     def query(self, value, prefix=None):
         if value is None:
             return Q()
@@ -326,6 +375,9 @@ class HideableForeignKeyQuery(HideableField):
             subform,
         )
         super(HideableForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
+
+    def sort_choices(self, *args, **kwargs):
+        return self.fields[1].sort_choices(*args, **kwargs)
 
     def query(self, *args, **kwargs):
         return self.fields[1].query(*args, **kwargs)

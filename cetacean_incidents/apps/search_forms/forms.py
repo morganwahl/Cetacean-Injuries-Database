@@ -8,7 +8,11 @@ objects.
 from django.conf import settings
 from django.db.models import Q
 from django import forms
-from django.forms.forms import BaseForm, get_declared_fields
+from django.forms.forms import (
+    BaseForm, 
+    get_declared_fields,
+    pretty_name,
+)
 from django.forms.models import ModelFormOptions
 from django.forms.widgets import media_property
 from django.utils.datastructures import SortedDict
@@ -25,7 +29,46 @@ class SubmitDetectingForm(forms.Form):
         widget= forms.HiddenInput,
         initial= 'yes',
     )
+
+def make_sortfield(field_dict, value_prefix=None, label_prefix=None, recursed=False):
+    "If recursed is True, we're already in a sub-choices group."
+    # add a sort_by field to choose one of the existing fields
+    if not label_prefix is None:
+        label_prefix += ': '
+    else:
+        label_prefix = ''
     
+    sort_choices = []
+    for fieldname, field in field_dict.items():
+        label = field.label
+        if label is None:
+            label = pretty_name(fieldname)
+        label = label_prefix + label
+        if hasattr(field, 'sort_choices'):
+            subchoices = field.sort_choices(
+                value_prefix= value_prefix,
+                label_prefix= label,
+            )
+            if not recursed:
+                sort_choices.append(
+                    (label, subchoices),
+                )
+            else:
+                sort_choices += subchoices
+            continue
+        value = fieldname
+        if not value_prefix is None:
+            value = value_prefix + '__' + value
+        sort_choices.append((value, label))
+
+    #from pprint import pprint
+    #pprint(('make_sortfield', sort_choices))
+    sort_field = forms.ChoiceField(
+        choices= tuple(sort_choices),
+        required= False,
+    )
+    return sort_field
+
 def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_callback=None):
     """
     Returns a ``SortedDict`` containing form fields for the given model.
@@ -74,6 +117,11 @@ def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_c
         )
     return field_dict
 
+class SearchFormOptions(ModelFormOptions):
+    def __init__(self, options=None):
+        super(SearchFormOptions, self).__init__(options)
+        self.sort_field = getattr(options, 'sort_field', None)
+
 class SearchFormMetaclass(type):
     # based on ModelFormMetaclass
     def __new__(cls, name, bases, attrs):
@@ -91,7 +139,9 @@ class SearchFormMetaclass(type):
         
         if 'media' not in attrs:
             new_class.media = media_property(new_class)
-        opts = new_class._meta = ModelFormOptions(getattr(new_class, 'Meta', None))
+        opts = new_class._meta = SearchFormOptions(getattr(new_class, 'Meta', None))
+        # TODO remove this? Currently BaseSearchForm.__init__ throws an error if
+        # no model is defined.
         if opts.model:
             # If a model is defined, extract form fields from it.
             fields = fields_for_model(opts.model, opts.fields, opts.exclude, opts.widgets, formfield_callback)
@@ -100,6 +150,8 @@ class SearchFormMetaclass(type):
             fields.update(declared_fields)
         else:
             fields = declared_fields
+        if opts.sort_field:
+            fields['sort_by'] = make_sortfield(fields)
         new_class.declared_fields = declared_fields
         new_class.base_fields = fields
         return new_class
@@ -132,7 +184,10 @@ class BaseSearchForm(BaseForm):
         return q
 
     def results(self):
-        return self.manager.filter(self._query())
+        qs = self.manager.filter(self._query())
+        if self.cleaned_data['sort_by']:
+            qs = qs.order_by(self.cleaned_data['sort_by'])
+        return qs
     
     class Media:
         js = (settings.JQUERY_FILE, 'getstring_reducer.js', 'helptext_hider.js')
