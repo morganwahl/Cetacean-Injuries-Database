@@ -3,12 +3,6 @@
 {% load observation_extras %} {# for datetime_observed_display #}
 {% load link_filter %}
 
-{% block head %}
-{{ block.super }}
-<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
-<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
-{% endblock %}
-
 {% block title %}{{ block.super }}: Animal Search{% endblock %}
 
 {% block header %}<h2>Animals</h2>{% endblock %}
@@ -26,12 +20,11 @@
 <div style="text-align: center;">
 ({{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }})
 </div>
-{# sorttable.js doesn't like empty tables #}
 {% if animal_count > 0 %}
-<table class="bordered{% if animal_list %} sortable{% endif %}">
+<table class="bordered">
     <thead>
         <tr>
-            <th class="sorttable_nosort">link</th>
+            <th>link</th>
             <th>taxon</th>
             <th>cases</th>
             <th>observations</th>
@@ -42,7 +35,7 @@
 	{% for animal in animal_list %}
 	<tr>
 	    <td>{{ animal|link_block }}</td>
-	    <td sorttable_customkey="{% taxon_sort_key animal.taxon "True" %}">
+	    <td>
 	        {% if animal.determined_taxon %}
 	        {{ animal.determined_taxon }}
 	        {% else %}
@@ -59,7 +52,7 @@
 	    <td>{{ animal.observation_set.count }}</td>
 	    {% with animal.first_observation.datetime_observed as od %}
 	    {% if od %}
-	    <td sorttable_customkey="{{ od.sortkey }}">
+	    <td>
 	        {% datetime_observed_display od %}
         </td>
         {% else %}
@@ -68,7 +61,7 @@
         {% endwith %}
 	    {% with animal.last_observation.datetime_observed as od %}
 	    {% if od %}
-	    <td sorttable_customkey="{{ od.sortkey }}">
+	    <td>
 	        {% datetime_observed_display od %}
         </td>
         {% else %}

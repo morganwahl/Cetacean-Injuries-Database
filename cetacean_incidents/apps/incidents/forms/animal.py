@@ -133,7 +133,7 @@ class AnimalSearchForm(SearchForm):
 
     class AnimalObservationSearchForm(ObservationSearchForm):
         class Meta(ObservationSearchForm.Meta):
-            pass
+            sort_field = False
 
     # TODO better way of finding ROs?
     _f = Observation._meta.get_field_by_name('animal')[0]
@@ -150,4 +150,5 @@ class AnimalSearchForm(SearchForm):
     class Meta:
         model = Animal
         exclude = ('id', 'import_notes',)
+        sort_field = True
 
