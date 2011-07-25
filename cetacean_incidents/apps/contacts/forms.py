@@ -188,4 +188,5 @@ class ContactSearchForm(SearchForm):
     class Meta:
         model = Contact
         exclude = ('id', 'sort_name')
+        sort_field = True
 
