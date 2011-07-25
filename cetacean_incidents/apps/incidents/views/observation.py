@@ -1,6 +1,11 @@
 import operator
 
 from django.conf import settings
+from django.core.paginator import (
+    Paginator,
+    InvalidPage,
+    EmptyPage,
+)
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django.db import transaction
@@ -23,6 +28,7 @@ from reversion import revision
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.forms import PagingForm
 
 from cetacean_incidents.apps.contacts.forms import (
     ContactForm,
@@ -576,20 +582,39 @@ def observation_search(request):
     if request.GET:
         form_kwargs['data'] = request.GET
     form = ObservationSearchForm(**form_kwargs)
+    paging_form = PagingForm(prefix='paging', **form_kwargs)
     
     observation_list = tuple()
 
     if form.is_valid():
-
         observation_list = form.results()
     
+    per_page = 1
+    page = 1
+    if paging_form.is_valid():
+        if 'per_page' in paging_form.cleaned_data:
+            per_page = paging_form.cleaned_data['per_page']
+        if 'page_num' in paging_form.cleaned_data:
+            page = paging_form.cleaned_data['page_num']
+
+    paginator = Paginator(observation_list, per_page)
+
+    try:
+        observations = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        observations = paginator.page(paginator.num_pages)
+    
+    template_media = Media(js=(settings.JQUERY_FILE,))
+
     return render_to_response(
         "incidents/observation_search.html",
         {
             'form': form,
+            'paging_form': paging_form,
             'media': form.media,
-            'observation_list': observation_list,
-            'observation_count': len(observation_list),
+            'media': template_media + form.media,
+            'observations': observations,
+            'observation_count': paginator.count,
         },
         context_instance= RequestContext(request),
     )

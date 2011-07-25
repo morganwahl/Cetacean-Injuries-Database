@@ -5,9 +5,10 @@
 {% block header %}<h2>Observations</h2>{% endblock %}
 
 {% block content %}
-<form action="{% url observation_search %}" method="get">
+<form id="the_form" action="{% url observation_search %}" method="get">
     <table class="section">
         {{ form.as_table }}
+        {{ paging_form.as_table }}
     </table>
     <button type="submit">search</button>
 </form>
@@ -15,8 +16,14 @@
 <div style="text-align: center;">
     ({{ observation_count|default:"no" }} matching observation{{ observation_count|pluralize }})
 </div>
+{% with observations as page %}
+{% with 'the_form' as form_id %}
+{% include "paging_form_include.html" %}
+{% endwith %}
+{% endwith %}
+
 {% if observation_count > 0 %}
-{% with observation_list as observations %}
+{% with observations.object_list as observations %}
 {% include "incidents/observation_list_include.html" %}
 {% endwith %}
 {% endif %} {# observation_count > 0 #}
