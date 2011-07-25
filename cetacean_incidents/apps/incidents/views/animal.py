@@ -8,6 +8,11 @@ except ImportError:
 
 from django.conf import settings
 from django.core.cache import cache
+from django.core.paginator import (
+    Paginator,
+    InvalidPage,
+    EmptyPage,
+)
 from django.db.models import Q
 from django.forms import Media
 from django.http import HttpResponse
@@ -20,6 +25,7 @@ from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.forms import PagingForm
 
 from cetacean_incidents.apps.generic_templates.templatetags.html_filter import html
 
@@ -62,6 +68,7 @@ def animal_search(request):
     if request.GET:
         form_kwargs['data'] = request.GET
     form = AnimalSearchForm(**form_kwargs)
+    paging_form = PagingForm(prefix='paging', **form_kwargs)
     
     animal_list = tuple()
     
@@ -69,13 +76,31 @@ def animal_search(request):
         
         animal_list = form.results()
 
+    per_page = 1
+    page = 1
+    if paging_form.is_valid():
+        if 'per_page' in paging_form.cleaned_data:
+            per_page = paging_form.cleaned_data['per_page']
+        if 'page_num' in paging_form.cleaned_data:
+            page = paging_form.cleaned_data['page_num']
+
+    paginator = Paginator(animal_list, per_page)
+
+    try:
+        animals = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        animals = paginator.page(paginator.num_pages)
+    
+    template_media = Media(js=(settings.JQUERY_FILE,))
+
     return render_to_response(
         "incidents/animal_search.html",
         {
             'form': form,
-            'media': form.media,
-            'animal_list': animal_list,
-            'animal_count': len(animal_list),
+            'paging_form': paging_form,
+            'media': template_media + form.media,
+            'animals': animals,
+            'animal_count': paginator.count,
         },
         context_instance= RequestContext(request),
     )

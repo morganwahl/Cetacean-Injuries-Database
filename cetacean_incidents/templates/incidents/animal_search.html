@@ -8,10 +8,11 @@
 {% block header %}<h2>Animals</h2>{% endblock %}
 
 {% block content %}
-<form action="" method="get">
+<form id="the_form" action="" method="get">
     <div class="section">
         <table>
             {{ form.as_table }}
+            {{ paging_form.as_table }}
         </table>
         <button type="submit">search</button>
     </div>
@@ -20,6 +21,12 @@
 <div style="text-align: center;">
 ({{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }})
 </div>
+{% with animals as page %}
+{% with 'the_form' as form_id %}
+{% include "paging_form_include.html" %}
+{% endwith %}
+{% endwith %}
+
 {% if animal_count > 0 %}
 <table class="bordered">
     <thead>
@@ -32,7 +39,7 @@
             <th>last observed</th>
         </tr>
     </thead>
-	{% for animal in animal_list %}
+	{% for animal in animals.object_list %}
 	<tr>
 	    <td>{{ animal|link_block }}</td>
 	    <td>
