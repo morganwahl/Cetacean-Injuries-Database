@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<form action="{% url case_search %}" method="get">
+<form id="the_form" action="{% url case_search %}" method="get">
     <script type="text/javascript">
         $().ready(function(){
             SelectHider.init(
@@ -33,7 +33,15 @@
 
 {% if is_bound %}
 {% if case_count > 0 %}
-{% with case_list as cases %}
+
+{% with cases as page %}
+{% with 'the_form' as form_id %}
+{% with forms.paging as paging_form %}
+{% include "paging_form_include.html" %}
+{% endwith %}
+{% endwith %}
+{% endwith %}
+{% with cases.object_list as cases %}
 {% include "incidents/case_list_include.html" %}
 {% endwith %}
 {% else %}

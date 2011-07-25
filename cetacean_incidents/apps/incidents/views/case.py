@@ -1,6 +1,11 @@
 from datetime import datetime
 
 from django.conf import settings
+from django.core.paginator import (
+    Paginator,
+    InvalidPage,
+    EmptyPage,
+)
 from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django import forms as django_forms
@@ -18,6 +23,8 @@ from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import permission_required
+
+from cetacean_incidents.forms import PagingForm
 
 from cetacean_incidents.apps.entanglements.models import Entanglement
 
@@ -130,6 +137,7 @@ def case_search(request):
         'case': CaseSearchForm,
         'entanglement': EntanglementSearchForm,
         'shipstrike': ShipstrikeSearchForm,
+        'paging': PagingForm,
     }
     forms = {}
     for name, cls in form_classes.items():
@@ -150,6 +158,21 @@ def case_search(request):
                 case_list = query_form.results()
                 search_done = True
     
+    per_page = 1
+    page = 1
+    if forms['paging'].is_valid():
+        if 'per_page' in forms['paging'].cleaned_data:
+            per_page = forms['paging'].cleaned_data['per_page']
+        if 'page_num' in forms['paging'].cleaned_data:
+            page = forms['paging'].cleaned_data['page_num']
+
+    paginator = Paginator(case_list, per_page)
+
+    try:
+        cases = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        cases = paginator.page(paginator.num_pages)
+    
     template_media = Media(
         js=(settings.JQUERY_FILE, 'selecthider.js'),
     )
@@ -161,8 +184,8 @@ def case_search(request):
             'forms': forms,
             'is_bound': search_done,
             'media': media,
-            'case_list': case_list,
-            'case_count': len(case_list),
+            'cases': cases,
+            'case_count': paginator.count,
         },
         context_instance= RequestContext(request),
     )
