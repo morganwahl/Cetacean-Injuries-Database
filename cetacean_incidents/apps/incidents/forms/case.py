@@ -104,14 +104,19 @@ class CaseMergeForm(DocumentableMergeForm):
 class CaseSearchForm(SearchForm):
 
     # TODO better way of finding ROs?
+    class CaseObservationSearchForm(ObservationSearchForm):
+        class Meta(ObservationSearchForm.Meta):
+            sort_field = False
+
     _f = Observation._meta.get_field_by_name('cases')[0]
     observations = HideableReverseManyToManyFieldQuery(
         model_field= _f,
-        subform= ObservationSearchForm,
+        subform= CaseObservationSearchForm,
         help_text= "Only match cases with an observation that matches this."
     )
 
     class Meta:
         model = Case
         exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
+        sort_field = True
 

@@ -1,11 +1,5 @@
 {% extends "page.html" %}
 
-{% block head %}
-{{ block.super }}
-<script type="text/javascript" src="{% url site-media path="sorttable/sorttable.js" %}"></script>
-<link rel="stylesheet" type="text/css" href="{% url site-media path="sorttable/sorttable.css" %}">
-{% endblock %}
-
 {% block title %}{{ block.super }}: Cases{% endblock %}
 
 {% block header %}<h2>Cases</h2>{% endblock %}
@@ -45,7 +39,7 @@
 {% else %}
 <div style="text-align: center;">
     <i>{{ case_count|default:"no" }} matching case{{ case_count|pluralize }}</i>
-</div>{# sorttable.js doesn't like empty tables #}
+</div>
 {% endif %} {# case_count > 0 #}
 {% else %} {# is_bound #}
 <p>click 'search' to see a list of cases</p>
