@@ -13,5 +13,6 @@ def permission_required(perm, login_url=None):
 
 def global_etag(request, *args, **kwargs):
     if not (request.GET or request.POST or request.FILES):
-        return settings.GLOBAL_ETAG
+        if hasattr(settings, 'GLOBAL_ETAG'):
+            return settings.GLOBAL_ETAG
 
