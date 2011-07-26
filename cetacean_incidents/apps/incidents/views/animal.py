@@ -96,17 +96,18 @@ def animal_search(request):
         animals = paginator.page(paginator.num_pages)
     
     template_media = Media(js=(settings.JQUERY_FILE,))
-
+    media = template_media + form.media + paging_form.media
+    
     return render_to_response(
         "incidents/animal_search.html",
         {
             'form': form,
             'paging_form': paging_form,
-            'media': template_media + form.media,
+            'media': media,
             'animals': animals,
             'animal_count': paginator.count,
         },
-        context_instance= RequestContext(request),
+        RequestContext(request),
     )
 
 # TODO how to secure this view?

@@ -172,7 +172,7 @@ class ContactMergeForm(MergeForm):
         }
 
 class ContactSearchForm(SearchForm):
-    
+
     class ContactAffiliationsSearchForm(SearchForm):
         class Meta:
             model = Organization

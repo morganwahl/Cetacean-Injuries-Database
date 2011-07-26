@@ -4,10 +4,10 @@ from itertools import chain
 import json
 import numbers
 
-from django.db import models
-from django.db.models import Q
 from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch
+from django.db import models
+from django.db.models import Q
 from django.forms import Media
 from django.http import HttpResponse
 from django.shortcuts import (

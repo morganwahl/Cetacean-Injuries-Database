@@ -425,7 +425,7 @@ class ObservationSearchForm(SearchForm):
     class ObservationContactSearchForm(ContactSearchForm):
         class Meta(ContactSearchForm.Meta):
             sort_field = False
-    
+
     _f = Observation._meta.get_field_by_name('observer')[0]
     observer = HideableForeignKeyQuery(
         model_field= _f,
@@ -442,7 +442,7 @@ class ObservationSearchForm(SearchForm):
         class Meta:
             model = Location
             exclude = ('id', 'import_notes', 'roughness', 'coordinates')
-    
+        
     _f = Observation._meta.get_field_by_name('location')[0]
     location = HideableForeignKeyQuery(
         model_field= _f,

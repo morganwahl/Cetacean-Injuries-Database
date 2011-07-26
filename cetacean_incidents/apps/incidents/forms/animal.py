@@ -122,7 +122,7 @@ class AnimalSearchForm(SearchForm):
         class Meta:
             model = Case
             exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
-    
+        
     _f = Case._meta.get_field_by_name('animal')[0]
     cases = HideableReverseForeignKeyQuery(
         model_field= _f,
@@ -133,7 +133,7 @@ class AnimalSearchForm(SearchForm):
     class AnimalObservationSearchForm(ObservationSearchForm):
         class Meta(ObservationSearchForm.Meta):
             sort_field = False
-    
+        
     _f = Observation._meta.get_field_by_name('animal')[0]
     observations = HideableReverseForeignKeyQuery(
         model_field= _f,
