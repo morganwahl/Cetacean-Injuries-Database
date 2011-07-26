@@ -4,5 +4,4 @@ $().ready(function(){
         $(this).next('span.help_text').toggle();
         return false;
     });
-    $('span.help_text').hide();
 });
