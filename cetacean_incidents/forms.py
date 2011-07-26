@@ -10,12 +10,6 @@ descendants: entanglements and shipstrikes.
 
 from django import forms
 
-from cetacean_incidents.apps.entanglements.forms import (
-    AddEntanglementForm,
-    EntanglementForm,
-)
-from cetacean_incidents.apps.entanglements.models import Entanglement
-
 from cetacean_incidents.apps.incidents.forms import (
     AnimalAutocomplete,
     CaseForm,
@@ -25,15 +19,13 @@ from cetacean_incidents.apps.incidents.models import (
     Case,
 )
 
-from cetacean_incidents.apps.shipstrikes.forms import (
-    AddShipstrikeForm,
-    ShipstrikeForm,
-)
-from cetacean_incidents.apps.shipstrikes.models import Shipstrike
-
 def CaseTypeForm_factory(user):
     'Generates a CaseTypeForm based on what types a user can add.'
     
+    # import here to avoid circular imports
+    from cetacean_incidents.apps.entanglements.models import Entanglement
+    from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+
     # a tuple of doubles: <class>.__name__, <class>._meta.verbose_name
     type_names = (
         ('Case', 'Case (generic stranding case)'),
@@ -69,6 +61,16 @@ def CaseTypeForm_factory(user):
                 lambda choice: type_perms[choice[0]](user),
                 type_names,
             )
+        )
+        
+        # import here to avoid circular imports
+        from cetacean_incidents.apps.entanglements.forms import (
+            AddEntanglementForm,
+            EntanglementForm,
+        )
+        from cetacean_incidents.apps.shipstrikes.forms import (
+            AddShipstrikeForm,
+            ShipstrikeForm,
         )
 
         # basically the same problem as above; we need a list of subclass of CaseForm

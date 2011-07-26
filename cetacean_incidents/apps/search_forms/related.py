@@ -8,11 +8,6 @@ from django.forms.util import flatatt
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-from forms import (
-    SearchForm,
-    make_sortfield,
-)
-
 HTML_SPACES = u'\u0020\u0009\u000a\u000c\u000d'
 
 # TODO this kinda belongs in utils.html
@@ -180,6 +175,9 @@ class SubqueryField(Field):
         return value
 
     def sort_choices(self, value_prefix=None, label_prefix=None):
+        # avoid circular imports
+        from forms import make_sortfield
+
         choices = make_sortfield(self.query_form_class.base_fields, value_prefix, label_prefix, recursed=True).choices
         return choices
 
@@ -194,6 +192,9 @@ class ReverseForeignKeyQuery(SubqueryField):
         
         # TODO subform should be a SearchForm subclass
         if subform is None:
+            # avoid circular imports
+            from forms import SearchForm
+
             other_model = self.model_field.model
             class other_model_search_form(SearchForm):
                 class Meta:
@@ -241,6 +242,9 @@ class ManyToManyFieldQuery(SubqueryField):
         self.model_field = model_field
         
         if subform is None:
+            # avoid circular imports
+            from forms import SearchForm
+
             other_model = self.model_field.rel.to
             class other_model_search_form(SearchForm):
                 class Meta:
@@ -290,6 +294,9 @@ class ReverseManyToManyFieldQuery(SubqueryField):
         
         # TODO subform should be a SearchForm subclass
         if subform is None:
+            # avoid circular imports
+            from forms import SearchForm
+
             other_model = self.model_field.model
             class other_model_search_form(SearchForm):
                 class Meta:
@@ -339,6 +346,9 @@ class ForeignKeyQuery(SubqueryField):
         self.model_field = model_field
         
         if subform is None:
+            # avoid circular imports
+            from forms import SearchForm
+
             other_model = self.model_field.rel.to
             class other_model_search_form(SearchForm):
                 class Meta:
