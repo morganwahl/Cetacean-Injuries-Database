@@ -65,6 +65,7 @@ MIDDLEWARE_CLASSES = (
     #'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    #'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.doc.XViewMiddleware',
     'django.middleware.transaction.TransactionMiddleware',
@@ -83,6 +84,9 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.databrowse',
     'django.contrib.humanize',
+    'django_extensions',
+    #'devserver',
+    #'debug_toolbar',
     'reversion',
     'cetacean_incidents.apps.utils',
     'cetacean_incidents.apps.countries',
@@ -105,5 +109,5 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.search_forms',
 )
 
-GLOBAL_ETAG = u'1'
+GLOBAL_ETAG = u'3'
 

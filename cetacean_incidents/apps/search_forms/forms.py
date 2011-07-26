@@ -32,6 +32,7 @@ class SubmitDetectingForm(forms.Form):
 
 def make_sortfield(field_dict, value_prefix=None, label_prefix=None, recursed=False):
     "If recursed is True, we're already in a sub-choices group."
+    
     # add a sort_by field to choose one of the existing fields
     if not label_prefix is None:
         label_prefix += ': '
