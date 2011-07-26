@@ -19,6 +19,7 @@ from django.template import (
     RequestContext,
 )
 from django.views.decorators.http import condition
+from django.utils.datastructures import SortedDict
 
 from django.contrib.auth.decorators import login_required
 
@@ -137,14 +138,15 @@ def case_search(request):
     
     from cetacean_incidents.apps.entanglements.forms import EntanglementSearchForm
     from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeSearchForm
-    form_classes = {
-        'case_type': CaseFormSelector,
-        'case': CaseSearchForm,
-        'entanglement': EntanglementSearchForm,
-        'shipstrike': ShipstrikeSearchForm,
-        'paging': PagingForm,
-    }
-    forms = {}
+    # use a SortedDict to ensure 'case_type' comes first and 'paging' comes last
+    form_classes = SortedDict([
+        ('case_type', CaseFormSelector),
+        ('case', CaseSearchForm),
+        ('entanglement', EntanglementSearchForm),
+        ('shipstrike', ShipstrikeSearchForm),
+        ('paging', PagingForm),
+    ])
+    forms = SortedDict()
     for name, cls in form_classes.items():
         form_kwargs = {
             'prefix': name

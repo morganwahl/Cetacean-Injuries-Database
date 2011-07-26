@@ -20,13 +20,10 @@
             );
         });
     </script>
-    {{ forms.case_type }}
     {% for form_name, form in forms.items %}
-    {% if form_name != "case_type" %}
     <table id="{{ form_name }}_form" class="section">
         {{ form }}
     </table>
-    {% endif %}
     {% endfor %}
     <button type="submit">search</button>
 </form>
