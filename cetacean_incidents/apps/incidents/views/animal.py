@@ -45,7 +45,6 @@ from ..models import Animal
 
 @login_required
 def animal_detail(request, animal_id):
-    
     animal = Animal.objects.get(id=animal_id)
         
     context = {
@@ -68,7 +67,6 @@ def animal_detail(request, animal_id):
 @login_required
 @condition(etag_func=global_etag)
 def animal_search(request):
-
     form_kwargs = {}
     if request.GET:
         form_kwargs['data'] = request.GET
@@ -97,7 +95,7 @@ def animal_search(request):
     
     template_media = Media(js=(settings.JQUERY_FILE,))
     media = template_media + form.media + paging_form.media
-    
+
     return render_to_response(
         "incidents/animal_search.html",
         {
