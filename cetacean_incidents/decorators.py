@@ -11,3 +11,7 @@ def permission_required(perm, login_url=None):
         login_url = settings.BAD_PERMISSION_URL
     return old_permission_required(perm, login_url)
 
+def global_etag(request, *args, **kwargs):
+    if not (request.GET or request.POST or request.FILES):
+        return settings.GLOBAL_ETAG
+

@@ -21,10 +21,14 @@ from django.shortcuts import (
     redirect,
 )
 from django.template import RequestContext
+from django.views.decorators.http import condition
 
 from django.contrib.auth.decorators import login_required
 
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 from cetacean_incidents.forms import PagingForm
 
 from cetacean_incidents.apps.generic_templates.templatetags.html_filter import html
@@ -62,6 +66,7 @@ def animal_detail(request, animal_id):
     )
 
 @login_required
+@condition(etag_func=global_etag)
 def animal_search(request):
 
     form_kwargs = {}

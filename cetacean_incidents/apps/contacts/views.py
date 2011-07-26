@@ -10,10 +10,14 @@ from django.shortcuts import (
     render_to_response,
 )
 from django.template import RequestContext
+from django.views.decorators.http import condition
 
 from django.contrib.auth.decorators import login_required
 
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 from cetacean_incidents.forms import (
     merge_source_form_factory,
     PagingForm,
@@ -143,6 +147,7 @@ def merge_contact(request, destination_id, source_id=None):
     )
 
 @login_required
+@condition(etag_func=global_etag)
 def contact_search(request):
 
     form_kwargs = {}

@@ -18,11 +18,15 @@ from django.template import (
     Context,
     RequestContext,
 )
+from django.views.decorators.http import condition
 
 from django.contrib.auth.decorators import login_required
 
 from cetacean_incidents import generic_views
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 
 from cetacean_incidents.forms import PagingForm
 
@@ -115,6 +119,7 @@ def cases_by_year(request, year=None):
     )
 
 @login_required
+@condition(etag_func=global_etag)
 def case_search(request):
     
     # TODO get Case subclasses dynamicly

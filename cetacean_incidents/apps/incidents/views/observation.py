@@ -21,13 +21,17 @@ from django.template import (
 )
 from django.template.loader import get_template
 from django.utils.safestring import mark_safe
+from django.views.decorators.http import condition
 
 from django.contrib.auth.decorators import login_required
 
 from reversion import revision
 
 from cetacean_incidents import generic_views
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 from cetacean_incidents.forms import PagingForm
 
 from cetacean_incidents.apps.contacts.forms import (
@@ -576,6 +580,7 @@ def observation_merge(request, destination_id, source_id=None):
     )
 
 @login_required
+@condition(etag_func=global_etag)
 def observation_search(request):
 
     form_kwargs = {}
