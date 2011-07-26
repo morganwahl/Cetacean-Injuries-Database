@@ -105,3 +105,5 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.search_forms',
 )
 
+GLOBAL_ETAG = u'1'
+

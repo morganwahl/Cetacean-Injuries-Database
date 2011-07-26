@@ -53,5 +53,3 @@ TEMPLATE_DIRS = (
 
 CACHE_BACKEND = 'file:///var/cache/cetacean_incidents'
 
-GLOBAL_ETAG = u'1'
-
