@@ -186,21 +186,12 @@ class SubqueryField(Field):
 
 class ReverseForeignKeyQuery(SubqueryField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         # TODO model_field should be a ForeignKey instance
         self.model_field = model_field
         
         # TODO subform should be a SearchForm subclass
-        if subform is None:
-            # avoid circular imports
-            from forms import SearchForm
-
-            other_model = self.model_field.model
-            class other_model_search_form(SearchForm):
-                class Meta:
-                    model = other_model
-            subform = other_model_search_form
-        return super(ReverseForeignKeyQuery, self).__init__(subform, *args, **kwargs)
+        return super(ReverseForeignKeyQuery, self).__init__(subform_class, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:
@@ -223,10 +214,10 @@ class ReverseForeignKeyQuery(SubqueryField):
 
 class HideableReverseForeignKeyQuery(HideableField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         subfield = ReverseForeignKeyQuery(
             model_field,
-            subform,
+            subform_class,
         )
         super(HideableReverseForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
 
@@ -238,19 +229,10 @@ class HideableReverseForeignKeyQuery(HideableField):
 
 class ManyToManyFieldQuery(SubqueryField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         self.model_field = model_field
         
-        if subform is None:
-            # avoid circular imports
-            from forms import SearchForm
-
-            other_model = self.model_field.rel.to
-            class other_model_search_form(SearchForm):
-                class Meta:
-                    model = other_model
-            subform = other_model_search_form
-        super(ManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+        super(ManyToManyFieldQuery, self).__init__(subform_class, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:
@@ -273,10 +255,10 @@ class ManyToManyFieldQuery(SubqueryField):
 
 class HideableManyToManyFieldQuery(HideableField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         subfield = ManyToManyFieldQuery(
             model_field,
-            subform,
+            subform_class,
         )
         super(HideableManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
 
@@ -288,22 +270,13 @@ class HideableManyToManyFieldQuery(HideableField):
 
 class ReverseManyToManyFieldQuery(SubqueryField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
 
         self.model_field = model_field
         
-        # TODO subform should be a SearchForm subclass
-        if subform is None:
-            # avoid circular imports
-            from forms import SearchForm
+        # TODO subform_class should be a SearchForm subclass
 
-            other_model = self.model_field.model
-            class other_model_search_form(SearchForm):
-                class Meta:
-                    model = other_model
-            subform = other_model_search_form
-
-        super(ReverseManyToManyFieldQuery, self).__init__(subform, *args, **kwargs)
+        super(ReverseManyToManyFieldQuery, self).__init__(subform_class, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:
@@ -326,10 +299,10 @@ class ReverseManyToManyFieldQuery(SubqueryField):
 
 class HideableReverseManyToManyFieldQuery(HideableField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         subfield = ReverseManyToManyFieldQuery(
             model_field,
-            subform,
+            subform_class,
         )
         super(HideableReverseManyToManyFieldQuery, self).__init__(subfield, *args, **kwargs)
 
@@ -341,20 +314,11 @@ class HideableReverseManyToManyFieldQuery(HideableField):
 
 class ForeignKeyQuery(SubqueryField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
 
         self.model_field = model_field
         
-        if subform is None:
-            # avoid circular imports
-            from forms import SearchForm
-
-            other_model = self.model_field.rel.to
-            class other_model_search_form(SearchForm):
-                class Meta:
-                    model = other_model
-            subform = other_model_search_form
-        return super(ForeignKeyQuery, self).__init__(subform, *args, **kwargs)
+        return super(ForeignKeyQuery, self).__init__(subform_class, *args, **kwargs)
     
     def sort_choices(self, value_prefix=None, label_prefix=None):
         if value_prefix is not None:
@@ -377,10 +341,10 @@ class ForeignKeyQuery(SubqueryField):
 
 class HideableForeignKeyQuery(HideableField):
     
-    def __init__(self, model_field, subform=None, *args, **kwargs):
+    def __init__(self, model_field, subform_class, *args, **kwargs):
         subfield = ForeignKeyQuery(
             model_field,
-            subform,
+            subform_class,
         )
         super(HideableForeignKeyQuery, self).__init__(subfield, *args, **kwargs)
 

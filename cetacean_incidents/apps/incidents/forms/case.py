@@ -110,7 +110,7 @@ class CaseSearchForm(SearchForm):
     _f = Observation._meta.get_field_by_name('cases')[0]
     observations = HideableReverseManyToManyFieldQuery(
         model_field= _f,
-        subform= CaseObservationSearchForm,
+        subform_class= CaseObservationSearchForm,
         help_text= "Only match cases with an observation that matches this."
     )
 
