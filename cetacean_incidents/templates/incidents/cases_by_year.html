@@ -26,7 +26,9 @@
 
 {% block content %}
 {% if cases %}
+{% with cases|length as case_count %}
 {% include "incidents/case_list_include.html" %}
+{% endwith %}
 {% else %}
 <i>no cases have relevant observations in {{ year }}</i>
 {% endif %}

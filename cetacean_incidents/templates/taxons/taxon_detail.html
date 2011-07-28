@@ -88,7 +88,9 @@
 <div>
     <h3>Entanglements in gear targeting {{ taxon|html }}</h3>
     {% with taxon.targeted_by.all as cases %}
+    {% with taxon.targeted_by.count as case_count %}
     {% include "incidents/case_list_include.html" %}
+    {% endwith %}
     {% endwith %}
 </div>
 {% endif %}

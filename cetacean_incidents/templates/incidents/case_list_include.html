@@ -1,9 +1,9 @@
-{# assumes a list of cases as 'cases' in the context #}
+{# assumes a list of cases as 'cases' in the context, a number of cases as case_count #}
 {% load observation_extras %} {# for date_observed_dipsplay #}
 {% load link_filter %}
 
 <div style="text-align: center;">
-    <i>{{ cases|length }} case{{ cases|length|pluralize }}</i>
+    <i>{{ case_count }} case{{ case_count|pluralize }}</i>
 </div>
 <table class="bordered sortable">
     <thead>
