@@ -197,6 +197,8 @@ def case_search(request):
         cases = paginator.page(page)
     except (EmptyPage, InvalidPage):
         cases = paginator.page(paginator.num_pages)
+        
+    all_ids = map(lambda c: c.id, case_list)
     
     template_media = Media(
         js=(settings.JQUERY_FILE, 'selecthider.js'),
@@ -210,6 +212,7 @@ def case_search(request):
             'is_bound': search_done,
             'media': media,
             'cases': cases,
+            'all_ids': all_ids,
             'case_count': paginator.count,
         },
         context_instance= RequestContext(request),

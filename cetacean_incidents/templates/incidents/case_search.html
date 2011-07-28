@@ -41,6 +41,16 @@
 {% with cases.object_list as cases %}
 {% include "incidents/case_list_include.html" %}
 {% endwith %}
+
+{% if user.is_staff %}
+<div style="width:100%; text-align: center;">
+    <form action="{% url case_report %}" method="get">
+        <input type="hidden" name="cases" value="{{ all_ids|join:"," }}" ">
+        <button type="submit">generate a report for all the matching cases</button>
+    </form>
+</div>
+{% endif %}
+
 {% else %}
 <div style="text-align: center;">
     <i>{{ case_count|default:"no" }} matching case{{ case_count|pluralize }}</i>
