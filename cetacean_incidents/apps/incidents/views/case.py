@@ -10,6 +10,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django import forms as django_forms
 from django.forms import Media
+from django.http import HttpResponse
 from django.shortcuts import (
     render_to_response,
     redirect,
@@ -35,6 +36,8 @@ from cetacean_incidents.apps.entanglements.models import Entanglement
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
+from cetacean_incidents.apps.reports.forms import ReportForm
+
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -54,6 +57,7 @@ from ..forms import (
     CaseMergeForm,
     CaseMergeSourceForm,
     CaseSearchForm,
+    CaseReportForm,
 )
 from ..templatetags.case_extras import YearsForm
 
@@ -61,6 +65,20 @@ from tabs import (
     AnimalTab,
     CaseTab,
 )
+
+def rfc822_quoting(string):
+    """Returns a "quoted-string" as defined in IETF RFC 822."""
+    # TODO will a HttpResponse do this for us?
+    
+    # escape any of '"' '\' or U+000D
+    if isinstance(string, unicode):
+        string = string.encode('utf-8')
+    string = string.replace('\\', '\\\\')
+    string = string.replace('"', '\\"')
+    string = string.replace('\x0d', '\\\x0d')
+    
+    # enclose in quotes
+    return '"%s"' % string
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
@@ -195,6 +213,85 @@ def case_search(request):
             'case_count': paginator.count,
         },
         context_instance= RequestContext(request),
+    )
+
+@login_required
+def case_report(request):
+    form_classes = {
+        'case_report': CaseReportForm,
+        'new_report': ReportForm,
+    }
+    form_kwargs = {}
+    for name, cls in form_classes.items():
+        form_kwargs[name] = {
+            'prefix': name
+        }
+    if request.POST:
+        form_kwargs['case_report']['data'] = request.POST
+    
+    # the GET string could have a value called 'cases' that's a
+    # comma-delimited list of case IDs
+    if request.GET and 'cases' in request.GET:
+        case_ids = request.GET['cases']
+        case_ids = map(int, case_ids.split(','))
+    else:
+        case_ids = []
+    cases = Case.objects.filter(id__in=case_ids)
+    form_kwargs['case_report']['cases'] = cases
+
+    forms = {}
+    forms['case_report'] = form_classes['case_report'](**form_kwargs['case_report'])
+    # only bind forms['new_report'] if 'new' was chosen in forms['case_report']
+    if forms['case_report'].is_valid():
+        if forms['case_report'].cleaned_data['new'] == 'new':
+            form_kwargs['new_report'].update({
+                'data': request.POST,
+                'files': request.FILES,
+            })
+    forms['new_report'] = form_classes['new_report'](**form_kwargs['new_report'])
+
+    if forms['case_report'].is_valid():
+        report = None
+        if forms['case_report'].cleaned_data['new'] == 'new':
+            if forms['new_report'].is_valid():
+                save = bool(forms['new_report'].cleaned_data['name'])
+                report = forms['new_report'].save(commit=False)
+                if save:
+                    report.uploader = request.user
+                    report.save()
+                    forms['new_report'].save_m2m()
+                
+        elif forms['case_report'].cleaned_data['new'] == 'existing':
+            report = forms['case_report'].cleaned_data['report']
+
+        if not report is None:
+            context = {'cases': cases}
+
+            if forms['case_report'].cleaned_data['to_pdf']:
+                rendered = report.render_to_pdf(context)
+                response = HttpResponse(rendered, mimetype='application/pdf')
+                name = forms['case_report'].cleaned_data['pdf_name'] 
+                if not name:
+                    name = 'report.pdf'
+                response['Content-Disposition'] = 'attachment; filename=%s' % rfc822_quoting(name)
+                return response
+
+            rendered = report.render(context)
+            return HttpResponse(rendered, mimetype=report.format)
+        
+    template_media = Media(
+        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
+    )
+    media = reduce(lambda m, f: m + f.media, forms.values(), template_media)
+    
+    return render_to_response(
+        "incidents/case_report.html",
+        {
+            'cases': cases,
+            'forms': forms,
+            'media': media,
+        },
+        RequestContext(request),
     )
 
 def edit_case_animal(request, case_id):

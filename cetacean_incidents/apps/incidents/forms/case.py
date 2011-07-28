@@ -7,6 +7,8 @@ from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 from cetacean_incidents.apps.search_forms.forms import SearchForm
 from cetacean_incidents.apps.search_forms.related import HideableReverseManyToManyFieldQuery
 
+from cetacean_incidents.apps.reports.models import Report
+
 from ..models import (
     Animal,
     Case,
@@ -119,3 +121,48 @@ class CaseSearchForm(SearchForm):
         exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
         sort_field = True
 
+class CaseReportForm(forms.Form):
+    
+    to_pdf = forms.BooleanField(
+        required= False,
+        initial= False,
+        label= 'return a PDF',
+    )
+    
+    pdf_name = forms.CharField(
+        max_length= 256,
+        required= False,
+        label= 'PDF name',
+        help_text= 'name of the PDF file to make',
+    )
+    
+    new = forms.ChoiceField(
+        widget= forms.RadioSelect,
+        choices= (
+            ('existing', 'existing'),
+            ('new',  'new'),
+        ),
+        initial= 'existing',
+        label= 'report source',
+    )
+    
+    report = forms.ModelChoiceField(
+        queryset= Report.objects.all(),
+        required= False,
+    )
+    
+    def __init__(self, cases, *args, **kwargs):
+        super(CaseReportForm, self).__init__(*args, **kwargs)
+        # insert this so it's the first field
+        self.fields.insert(0, 'cases', forms.ModelMultipleChoiceField(
+            queryset= cases,
+            initial= cases.all(),
+            widget= forms.CheckboxSelectMultiple,
+        ))
+
+    def clean(self):
+        data = self.cleaned_data
+        if data['new'] == 'existing' and not data['report']:
+            raise forms.ValidationError("no existing report given")
+        return data
+            
