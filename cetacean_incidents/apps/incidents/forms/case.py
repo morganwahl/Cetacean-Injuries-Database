@@ -120,6 +120,10 @@ class CaseSearchForm(SearchForm):
         model = Case
         exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
         sort_field = True
+    
+    def __init__(self, *args, **kwargs):
+        super(CaseSearchForm, self).__init__(*args, **kwargs)
+        self.fields['sort_by'].initial = 'observation__datetime_observed'
 
 class CaseReportForm(forms.Form):
     
