@@ -30,7 +30,7 @@ class SubmitDetectingForm(forms.Form):
         initial= 'yes',
     )
 
-def make_sortfield(field_dict, value_prefix=None, label_prefix=None, recursed=False):
+def make_sortfield(field_dict, ordering=None, value_prefix=None, label_prefix=None, recursed=False):
     "If recursed is True, we're already in a sub-choices group."
     
     # add a sort_by field to choose one of the existing fields
@@ -61,13 +61,24 @@ def make_sortfield(field_dict, value_prefix=None, label_prefix=None, recursed=Fa
         if not value_prefix is None:
             value = value_prefix + '__' + value
         sort_choices.append((value, label))
-
+    
     #from pprint import pprint
     #pprint(('make_sortfield', sort_choices))
-    sort_field = forms.ChoiceField(
-        choices= tuple(sort_choices),
-        required= False,
-    )
+
+    field_kwargs = {
+        'choices': tuple(sort_choices),
+        'required': False
+    }
+    
+    if not ordering is None:
+        # only use the first field
+        initial = ordering[0]
+        # ignore descending order
+        if initial[0] == '-':
+            initial = initial[1:]
+        field_kwargs['initial'] = initial
+
+    sort_field = forms.ChoiceField(**field_kwargs)
     return sort_field
 
 def fields_for_model(model, fields=None, exclude=None, widgets=None, formfield_callback=None):
@@ -153,7 +164,7 @@ class SearchFormMetaclass(type):
         else:
             fields = declared_fields
         if opts.sort_field:
-            fields['sort_by'] = make_sortfield(fields)
+            fields['sort_by'] = make_sortfield(fields, ordering=opts.model._meta.ordering)
         new_class.declared_fields = declared_fields
         new_class.base_fields = fields
         return new_class
