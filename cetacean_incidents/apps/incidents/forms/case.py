@@ -5,7 +5,10 @@ from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
-from cetacean_incidents.apps.search_forms.related import HideableReverseManyToManyFieldQuery
+from cetacean_incidents.apps.search_forms.related import (
+    HideableReverseManyToManyFieldQuery,
+    HideableForeignKeyQuery,
+)
 
 from cetacean_incidents.apps.reports.models import Report
 
@@ -16,6 +19,7 @@ from ..models import (
     YearCaseNumber,
 )
 
+from animal import AnimalSearchForm
 from observation import ObservationSearchForm
 
 class CaseAnimalForm(forms.Form):
@@ -104,6 +108,17 @@ class CaseMergeForm(DocumentableMergeForm):
         exclude = ('animal',)
 
 class CaseSearchForm(SearchForm):
+
+    class CaseAnimalSearchForm(AnimalSearchForm):
+        class Meta(AnimalSearchForm.Meta):
+            sort_field = False
+    
+    _f = Case._meta.get_field_by_name('animal')[0]
+    animal = HideableForeignKeyQuery(
+        model_field= _f,
+        subform_class= CaseAnimalSearchForm,
+        help_text= "Only match cases for an animal that matches this."
+    )
 
     class CaseObservationSearchForm(ObservationSearchForm):
         class Meta(ObservationSearchForm.Meta):
