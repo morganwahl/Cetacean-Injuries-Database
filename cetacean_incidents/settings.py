@@ -110,5 +110,5 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.reports',
 )
 
-GLOBAL_ETAG = u'3'
+GLOBAL_ETAG = u'4'
 
