@@ -39,7 +39,7 @@
 {% if user.is_staff %}
 <div style="width:100%; text-align: center;">
     <form action="{% url case_report %}" method="get">
-        <input type="hidden" name="cases" value="{{ all_ids|join:"," }}" ">
+        <input type="hidden" name="cases" value="{{ all_ids }}">
         <button type="submit">generate a report for all the matching cases</button>
     </form>
 </div>

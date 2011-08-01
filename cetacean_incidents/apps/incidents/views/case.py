@@ -1,3 +1,5 @@
+import base64
+import bz2
 from datetime import datetime
 
 from django.conf import settings
@@ -178,7 +180,17 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
     except (EmptyPage, InvalidPage):
         cases = paginator.page(paginator.num_pages)
         
-    all_ids = map(lambda c: c.id, case_list)
+    all_ids = u",".join(map(lambda c: unicode(c.id), case_list))
+    # This make sense as a URL, conceptually, so let's try to keep it that way
+    MAX_GET_LENGTH = 1000
+    if len(all_ids) > MAX_GET_LENGTH:
+        zall_ids = all_ids.encode('utf-8')
+        zall_ids = bz2.compress(zall_ids)
+        zall_ids = base64.urlsafe_b64encode(zall_ids)
+        # prepend a 'z' so we know it was compressed
+        zall_ids = u'z' + zall_ids.decode('utf-8')
+        if len(zall_ids) < len(all_ids):
+            all_ids = zall_ids
     
     media = reduce(lambda m, f: m + f.media, forms.values(), Media())
     
@@ -213,6 +225,15 @@ def case_report(request):
     # comma-delimited list of case IDs
     if request.GET and 'cases' in request.GET:
         case_ids = request.GET['cases']
+
+        # 'cases' may have been compressed to keep the URL length down
+        if case_ids[0] == u'z':
+            case_ids = case_ids[1:]
+            case_ids = case_ids.encode('utf-8')
+            case_ids = base64.urlsafe_b64decode(case_ids)
+            case_ids = bz2.decompress(case_ids)
+            case_ids = case_ids.decode('utf-8')
+        
         case_ids = map(int, case_ids.split(','))
     else:
         case_ids = []
