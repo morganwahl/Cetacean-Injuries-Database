@@ -14,7 +14,7 @@ from django.forms.forms import (
     pretty_name,
 )
 from django.forms.models import ModelFormOptions
-from django.forms.widgets import media_property
+from django.forms.widgets import Media
 from django.utils.datastructures import SortedDict
 
 import models # needed to add the searchformfield attribute to Django's models
@@ -29,6 +29,39 @@ class SubmitDetectingForm(forms.Form):
         widget= forms.HiddenInput,
         initial= 'yes',
     )
+
+def caching_media_property(cls):
+    def _media(self):
+        if hasattr(self, '_media_cache'):
+            return self._media_cache
+        # Get the media property of the superclass, if it exists
+        if hasattr(super(cls, self), 'media'):
+            base = super(cls, self).media
+        else:
+            base = Media()
+
+        # Get the media definition for this class
+        definition = getattr(cls, 'Media', None)
+        if definition:
+            extend = getattr(definition, 'extend', True)
+            if extend:
+                if extend == True:
+                    m = base
+                else:
+                    m = Media()
+                    for medium in extend:
+                        m = m + base[medium]
+                result = m + Media(definition)
+            else:
+                result = Media(definition)
+        else:
+            result = base
+        
+        self._media_cache = result
+        return result
+
+    cls._media = _media
+    return property(cls._media)
 
 def make_sortfield_choices(field_dict, value_prefix=None, label_prefix=None, recursed=False):
     "If recursed is True, we're already in a sub-choices group."
@@ -154,7 +187,7 @@ class SearchFormMetaclass(type):
             return new_class
         
         if 'media' not in attrs:
-            new_class.media = media_property(new_class)
+            new_class.media = caching_media_property(new_class)
         opts = new_class._meta = SearchFormOptions(getattr(new_class, 'Meta', None))
         # TODO remove this? Currently BaseSearchForm.__init__ throws an error if
         # no model is defined.
