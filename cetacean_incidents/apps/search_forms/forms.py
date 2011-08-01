@@ -30,10 +30,9 @@ class SubmitDetectingForm(forms.Form):
         initial= 'yes',
     )
 
-def make_sortfield(field_dict, ordering=None, value_prefix=None, label_prefix=None, recursed=False):
+def make_sortfield_choices(field_dict, value_prefix=None, label_prefix=None, recursed=False):
     "If recursed is True, we're already in a sub-choices group."
     
-    # add a sort_by field to choose one of the existing fields
     if not label_prefix is None:
         label_prefix += ': '
     else:
@@ -62,9 +61,13 @@ def make_sortfield(field_dict, ordering=None, value_prefix=None, label_prefix=No
             value = value_prefix + '__' + value
         sort_choices.append((value, label))
     
-    #from pprint import pprint
-    #pprint(('make_sortfield', sort_choices))
+    return sort_choices
 
+def make_sortfield(field_dict, ordering=None, value_prefix=None, label_prefix=None, recursed=False):
+    "Generate a sort_by field to choose one of the existing fields. If recursed is True, we're already in a sub-choices group."
+    
+    sort_choices = make_sortfield_choices(field_dict, value_prefix, label_prefix, recursed)
+    
     field_kwargs = {
         'choices': tuple(sort_choices),
         'required': False

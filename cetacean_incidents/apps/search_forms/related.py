@@ -176,9 +176,9 @@ class SubqueryField(Field):
 
     def sort_choices(self, value_prefix=None, label_prefix=None):
         # avoid circular imports
-        from forms import make_sortfield
+        from forms import make_sortfield_choices
 
-        choices = make_sortfield(self.query_form_class.base_fields, value_prefix=value_prefix, label_prefix=label_prefix, recursed=True).choices
+        choices = make_sortfield_choices(self.query_form_class.base_fields, value_prefix=value_prefix, label_prefix=label_prefix, recursed=True)
         return choices
 
     def query(self, value):
