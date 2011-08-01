@@ -139,29 +139,11 @@ def cases_by_year(request, year=None):
 
 @login_required
 @condition(etag_func=global_etag)
-def case_search(request):
+def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/case_search.html'):
     
-    # TODO get Case subclasses dynamicly
-
-    class CaseFormSelector(django_forms.Form):
-        case_type = django_forms.ChoiceField(
-            label= 'what type of cases to search?',
-            choices= (
-                ('case', 'all cases'),
-                ('entanglement', 'just entanglements'),
-                ('shipstrike', 'just shipstrikes'),
-            ),
-            initial= 'case',
-        )
-    
-    from cetacean_incidents.apps.entanglements.forms import EntanglementSearchForm
-    from cetacean_incidents.apps.shipstrikes.forms import ShipstrikeSearchForm
-    # use a SortedDict to ensure 'case_type' comes first and 'paging' comes last
+    # use a SortedDict to ensure 'paging' comes last
     form_classes = SortedDict([
-        ('case_type', CaseFormSelector),
-        ('case', CaseSearchForm),
-        ('entanglement', EntanglementSearchForm),
-        ('shipstrike', ShipstrikeSearchForm),
+        ('case', searchform_class),
         ('paging', PagingForm),
     ])
     forms = SortedDict()
@@ -176,12 +158,10 @@ def case_search(request):
     case_list = tuple()
     
     search_done = False
-    if forms['case_type'].is_bound:
-        if forms['case_type'].is_valid():
-            query_form = forms[forms['case_type'].cleaned_data['case_type']]
-            if query_form.is_valid():
-                case_list = query_form.results()
-                search_done = True
+    if forms['case'].is_bound:
+        if forms['case'].is_valid():
+            case_list = forms['case'].results()
+            search_done = True
     
     per_page = 1
     page = 1
@@ -200,13 +180,10 @@ def case_search(request):
         
     all_ids = map(lambda c: c.id, case_list)
     
-    template_media = Media(
-        js=(settings.JQUERY_FILE, 'selecthider.js'),
-    )
-    media = reduce(lambda m, f: m + f.media, forms.values(), template_media)
+    media = reduce(lambda m, f: m + f.media, forms.values(), Media())
     
     return render_to_response(
-        "incidents/case_search.html",
+        template,
         {
             'forms': forms,
             'is_bound': search_done,

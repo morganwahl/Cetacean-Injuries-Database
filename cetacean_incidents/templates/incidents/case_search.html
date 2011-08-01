@@ -1,25 +1,19 @@
 {% extends "page.html" %}
 
-{% block title %}{{ block.super }}: Cases{% endblock %}
+{% block title %}{{ block.super }}: Case Search{% endblock %}
 
-{% block header %}<h2>Cases</h2>{% endblock %}
+{% block header %}
+<h2>Case Search</h2>
+<div>
+    <a href="{% url entanglement_search %}">search entanglement-specific fields</a>
+</div>
+<div>
+    <a href="{% url shipstrike_search %}">search shipstrike-specific fields</a>
+</div>
+{% endblock %}
 
 {% block content %}
-
-<form id="the_form" action="{% url case_search %}" method="get">
-    <script type="text/javascript">
-        $().ready(function(){
-            SelectHider.init(
-                {# TODO javascript-string escaping? #}
-                '{{ forms.case_type.case_type.html_name }}',
-                {
-                    {% for val, disp in forms.case_type.case_type.field.choices %}
-                    '{{ val }}': '{{ val }}_form'{% if not forloop.last %},{% endif %}
-                    {% endfor %}
-                }
-            );
-        });
-    </script>
+<form id="the_form" action="" method="get">
     {% for form_name, form in forms.items %}
     <table id="{{ form_name }}_form" class="section">
         {{ form }}

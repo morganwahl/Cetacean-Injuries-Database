@@ -1,0 +1,14 @@
+{% extends "incidents/case_search.html" %}
+
+{% block title %}{{ block.super }}: Shipstrike Search{% endblock %}
+
+{% block header %}
+<h2>Shipstrike Search</h2>
+<div>
+    <a href="{% url case_search %}">search all cases (using only the field they have in common)</a>
+</div>
+<div>
+    <a href="{% url entanglement_search %}">search entanglement-specific fields</a>
+</div>
+{% endblock %}
+

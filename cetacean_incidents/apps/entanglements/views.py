@@ -19,10 +19,14 @@ from django.template import (
     RequestContext,
 )
 from django.utils.safestring import mark_safe
+from django.views.decorators.http import condition
 
 from reversion import revision
 
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 from cetacean_incidents import generic_views
 
 from cetacean_incidents.apps.contacts.forms import (
@@ -42,6 +46,7 @@ from cetacean_incidents.apps.incidents.views import (
     _change_case,
     add_observation,
     case_detail,
+    case_search,
     edit_observation,
 )
 from cetacean_incidents.apps.incidents.views.observation import _change_incident
@@ -61,6 +66,7 @@ from forms import (
     EntanglementForm,
     EntanglementMergeForm,
     EntanglementObservationForm,
+    EntanglementSearchForm,
     GearAnalysisForm,
     GearAnalysisObservationFormset,
     GearOwnerForm,
@@ -136,6 +142,15 @@ def entanglement_detail(request, case_id, extra_context):
         queryset= Entanglement.objects.select_related().all(),
         template_object_name= 'case',
         extra_context= extra_context,
+    )
+
+@login_required
+@condition(etag_func=global_etag)
+def entanglement_search(request):
+    return case_search(
+        request,
+        searchform_class= EntanglementSearchForm,
+        template= u'entanglements/entanglement_search.html',
     )
 
 @login_required

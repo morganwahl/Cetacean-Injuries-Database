@@ -5,14 +5,19 @@ from django.shortcuts import (
 )
 from django.utils.safestring import mark_safe
 from django.template import RequestContext
+from django.views.decorators.http import condition
 
-from cetacean_incidents.decorators import permission_required
+from cetacean_incidents.decorators import (
+    permission_required,
+    global_etag,
+)
 
 from cetacean_incidents.apps.incidents.forms import CaseMergeSourceForm
 from cetacean_incidents.apps.incidents.models import Animal
 from cetacean_incidents.apps.incidents.views import (
     _change_case,
     _change_incident,
+    case_search,
 )
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tab
@@ -23,8 +28,18 @@ from forms import (
     ShipstrikeForm,
     ShipstrikeMergeForm,
     ShipstrikeObservationForm,
+    ShipstrikeSearchForm,
     StrikingVesselInfoForm,
 )
+
+@login_required
+@condition(etag_func=global_etag)
+def shipstrike_search(request):
+    return case_search(
+        request,
+        searchform_class= ShipstrikeSearchForm,
+        template= u'shipstrikes/shipstrike_search.html',
+    )
 
 @login_required
 @permission_required('shipstrikes.change_shipstrike')

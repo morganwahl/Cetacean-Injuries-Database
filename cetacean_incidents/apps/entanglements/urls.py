@@ -5,6 +5,7 @@ from django.forms import Media
 import views
 
 urlpatterns = patterns('',
+    (r'^search$', views.entanglement_search, {}, 'entanglement_search'),
     (r'^(\d+)/$', views.entanglement_detail, {
         'extra_context': {
             'media': Media(js=(settings.JQUERY_FILE, 'radiohider.js',)),
