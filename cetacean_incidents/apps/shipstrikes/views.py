@@ -3,8 +3,8 @@ from django.shortcuts import (
     redirect,
     render_to_response,
 )
-from django.utils.safestring import mark_safe
 from django.template import RequestContext
+from django.utils.safestring import mark_safe
 from django.views.decorators.http import condition
 
 from cetacean_incidents.decorators import (

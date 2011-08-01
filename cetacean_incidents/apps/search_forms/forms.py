@@ -80,7 +80,7 @@ def make_sortfield(field_dict, ordering=None, value_prefix=None, label_prefix=No
         if initial[0] == '-':
             initial = initial[1:]
         field_kwargs['initial'] = initial
-
+    
     sort_field = forms.ChoiceField(**field_kwargs)
     return sort_field
 

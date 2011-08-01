@@ -60,7 +60,7 @@ class FormWidget(Widget):
     @property
     def media(self):
         return self.form_class().media
-
+    
 class HiddenFormWidget(FormWidget):
     is_hidden = True
 

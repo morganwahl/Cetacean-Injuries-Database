@@ -26,11 +26,11 @@ from django.utils.datastructures import SortedDict
 
 from django.contrib.auth.decorators import login_required
 
-from cetacean_incidents import generic_views
 from cetacean_incidents.decorators import (
     permission_required,
     global_etag,
 )
+from cetacean_incidents import generic_views
 
 from cetacean_incidents.forms import PagingForm
 
@@ -174,7 +174,7 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             page = forms['paging'].cleaned_data['page_num']
 
     paginator = Paginator(case_list, per_page)
-
+    
     try:
         cases = paginator.page(page)
     except (EmptyPage, InvalidPage):
@@ -296,6 +296,7 @@ def case_report(request):
         RequestContext(request),
     )
 
+# TODO login_required?
 def edit_case_animal(request, case_id):
     
     case = Case.objects.get(id=case_id)
