@@ -179,8 +179,9 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
         cases = paginator.page(page)
     except (EmptyPage, InvalidPage):
         cases = paginator.page(paginator.num_pages)
-        
-    all_ids = u",".join(map(lambda c: unicode(c.id), case_list))
+    
+    # use an unreserved character so it doesn't get escaped in the URL
+    all_ids = u"_".join(map(lambda c: unicode(c.id), case_list))
     # This make sense as a URL, conceptually, so let's try to keep it that way
     MAX_GET_LENGTH = 1000
     if len(all_ids) > MAX_GET_LENGTH:
@@ -234,7 +235,7 @@ def case_report(request):
             case_ids = bz2.decompress(case_ids)
             case_ids = case_ids.decode('utf-8')
         
-        case_ids = map(int, case_ids.split(','))
+        case_ids = map(int, case_ids.split('_'))
     else:
         case_ids = []
     cases = Case.objects.filter(id__in=case_ids)
