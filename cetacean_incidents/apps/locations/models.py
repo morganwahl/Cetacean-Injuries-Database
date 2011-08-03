@@ -6,8 +6,6 @@ import re
 
 from django.db import models
 
-from django.contrib.localflavor.us.models import USStateField
-
 from cetacean_incidents.apps.countries.models import Country
 
 from cetacean_incidents.apps.delete_guard import guard_deletes
@@ -15,6 +13,42 @@ from cetacean_incidents.apps.delete_guard import guard_deletes
 from utils import (
     dec_to_dms,
     dms_to_dec,
+)
+
+# although Django's contrib.localflavor module would seem to work here, it's
+# really intended as a field for addresses. It includes a lot of states we don't
+# need (they have no marine waters, and as of Django 1.3, includes military
+# postal codes, which doesn't even make sense here.
+
+# Note that "insular areas" such as Puerto Rico and Guam are included. This is
+# certainly needed for beached animals, but it's not clear if they have anything
+# equivalent to 'state waters' (i.e. an area of the ocean that is regulated by
+# their laws instead of federal ones).
+STATE_CHOICES = (
+    ('ME', 'Maine'),
+    ('NH', 'New Hampshire'),
+    ('MA', 'Massachusetts'),
+    ('RI', 'Rhode Island'),
+    ('CT', 'Connecticut'),
+    ('NY', 'New York'),
+    ('NJ', 'New Jersey'),
+    # ('PA', 'Pennsylvania'), # TODO include this? Could a whale get up the
+                              # delaware river far enough?
+    ('DE', 'Delaware'),
+    ('MD', 'Maryland'),
+    # ('DC', 'District of Columbia'), # TODO include this? Could a whale get up
+                                      # the potomac river far enough?
+    ('VA', 'Virginia'),
+    ('NC', 'North Carolina'),
+    ('SC', 'South Carolina'),
+    ('GA', 'Georgia'),
+    ('FL', 'Florida'),
+    ('PR', 'Puerto Rico'),
+    ('VI', 'Virgin Islands'),
+    ('AL', 'Alabama'),
+    ('MS', 'Mississippi'),
+    ('LA', 'Louisiana'),
+    ('TX', 'Texas'),
 )
 
 class Location(models.Model):
@@ -55,7 +89,9 @@ class Location(models.Model):
         help_text= u"""‘land’ is anyplace above mean-low-tide. ‘state waters’ are defined by the Submerged Lands Act (and numerous relevant court cases). Mostly, they extend 3 nm out from shore. The big exceptions are in FL, TX, and PR, and small exceptions are all over the place. ‘federal waters’ includes all the non-state waters within the 'territorial waters' and 'exclusive economic zone' of the U.S., which extends out 200 nm from shore. For the 'territorial waters' and EEZ of other countries, use 'federal waters'.""",
     )
     
-    state = USStateField(
+    state = models.CharField(
+        choices= STATE_CHOICES,
+        max_length= 2,
         blank= True,
         null= True,
         help_text= "If on land or in state waters, the state the observation was in. If in federal waters or the U.S. EEZ, give the nearest state. Leave blank if unknown or outside the U.S.",
