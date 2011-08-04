@@ -5,4 +5,4 @@ from autocomplete import (
     ModelAutocomplete,
 )
 from datepicker import Datepicker
-
+from checkbox_select_multiple import CheckboxSelectMultiple

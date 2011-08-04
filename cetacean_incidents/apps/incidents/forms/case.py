@@ -12,6 +12,8 @@ from cetacean_incidents.apps.search_forms.related import (
 
 from cetacean_incidents.apps.reports.models import Report
 
+from cetacean_incidents.apps.jquery_ui.widgets import CheckboxSelectMultiple as JQueryCheckboxSelectMultiple
+
 from ..models import (
     Animal,
     Case,
@@ -176,7 +178,7 @@ class CaseReportForm(forms.Form):
         self.fields.insert(0, 'cases', forms.ModelMultipleChoiceField(
             queryset= cases,
             initial= cases.all(),
-            widget= forms.CheckboxSelectMultiple,
+            widget= JQueryCheckboxSelectMultiple,
         ))
 
     def clean(self):
