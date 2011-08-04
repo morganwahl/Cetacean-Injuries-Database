@@ -110,5 +110,13 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.reports',
 )
 
+# match the formatting of UncertainDatetime.__unicode__
+DATE_FORMAT = '%Y-%m-%d'
+SHORT_DATE_FORMAT = DATE_FORMAT
+TIME_FORMAT = '%H:%M:%S'
+SHORT_TIME_FORMAT = TIME_FORMAT
+DATETIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT
+SHORT_DATETIME_FORMAT = DATETIME_FORMAT
+
 GLOBAL_ETAG = u'5'
 
