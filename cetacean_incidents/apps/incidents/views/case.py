@@ -268,7 +268,11 @@ def case_report(request):
 
         if not report is None:
             # use the cases list from the form, not from the URL
-            context = {'cases': forms['case_report'].cleaned_data['cases']}
+            report_cases = forms['case_report'].cleaned_data['cases']
+            report_cases = map(lambda c: c.specific_instance(), report_cases)
+            context = {
+                'cases': report_cases,
+            }
 
             if forms['case_report'].cleaned_data['to_pdf']:
                 rendered = report.render_to_pdf(context)
