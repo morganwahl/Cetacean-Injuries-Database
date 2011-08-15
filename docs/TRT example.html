@@ -1,0 +1,475 @@
+{% load html_filter %}<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <style>
+    h2 {
+      text-align: center;
+    }
+    div.section {
+      border: 1px solid black;
+      margin: .1em;
+    }
+    table {
+      border-collapse: collapse
+    }
+    th {
+      border: 1px solid black;
+      padding: .2em;
+    }
+    td {
+      border: 1px solid black;
+      padding: .2em;
+    }
+    p {
+      page-break-inside: avoid;
+    }
+
+    #entanglement_summary caption {
+      caption-side: bottom;
+      text-align: left;
+    }
+    #entanglement_summary caption li {
+      margin: .5em;
+    }
+    #entanglement_summary tr.group1 {
+      background-color: white;
+    }
+    #entanglement_summary tr.group2 {
+      background-color: lightgrey;
+    }
+    #entanglement_summary th {
+      background-color: grey;
+      text-align: center;
+    }
+    #entanglement_summary td {
+      text-align: center;
+    }
+
+    #entanglement_details {
+      margin: 1em;
+    }
+    #entanglement_details th {
+      background-color: lightgrey;
+      text-align: right;
+    }
+    #entanglement_details td {
+      text-align: left;
+    }
+    #entanglement_details > h3 {
+      text-align: center;
+    }
+    div.entanglement {
+      page-break-before: always;
+    }
+    div.entanglement tr.narratives h3 {
+      font-weight: normal;
+    }
+    div.gear_analysis {
+      page-break-before: always;
+    }
+  </style>
+  <title>TRT report</title>
+</head>
+
+<body>
+  <table id="entanglement_summary">
+    <thead>
+      <tr>
+        <th>Entanglement Report Number</th>
+        <th>species</th>
+        <th>date</th>
+        <th>dead or alive?</th>
+        <th>gear collected</th>
+        <th>type of gear</th>
+        <th>gear part ID</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for c in cases %}
+      <tr class="{% cycle 'group1' 'group1' 'group2' 'group2' %}">
+        <td>{{ c.nmfs_id|default:'none' }}</td>
+        <td>
+          {{ c.animal.taxon|html }}
+        </td>
+        <td>{{ c.date }}</td>
+        <td>{{ c.animal.dead|yesno:'dead,alive' }}</td>
+        <td>{{ c.gear_retrieved|yesno }}</td>
+        <td>
+          {% for attrib in c.gear_types.all %}
+          {{ attrib.name }}{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        </td>
+        <td>
+          {% if not c.gear_analzyed %}N/A{% endif %}
+          {# TODO where to get other codes? #}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <caption>
+      Notes:
+      <ul>
+        <li>
+          Dead/Alive column represents the latest known status as of the writing
+          of this report.
+        </li>
+        <li>Abbreviations within the Vertical/Ground Line ID and Type of Gear:
+          <dl>
+            <dt>V</dt>
+            <dd>Vertical/End Line</dd>
+            <dt>S</dt>
+            <dd>Surface System</dd>
+            <dt>G</dt>
+            <dd>Ground Line</dd>
+            <dt>N</dt>
+            <dd>Gillnet/Mesh</dd>
+            <dt>U</dt>
+            <dd>Unknown, gear type could not be determined.<dd>
+            <dt>N/A</dt>
+            <dd>Not applicable, no gear was analyzed.</dd>
+          </dl>
+          <p>
+            Any combination of codes is possible although each code will only be
+            listed once, regardless if different types of gear were involved.
+            This column may not represent all portions of the true initial
+            entanglement as gear could have been shed before the first
+            observation. Gear portions identified may not represent the section
+            that initially caused the entanglement.
+          </p>
+        </li>
+        <li>
+          SI determination:
+          <dl>
+            <dt>SI</td>
+            <dd>
+              Serious injury or mortality was determined to be the primary cause
+              from entanglement.
+            </dd>
+            <dt>Non-SI</dt>
+            <dd>no serious injury or mortality caused by the entanglement.</dd>
+          </dl>
+        </li>
+      </ul>
+    </caption>
+  </table>
+  <div id="entanglement_details">
+    {% for c in cases %}
+    {% with c.observation_set.all as obs %}
+    <div class="entanglement">
+      <h2>Entanglement {{ c.name }}</h2>
+      <table>
+        <tr>
+          <th>NMFS number</th>
+          <td>{{ c.nmfs_id|default:"none" }}</td>
+        </tr>
+        <tr>
+          <th>Indication of Entanglement</th>
+          <td>{{ obs.0.indication_entanglement }}</td>
+        </tr>
+        <tr>
+          <th>Initial condition</th>
+          <td>{{ obs.0.get_condition_display }}</td>
+        </tr>
+        <tr>
+          <th>
+            Subsequent Status (as of the date the NMFS report was completed)
+          </th>
+          <td>
+            {% with c.latest_observation as o %}
+            {% with o.entanglements_entanglementobservation as eo %}
+            {{ eo.get_disentanglement_outcome_display }}
+            {% endwith %}
+            {% endwith %}
+          </td>
+        </tr>
+        <tr>
+          <th>Date 1st Observed Entangled</th>
+          <td>{{ obs.0.datetime_observed }}</td>
+        </tr>
+        <tr>
+          <th>Species</th>
+          <td>{{ c.animal.taxon.scientific_name }}</td>
+        </tr>
+        <tr>
+          <th>Individual ID</th>
+          <td>{{ c.animal.name }}</td>
+        </tr>
+        <tr>
+          <th>Location 1<sup>st</sup> Observed Entangled</th>
+          <td>{{ obs.0.location.description }}</td>
+        </tr>
+        <tr>
+          <th>Coordinates 1<sup>st</sup> Observed Entangled</th>
+          <td>
+            {{ obs.0.location.coords_pair.0|floatformat:3 }},
+            {{ obs.0.location.coords_pair.1|floatformat:3 }}
+          </td>
+        </tr>
+        <tr class="narratives">
+          <th>Event description</th>
+          <td>
+            <ul>
+              {% for o in obs %}
+              <li>
+                <h4>{{ o.datetime_observed }}</h4>
+                <p>{{ o.narrative }}</p>
+              </li>
+              {% endfor %}
+            </ul>
+          </td>
+        </tr>
+        <tr>
+          <th>
+          Description of Gear on Whale as Reported
+          </th>                    
+          <td>
+            <table>
+              <tr>
+                <th>A. During Initial Sighting</th>
+                <td>
+                  {% with obs.0.entanglements_entanglementobservation as eo %}
+                  {{ eo.gear_description }}
+                  {% endwith %}
+                <td>
+              </tr>
+              <tr>
+                <th>B. Subsequent Descriptions</th>
+                <td>
+                  <ul>
+                    {% for o in obs %}
+                    {% if not forloop.first %}
+                    <li>
+                      {% with o.entanglements_entanglementobservation as eo %}
+                      <h4>{{ o.datetime_observed }}</h4>
+                      <p>{{ eo.gear_description }}</p>
+                      {% endwith %}
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                  </ul>
+                <td>
+              </tr>
+              <tr>
+                <th>C. Diagram of Entangling Gear on Whale</th>
+                <td>{# TODO #}<td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <th>Description of Wounds/Condition</th>
+          <td>
+            <table>
+              <tr>
+                <th>A. During Initial Sighting</th>
+                <td>{{ obs.0.wound_description }}</td>
+              </tr>
+              <tr>
+                <th>B. Subsequent Descriptions</th>
+                <td>
+                  <ul>
+                    {% for o in obs %}
+                    {% if not forloop.first %}
+                    <li>
+                      <h4>{{ o.datetime_observed }}</h4>
+                      <p>{{ o.wound_description }}</p>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                  </ul>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        <tr>
+          <th>Sighting Prior to Entanglement</th>
+          <td>{{ c.happened_after }}</td>
+        </tr>
+        <tr>
+          <th>Re-sightings Post-Entanglement</th>
+          <td>{# TODO #}</td>
+        </tr>
+        <tr>
+          <th>Life History Information</th>
+          <td>
+            {% if c.animal.determined_gender %}
+            {{ c.animal.get_determined_gender_display }}
+            {% else %}
+            unknown sex
+            {% endif %}
+          </td>
+        </tr>
+        <tr>
+          <th>NMFS Serious Injury/Mortality Determination</th>
+          <td>{{ c.get_animal_fate_display }}</td>
+        </tr>
+      </table>
+    </div> <!-- div.entanglement -->
+
+    <div class="gear_analysis">
+      <h3>Fishery Interaction Gear Analysis</h3>
+      <table>
+        <!-- The table is split into two columns -->
+        <tr>
+          <th>NMFS No.</th>
+          <td>{{ c.nfms_id|default:"none" }}</td>
+
+          <th rowspan="2">Date 1<sup>st</sup> Observed</th>
+          <td rowspan="2">{{ obs.0.datetime_observed }}</td>
+        </tr>
+        <tr>
+          <th>Field No.</th>
+          <td>{{ c.gear_fieldnumber }}</td>
+        </tr>
+        <tr>
+          <th>Location 1<sup>st</sup> Observed</th>
+          <td>
+            <p>{{ obs.0.location.description }}</p>
+            {{ obs.0.location.coords_pair.0|floatformat:3 }},
+            {{ obs.0.location.coords_pair.1|floatformat:3 }}
+          </td>
+
+          <th>
+            Type of Event - Observation, Disentanglement, Stranding, Other
+            (describe)
+          </th>
+          <td>{# TODO #}</td>
+        </tr>
+        <tr>
+          <th>Species</th>
+          <td>{{ c.animal.taxon.scientific_name }}</td>
+
+          <th>Gear recovered (y/n)</th>
+          <td>{{ c.gear_retrieved|yesno }}</td>
+        </tr>
+        <tr>
+          <th>Individual ID</th>
+          <td>{{ c.animal.name }}</td>
+
+          <th>Gear Analysis Conducted (y/n)</th>
+          <td>{{ c.gear_analyzed }}</td>
+        </tr>
+      </table>
+
+      <div>
+        <h3>Gear Description / Analysis</h3>
+        <table>
+          <!-- this table has two columns -->
+          {% for o in obs %}
+          {% with o.entanglements_entanglementobservation as eo %}
+          {% if eo.gear_retrieved %}
+          <tr>
+            <th colspan="2">Date Gear Retrieved</th>
+            <td>{{ o.datetime_observed }}</td>
+
+            <th>Gear Retrieved By</th>
+            <td>{{ o.observer|html }}</td>
+          </tr>
+          <tr>
+            <th colspan="2">Date Gear Received</th>
+            <td>{{ eo.gear_given_date|default:"not received" }}</td>
+
+            <th>Received From</th>
+            <td>{{ eo.gear_giver|html }}</td>
+          </tr>
+          {% endif %}
+          {% endwith %}
+          {% endfor %}
+          <tr>
+            <th rowspan="5">Sources:</th>
+            <th>USCG</th>
+            <td></td>
+
+            <th>Date Set</th>
+            <td>{{ c.gear_owner_info.datetime_set }}</td>
+          </tr>
+          <tr>
+            <th>CCS</th>
+            <td></td>
+
+            <th>Date Lost</th>
+            <td>{{ c.gear_owner_info.datetime_missing }}</td>
+          </tr>
+          <tr>
+            <th>Fisherman</th>
+            <td></td>
+
+            <th>Location</th>
+            <td>{{ c.gear_owner_info.location_gear_set.description }}</td>
+          </tr>
+          <tr>
+            <th>Other</th>
+            <td></td>
+
+            <th>Depth</th>
+            <td>{{ c.gear_owner_info.location_gear_set.depth }}</td>
+          </tr>
+          <tr>
+            <td colspan="2"></td>
+
+            <th>Bottom Type</th>
+            <td>
+            {{ c.gear_owner_info.location_gear_set.bottom_type }}
+            </td>
+          </tr>
+          <tr>
+            <th>Gear Type(s)</th>
+            <td colspan="2">{{ c.gear_types.all|join:", " }}</td>
+
+            <th>Target Species</th>
+            <td>
+              {% for t in c.gear_targets.all %}
+              {{ t|html }}{% if not forloop.last %}, {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
+        </table>
+
+        <div class="section">
+          <i>Gear Description:</i>
+          {% if c.gear_description %}
+          <p>{{ c.gear_description }}</p>
+          {% else %}
+          none
+          {% endif %}
+        </div>
+        <div class="section">
+          <i>Comments:</i>
+          {% if c.gear_analysis_comments %}
+          <p>{{ c.gear_analysis_comments }}</p>
+          {% else %}
+          none
+          {% endif %}
+        </div>
+        <div class="section">
+          <i>Conclusions:</i>
+          {% if c.gear_analysis_conclusions %}
+          <p>{{ c.gear_analysis_conclusions }}</p>
+          {% else %}
+          none
+          {% endif %}
+        </div>
+
+        <table>
+          <tr>
+            <th>Report By:</th>
+            <td>{{ c.analyzed_by|html }}</td>
+
+            <th>Date</th>
+            <td>{{ c.analyzed_date|default:"" }}</td>
+
+            <th>Current Location of Gear</th>
+            <td>{{ c.gear_kept_where|default:"" }}</td>
+          </tr>
+        </table>
+      </div>
+    </div> <!-- div.gear_analysis -->
+    {% endwith %}      
+    {% endfor %}
+  </div> <!-- div#entanglement_details -->
+</body>
+
+</html>
+

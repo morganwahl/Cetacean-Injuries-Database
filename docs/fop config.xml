@@ -1,0 +1,18 @@
+<fop version="1.0">
+
+  <!-- Strict user configuration -->
+  <strict-configuration>true</strict-configuration>
+
+  <!-- Strict FO validation -->
+  <strict-validation>true</strict-validation>
+
+  <!-- Base URL for resolving relative URLs -->
+  <base>file:///usr/share/xml/docbook/stylesheet/docbook-xsl/</base>
+
+  <!-- Font Base URL for resolving relative font URLs -->
+  <font-base>./</font-base>
+  
+  <!-- Base URL for resolving relative URLs to hyphenation pattern files -->
+  <hyphenation-base>file:///home/morgan/Development/ci-env/lib/fop/hyph/</hyphenation-base>
+
+</fop>

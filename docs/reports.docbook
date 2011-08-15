@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<part
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xl="http://www.w3.org/1999/xlink" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:lang="en-US"
+  version="5.0" 
+  id="reports"
+>
+  <title>Report Author's Manual</title>
+
+  <chapter xml:id="intro">
+    <title>Introduction</title>
+    <para>
+      This is a guide for using the database to generate reports.
+	  </para>
+	  <para>
+	    There are two ways of making a template for the database. You can write
+	    the template in any program that can edit HTML files, even Microsoft Word.
+	    When you want to fill it in with case data, you upload the template file
+	    you've created. The file will be stored on the database's server (along
+	    will other attachments that have been uploaded to the database). Or, for
+	    simple templates (and getting the hang of the templating language) you can
+	    write them directly in the database's website.
+	  </para>
+	  <para>
+	    Either way, you can save the template you've composed for later use.
+	  </para>
+    <para>
+      The basic steps of writing a template are:
+      <procedure>
+        <step>
+          Choose a format to write the template in. The report will be in this
+          format. Currently, the only supported format is HTML. The in-site
+          template editor only produces HTML templates.
+        </step>
+        <step>
+          Do a case-search that includes the cases you want in the report.
+        </step>
+        <step>
+          On the search results page, there will be a button to generate a
+          report for those cases. This includes all the cases that matched the
+          search, even if only the first few are listed on the page.
+			  </step>
+        <step>
+          On the report-generating page, the matching cases will be listed.
+          Check off the ones you want to include in the report. (Under the list
+          of cases is a 'check all' button.)
+        </step>
+        <step>
+          You have the option of using an template that was previously saved, or
+          adding a new one, or just using a new one once without saving it.
+        </step>
+        <step>
+          <para>
+            If you're using a template that's been saved in the database, just
+            choose it from the menu.
+          </para>
+          <para>
+            If you've written a separate file to upload, pick the file, and
+            indicate what the format of the report generated with it will be. If
+            you give it a name, it will be saved in the database for future use
+            (and can be later be selected by choosing 'existing' above.) If you
+            leave the name blank, it will be used to generate a report, but not
+            saved. This is useful for testing.
+          </para>
+          <para>
+            If you're just writing the template in the website itself, you can
+            type (or paste) the template text in the editor box. If you give it
+            a name, it will be saved in the database for future use.
+          </para>
+        </step>
+        <step>
+          Press 'generate report' and the template will be uploaded, filled in
+          with data from the selected cases, and the resulting report will be
+          sent back to your browser. If it's in a format you're browser can
+          display, it will. Otherwise it will be downloaded and saved.
+        </step>
+      </procedure>
+    </para>
+  </chapter>
+
+  <chapter xml:id="ch1">
+    <title>The templating language</title>
+    <section>
+      <title>Background</title>
+      <para>
+        The templating language is how templates indicate what data should be
+        filled in where. The language used is the Django templating language.
+        (It's the same language use to generate web pages for the database
+        itself.) An overview of the language for template authors is
+        <link xl:href="https://docs.djangoproject.com/en/1.2/topics/templates/">here</link>.
+        What follows is more specific to case-report templates and assumes
+        you're familiar with with basic syntax of the template language.
+      </para>
+    </section>
+
+    <section>
+      <title>Case-Report Templates</title>
+      <para>
+        Case-report templates will always have a variable called
+        <varname>cases</varname>. Variables can have many different kinds of
+        values. The <varname>cases</varname> variable will be a
+        <type>list</type> of <type>cases</type>.
+      </para>
+      <para>
+        <type>Lists</type> have numbered attributes (staring at 0) for each item
+        in the list. So you can acces the first case like this:
+      </para>
+      <informalexample>
+        <programlisting>{{ cases.0 }}</programlisting>
+        <caption>
+          Template code to acces the first <type>case</type> in the
+          <type>list</type> <varname>cases</varname>.
+        </caption>
+      </informalexample>
+      <para>
+        This is what the Django documentation refers to as "list-index lookup".
+        Of course, just filling in a spot in a template with a <type>case</type>
+        isn't very useful. You'll almost always want one of the fields of a
+        <type>case</type>, which are attributes of individual
+        <type>cases</type>:
+      </para>
+      <informalexample>
+        <programlisting>{{ cases.0.happened_after }}</programlisting>
+        <caption>
+          Template code to fill-in the value of the
+          <property>happened_after</property> field for the first
+          <type>case</type> in the <type>list</type> <varname>cases</varname>.
+        </caption>
+      </informalexample>
+      <para>
+        Typically, you'll want to access all the cases, not just the first one.
+        To do that, you can use the <function>for</function> template-tag.
+      </para>
+      <informalexample>
+        <programlisting>
+  {% for case in cases %}
+  {{ case.happened_after }}
+  {% endfor %}
+        </programlisting>
+        <caption>
+          Template code to fill-in the <property>happened_after</property> of
+          every <type>case</type> in the <type>list</type>
+          <varname>cases</varname>.
+        </caption>
+      </informalexample>
+      <para>
+        Many of the fields in the database can only take one of a few values,
+        and are simple stored as short text or numbers to indicate which value
+        they have. For example, <replaceable>case</replaceable>.
+        <property>valid</property> will be one of 0, 1, or 2 for the
+        display-values <literal>invalid</literal>, <literal>suspected</literal>,
+        or <literal>confirmed</literal>. When using these fields in a template,
+        you typically want the display-value, which can be accessed with the
+        <property>get_<replaceable>fieldname</replaceable>_display</property>
+        attribute:
+      </para>
+      <informalexample>
+        <programlisting>
+  {% for case in cases %}
+  {{ case.get_valid_display }}
+  {% endfor %}
+        </programlisting>
+        <caption>
+          Template code to fill-in the display-value of the
+          <property>valid</property> field on every <type>case</type>
+        </caption>
+      </informalexample>
+      <para>
+        The templating language comes with many built-in 'filters'. One
+        particularly useful one is <function>yesno</function>. Many of the
+        database's fields (such as
+        <type>case</type>.<property>ole_investigation</property>) have their
+        values stored as <literal>True</literal>, <literal>False</literal>, or
+        <literal>None</literal>. The <function>yesno</function> filter will
+        change those to <literal>yes</literal>, <literal>no</literal>, and
+        <literal>maybe</literal>.
+      </para>
+      <informalexample>
+        <programlisting>{{ case.ole_investigation|yesno }}</programlisting>
+        <caption>
+          Template code to fill-in <literal>yes</literal>,
+          <literal>no</literal>, and <literal>maybe</literal> depending on
+          whether the <property>ole_investigation</property> field of
+          <varname>case</varname> is <literal>True</literal>,
+          <literal>False</literal>, or <literal>None</literal>, respectively.
+        </caption>
+      </informalexample>
+      <para>
+        If you want to customize the the words the <function>yesno</function>
+        filter uses, you can pass it an argument. The argument should enclosed
+        in <literal>"</literal> characters, and have two or three parts,
+        separated by <literal>,</literal> characters. The first part is used for
+        when the value filtering through it is <literal>True</literal>. If
+        there's only two parts, the second one is used for both
+        <literal>False</literal> and <literal>None</literal>. If there's three
+        parts, the 2<superscript>nd</superscript> and
+        3<superscript>rd</superscript> are used for <literal>False</literal> and
+        <literal>None</literal>, respectively. For example, to display a
+        <type>case</type>'s <property>ole_investigation</property> field with
+        <literal>unknown</literal> instead of <literal>maybe</literal>:
+      </para>
+      <informalexample>
+        <programlisting>
+  {{ case.ole_investigation|yesno:"yes,no,unknown" }}
+        </programlisting>
+      </informalexample>
+      <para>
+        Some fields are references to several other models, such as
+        <type>observation</type>. <property>cases</property>. To access all the
+        models that are included, use the <literal>all</literal> property:
+      </para>
+      <informalexample>
+        <programlisting>{{ observation.cases.all }}</programlisting>
+        <caption>
+          Template code to access a list of all the cases an observation is
+          relevant to.
+        </caption>
+      </informalexample>
+      <para>
+        Typically you would want to iterate over those fields like so:
+      </para>
+      <informalexample>
+        <programlisting>
+  {% for c in observation.cases.all %}
+  {{ c.names }}
+  {% endfor %}
+        </programlisting>
+      </informalexample>
+    </section>
+
+    <section>
+      <title>References</title>
+      <para>
+        The complete list of fieldnames for <type>cases</type> can be found in
+        <link
+        xl:href="https://www.nero.noaa.gov/ci/admin/doc/models/incidents.case/">the
+        documentation available on the database's admin pages</link>. There is
+        also <link
+        xl:href="https://www.nero.noaa.gov/ci/admin/doc/models/">documentation
+        for all the other models used in the database</link> there as well. An
+        overview of the model fields is also included in <link
+        href="#field_reference">an appendix</link> to this manual.
+      </para>
+      <para>
+        The Django documentation website has <link
+        xl:href="https://docs.djangoproject.com/en/1.2/ref/templates/builtins/">a
+        complete list of the different template-tags and filters. </link>
+      </para>
+    </section>
+  </chapter>
+
+  <appendix xml:id="html_example">
+    <title>Example template in HTML</title>
+
+    <para>
+      This appendix present a rather complete template written in HTML. It
+      approximates the per-case portions of a TRT Report.
+    </para>
+    <para>
+      First, a little overview of HTML syntax to make the example easier to
+      understand. Any sequence of whitespace characters means the same thing as
+      a single space character, so it can be used to make the HTML file more
+      readable when editing it.
+    </para>
+    <para>
+      HTML 'markup' consists of 'tags', which are the things between "&lt;" and
+      "&gt;" characters. These tags come in opening and closing pairs, which
+      mark the start and end of an element. The closing tag starts with "&lt;/".
+      For example:
+    </para>
+    <informalexample>
+      <markup><![CDATA[<p>some text</p>]]></markup>
+      <caption>
+        A paragraph in HTML. The <tag>p</tag> tag is short for 'paragraph',
+        which is what it delineates.
+      </caption>
+    </informalexample>
+    <para>
+      Tag names aren't case-sensitive, thus <literal>&lt;P&gt;</literal> is the same as
+      <literal>&lt;p&gt;</literal>.
+    </para>
+    <para>
+      An element can have 'attributes', which are indicated inside it's opening tag with <literal><replaceable>elementname</replaceable>="<replaceable>element value</replaceable>"</literal>. E.g.
+    </para>
+      <informalexample>
+        <markup><![CDATA[<a href="http://www.noaa.gov/">NOAA website</a>]]></markup>
+        <caption>
+          a link to the NOAA website whose <literal>href</literal> attribute has value <literal>http://www.noaa.gov/</literal>
+        </caption>
+      </informalexample>
+    <para>
+      HTML elements can be nested:
+    </para>
+    <informalexample>
+      <markup>
+        <![CDATA[<p>Here is <a href="http://www.noaa.gov/">a link to the NOAA website</a></p>]]>
+      </markup>
+    </informalexample>
+    <para>
+      Some elements don't wouldn't make sense to have any text inside them, and
+      so can be written with just their opening tag; a closing tag is implied.
+      E.g.
+    </para>
+    <informalexample>
+      <markup><![CDATA[<img src="http://www.noaa.gov/logo.png">]]></markup>
+      <caption>
+        a tag indicating the image at the given URL should be included in the
+        document here.
+      </caption>
+    </informalexample>
+    <para>
+      HTML is maintained as a <link
+      xl:href="http://www.w3.org/TR/html4/">standard</link> by the <link
+      xl:href="http://www.w3.org/">W3C</link> and they have <link
+      xl:href="http://www.w3.org/wiki/HTML/Training">numerous educational
+      materials on their website </link>.
+    </para>
+
+    <informalexample>
+      <programlisting language="html" width="80">
+        <markup>
+          <xi:include parse="text" encoding="utf-8" href="TRT%20example.html" />
+        </markup>
+      </programlisting>
+      <caption>
+        An example template. It approximates the overview-table and detailed
+        data on entanglements in an annual TRT report.
+      </caption>
+    </informalexample>
+  </appendix>
+</part>
+

@@ -1,0 +1,40 @@
+* {
+  font-family: "Sans", "Verdana", sans-serif;
+}
+
+.informalexample {
+  margin: 1em;
+  padding: .5em;
+  border: thin solid grey;
+}
+.informalexample .caption {
+  padding: .5em;
+  border-top: thin solid lightgrey;
+}
+
+.type {
+  background-color: lightgrey;
+  font-style: smallcaps;
+}
+
+.property {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.varname {
+  font-family: monospace;
+  font-style: italic;
+}
+
+.function {
+  font-family: monospace;
+  font-weight: bold;
+}
+
+.literal:before {
+  content: open-quote;
+}
+.literal:after {
+  content: close-quote;
+}
