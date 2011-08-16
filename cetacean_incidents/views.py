@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.urlresolvers import NoReverseMatch
 from django.db import models
 from django.db.models import Q
+from django.db.models.query import QuerySet
 from django.forms import Media
 from django.http import HttpResponse
 from django.shortcuts import (
@@ -46,6 +47,7 @@ from cetacean_incidents.apps.entanglements.views import add_entanglementobservat
 
 from cetacean_incidents.apps.incidents.forms import (
     AnimalFieldNumberLookupForm,
+    AnimalLookupForm,
     AnimalNameLookupForm,
 )
 from cetacean_incidents.apps.incidents.models import (
@@ -64,6 +66,7 @@ from cetacean_incidents.apps.taxons.views import import_search as unsecured_impo
 @login_required
 def home(request):
     form_classes = {
+        'animal_lookup': AnimalLookupForm,
         'animal_lookup_field_number': AnimalFieldNumberLookupForm,
         'animal_lookup_name': AnimalNameLookupForm,
         'entanglement_lookup_nmfs': EntanglementNMFSIDLookupForm,
@@ -78,7 +81,7 @@ def home(request):
         if '%s-submitted' % form_name in request.GET:
             if forms[form_name].is_valid():
                 r = forms[form_name].results()
-                if r.count() == 1:
+                if (isinstance(r, QuerySet) and r.count() == 1) or len(r) == 1:
                     return redirect(r[0])
                 results[form_name] = r
     

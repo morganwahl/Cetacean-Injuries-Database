@@ -9,6 +9,17 @@
 <table class="layout">
     <tr class="layout">
         <td class="section layout" style="text-align:center; width:50%;">
+            <h3>look up a particular animal</h3>
+            <form action="" method="get" class="subform">
+                <table>
+                    {{ forms.animal_lookup.as_table }}
+                </table>
+                {% with results.animal_lookup as rs %}
+                {% include "lookup_results-include.html" %}
+                {% endwith %}
+                <button type="submit">lookup</button>
+            </form>
+            <i>or</i>
             <form action="" method="get" class="subform">
                 <table>
                     {{ forms.animal_lookup_field_number.as_table }}

@@ -31,6 +31,51 @@ from ..models import (
 
 from observation import ObservationSearchForm
 
+class AnimalAutocomplete(ModelAutocomplete):
+    
+    model = Animal
+    
+    def __init__(self, attrs=None):
+        super(AnimalAutocomplete, self).__init__(
+            attrs=attrs,
+            source= 'animal_autocomplete_source',
+            options= {
+                'minLength': 2,
+            },
+        )
+    
+    def render(self, name, value, attrs=None):
+        return super(AnimalAutocomplete, self).render(
+            name=name,
+            value=value,
+            attrs=attrs,
+            custom_html= 'animal_autocomplete_entry',
+            # TODO better way to pass this URL
+            extra_js= '''\
+            animal_autocomplete_source_url = "%s";
+            ''' % reverse('animal_search_json'),
+        )
+    
+    class Media:
+        css = {'all': (settings.JQUERYUI_CSS_FILE, 'animal_autocomplete.css')}
+        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'animal_autocomplete.js')
+
+class AnimalLookupForm(SubmitDetectingForm):
+
+    animal = forms.ModelChoiceField(
+        queryset= Animal.objects.all(),
+        required= True, # ensures an animal is selected
+        initial= None,
+        widget= AnimalAutocomplete,
+        help_text= u"""Type to search animals; select the one whose entry you want.""",
+        error_messages= {
+            'required': u"You must select an animal.",
+        },
+    )
+
+    def results(self):
+        return [self.cleaned_data['animal']]
+
 class AnimalFieldNumberLookupForm(SubmitDetectingForm):
     field_number = forms.CharField(
         help_text= u"look up an animal by it's field number",
@@ -62,35 +107,6 @@ class AnimalNameLookupForm(SubmitDetectingForm):
 
     def results(self):
         return self.cleaned_data['name_contains']
-
-class AnimalAutocomplete(ModelAutocomplete):
-    
-    model = Animal
-    
-    def __init__(self, attrs=None):
-        super(AnimalAutocomplete, self).__init__(
-            attrs=attrs,
-            source= 'animal_autocomplete_source',
-            options= {
-                'minLength': 2,
-            },
-        )
-    
-    def render(self, name, value, attrs=None):
-        return super(AnimalAutocomplete, self).render(
-            name=name,
-            value=value,
-            attrs=attrs,
-            custom_html= 'animal_autocomplete_entry',
-            # TODO better way to pass this URL
-            extra_js= '''\
-            animal_autocomplete_source_url = "%s";
-            ''' % reverse('animal_search_json'),
-        )
-    
-    class Media:
-        css = {'all': (settings.JQUERYUI_CSS_FILE, 'animal_autocomplete.css')}
-        js = (settings.JQUERY_FILE, settings.JQUERYUI_JS_FILE, 'animal_autocomplete.js')
 
 class AnimalForm(forms.ModelForm):
     

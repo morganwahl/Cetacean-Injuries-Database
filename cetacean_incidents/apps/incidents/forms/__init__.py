@@ -2,6 +2,7 @@ from animal import (
     AnimalAutocomplete,
     AnimalFieldNumberLookupForm,
     AnimalForm,
+    AnimalLookupForm,
     AnimalMergeForm,
     AnimalMergeSourceForm,
     AnimalNameLookupForm,
