@@ -11,6 +11,7 @@
 <xsl:param name="paper.type" select="'USletter'"/>
 
 <xsl:attribute-set name="informalexample.properties">
+  <xsl:attribute name="keep-together.within-column">always</xsl:attribute>
   <xsl:attribute name="border">0.5pt solid #888</xsl:attribute>
   <xsl:attribute name="padding">.5em</xsl:attribute>
   <xsl:attribute name="background-color">#eee</xsl:attribute>

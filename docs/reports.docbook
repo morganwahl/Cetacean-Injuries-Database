@@ -318,17 +318,11 @@
       materials on their website </link>.
     </para>
 
-    <informalexample>
-      <programlisting language="html" width="80">
-        <markup>
-          <xi:include parse="text" encoding="utf-8" href="TRT%20example.html" />
-        </markup>
-      </programlisting>
-      <caption>
-        An example template. It approximates the overview-table and detailed
-        data on entanglements in an annual TRT report.
-      </caption>
-    </informalexample>
+    <programlisting language="html" width="80">
+      <markup>
+<xi:include parse="text" encoding="utf-8" href="TRT%20example.html" />
+      </markup>
+    </programlisting>
   </appendix>
 </part>
 
