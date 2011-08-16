@@ -78,7 +78,7 @@ class AnimalLookupForm(SubmitDetectingForm):
 
 class AnimalFieldNumberLookupForm(SubmitDetectingForm):
     field_number = forms.CharField(
-        help_text= u"look up an animal by it's field number",
+        help_text= u"look up an animal with this field number",
         label= "field number",
     )
     
