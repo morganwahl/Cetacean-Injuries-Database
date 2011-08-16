@@ -135,9 +135,9 @@
       </para>
       <informalexample>
         <programlisting>
-  {% for case in cases %}
-  {{ case.happened_after }}
-  {% endfor %}
+{% for case in cases %}
+{{ case.happened_after }}
+{% endfor %}
         </programlisting>
         <caption>
           Template code to fill-in the <property>happened_after</property> of
@@ -158,9 +158,9 @@
       </para>
       <informalexample>
         <programlisting>
-  {% for case in cases %}
-  {{ case.get_valid_display }}
-  {% endfor %}
+{% for case in cases %}
+{{ case.get_valid_display }}
+{% endfor %}
         </programlisting>
         <caption>
           Template code to fill-in the display-value of the
@@ -203,7 +203,7 @@
       </para>
       <informalexample>
         <programlisting>
-  {{ case.ole_investigation|yesno:"yes,no,unknown" }}
+{{ case.ole_investigation|yesno:"yes,no,unknown" }}
         </programlisting>
       </informalexample>
       <para>
@@ -223,9 +223,9 @@
       </para>
       <informalexample>
         <programlisting>
-  {% for c in observation.cases.all %}
-  {{ c.names }}
-  {% endfor %}
+{% for c in observation.cases.all %}
+{{ c.names }}
+{% endfor %}
         </programlisting>
       </informalexample>
     </section>
