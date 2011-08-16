@@ -14,8 +14,8 @@ BUILD_DIR := built
 
 %.pdf: %.fo
 	$(FOP) -c "fop config.xml" $(BUILD_DIR)/$< $(BUILD_DIR)/$@
-%.fo: %.docbook
-	$(XSLT) $(XSLT_DIR)/fo/docbook.xsl $< > $(BUILD_DIR)/$@
+%.fo: %.docbook custom-fo.xsl
+	$(XSLT) custom-fo.xsl $< > $(BUILD_DIR)/$@
 
 
 all: html pdf
