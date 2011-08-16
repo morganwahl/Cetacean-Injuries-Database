@@ -8,13 +8,20 @@
   id="book"
 >
 
+<title>Marine Mammal Injury Database User Manual</title>
+
 <!-- Model overview -->
 <part>
+  <title>A Model for Marine Mammal Injuries Data</title>
+  <partintro>
+    <para>
+      TODO!
+    </para>
+  </partintro>
 </part>
 
 <!-- UI details -->
-<part>
-</part>
+<xi:include parse="xml" href="ui.docbook"/>
 
 <!-- Template author guide -->
 <xi:include parse="xml" href="reports.docbook"/>
