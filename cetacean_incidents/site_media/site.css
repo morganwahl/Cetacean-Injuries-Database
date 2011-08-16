@@ -241,6 +241,13 @@ div.field_wrapper {
     text-align: left;
 }
 
+form th {
+    text-align: right;
+}
+form td {
+    text-align: left;
+}
+
 tr.field > th, tr.field > td {
     border-top: thin solid #d3d7cf; /* aluminium 3 */;
     border-bottom: thin solid #d3d7cf; /* aluminium 3 */;

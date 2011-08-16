@@ -8,65 +8,37 @@
 {% block content %}
 <table class="layout">
     <tr class="layout">
-        <td class="section layout" width="50%">
-            <h3>look up a particular animal</h3>
+        <td class="section layout" style="text-align:center; width:50%;">
             <form action="" method="get" class="subform">
-                    {% with forms.animal_lookup_field_number.non_field_errors as errors %}
-                    {% if errors %}
-                    <ul class="errorlist">
-                        {% for e in errors %}
-                        <li>{{ e }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
-                    {% for f in forms.animal_lookup_field_number %}
-                    {% include "inline_field.html" %}
-                    {% endfor %}
-                    {% with results.animal_lookup_field_number as rs %}
-                    {% include "lookup_results-include.html" %}
-                    {% endwith %}
-                    <button type="submit">lookup</button>
+                <table>
+                    {{ forms.animal_lookup_field_number.as_table }}
+                </table>
+                {% with results.animal_lookup_field_number as rs %}
+                {% include "lookup_results-include.html" %}
+                {% endwith %}
+                <button type="submit">lookup</button>
             </form>
-            <div style="text-align: center;"><i>or</i></div>
+            <i>or</i>
             <form action="" method="get" class="subform">
-                    {% with forms.animal_lookup_name.non_field_errors as errors %}
-                    {% if errors %}
-                    <ul class="errorlist">
-                        {% for e in errors %}
-                        <li>{{ e }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
-                    {% for f in forms.animal_lookup_name %}
-                    {% include "inline_field.html" %}
-                    {% endfor %}
-                    {% with results.animal_lookup_name as rs %}
-                    {% include "lookup_results-include.html" %}
-                    {% endwith %}
-                    <button type="submit">lookup</button>
+                <table>
+                    {{ forms.animal_lookup_name.as_table }}
+                </table>
+                {% with results.animal_lookup_name as rs %}
+                {% include "lookup_results-include.html" %}
+                {% endwith %}
+                <button type="submit">lookup</button>
             </form>
         </td>
-        <td class="section layout">
+        <td class="section layout" style="text-align:center; width:50%;">
             <h3>look up a particular case</h3>
             <form action="" method="get" class="subform">
-                    {% with forms.entanglement_lookup_nmfs.non_field_errors as errors %}
-                    {% if errors %}
-                    <ul class="errorlist">
-                        {% for e in errors %}
-                        <li>{{ e }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% endif %}
-                    {% endwith %}
-                    {% for f in forms.entanglement_lookup_nmfs %}
-                    {% include "inline_field.html" %}
-                    {% endfor %}
-                    {% with results.entanglement_lookup_nmfs as rs %}
-                    {% include "lookup_results-include.html" %}
-                    {% endwith %}
-                    <button type="submit">lookup</button>
+                <table>
+                    {{ forms.entanglement_lookup_nmfs.as_table }}
+                </table>
+                {% with results.entanglement_lookup_nmfs as rs %}
+                {% include "lookup_results-include.html" %}
+                {% endwith %}
+                <button type="submit">lookup</button>
             </form>
         </td>
     </tr>
