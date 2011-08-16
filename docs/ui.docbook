@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<part
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xl="http://www.w3.org/1999/xlink" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:lang="en-US"
+  version="5.0" 
+>
+
+  <title>Marine Mammal Injury Database - User Interface Guide</title>
+
+  <chapter>
+    <title>Browsing Data</title>
+    <section>
+      <title>The Homepage</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Animal Pages</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Case Pages</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Observation Pages</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Contact Pages</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+  </chapter>
+  
+  <chapter>
+    <title>Editing Data</title>
+    <section>
+      <title>Editing Contacts</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Editing Animals</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Editing Cases</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Editing Observations</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Merging Entries</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Uploading Files</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Adding Entries</title>
+      <para>
+        TODO!
+      </para>
+  </chapter>
+  
+  <chapter>
+    <title>Administrative Tasks</title>
+    <section>
+      <title>The <quote>odd entries</quote> page</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>The Admin Site</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Managing Users and Permissions</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Importing Taxa</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+    <section>
+      <title>Adding Gear Attributes</title>
+      <para>
+        TODO!
+      </para>
+    </section>
+  </chapter>
+</part>
+

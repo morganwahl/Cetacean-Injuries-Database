@@ -88,17 +88,21 @@
         The templating language is how templates indicate what data should be
         filled in where. The language used is the Django templating language.
         (It's the same language use to generate web pages for the database
-        itself.) An overview of the language for template authors is
-        <link xl:href="https://docs.djangoproject.com/en/1.2/topics/templates/">here</link>.
-        What follows is more specific to case-report templates and assumes
-        you're familiar with with basic syntax of the template language.
+        itself.) You should read <link
+        xl:href="https://docs.djangoproject.com/en/1.2/topics/templates/">the
+        overview of the language for template authors</link> before going
+        further. (You can skip the section on template inheritance, since that's
+        not used for reports.) The rest of this chapter assumes you understand
+        the basic concepts presented there. What follows is more specific to
+        case-report templates.
       </para>
     </section>
 
     <section>
       <title>Case-Report Templates</title>
       <para>
-        Case-report templates will always have a variable called
+        Case-report templates will always have a <glossterm basename="template
+        variable" linkend="gloss_template_variable">variable</glossterm> called
         <varname>cases</varname>. Variables can have many different kinds of
         values. The <varname>cases</varname> variable will be a
         <type>list</type> of <type>cases</type>.
@@ -111,7 +115,7 @@
         <programlisting>{{ cases.0 }}</programlisting>
         <caption>
           Template code to acces the first <type>case</type> in the
-          <type>list</type> <varname>cases</varname>.
+          <type>list</type><![CDATA[ ]]><varname>cases</varname>.
         </caption>
       </informalexample>
       <para>
@@ -128,6 +132,38 @@
           <property>happened_after</property> field for the first
           <type>case</type> in the <type>list</type> <varname>cases</varname>.
         </caption>
+      </informalexample>
+      <para>
+        Some fields are <type>references</type> to other models, such as <type>case</type>.<property>animal</property>. These other models fields can be access as properties as well:
+      </para>
+      <informalexample>
+        <programlisting>{{ cases.0.animal.field_number }}</programlisting>
+        <caption>
+          Template code to access the <property>field_number</property> of a <type>case</type>'s <property>animal</property>.
+        </caption>
+      </informalexample>
+      <para>
+        Some fields are <type>references</type> to several other models, such as
+        <type>case</type>.<property>observation_set</property>. These <type>set
+        references</type> have two attributes of their own:
+        <literal>all</literal> and <literal>count</literal>.
+      </para>
+      <informalexample>
+        <programlisting>{{ observation.cases.all }}</programlisting>
+        <caption>
+          Template code to access a list of all the cases an observation is
+          relevant to.
+        </caption>
+      </informalexample>
+      <para>
+        Typically you would want to iterate over those fields like so:
+      </para>
+      <informalexample>
+        <programlisting>
+{% for c in observation.cases.all %}
+{{ c.names }}
+{% endfor %}
+        </programlisting>
       </informalexample>
       <para>
         Typically, you'll want to access all the cases, not just the first one.
@@ -204,28 +240,6 @@
       <informalexample>
         <programlisting>
 {{ case.ole_investigation|yesno:"yes,no,unknown" }}
-        </programlisting>
-      </informalexample>
-      <para>
-        Some fields are references to several other models, such as
-        <type>observation</type>. <property>cases</property>. To access all the
-        models that are included, use the <literal>all</literal> property:
-      </para>
-      <informalexample>
-        <programlisting>{{ observation.cases.all }}</programlisting>
-        <caption>
-          Template code to access a list of all the cases an observation is
-          relevant to.
-        </caption>
-      </informalexample>
-      <para>
-        Typically you would want to iterate over those fields like so:
-      </para>
-      <informalexample>
-        <programlisting>
-{% for c in observation.cases.all %}
-{{ c.names }}
-{% endfor %}
         </programlisting>
       </informalexample>
     </section>
@@ -324,5 +338,15 @@
       </markup>
     </programlisting>
   </appendix>
+  
+  <glossary>
+    <title>Template language glossary</title>
+    <glossentry xml:id="gloss_template_variable">
+       <glossterm>template variable</glossterm>
+       <glossdef>
+         <para>yadda</para>
+       </glossdef>
+    </glossentry>
+  </glossary>
 </part>
 
