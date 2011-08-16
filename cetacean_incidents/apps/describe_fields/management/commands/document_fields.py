@@ -27,7 +27,7 @@ class Command(AppCommand):
                 continue
             
             if not sectiontitle.text:
-                sectiontitle.text = m.app_label
+                sectiontitle.text = u'App: ' + m.app_label
             
             subsection = etree.SubElement(section, DOC + 'section')
             title = etree.SubElement(subsection, DOC + 'title')
