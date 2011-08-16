@@ -87,10 +87,9 @@ def home(request):
     return render_to_response(
         'home.html',
         {
-            # pass in some big querysets for database stats
-            'animals': Animal.objects.all(),
-            'cases': Case.objects.all(),
-            'observations': Observation.objects.all(),
+            'animal_count': Animal.objects.count(),
+            'case_count': Case.objects.count(),
+            'observation_count': Observation.objects.count(),
             'forms': forms,
             'results': results,
             'media': reduce(lambda m, f: m + f.media, forms.values(), template_media),

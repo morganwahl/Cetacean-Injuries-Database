@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block header %}
-<div style="text-align:center;">{{ observations.count|intcomma }} observations in {{ cases.count|intcomma }} cases for {{ animals.count|intcomma }} animals</div>
+<div style="text-align:center;">{{ observation_count|intcomma }} observations in {{ case_count|intcomma }} cases for {{ animal_count|intcomma }} animals</div>
 {% endblock %}
 
 {% block content %}
