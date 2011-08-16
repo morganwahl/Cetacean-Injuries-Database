@@ -24,7 +24,7 @@ html: includes manual.html
 
 pdf: includes manual.pdf
 
-includes: TRT\ example.html api.docbook
+includes: TRT\ example.html api.docbook reports.docbook ui.docbook
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
