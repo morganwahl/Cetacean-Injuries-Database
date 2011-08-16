@@ -1,8 +1,10 @@
 from animal import (
     AnimalAutocomplete,
+    AnimalFieldNumberLookupForm,
     AnimalForm,
     AnimalMergeForm,
     AnimalMergeSourceForm,
+    AnimalNameLookupForm,
     AnimalSearchForm,
 )
 from case import (
@@ -19,15 +21,6 @@ from observation import (
     ObservationMergeForm,
     ObservationMergeSourceForm,
     ObservationSearchForm,
-)
-from search import (
-    SubmitDetectingForm,
-    
-    AnimalIDLookupForm,
-    AnimalFieldNumberLookupForm,
-
-    CaseIDLookupForm,
-    CaseYearlyNumberLookupForm,
 )
 
 import tests

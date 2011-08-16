@@ -40,18 +40,13 @@ from cetacean_incidents.apps.contacts.models import (
     Organization,
 )
 
-from cetacean_incidents.apps.entanglements.forms import (
-    AnimalNMFSIDLookupForm,
-    EntanglementNMFSIDLookupForm,
-)
+from cetacean_incidents.apps.entanglements.forms import EntanglementNMFSIDLookupForm
 from cetacean_incidents.apps.entanglements.models import Entanglement
 from cetacean_incidents.apps.entanglements.views import add_entanglementobservation
 
 from cetacean_incidents.apps.incidents.forms import (
-    AnimalIDLookupForm,
     AnimalFieldNumberLookupForm,
-    CaseIDLookupForm,
-    CaseYearlyNumberLookupForm,
+    AnimalNameLookupForm,
 )
 from cetacean_incidents.apps.incidents.models import (
     Animal,
@@ -69,49 +64,23 @@ from cetacean_incidents.apps.taxons.views import import_search as unsecured_impo
 @login_required
 def home(request):
     form_classes = {
-        'animal_lookup_id': AnimalIDLookupForm,
-        'animal_lookup_nmfs': AnimalNMFSIDLookupForm,
         'animal_lookup_field_number': AnimalFieldNumberLookupForm,
-        'case_lookup_id': CaseIDLookupForm,
-        'case_lookup_yearlynumber': CaseYearlyNumberLookupForm,
+        'animal_lookup_name': AnimalNameLookupForm,
         'entanglement_lookup_nmfs': EntanglementNMFSIDLookupForm,
     }
     forms = {}
+    results = {}
     for (form_name, form_class) in form_classes.items():
         kwargs = {}
-        if request.method == 'GET':
-            if '%s-submitted' % form_name in request.GET:
-                kwargs['data'] = request.GET
+        if '%s-submitted' % form_name in request.GET:
+            kwargs['data'] = request.GET
         forms[form_name] = form_class(prefix=form_name, **kwargs)
-    
-    if request.method == 'GET':
-        if 'animal_lookup_id-submitted' in request.GET:
-            if forms['animal_lookup_id'].is_valid():
-                animal = forms['animal_lookup_id'].cleaned_data['local_id']
-                return redirect(animal)
-        if 'animal_lookup_nmfs-submitted' in request.GET:
-            if forms['animal_lookup_nmfs'].is_valid():
-                animal = forms['animal_lookup_nmfs'].cleaned_data['nmfs_id']
-                return redirect(animal)
-        if 'animal_lookup_field_number-submitted' in request.GET:
-            if forms['animal_lookup_field_number'].is_valid():
-                animal = forms['animal_lookup_field_number'].cleaned_data['field_number']
-                return redirect(animal)
-        if 'case_lookup_id-submitted' in request.GET:
-            if forms['case_lookup_id'].is_valid():
-                case = forms['case_lookup_id'].cleaned_data['local_id']
-                return redirect(case)
-        if 'case_lookup_yearlynumber-submitted' in request.GET:
-            form = forms['case_lookup_yearlynumber']
-            if form.is_valid():
-                year = form.cleaned_data['year']
-                num = form.cleaned_data['number']
-                case = YearCaseNumber.objects.get(year=year, number=num).case
-                return redirect(case)
-        if 'entanglement_lookup_nmfs-submitted' in request.GET:
-            if forms['entanglement_lookup_nmfs'].is_valid():
-                case = forms['entanglement_lookup_nmfs'].cleaned_data['nmfs_id']
-                return redirect(case)
+        if '%s-submitted' % form_name in request.GET:
+            if forms[form_name].is_valid():
+                r = forms[form_name].results()
+                if r.count() == 1:
+                    return redirect(r[0])
+                results[form_name] = r
     
     template_media = Media()
     
@@ -123,6 +92,7 @@ def home(request):
             'cases': Case.objects.all(),
             'observations': Observation.objects.all(),
             'forms': forms,
+            'results': results,
             'media': reduce(lambda m, f: m + f.media, forms.values(), template_media),
         },
         RequestContext(request),

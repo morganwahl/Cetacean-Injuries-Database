@@ -1,0 +1,16 @@
+{% load link_filter %}
+
+{% if rs %}
+<div>
+  {{ rs.count }} results{% if rs.count > 5 %} (only the first 5 shown){% endif %}:
+  <ul>
+    {% for r in rs|slice:":5" %}
+    <li>{{ r|link_block }}</li>
+    {% endfor %}
+    {% if rs.count > 5 %}
+    <li>...</li>
+    {% endif %}
+  </ul>
+</div>
+{% endif %}
+

@@ -10,7 +10,6 @@ from cetacean_incidents.apps.dag.forms import DAGField
 from cetacean_incidents.apps.incidents.forms import (
     CaseForm,
     CaseMergeForm,
-    SubmitDetectingForm,
     CaseSearchForm,
 )
 from cetacean_incidents.apps.incidents.models import Animal
@@ -20,6 +19,8 @@ from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
+
+from cetacean_incidents.apps.search_forms.forms import SubmitDetectingForm
 
 from cetacean_incidents.apps.taxons.forms import TaxonMultipleChoiceField
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -460,26 +461,9 @@ class GearOwnerMergeForm(MergeForm):
     class Meta:
         model = GearOwner
 
-class AnimalNMFSIDLookupForm(SubmitDetectingForm):
-    nmfs_id = forms.CharField(
-        help_text= u"look up an animal by the NMFS ID for one of its entanglement cases",
-        label= "entanglement NMFS ID",
-    )
-    
-    def clean_nmfs_id(self):
-        data = self.cleaned_data['nmfs_id']
-        animals = Animal.objects.filter(case__entanglement__nmfs_id__icontains=data)
-        # nmfs_id isn't garanteed to be unique
-        if animals.count() < 1:
-            raise forms.ValidationError("no entanglement case has been marked with an NMFS ID like that")
-        elif animals.count() > 1:
-            animal_ids = animals.values_list('id', flat=True).order_by('id')
-            raise forms.ValidationError("Multiple animals have entanglement cases with NMFS IDs that contain that. The animals' local-IDs are: %s" % ', '.join(map(unicode, animal_ids)))
-        return animals[0]
-
 class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
     nmfs_id = forms.CharField(
-        help_text= u"lookup a particular entanglement case by NMFS ID",
+        help_text= u"find entanglement cases whose entanglement NMFS IDs contain this",
         label= "entanglement NMFS ID",
     )
     
@@ -489,21 +473,10 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
         # nmfs_id isn't garanteed to be unique
         if cases.count() < 1:
             raise forms.ValidationError("no case has been marked with an NMFS ID like that")
-        elif cases.count() > 1:
-            case_ids = cases.values('id', 'nmfs_id').order_by('id')
-            # do any have the same nmfs_id?
-            dupes = (len(set([i['nmfs_id'] for i in case_ids])) != len(case_ids))
-            message = "Multiple cases have NMFS IDs that contain that. They are: %s"
-            if dupes:
-                message = message % u' \u2022 '.join(
-                    ["%(nmfs_id)s (#%(id)06d)" % i for i in case_ids]
-                )
-            else:
-                message = message % ', '.join(
-                    ["%(nmfs_id)s (#%(id)06d)" % i for i in case_ids]
-                )
-            raise forms.ValidationError(message)
-        return cases[0]
+        return cases
+    
+    def results(self):
+        return self.cleaned_data['nmfs_id']
 
 class GearTypeQueryField(DAGField):
     

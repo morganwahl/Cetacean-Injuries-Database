@@ -9,7 +9,10 @@ from cetacean_incidents.apps.jquery_ui.widgets import (
     ModelAutocomplete,
 )
 
-from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.forms import (
+    SearchForm,
+    SubmitDetectingForm,
+)
 from cetacean_incidents.apps.search_forms.related import (
     HideableReverseForeignKeyQuery,
     ForeignKeyQuery,
@@ -27,6 +30,38 @@ from ..models import (
 )
 
 from observation import ObservationSearchForm
+
+class AnimalFieldNumberLookupForm(SubmitDetectingForm):
+    field_number = forms.CharField(
+        help_text= u"look up an animal by it's field number",
+        label= "field number",
+    )
+    
+    def clean_field_number(self):
+        data = self.cleaned_data['field_number']
+        animals = Animal.objects.filter(field_number__iexact=data)
+        # field_number isn't garanteed to be unique
+        if animals.count() < 1:
+            raise forms.ValidationError("no animal in the database has that field number")
+        return animals
+    
+    def results(self):
+        return self.cleaned_data['field_number']
+
+class AnimalNameLookupForm(SubmitDetectingForm):
+    name_contains = forms.CharField(
+        help_text= u"look up an with a name that contains this",
+    )
+    
+    def clean_name_contains(self):
+        data = self.cleaned_data['name_contains']
+        animals = Animal.objects.filter(name__icontains=data)
+        if animals.count() < 1:
+            raise forms.ValidationError("no animal in the database has a name that contains that")
+        return animals
+
+    def results(self):
+        return self.cleaned_data['name_contains']
 
 class AnimalAutocomplete(ModelAutocomplete):
     
