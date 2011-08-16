@@ -1,4 +1,4 @@
-FOP := fop
+FOP := fop -q
 XSLT := xsltproc --xinclude
 
 XSLT_DIR := /usr/share/xml/docbook/stylesheet/docbook-xsl
@@ -8,23 +8,29 @@ HTML_PARAMS := --stringparam html.stylesheet $(STYLESHEET)
 
 BUILD_DIR := built
 
-# implicit rules
-%.html: %.docbook $(STYLESHEET)
-	$(XSLT) $(HTML_PARAMS) $(XSLT_DIR)/html/docbook.xsl $< > $(BUILD_DIR)/$@
-
-%.pdf: %.fo
-	$(FOP) -c "fop config.xml" $(BUILD_DIR)/$< $(BUILD_DIR)/$@
-%.fo: %.docbook custom-fo.xsl
-	$(XSLT) custom-fo.xsl $< > $(BUILD_DIR)/$@
+MANUAL_DEPENDS := TRT\ example.html api.docbook reports.docbook ui.docbook
 
 
 all: html pdf
 
-html: includes manual.html
 
-pdf: includes manual.pdf
+html: $(BUILD_DIR)/manual.html $(BUILD_DIR)/manual.css
 
-includes: TRT\ example.html api.docbook reports.docbook ui.docbook
+$(BUILD_DIR)/manual.html: manual.docbook $(MANUAL_DEPENDS) | $(BUILD_DIR)
+	$(XSLT) $(HTML_PARAMS) $(XSLT_DIR)/html/docbook.xsl manual.docbook > $(BUILD_DIR)/manual.html
+
+$(BUILD_DIR)/manual.css: manual.css | $(BUILD_DIR)
+	cp -v manual.css $(BUILD_DIR)/
+
+
+pdf: $(BUILD_DIR)/manual.pdf
+
+$(BUILD_DIR)/manual.pdf: $(BUILD_DIR)/manual.fo fop\ config.xml | $(BUILD_DIR)
+	$(FOP) -c "fop config.xml" $(BUILD_DIR)/manual.fo $(BUILD_DIR)/manual.pdf
+
+$(BUILD_DIR)/manual.fo: custom-fo.xsl manual.docbook $(MANUAL_DEPENDS) | $(BUILD_DIR)
+	$(XSLT) custom-fo.xsl manual.docbook > $(BUILD_DIR)/manual.fo
+
 
 $(BUILD_DIR):
 	mkdir $(BUILD_DIR)
@@ -64,5 +70,5 @@ api.docbook: \
 
 .PHONY: clean
 clean:
-	rm -rv $(HTML_DIR) $(PDF_DIR)
+	rm -rv $(BUILD_DIR) $(API_DOCS_DIR)
 
