@@ -263,7 +263,14 @@ def _case_report_change(request, report=None, report_type=None):
         
         if pressed == 'save':
             if form.is_valid():
-                report = form.save()
+                if form_class == FileReportForm:
+                    report = form.save(commit=False)
+                    report.uploader = request.user
+                    report.save()
+                    form.save_m2m()
+                else:
+                    report = form.save()
+
                 if creating:
                     url = reverse('case_report_edit', args=(report.id,))
                     querystring = urlencode(doseq=True, query={'cases': case_ids})
