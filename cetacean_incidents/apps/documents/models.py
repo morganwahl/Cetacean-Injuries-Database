@@ -28,6 +28,7 @@ def _checkdir(p):
     if not path.isdir(p):
         os.mkdir(p)
 
+# FIXME are we duplicateing settings.MEDIA_ROOT?
 _storage_dir_name = 'documents'
 _storage_dir = path.join(settings.MEDIA_ROOT, _storage_dir_name)
 _checkdir(_storage_dir)
