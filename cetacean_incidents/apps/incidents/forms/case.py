@@ -10,6 +10,10 @@ from cetacean_incidents.apps.search_forms.related import (
     HideableForeignKeyQuery,
 )
 
+from cetacean_incidents.apps.reports.forms import (
+    FileReportForm,
+    StringReportForm,
+)
 from cetacean_incidents.apps.reports.models import Report
 
 from cetacean_incidents.apps.jquery_ui.widgets import CheckboxSelectMultiple as JQueryCheckboxSelectMultiple
@@ -142,48 +146,52 @@ class CaseSearchForm(SearchForm):
         super(CaseSearchForm, self).__init__(*args, **kwargs)
         self.fields['sort_by'].initial = 'observation__datetime_observed'
 
-class CaseReportForm(forms.Form):
+class CaseSelectionForm(forms.Form):
+    def __init__(self, cases, *args, **kwargs):
+        super(CaseSelectionForm, self).__init__(*args, **kwargs)
+        self.fields['cases'] = forms.ModelMultipleChoiceField(
+            queryset= cases,
+            initial= cases,
+            label= u'',
+            widget= JQueryCheckboxSelectMultiple,
+        )
+
+class UseCaseReportForm(forms.Form):
     
-    to_pdf = forms.BooleanField(
-        required= False,
+    show = forms.BooleanField(
         initial= False,
-        label= 'return a PDF',
+        label= u'generate a report using these cases...'
     )
     
-    pdf_name = forms.CharField(
-        max_length= 256,
-        required= False,
-        label= 'PDF name',
-        help_text= 'name of the PDF file to make',
-    )
+    report = forms.ModelChoiceField(queryset= Report.objects.all())
+
+    def __init__(self, cases, *args, **kwargs):
+        super(UseCaseReportForm, self).__init__(*args, **kwargs)
+        self.fields['cases'] = forms.ModelMultipleChoiceField(
+            queryset= cases,
+            initial= cases,
+            label= u'',
+            widget= JQueryCheckboxSelectMultiple,
+        )
+
+class ChangeCaseReportForm(forms.Form):
     
-    new = forms.ChoiceField(
-        widget= forms.RadioSelect,
-        choices= (
-            ('existing', 'existing'),
-            ('new',  'new'),
-        ),
-        initial= 'existing',
-        label= 'report source',
+    show = forms.BooleanField(
+        initial= False,
+        label= u'add/edit a report template using these cases...'
     )
     
     report = forms.ModelChoiceField(
         queryset= Report.objects.all(),
         required= False,
+        empty_label= '<new report template>',
     )
     
-    def __init__(self, cases, *args, **kwargs):
-        super(CaseReportForm, self).__init__(*args, **kwargs)
-        # insert this so it's the first field
-        self.fields.insert(0, 'cases', forms.ModelMultipleChoiceField(
-            queryset= cases,
-            initial= cases.all(),
-            widget= JQueryCheckboxSelectMultiple,
-        ))
+    report_type = forms.ChoiceField(
+        choices= (
+            ('string', 'HTML directly edited on this site'),
+            ('file', 'an uploaded file'),
+        ),
+        label= 'type of new report',
+    )
 
-    def clean(self):
-        data = self.cleaned_data
-        if data['new'] == 'existing' and not data['report']:
-            raise forms.ValidationError("no existing report given")
-        return data
-            

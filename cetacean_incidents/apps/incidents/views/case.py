@@ -12,7 +12,7 @@ from django.core.urlresolvers import reverse
 from django.db.models import Q
 from django import forms as django_forms
 from django.forms import Media
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.shortcuts import (
     render_to_response,
     redirect,
@@ -23,6 +23,7 @@ from django.template import (
 )
 from django.views.decorators.http import condition
 from django.utils.datastructures import SortedDict
+from django.utils.http import urlencode
 
 from django.contrib.auth.decorators import login_required
 
@@ -38,7 +39,15 @@ from cetacean_incidents.apps.entanglements.models import Entanglement
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tabs
 
-from cetacean_incidents.apps.reports.forms import ReportForm
+from cetacean_incidents.apps.reports.forms import (
+    StringReportForm,
+    FileReportForm,
+)
+from cetacean_incidents.apps.reports.models import (
+    Report,
+    StringReport,
+    FileReport,
+)
 
 from cetacean_incidents.apps.shipstrikes.models import Shipstrike
 
@@ -59,7 +68,9 @@ from ..forms import (
     CaseMergeForm,
     CaseMergeSourceForm,
     CaseSearchForm,
-    CaseReportForm,
+    CaseSelectionForm,
+    ChangeCaseReportForm,
+    UseCaseReportForm,
 )
 from ..templatetags.case_extras import YearsForm
 
@@ -67,20 +78,6 @@ from tabs import (
     AnimalTab,
     CaseTab,
 )
-
-def rfc822_quoting(string):
-    """Returns a "quoted-string" as defined in IETF RFC 822."""
-    # TODO will a HttpResponse do this for us?
-    
-    # escape any of '"' '\' or U+000D
-    if isinstance(string, unicode):
-        string = string.encode('utf-8')
-    string = string.replace('\\', '\\\\')
-    string = string.replace('"', '\\"')
-    string = string.replace('\x0d', '\\\x0d')
-    
-    # enclose in quotes
-    return '"%s"' % string
 
 @login_required
 def case_detail(request, case_id, extra_context={}):
@@ -165,6 +162,44 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             case_list = forms['case'].results()
             search_done = True
     
+    pressed = request.GET.get('pressed', None)
+
+    if pressed == 'use_report_button':
+        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_list, data=request.GET)
+        if use_report_form.is_valid():
+            report = use_report_form.cleaned_data['report'].specific_instance()
+            rendered = report.render({
+                'cases': use_report_form.cleaned_data['cases'],
+            })
+            return HttpResponse(rendered, mimetype=report.format)
+    else:
+        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_list)
+    
+    if pressed == 'change_report_button':
+        change_report_form = ChangeCaseReportForm(prefix='change_report', data=request.GET)
+        if change_report_form.is_valid():
+            if not change_report_form.cleaned_data['report']:
+                response_url = reverse(
+                    'case_report_create', 
+                    kwargs= {
+                        'report_type': change_report_form.cleaned_data['report_type']
+                    },
+                )
+            else:
+                report = change_report_form.cleaned_data['report'].specific_instance()
+                response_url = reverse(
+                    'case_report_edit',
+                    args=(report.id,),
+                )
+            case_ids = map(lambda c: c.id, case_list)
+            querystring = urlencode(
+                doseq=True,
+                query={'cases': case_ids},
+            )
+            return HttpResponsePermanentRedirect(response_url + '?' + querystring)
+    else:
+        change_report_form = ChangeCaseReportForm(prefix='change_report')
+
     per_page = 1
     page = 1
     if forms['paging'].is_valid():
@@ -180,20 +215,14 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
     except (EmptyPage, InvalidPage):
         cases = paginator.page(paginator.num_pages)
     
-    # use an unreserved character so it doesn't get escaped in the URL
-    all_ids = u"_".join(map(lambda c: unicode(c.id), case_list))
-    # This make sense as a URL, conceptually, so let's try to keep it that way
-    MAX_GET_LENGTH = 1000
-    if len(all_ids) > MAX_GET_LENGTH:
-        zall_ids = all_ids.encode('utf-8')
-        zall_ids = bz2.compress(zall_ids)
-        zall_ids = base64.urlsafe_b64encode(zall_ids)
-        # prepend a 'z' so we know it was compressed
-        zall_ids = u'z' + zall_ids.decode('utf-8')
-        if len(zall_ids) < len(all_ids):
-            all_ids = zall_ids
-    
-    media = reduce(lambda m, f: m + f.media, forms.values(), Media())
+    template_media = Media(
+        js=(settings.JQUERY_FILE, 'checkboxhider.js', 'selecthider.js'),
+    )
+    media = reduce(
+        lambda m, f: m + f.media,
+        forms.values() + [use_report_form],
+        template_media
+    )
     
     return render_to_response(
         template,
@@ -202,111 +231,84 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             'is_bound': search_done,
             'media': media,
             'cases': cases,
-            'all_ids': all_ids,
             'case_count': paginator.count,
+            'use_report_form': use_report_form,
+            'change_report_form': change_report_form,
+        },
+        context_instance= RequestContext(request),
+    )
+
+def _case_report_change(request, report=None, report_type=None):
+    # the list of test cases comes from the GET string
+    case_ids = request.GET.getlist('cases')
+    cases = Case.objects.filter(id__in=case_ids)
+    
+    creating = report is None
+    
+    if creating:
+        form_class = {
+            'string': StringReportForm,
+            'file': FileReportForm,
+        }[report_type]
+    else:
+        if isinstance(report, StringReport):
+            form_class = StringReportForm
+        if isinstance(report, FileReport):
+            form_class = FileReportForm
+
+    if request.POST:
+        pressed = request.POST.get('pressed', None)
+        form = form_class(request.POST, files=request.FILES, instance=report)
+        cases_form = CaseSelectionForm(cases, request.POST, prefix='cases')
+        
+        if pressed == 'save':
+            if form.is_valid():
+                report = form.save()
+                if creating:
+                    url = reverse('case_report_edit', args=(report.id,))
+                    querystring = urlencode(doseq=True, query={'cases': case_ids})
+                    return redirect(url + '?' + querystring)
+        if pressed == 'try':
+            if form.is_valid() and cases_form.is_valid():
+                report = report.specific_instance()
+                rendered = report.render({
+                    'cases': cases_form.cleaned_data['cases'],
+                })
+                return HttpResponse(rendered, mimetype=report.format)
+    else:
+        form = form_class(instance=report)
+        cases_form = CaseSelectionForm(cases, prefix='cases')
+    
+    template_media = Media(js=(settings.JQUERY_FILE,))
+
+    return render_to_response(
+        'incidents/case_report_change.html',
+        {
+            'report': report,
+            'form': form,
+            'cases_form': cases_form,
+            'media': template_media + form.media + cases_form.media,
         },
         context_instance= RequestContext(request),
     )
 
 @login_required
-def case_report(request):
-    form_classes = {
-        'case_report': CaseReportForm,
-        'new_report': ReportForm,
-    }
-    form_kwargs = {}
-    for name, cls in form_classes.items():
-        form_kwargs[name] = {
-            'prefix': name
-        }
-    if request.POST:
-        form_kwargs['case_report']['data'] = request.POST
-    
-    # the GET string could have a value called 'cases' that's a
-    # comma-delimited list of case IDs
-    if request.GET and 'cases' in request.GET:
-        case_ids = request.GET['cases']
+def case_report_create(request, report_type):
+    # the list of test cases comes from the GET string
+    return _case_report_change(request, None, report_type)
 
-        # 'cases' may have been compressed to keep the URL length down
-        if case_ids[0] == u'z':
-            case_ids = case_ids[1:]
-            case_ids = case_ids.encode('utf-8')
-            case_ids = base64.urlsafe_b64decode(case_ids)
-            case_ids = bz2.decompress(case_ids)
-            case_ids = case_ids.decode('utf-8')
-        
-        case_ids = map(int, case_ids.split('_'))
-    else:
-        case_ids = []
-    cases = Case.objects.filter(id__in=case_ids)
-    form_kwargs['case_report']['cases'] = cases
-
-    forms = {}
-    forms['case_report'] = form_classes['case_report'](**form_kwargs['case_report'])
-    # only bind forms['new_report'] if 'new' was chosen in forms['case_report']
-    if forms['case_report'].is_valid():
-        if forms['case_report'].cleaned_data['new'] == 'new':
-            form_kwargs['new_report'].update({
-                'data': request.POST,
-                'files': request.FILES,
-            })
-    forms['new_report'] = form_classes['new_report'](**form_kwargs['new_report'])
-
-    if forms['case_report'].is_valid():
-        report = None
-        if forms['case_report'].cleaned_data['new'] == 'new':
-            if forms['new_report'].is_valid():
-                save = bool(forms['new_report'].cleaned_data['name'])
-                report = forms['new_report'].save(commit=False)
-                if save:
-                    report.uploader = request.user
-                    report.save()
-                    forms['new_report'].save_m2m()
-                
-        elif forms['case_report'].cleaned_data['new'] == 'existing':
-            report = forms['case_report'].cleaned_data['report']
-
-        if not report is None:
-            # use the cases list from the form, not from the URL
-            report_cases = forms['case_report'].cleaned_data['cases']
-            report_cases = map(lambda c: c.specific_instance(), report_cases)
-            context = {
-                'cases': report_cases,
-            }
-
-            if forms['case_report'].cleaned_data['to_pdf']:
-                rendered = report.render_to_pdf(context)
-                response = HttpResponse(rendered, mimetype='application/pdf')
-                name = forms['case_report'].cleaned_data['pdf_name'] 
-                if not name:
-                    name = 'report.pdf'
-                response['Content-Disposition'] = 'attachment; filename=%s' % rfc822_quoting(name)
-                return response
-
-            rendered = report.render(context)
-            return HttpResponse(rendered, mimetype=report.format)
-        
-    template_media = Media(
-        js= (settings.JQUERY_FILE, 'radiohider.js', 'checkboxhider.js'),
-    )
-    media = reduce(lambda m, f: m + f.media, forms.values(), template_media)
-    
-    return render_to_response(
-        "incidents/case_report.html",
-        {
-            'cases': cases,
-            'forms': forms,
-            'media': media,
-        },
-        RequestContext(request),
-    )
+@login_required
+def case_report_edit(request, report_id):
+    # the list of test cases comes from the GET string
+    report = Report.objects.get(id=report_id).specific_instance()
+    return _case_report_change(request, report)
 
 # TODO login_required?
 def edit_case_animal(request, case_id):
     
     case = Case.objects.get(id=case_id)
     
-    # we'll need to change the animal for all this cases observations, and for
+    # we'll need to change the animal for all this case's observations, and for
     # any cases they're relevant to, and any of those cases other observations,
     # etc.
     case_set = set([case])

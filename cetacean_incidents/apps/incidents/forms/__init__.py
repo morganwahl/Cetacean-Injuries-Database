@@ -14,7 +14,9 @@ from case import (
     CaseMergeForm,
     CaseMergeSourceForm,
     CaseSearchForm,
-    CaseReportForm,
+    CaseSelectionForm,
+    ChangeCaseReportForm,
+    UseCaseReportForm,
 )
 from observation import (
     ObservationCasesForm,

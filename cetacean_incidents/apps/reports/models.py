@@ -11,37 +11,15 @@ from django.template import (
 
 from django.contrib.auth.models import User
 
+from cetacean_incidents.apps.documents.models import Specificable
+
 # FIXME are we duplicateing settings.MEDIA_ROOT?
 from cetacean_incidents.apps.documents.models import _storage_dir
 
-class Report(models.Model):
-    
-    name = models.CharField(
-        max_length= 256,
-        unique= True,
-    )
-    template = models.FileField(
-        upload_to= path.join(_storage_dir, u'reports', u'templates'),
-    )
-    format = models.CharField(
-        max_length= 1000, # TODO just how long can a mimetype be?
-        help_text= 'the type of the template\'s output',
-        choices= (
-            ('text/html', u'HTML'),
-            ('image/svg+xml', u'SVG'),
-        ),
-    )
-    uploader = models.ForeignKey(
-        User,
-        editable=False,
-    )
-    upload_date = models.DateTimeField(
-        auto_now_add= True,
-    )
+class Report(Specificable):
     
     def render(self, context):
-        contents = self.template.file.read()
-        t = Template(contents)
+        t = self.template()
         if isinstance(context, dict):
             context = Context(context)
         return t.render(context)
@@ -56,6 +34,55 @@ class Report(models.Model):
             raise NotImplementedError
         return pdf_contents
     
+    name = models.CharField(
+        max_length= 256,
+        unique= True,
+    )
+
+    #@property
+    #def format(self):
+    #    raise NotImplementedError
+    
+    def template(self):
+        raise NotImplementedError
+
     def __unicode__(self):
         return self.name
+        
+class StringReport(Report):
+    
+    format = 'text/html'
+    
+    template_text = models.TextField()
+    
+    def template(self):
+        return Template(self.template_text)
+
+class FileReport(Report):
+
+    template_file = models.FileField(
+        upload_to= path.join(_storage_dir, u'reports', u'templates'),
+    )
+    
+    def template(self):
+        contents = self.template_file.file.read()
+        return Template(contents)
+
+    format = models.CharField(
+        max_length= 1000, # TODO just how long can a mimetype be?
+        help_text= 'the type of the template\'s output',
+        choices= (
+            ('text/html', u'HTML'),
+            #('image/svg+xml', u'SVG'),
+        ),
+    )
+
+    uploader = models.ForeignKey(
+        User,
+        editable=False,
+    )
+
+    upload_date = models.DateTimeField(
+        auto_now_add= True,
+    )
 

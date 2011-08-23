@@ -1,0 +1,66 @@
+{% extends "page.html" %}
+
+{% block head %}
+{{ block.super }}
+<style>
+  td {
+    vertical-align: top;
+  }
+</style>
+<script type="text/javascript">
+  $().ready(function(){
+    $('button[type="submit"]').click(function(event){
+      $('[name=pressed]').val($(this).attr('id'));
+    });
+  });
+</script>
+{% endblock %}
+
+{% block title %}{{ block.super }}: editing {{ report|default:"new report" }}{% endblock %}
+
+{% block header %}
+<h2>editing {{ report|default:"new report" }}</h2>
+{% endblock %}
+
+{% block content %}
+
+<form target="" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+<input type="hidden" name="pressed" value="">
+<table class="layout">
+<tr><td width="50%">
+
+<table>
+{{ cases_form.as_table }}
+</table>
+
+</td><td width="50%">
+
+<div class="subform">
+    <table>
+    {{ form.as_table }}
+    </table>
+    <button type="submit" id="save">save changes</button>
+    <button type="submit" id="try">try this template with the selected cases</button>
+    
+</div>
+
+{% if report.template_file %}
+<script>
+  $().ready(function(){
+    $('#template_contents_toggle').click(function(event){
+      $('#template_contents').toggle();
+      return false;
+    });
+  });
+</script>
+<a href="" id="template_contents_toggle">show the current template file's contents...</a>
+<pre id="template_contents">
+{{ report.template_file.file.read }}
+</pre>
+{% endif %}
+
+</td></tr>
+</table>
+</form>
+{% endblock %}

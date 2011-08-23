@@ -88,6 +88,7 @@ INSTALLED_APPS = (
     #'devserver',
     #'debug_toolbar',
     'reversion',
+    'tinymce',
     'cetacean_incidents.apps.utils',
     'cetacean_incidents.apps.countries',
     'cetacean_incidents.apps.locations',
@@ -118,5 +119,18 @@ SHORT_TIME_FORMAT = TIME_FORMAT
 DATETIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT
 SHORT_DATETIME_FORMAT = DATETIME_FORMAT
 
-GLOBAL_ETAG = u'5'
+GLOBAL_ETAG = u'29384574'
+
+TINYMCE_JS_URL = MEDIA_URL + 'tiny_mce/tiny_mce.js'
+TINYMCE_JS_ROOT = path.join(MEDIA_ROOT, 'tiny_mce')
+
+TINYMCE_DEFAULT_CONFIG = {
+    'plugins': "table,fullpage,style,contextmenu,advlist,paste",
+    'theme_advanced_buttons2_add': "styleprops",
+    'theme_advanced_buttons3_add': "tablecontrols,fullpage",
+    'theme': "advanced",
+    'cleanup_on_startup': True,
+    'custom_undo_redo_levels': 10,
+}
+TINYMCE_COMPRESSOR = False
 

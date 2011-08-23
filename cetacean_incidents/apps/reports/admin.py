@@ -2,9 +2,16 @@ from django.contrib import admin
 
 from reversion.admin import VersionAdmin
 
-from models import Report
+from models import (
+    FileReport,
+    StringReport,
+)
 
-class ReportAdmin(VersionAdmin):
+class FileReportAdmin(VersionAdmin):
     pass
-admin.site.register(Report, ReportAdmin)
+admin.site.register(FileReport, FileReportAdmin)
+
+class StringReportAdmin(VersionAdmin):
+    pass
+admin.site.register(StringReport, StringReportAdmin)
 
