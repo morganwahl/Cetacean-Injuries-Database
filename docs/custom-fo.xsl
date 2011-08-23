@@ -17,5 +17,11 @@
   <xsl:attribute name="background-color">#eee</xsl:attribute>
 </xsl:attribute-set>
 
+<xsl:template match="literal">
+  <fo:inline font-variant="small-caps">
+    <xsl:apply-templates/>
+  </fo:inline>
+</xsl:template>
+
 </xsl:stylesheet>
 

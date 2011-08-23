@@ -1,40 +1,34 @@
+/* Colors from the XKCD color survey.
+ *
+ * http://xkcd.com/color/rgb/
+ *
+ * d8dcd6	light grey
+ * c5c9c7	silver
+ * 929591	grey
+ * 363737	dark grey
+ */
+
 * {
-  font-family: "Sans", "Verdana", sans-serif;
+  font-family: "Sans", "Helvetica", "Verdana", sans-serif;
 }
 
 .informalexample {
-  margin: 1em;
+  border: thin solid #363737;
   padding: .5em;
-  border: thin solid grey;
 }
 .informalexample .caption {
-  padding: .5em;
-  border-top: thin solid lightgrey;
+  border-top: thin solid #929591;
 }
 
-.type {
-  background-color: lightgrey;
-  font-style: smallcaps;
+.glossterm {
+	font-weight: bold;
+	font-size: 0.90em;
 }
 
-.property {
-  font-family: monospace;
-  font-weight: bold;
+.literal, .token, .classname, .varname, .function, .property, .programlisting {
+	font-family: monospace;
+	background-color: #c5c9c7;
+	font-size: 0.95em;
+	padding: 0 1px 0 1px;
 }
 
-.varname {
-  font-family: monospace;
-  font-style: italic;
-}
-
-.function {
-  font-family: monospace;
-  font-weight: bold;
-}
-
-.literal:before {
-  content: open-quote;
-}
-.literal:after {
-  content: close-quote;
-}

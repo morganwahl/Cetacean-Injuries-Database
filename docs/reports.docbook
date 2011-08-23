@@ -102,83 +102,142 @@
       <title>Case-Report Templates</title>
       <para>
         Case-report templates will always have a <glossterm basename="template
-        variable" linkend="gloss_template_variable">variable</glossterm> called
-        <varname>cases</varname>. Variables can have many different kinds of
-        values. The <varname>cases</varname> variable will be a
-        <type>list</type> of <type>cases</type>.
+        variable">variable</glossterm> called <varname>cases</varname>.
+        Variables can have many different kinds of values. The
+        <varname>cases</varname> variable will be a list of cases. The cases
+        will be in the same order they appear on the report-generating page,
+        which should be in order by the earliest observation date of their
+        observations.
       </para>
       <para>
-        <type>Lists</type> have numbered attributes (staring at 0) for each item
-        in the list. So you can acces the first case like this:
+        Lists have numeric <glossterm basename="template
+        attribute">attributes</glossterm> (starting at 0) for each item in the
+        list. So you can acces the first case like this:
       </para>
       <informalexample>
         <programlisting>{{ cases.0 }}</programlisting>
         <caption>
-          Template code to acces the first <type>case</type> in the
-          <type>list</type><![CDATA[ ]]><varname>cases</varname>.
+          Template code to acces the first case in the list
+          <varname>cases</varname>.
         </caption>
       </informalexample>
       <para>
         This is what the Django documentation refers to as "list-index lookup".
-        Of course, just filling in a spot in a template with a <type>case</type>
-        isn't very useful. You'll almost always want one of the fields of a
-        <type>case</type>, which are attributes of individual
-        <type>cases</type>:
+        Of course, just filling in a spot in a template with a case isn't very
+        useful. You'll almost always want one of the fields of a case, which are
+        attributes of individual cases:
       </para>
       <informalexample>
-        <programlisting>{{ cases.0.happened_after }}</programlisting>
+        <programlisting>
+Case: {{ cases.0.name }}
+happened after: {{ cases.0.happened_after }}</programlisting>
         <caption>
-          Template code to fill-in the value of the
-          <property>happened_after</property> field for the first
-          <type>case</type> in the <type>list</type> <varname>cases</varname>.
+          Template for the name of the first item in the list
+          <varname>cases</varname> and it's <property>happened_after</property>
+          field.
         </caption>
       </informalexample>
       <para>
-        Some fields are <type>references</type> to other models, such as <type>case</type>.<property>animal</property>. These other models fields can be access as properties as well:
+        Some fields are references to other models, such as
+        <varname>case.animal</varname>. The other models fields can be accessed
+        as attributes of that field:
       </para>
       <informalexample>
         <programlisting>{{ cases.0.animal.field_number }}</programlisting>
         <caption>
-          Template code to access the <property>field_number</property> of a <type>case</type>'s <property>animal</property>.
+          Template code to access the <property>field_number</property> of the
+          animal referenced by the <property>animal</property> field of the
+          first case in the list <varname>cases</varname>.
         </caption>
       </informalexample>
       <para>
-        Some fields are <type>references</type> to several other models, such as
-        <type>case</type>.<property>observation_set</property>. These <type>set
-        references</type> have two attributes of their own:
-        <literal>all</literal> and <literal>count</literal>.
+        Some fields are references to <emphasis>several</emphasis> other models, such as
+        <varname>case.observation_set</varname>. These multiple-reference fields
+        have two attributes in templates: <literal>all</literal> and
+        <literal>count</literal>. <literal>all</literal> is a list of all the
+        things referenced in the field (in this case, all the observations for a
+        particular case). <literal>count</literal> is the number of things
+        referenced (e.g. the # of observations for a case). You could also use
+        the <literal>length</literal> <glossterm basename="template
+        filter">filter</glossterm> to count the number of elements in the
+        <literal>all</literal> list and get the same number.
+        <literal>count</literal> is preferred though, since it accesses the
+        database more efficiently.
       </para>
       <informalexample>
-        <programlisting>{{ observation.cases.all }}</programlisting>
+        <programlisting>{{ cases.0.observation_set.count }}</programlisting>
         <caption>
-          Template code to access a list of all the cases an observation is
-          relevant to.
+          Template code for the the number of observations for the first case in
+          <varname>cases</varname>.
+        </caption>
+      </informalexample>
+      <informalexample>
+        <programlisting>{{ cases.0.observation_set.all.0.datetime_observed }}</programlisting>
+        <caption>
+          Template code for the <property>datetime_observed</property> field of
+          the first observation for the first case in the list
+          <varname>cases</varname>.
         </caption>
       </informalexample>
       <para>
-        Typically you would want to iterate over those fields like so:
+        That's getting a little unweildly. For convenience you can temporarily
+        assign a value to another variable with the <literal>with</literal>
+        <glossterm>template-tag</glossterm>. It has the syntax <literal>{% with
+        <replaceable>some value</replaceable> as <replaceable>variable
+        name</replaceable> %}</literal> and must be matched with a later
+        <literal>{% endwith %}</literal> tag. For example, to assign the first
+        case in <varname>cases</varname> to the variable <varname>case</varname>
+        and then fill-in it's animal's <property>field_number</property> and
+        it's <property>happened_after</property>:
       </para>
       <informalexample>
         <programlisting>
-{% for c in observation.cases.all %}
-{{ c.names }}
-{% endfor %}
-        </programlisting>
+{% with cases.0 as case %}
+{{ case.animal.field_number }}
+{{ case.happened_after }}
+{% endwith %}</programlisting>
       </informalexample>
       <para>
-        Typically, you'll want to access all the cases, not just the first one.
-        To do that, you can use the <function>for</function> template-tag.
+        <varname>case</varname> will only be defined between the
+        <literal>with</literal> and <literal>endwith</literal> tags.
+      </para>
+      <para>
+        You can nest <literal>with</literal> tags, for example:
+      </para>
+      <informalexample>
+        <programlisting>
+{% with cases.0 as case %}
+{{ case.animal.field_number }}
+{{ case.happened_after }}
+{% with case.observation_set.all.0 as obs %}
+{{ obs.observation_datetime }}
+{{ obs.observer.name }}
+{% endwith %}
+{% endwith %}</programlisting>
+      </informalexample>
+      <para>
+        Typically, you want to access each item in a list, one at a time.
+        Instead of giving their numeric indicies (which would mean you'd have to
+        know ahead of time how many there were), you can use the
+        <literal>for</literal> tag to repeat a section of a template, once for
+        each item in a list. It's syntax is <literal>{% for
+        <replaceable>variable name</replaceable> in
+        <replaceable>list</replaceable> %}</literal>. Everything between the
+        <literal>for</literal> and <literal>endfor</literal> tags will be
+        repeated with the variable mentioned in the <literal>for</literal> tag
+        set to one of the items in the list.
       </para>
       <informalexample>
         <programlisting>
 {% for case in cases %}
-{{ case.happened_after }}
-{% endfor %}
-        </programlisting>
+Case: {{ case.name }}
+validity: {{ case.valid }}
+
+{% endfor %}</programlisting>
         <caption>
-          Template code to fill-in the <property>happened_after</property> of
-          every <type>case</type> in the <type>list</type>
-          <varname>cases</varname>.
+           Template that lists all the cases in <varname>cases</varname>, giving
+           their name and the value of their <property>valid</property> field,
+           followed by a blank line.
         </caption>
       </informalexample>
       <para>
@@ -196,21 +255,20 @@
         <programlisting>
 {% for case in cases %}
 {{ case.get_valid_display }}
-{% endfor %}
-        </programlisting>
+{% endfor %}</programlisting>
         <caption>
           Template code to fill-in the display-value of the
-          <property>valid</property> field on every <type>case</type>
+          <property>valid</property> field on every case
         </caption>
       </informalexample>
       <para>
-        The templating language comes with many built-in 'filters'. One
+        The templating language comes with many built-in filters. One
         particularly useful one is <function>yesno</function>. Many of the
-        database's fields (such as
-        <type>case</type>.<property>ole_investigation</property>) have their
-        values stored as <literal>True</literal>, <literal>False</literal>, or
-        <literal>None</literal>. The <function>yesno</function> filter will
-        change those to <literal>yes</literal>, <literal>no</literal>, and
+        database's fields (such as case.<property>ole_investigation</property>)
+        have their values stored as <literal>True</literal>,
+        <literal>False</literal>, or <literal>None</literal>. The
+        <function>yesno</function> filter will change those to
+        <literal>yes</literal>, <literal>no</literal>, and
         <literal>maybe</literal>.
       </para>
       <informalexample>
@@ -234,7 +292,7 @@
         parts, the 2<superscript>nd</superscript> and
         3<superscript>rd</superscript> are used for <literal>False</literal> and
         <literal>None</literal>, respectively. For example, to display a
-        <type>case</type>'s <property>ole_investigation</property> field with
+        case's <property>ole_investigation</property> field with
         <literal>unknown</literal> instead of <literal>maybe</literal>:
       </para>
       <informalexample>
@@ -247,7 +305,7 @@
     <section>
       <title>References</title>
       <para>
-        The complete list of fieldnames for <type>cases</type> can be found in
+        The complete list of fieldnames for cases can be found in
         <link
         xl:href="https://www.nero.noaa.gov/ci/admin/doc/models/incidents.case/">the
         documentation available on the database's admin pages</link>. There is
