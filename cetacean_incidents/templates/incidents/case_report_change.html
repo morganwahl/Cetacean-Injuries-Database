@@ -39,6 +39,9 @@
 <div class="subform">
     <table>
     {{ form.as_table }}
+    {% if report.uploader %}
+    <tr><th>Uploaded By</th><td>{{ report.uploader }}</td></tr>
+    {% endif %}
     </table>
     <button type="submit" id="save">save changes</button>
     <button type="submit" id="try">try this template with the selected cases</button>
