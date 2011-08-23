@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from django.forms.widgets import CheckboxSelectMultiple as DjangoCheckboxSelectMultiple
 
@@ -26,7 +27,7 @@ class CheckboxSelectMultiple(DjangoCheckboxSelectMultiple):
         """ % {
             'name': name,
         }
-        return result + script
+        return mark_safe(result + script)
 
     class Media:
         js = (settings.JQUERY_FILE,)
