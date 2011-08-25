@@ -23,5 +23,11 @@
   </fo:inline>
 </xsl:template>
 
+<xsl:template match="database">
+  <fo:inline text-transform="uppercase">
+    <xsl:apply-templates/>
+  </fo:inline>
+</xsl:template>
+
 </xsl:stylesheet>
 
