@@ -6,13 +6,13 @@ XSLT_DIR := /usr/share/xml/docbook/stylesheet/docbook-xsl
 STYLESHEET := manual.css
 HTML_PARAMS := --stringparam html.stylesheet $(STYLESHEET)
 
-BUILD_DIR := built
+BUILD_DIR := ../cetacean_incidents/site_media/manual
 
 MANUAL_DEPENDS := TRT\ example.html api.docbook reports.docbook ui.docbook
 
+.PHONEY: all html pdf
 
 all: html pdf
-
 
 html: $(BUILD_DIR)/manual.html $(BUILD_DIR)/manual.css
 
