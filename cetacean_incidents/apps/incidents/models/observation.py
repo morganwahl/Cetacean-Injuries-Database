@@ -303,36 +303,33 @@ class Observation(Documentable, Importable):
         ),
         verbose_name= "Condition (dead or alive?)",
         help_text= '''\
-            <em>carcass condition definitions</em>:
-            <dl>
-                <dt>fresh dead</dt>
-                <dd>
+            **carcass condition definitions**:
+
+                fresh dead
                     The carcass was in good condition (fresh/edible). Normal
                     appearance, usually with little scavenger damage; fresh
                     smell; minimal drying and wrinkling of skin, eyes and mucous
                     membranes; eyes clear; carcass not bloated, tongue and penis
                     not protruded; blubber firm and white; muscles firm, dark
-                    red, well-defined; blood cells intact, able to settle in a
-                    sample tube; serum unhemolyzed; viscera intact and
-                    well-defined, gut contains little or no gas; brain firm with
-                    no discoloration, surface features distinct, easily removed
-                    intact.
-                </dd>
-                <dt>moderate decomposition</dt>
-                <dd>
+                    red, well\u2010defined; blood cells intact, able to settle
+                    in a sample tube; serum unhemolyzed; viscera intact and
+                    well\u2010defined, gut contains little or no gas; brain firm
+                    with no discoloration, surface features distinct, easily
+                    removed intact.
+
+                moderate decomposition
                     The carcass was in fair condition (decomposed, but organs
                     basically intact). Carcass intact, bloating evident (tongue
                     and penis protruded) and skin cracked and sloughing;
                     possible scavenger damage; characteristic mild odor; mucous
-                    membranes dry, eyes sunken or missing; blubber blood-tinged
-                    and oily; muscles soft and poorly defined; blood hemolyzed,
-                    uniformly dark red; viscera soft, friable, mottled, but
-                    still intact; gut dilated by gas; brain soft, surface
-                    features distinct, dark reddish cast, fragile but can
-                    usually be moved intact.  
-                </dd>
-                <dt>advanced decomposition</dt>
-                <dd>
+                    membranes dry, eyes sunken or missing; blubber
+                    blood\u2010tinged and oily; muscles soft and poorly defined;
+                    blood hemolyzed, uniformly dark red; viscera soft, friable,
+                    mottled, but still intact; gut dilated by gas; brain soft,
+                    surface features distinct, dark reddish cast, fragile but
+                    can usually be moved intact.
+
+                advanced decomposition
                     The carcass was in poor condition (advanced decomposition).
                     Carcass may be intact, but collapsed; skin sloughing;
                     epidermis of cetaceans may be entirely missing; often severe
@@ -340,16 +337,13 @@ class Observation(Documentable, Importable):
                     pockets of gas and pooled oil; muscles nearly liquefied and
                     easily torn, falling easily off bones; blood thin and black;
                     viscera often identifiable but friable, easily torn, and
-                    difficult to dissect; gut gas-filled; brain soft, dark red,
-                    containing gas pockets, pudding-like consistency.
-                </dd>
-                <dt>skeletal</dt>
-                <dd>
+                    difficult to dissect; gut gas\u2010filled; brain soft, dark
+                    red, containing gas pockets, pudding\u2010like consistency.
+
+                skeletal
                     Carcass was mummified or skeletal remains. Skin may be
                     draped over skeletal remains; any remaining tissues are
                     desiccated.
-                </dd>
-            </dl>
         ''',
     )
     
