@@ -8,7 +8,7 @@ HTML_PARAMS := --stringparam html.stylesheet $(STYLESHEET)
 
 BUILD_DIR := ../cetacean_incidents/site_media/manual
 
-MANUAL_DEPENDS := TRT\ example.html api.docbook reports.docbook ui.docbook
+MANUAL_DEPENDS := TRT\ example.html api.docbook model.docbook reports.docbook ui.docbook
 
 .PHONEY: all html pdf
 

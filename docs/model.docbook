@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<part
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xl="http://www.w3.org/1999/xlink"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:lang="en-US"
+  version="5.0"
+  id="reports"
+>
+  <title>A Model for Marine Mammal Injuries Data</title>
+  <partintro>
+    <para>
+      This part of the manual describes a general model for tracking animal
+      observations and injuries. There are a variety of different models and
+      definitions implicitly used in the various forms and spreadsheets and deal
+      with this data. This is an attempt at defining one that can easily
+      encompass data from all those different sources while still being simple
+      enough to do meaningul analysis with.
+    </para>
+  </partintro>
+
+  <chapter>
+    <title>Ancillary datatypes</title>
+    <section xml:id="uncertain_datetime_model">
+      <title>Uncertain Date/Time</title>
+      <para>
+        This is a date and time with varying degrees of uncertainty to it. It
+        has the typical fields of a date and time (year, month, day, hour, etc)
+        but each of them may be left as <quote>unknown</quote>. This means that
+        when storing values of this type in a relational database the database's
+        built-in date and time types can't be used. Instead a string
+        representation is used and comparisons must be done with substring
+        operations.
+      </para>
+      <para>
+        TODO examples of serializations
+      </para>
+      <para>
+        TODO examples of operators and definitions
+      </para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Observations</title>
+    <para>
+      The most important type of entry in the database is for an Observation. An
+      observation is defined as being by a single observer and of a single
+      animal, with a single observation date/time. It might be a brief sighting
+      from a plane, a detailed examination on a beach, or an attempt at
+      disentanglement. The key thing is that an animal was observed and the
+      Observation entry is to record what all information about the animal could
+      be determined in that time (including what happened to it during the
+      observation, in the case of disentanglement attempts).
+    </para>
+    <para>
+      The specificity with which seperate Observations are recorded is somewhat
+      up to the user. Currently, sighting of the same animal by the same
+      observer on the same day are considered a single long observation and are
+      given a single entry in the database. This is merely a database
+      user-policy, and is not inherint in this model.
+    </para>
+    <para>
+      Observations have a <literal>narrative</literal> field which is text of
+      arbitrary length that is complete description of who the observer is, what
+      they saw, and when. Narratives are important for indicate the sources of
+      the data in other fields, as well as putting them into context. Ideally,
+      all the other data in the database could be determined from reading these
+      narratives. The other Observation fields and the rest of the database's
+      structure are there to connect related Observations (e.g. for the same
+      animal, or by the same observer) or facilitate searching and analysis of
+      the data (e.g. search for observation of a particular taxon). There are
+      some important exceptions to this, such as uploaded files (which are
+      almost always primary sources of data), and the fields that are similiar
+      to Observation narratives, but for gear-analysis (which is not an
+      observation of an animal).
+    </para>
+    <para>
+      An Observation entry has an <literal>observer</literal>, which in the
+      database is a reference to a Contact entry. The observer is who actually
+      saw the animal and is the ultimate source for the data recorded in the
+      narrative. An Observation may also have a <literal>reporter</literal>,
+      which is the proximate source for the data (roughly, it's who told NOAA
+      about the observation). The reporter and observer are often the same.
+    </para>
+    <para>
+      In parallel to the observer and reporter are the <literal>observation
+      date-time</literal> and <literal>report date-time</literal> fields. They
+      have <link href="#uncertain_datetime">Uncertain Date/Time</link> values.
+    </para>
+    <para>
+      The observation date-time is defined as the start of the observation.
+      Currently, the database doesn't store a duration or observation end-time,
+      since those fields weren't deemed necessary for any queries. The exact
+      timing of observations can be made clear in the narrative. The database
+      currently requires observations to at least have a year defined in their observation date, but all
+      other subfields (e.g. month, minute) can be left as <quote>unknown</quote>
+    </para>
+    <para>
+      The report date-time is when NOAA heard of the observation. It's exact definition isn't pinned down yet, but the purpose of the field is to track the order in which observations we heard about, since that may very well be different than the order they occured.
+    </para>
+    <para>
+      Observations have an animal field, which is a reference to an Animal (see
+      <link href="#animal_model">the chapter on the Animal model</link> below).
+      Observations of the same animal should refer to the same animal entry.
+      Currently, the database requires an an Observation to have an value for
+      it's animal field, but it could be changed to allow the animal field to be
+      left blank. This might make sense for species where individuals aren't
+      typically distinguished. Although even in that case, you would want to
+      occationally make an Animal entry to indicate two observations were of the
+      same animal.
+    </para>
+  </chapter>
+
+  <chapter xml:id="animal_model">
+    <title>Animals</title>
+  </chapter>
+
+</part>
+
