@@ -326,7 +326,7 @@ class Entanglement(Case, GearAnalysis):
                 self.observation_set.all()
             )
         )
-        
+
     @models.permalink
     def get_absolute_url(self):
         return ('entanglement_detail', [str(self.id)])

@@ -467,7 +467,7 @@ class Observation(Documentable, Importable):
             if self.observer:
                 ret += "by %s " % self.observer
         except Contact.DoesNotExist:
-            ret += "by <non-existant observer>"
+            ret += "by <non\u2010existant observer>"
         ret += ( "(#%06d)" % self.id if self.id else "(unsaved!)" )
         return ret
     
@@ -511,7 +511,7 @@ for m, rm, fn in (
 class ObservationExtension(models.Model):
     '''\
     Classes that want to add sets of fields to Observations can subclass this.
-    E.g. entanglement-specific fields (which will only be needed if an
+    E.g. entanglement\u2010specific fields (which will only be needed if an
     Observation is relevant to an Entanglement Case) can be put in a subclass of
     this. It doesn't make sense to subclass Observation for that, since an
     Observation instance may have multiple ObservationExtensions that go with

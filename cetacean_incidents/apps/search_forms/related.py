@@ -130,7 +130,7 @@ class SubqueryField(Field):
         #defaults = {
         #    'required': True,
         #    'widget': None,
-        #    'label': None,
+        #    'label': query_form_class._meta.model._meta.verbose_name,
         #    'initial': None,
         #    'help_text': None,
         #    'error_messages': None,
