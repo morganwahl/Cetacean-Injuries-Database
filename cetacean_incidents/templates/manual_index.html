@@ -1,0 +1,17 @@
+{% extends "page.html" %}
+
+{% block title %}{{ block.super }}: User Manual{% endblock %}
+
+{% block header %}
+<h2>User Manual</h2>
+{% endblock %}
+
+{% block content %}
+<p>
+  The user manual documents the animal&#x2010;observation model that the
+  database implements, the detailed definitions of every field, the website
+  user-interface, and the report-generating system. It's available 
+  <a href="{{ MEDIA_URL }}manual/manual.html">online</a> and as a 
+  <a href="{{ MEDIA_URL }}manual/manual.pdf">PDF</a>
+</p>
+{% endblock %}
