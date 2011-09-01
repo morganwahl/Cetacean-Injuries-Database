@@ -276,6 +276,8 @@ def _case_report_change(request, report=None, report_type=None):
                     querystring = urlencode(doseq=True, query={'cases': case_ids})
                     return redirect(url + '?' + querystring)
         if pressed == 'try':
+            if creating:
+                report = form.save(commit=False)
             if form.is_valid() and cases_form.is_valid():
                 report = report.specific_instance()
                 rendered = report.render({
