@@ -3,8 +3,7 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
    version="1.1"
-   width="1600"
-   height="1200"
+   viewBox="0 0 1600 1200"
 >
   <defs>
     <path
@@ -14,8 +13,8 @@
   </defs>
   <image
      xlink:href="2.png"
-     height="1200"
      width="1600"
+     height="1200"
   />
   <g transform="translate(350, 280) scale(12)">
     <!-- the shadow is the same shape, offset, with different colors -->

@@ -1,0 +1,694 @@
+<?xml version="1.0" encoding="utf-8"?>
+<part
+  xmlns="http://docbook.org/ns/docbook"
+  xmlns:xl="http://www.w3.org/1999/xlink" 
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xml:lang="en-US"
+  version="5.0" 
+>
+  <title>Marine Mammal Injury Database - Biologist Notes</title>
+  <partintro>
+    <para>
+      This guide is meant to provide the non‐programmer with some guidelines on
+      how to enter cases. The perspective is based upon entering entanglement
+      cases; however, the basics apply to any data wishing to be entered.
+    </para>
+    <para>
+      It is important to realize that this section is meant as a supplemental
+      piece to the entire database manual. Please review the entire manual
+      before database use.
+    </para>
+    <para>
+      This database was designed to be used by NERO staff for ‘warehouse’
+      storage of all large whale human interaction (HI), strandings and
+      mortalities. Information within the database is meant for NOAA staff only
+      unless cleared by the appropriate NERO programs. Currently, a data request
+      application is being vetted through the North Atlantic Right Whale
+      Consortium board of directors for approval. If approved, the public may
+      request approved information from the database (non‐sensitive) through the
+      consortium and receive their requested data in a spreadsheet format.
+    </para>
+    <para>
+      The database is currently stored on a NERO server maintained by IRM.
+      Access to the database is only permitted for NOAA staff. Staff outside of
+      the NERO may need VPN access through their computer for access. Contact
+      NERO PRD staff first for access approval who will then guide you to NERO
+      IRM for the appropriate access application forms.
+    </para>
+  </partintro>
+  
+  <chapter>
+    <title>Database Structure and Categories</title>
+    
+    <variablelist>
+      <varlistentry>
+        <term>Animal</term>
+        <listitem>
+          <para>
+            The Animal is the foundation of the database structure with all
+            fields being linked to a particular Animal. For Animals the user can
+            add additional cases, information or attached files using their
+            unique ID names or numbers. All animals regardless if an ID name or
+            number is assigned for that individual Animal, will have a unique
+            sequentially generated ID number will be generated. This allows
+            non‐ID’d Animals to also be unique and reduces conflicts for
+            database summaries and reports. For example, if all minke whale
+            cases were not given a computer generated ID number automatically
+            any search involving minke whales would indicate only one animal
+            involved with all Human Interaction cases.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Cases</term>
+        <listitem>
+          <para>
+            Cases are defined generally as HI, stranding or mortalities for one
+            animal. Cases follow the unique Animal and accordingly multiple
+            cases can be assigned to the same individual Animal. There also can
+            be multiple cases for the same ‘event’. For example, a deceased
+            whale with recent ship strike trauma and entangling gear present,
+            would have two cases for the same ‘event’ – entanglement and ship
+            strike. NERO PRD staff will fill in the corresponding cases to their
+            duties. Another example would be if a dead, entangled carcass was
+            found. There would be two cases for this animal. One would be the
+            general stranding/mortality case which stranding program staff would
+            fill out. The other would be an entanglement case filled out by
+            entanglement staff. If two or more animal are involved with an
+            entanglement incident then each animal receives its own case.
+            Multiple animals stranding are handled differently and consult with
+            the NERO stranding group for proper protocol. There are three types
+            of cases: Entanglement, ship strike, or case (generic
+            stranding/mortality case).
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Observations</term>
+        <listitem>
+          <para>
+            Observations are the individual sightings by human which make up a
+            case within one calendar day. Generally, there is only one
+            observation per day/per case with the ‘status’ (alive/dead,
+            entangled, gear shed, etc) indicating how the animal was at the end
+            of the observation (end of the day). For example, if an entangled
+            whale was sighted early in the morning and was lost for 6 hours,
+            then found later in the same day the database would include
+            information from both of those sightings (usually explained within
+            the narrative). If the animal is observed through midnight, then two
+            observations would occur. Animals that are tracked with telemetry
+            are not given an observation for every day they are tagged. Only
+            when the animal is sighted by a person is an observation created.
+            Telemetry tracks and information can be added in the attached files
+            section for the animal or case.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Gear identification</term>
+        <listitem>
+          <para>
+            Generally, has restricted access due to sensitive nature. NERO
+            (potentially other regions in the future) gear experts will fill in
+            this information that is associated with a particular case. Release
+            of this information with contacting appropriate NERO gear expert
+            staff is prohibited. Visibility and access to these fields are only
+            granted to users with this specific permission.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Serious Injury (SI) determination</term>
+        <listitem>
+          <para>
+            NEFSC will be using the database to help them determine large whale
+            SI status for HI cases. NEFSC will exclusively fill out these fields
+            that are associated with a case. Release of this information without
+            contacting appropriate NEFSC staff is prohibited.
+          </para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term>Fields</term>
+        <listitem>
+          <para>
+            Fields are specific data within the database. Think of fields as a
+            column in a spreadsheet. Certain fields may only be visible,
+            depending on permission and/or the type of case you are entering.
+            For example, you may not see all ship strike fields if you are
+            entering in an entanglement case. However, a large number of fields
+            are used by all cases. Any blank fields not entered are
+            automatically assigned an unknown value. In other words, there won’t
+            be any blank fields in existing cases.
+          </para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+  </chapter>
+  
+  <chapter>
+    <title>Website navigation</title>
+    
+    <para>
+      The website/database is located at: <link xl:href="https://www.nero.noaa.gov/ci/">https://www.nero.noaa.gov/ci/</link>.
+    </para>
+    <para>
+      Prior to accessing the complete database you will need to contact Jamison
+      Smith or David Morin at NERO for a username and password. Please do not
+      release your username and password for other staff to use. Every addition,
+      modification, or deletion is associated with the logged in user.
+    </para>
+    <para>
+      On the login page (see <xref linkend="image1"/>) enter your specific
+      username and password for the database and press the login button below
+      the password entry area.
+    </para>
+    <figure xml:id="image1">
+      <title>login page</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/1.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      The home page (see <xref linkend="image2"/>) allows the user to begin
+      searching for specific animal or cases as defined by the search fields in
+      the boxed section of the page (green arrow) or other searches such as the
+      tabbed links above the boxed section, such as the yearly summaries (red
+      arrow). Next to the red arrowed tabs are some administrative tools (only
+      visible to administrators) for managing the database. Users may also begin
+      to add animals or cases under the appropriate tabs (ex. adding a new case,
+      click on the “add” link just below “cases”). The search functions under the
+      tabs have more extensive features than the boxed search features on this
+      page.
+    </para>
+    <figure xml:id="image2">
+      <title>home page</title>
+      <screenshot>
+        <mediaobject>
+          <!-- FIXME the xhtml stylesheets don't embed SVG the same way they do png :-( -->
+          <!--
+          <imageobject>
+            <imagedata fileref="images/2.svg" format="SVG" width="100%"/>
+          </imageobject>
+          -->
+          <imageobject>
+            <imagedata fileref="images/2.svg.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      We will start with the assumption that the user is adding a new case.
+      Searching for specific animals or cases will be covered later in this
+      section.
+    </para>
+    <para>
+      After clicking the “add” under cases, it will bring you to a new case
+      page (<xref linkend="image3"/>). There are two radio buttons labeled “add a
+      new animal entry” and the highlighted one “use an existing entry”. If you
+      have a known ID’d animal for your entry case, you should begin my typing
+      the name or ID number (not case sensitive) in the “existing animal” box.
+      You will see as you type the database will automatically begin to narrow
+      down choices depending on the characters you type. For example, if you
+      type “Canopy”, you will see the humpback whales: Canopy and 2011 calf of
+      Canopy appear in the list below. So depending on the characters you type,
+      the database will return any animals that contain those characters. This
+      allows you to check to see if the animal already exists in the database.
+      If you have a new animal, the ID search turned up negative or it is an
+      unknown/not ID’d animal (ex. minkes), then click on the new animal entry
+      button. This will create a brand new animal for the database. Don’t worry
+      if you cannot initially find an existing animal but discover it later.
+      There is a merge feature that will allow you to merge animals, cases or
+      observations. The merge feature will be discussed later.
+    </para>
+    <para>
+      Below the “Existing animal” box is the “Case type” drop down menu. In this
+      menu you can pick the type of case that you would like to enter:
+      Entanglement, ship strike, or case (generic stranding/mortality case). Hit
+      the “Submit” button after your existing/new animal, and case type are
+      chosen. In this subsequent case explanation we will ‘enter’ a new
+      entanglement case for a new animal.
+    </para>
+    <figure xml:id="image3">
+      <title>initial new case page</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/3.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      After submitting for a new case it will bring you to New Case entry page:
+      the ‘tabbed’ page (<xref linkend="image4"/>). The tabs below are meant to
+      be entered from left to right. Depending on who entered/edited the last
+      case, the leftmost tab “Animal” may not be highlighted. Click on the
+      “Animal” tab which will show the page below. The reasoning behind why the
+      “Animal” tab is not highlighted automatically is in case the user needs to
+      edit a number of specific fields in existing cases. The database has a
+      memory of which last tab was used.
+    </para>
+    <para>
+      Tabs can be navigated by clicking on the next tab near the bottom of the
+      page or the appropriate tab you would like to enter in information. For
+      most users, I would highly suggest you navigate the tabs in order from
+      left to right. Do not skip tabs. There is a large amount of fields and
+      while you may think you don’t have the necessary information for some
+      fields, 99% of the time you do have enough for at least on field on each
+      tab.
+    </para>
+    <para>
+      Most fields have visible definitions next to the entry box. Please read
+      and understand these definitions before entry. If you have any questions
+      as to the definition of the field, please contact appropriate NERO staff
+      beforehand.
+    </para>
+    <para>
+      The “Animal” tab is section where the user will create the new animal for
+      the new case. Focusing on entanglement – our first entry will be in the
+      name field if it is a known/ID’d animal that is new to the database.
+      Generally, you don’t need to add symbols to the name field (ex. for a
+      right whale just enter 2427, not #2427). If the animal is truly an
+      unknown, just leave the field blank. The database will automatically
+      assign a unique ID number for that animal regardless if known or not.
+    </para>
+    <para>
+      “Determined taxon” this is an auto‐generating taxon list. Simply type in
+      the common or scientific name of the species and it will give you options
+      to choose. Remember that this field is for confirmed species ID. If it is
+      unclear as to the exact species, choose an order, suborder or appropriate
+      taxa on the tree.
+    </para>
+    <para>
+      The next field is the “Determined sex” field. Pretty self explanatory. If
+      unknown leave blank.
+    </para>
+    <para>
+      The next possible field is “Dead on or before”. Obviously, only needed for
+      deceased animal cases. Database definition: A date when the animal was
+      certainly dead, as determined from the observations of this animal. If
+      you're unsure of an exact date, just put something certainly after it;
+      e.g. if you know it was dead sometime in July of 2008, just put 2008‐07‐31
+      (or 2008‐08‐01). If you're totally unsure, just put the current date. Any
+      animal with a date before today is considered currently dead.
+    </para>
+    <para>
+      The rest of the fields are for the stranding crew.
+    </para>
+    <figure xml:id="image4">
+      <title>new case data-entry page</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/4.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      The case tab (<xref linkend="image5"/>) is the beginning of how NOAA
+      tracks a case.
+    </para>
+    <para>
+      The “incident was on or after” field deals with known animals and when
+      their last gear free sighting occurred. This allows users to know when the
+      event could have occurred and how long it was entangled before its first
+      entangled sighting. This is helpful for health and gear analysis. You can
+      use PCCS for humpbacks and the right whale consortium for right whales.
+    </para>
+    <para>
+      “Validity” field has three choices – confirmed, suspected or invalid. A
+      confirmed entanglement case must be an animal with gear present that was
+      either documented (entanglement is visible in documentation) or witnessed
+      by a reliable observer (trained network member, fisherman with experience,
+      etc.). Recreational and even commercial fisherman, USCG and other marine
+      professionals cannot be relied upon to always make an accurate assessment
+      if the whale is entangled. If the case is unclear, then lean towards a
+      conservative assessment. Think if the evidence would stand up in court. If
+      you feel the case cannot be a confirmed entanglement, then you can choose
+      the suspected field. Invalid cases are existing cases that were later
+      determined not be an actual case. It is important to note, live or dead
+      animals, that have new entanglement trauma but no gear present are NOT
+      considered an entanglement case. This definition is different than in the
+      past and accordingly summary numbers have changed for past years. The old,
+      now “invalid” cases, still exist in the database and can be found but they
+      would not count towards new summary numbers. NEFSC and the NERO stranding
+      program will cover these cases.
+    </para>
+    <para>
+      “OLE investigation” ‐ yes, no or unknown. Certain cases might be under
+      investigation by OLE, usually for suspected illegal gear. By answering
+      this field with a yes, it will provide a highlighted red warning for this
+      case, notifying the user that any information on this case should not be
+      released until the investigation is complete.
+    </para>
+    <para>
+      “Human interaction” – yes, no or unknown. A carryover from the stranding
+      portion of the database. If you are entering in a known entanglement case
+      then naturally this will be “yes”.
+    </para>
+    <figure xml:id="image5">
+      <title>case tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/5.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      The next tab after the 'Case' tab is the 'Case: Entanglement' tab (<xref linkend="image6"/>).
+    </para>
+    <para>
+      “Entanglement NMDS ID” field ‐ This allows users to enter in the NMFS ‘E
+      code’ (ex. E01‐11 – the first known case for 2011). You can also put in
+      other NMFS or historical codes in here and the case will be found with any
+      of the appropriate codes. In other words if case E01‐01 was also known as
+      E03‐01 (for example, because of the new entanglement definition where gear
+      must be present for a case, this has changed some historical
+      classifications); I would enter “E01‐ 01 (formerly known as E03‐01)” So if
+      a user is searching for the case regardless if they have a new or old
+      report they will find the appropriate case. The “formerly known” is added
+      so the user is not confused with just two ‘E’ numbers listed.
+    </para>
+    <para>
+      The database also stores any old NMFS ID numbers ever entered in this
+      field. In other words if the user made an error or correction after the
+      initial entry, the old number is still associated with this case even
+      though it is not visible. This old number is also used in a search. For
+      example, say the user entered E32‐11 by accident and saved the entry. They
+      then realized their mistake and edited the case, ‘deleted’ the incorrect
+      ‘E’ number of E32‐11, and then entered the correct ‘E’ number E33‐11, then
+      saved. If a search was conducted for E32‐11, at the minimum, this new
+      E33‐11 case and the ‘true’ E32‐11 will come up in the search. The user
+      will then have to determine the correct case by using other fields such as
+      species, name, observation date, etc. Again, the reasoning behind this is
+      changes often occur and the database was designed to be all inclusive and
+      let the user determine the correct case.
+    </para>
+    <para>
+      “Was the gear analyzed” field – yes, no or unknown. NEFSC gear experts
+      usually fill out this field although for historical cases this can be
+      entered by entanglement experts who have knowledge about the case.
+    </para>
+    <figure xml:id="image6">
+      <title>case entanglement tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/6.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      The next six tabs correspond to the observation (the events of one
+      observation day) for this new case.
+    </para>
+    <para>
+      “Observation” tab (<xref linkend="image7"/>) – This is the reporting year,
+      month, day and time of a network member reporting to NMFS. This must be
+      the time and person that informed NMFS and not another network member.
+      This may not be the actual person who witnessed the entanglement. For
+      example, a fisherman could contact the USCG, who contacted NMFS. The USCG
+      report time would go here. Often dates, times and reporters are different
+      than the actual observers. Use military time.
+    </para>
+    <para>
+      “Reporter” field – The database keeps track of parties involved in cases.
+      “No contact info for reporter” is self explanatory. If you know the
+      reporter, you should select “Use an existing contact” button first. You
+      will see a dropdown list of already used contacts. Generally, try to avoid
+      potentially sensitive individual names and use the categories or
+      organization names. For example, commercial fisherman, recreational
+      fisherman, USCG, GA DNR Aerial Survey, etc. Whale watch companies all
+      start with a WW. Again if you make a mistake and add a ‘new’ contact for
+      one that already exists and you save the case, you can always merge the
+      contacts later.
+    </para>
+    <figure xml:id="image7">
+      <title>observation tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/7.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      If you need to “Add a new contact” the page will expand (<xref
+      linkend="image8"/>). This allows you to enter in a new contact and
+      appropriate contact information. The Contact affiliations is an early
+      database leftover (may possibly delete it) that allows the user to lump a
+      contact into one or numerous categories. If you would like to add a new
+      category there are fields on the far right.
+    </para>
+    <figure xml:id="image8">
+      <title>new observer</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/8.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      'Observation: Observer' tab (<xref linkend="image9"/>) – This tab has the
+      same time, date and personnel fields as the last tab; however, this is the
+      location that you put the information for who and when the witness
+      actually observed the entanglement.
+    </para>
+    <para>
+      Below is the location of the first sighting of the entanglement. Remember
+      to put the first location and time of the first sighting of the day. Do
+      not put the last. The “observation location” field is a place to put a
+      general description of the location (ex. 2.5 NM NW of Race Point,
+      Provincetown, MA).
+    </para>
+    <figure xml:id="image9">
+      <title>Observation: Observer tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/9.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      Lower down on the same tab (<xref linkend="image10"/>) there are some
+      buttons to put the country. A pull down member for what kind of waters
+      (state, federal, etc.). Latitude and Longitude fields. Notice that you can
+      enter the lat/lon in a number of different formats and it will
+      automatically convert. Below that is a check box if the observer was on a
+      vessel (carryover from ship strike information). Here you can put the name
+      of the observer vessel, home port and a few other bits of information if
+      available.
+    </para>
+    <figure xml:id="image10">
+      <title>location details</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/10.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      Animal description tab (<xref linkend="image11"/>) – There is a taxon
+      field for the observation. What the animal was reported as, unconfirmed,
+      correct or not. This could be different than the actual species
+      confirmation ID under the “Animal” tab. Sex, if known, as described in the
+      field. This again could be different than the confirmed sex field under
+      the “Animal” tab. The “Animal description” field is a text field that
+      allows the user to describe the animal if species ID was unclear or
+      unconfirmed in the field. Be as descriptive as possible.
+    </para>
+    <para>
+      The “Animal length” field is a place to put the estimated or known length
+      of the animal, in varying units. The auto or selected accuracy feature
+      allows the user to show how precise the measurement was. For example, if
+      you know the carcass was 10.075 meters and select auto, it will save the
+      measurement as 10.075. However, if you select a number it will only save
+      that number of decimal places. So in this case, if you selected 2 it would
+      change the measurement to 10.08. Generally, you want to enter in the
+      precise measurement and press auto. The exception is 10.750 or something
+      similar that ends in zero. Auto will save it as 10.75; however, you know
+      your measurement is more accurate so select 3 in this case.
+    </para>
+    <para>
+      “Age class” can be a subjective estimate at the time of observation.
+      Remember for a very long case this classification may change over time.
+      For example, the animal may start off as a calf, juvenile to adult.
+    </para>
+    <figure xml:id="image11">
+      <title>animal description tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/11.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      Observation Incident tab (<xref linkend="image12"/>) – A large number of
+      basic yes/no/unknown fields pertaining to the case. The “Body condition
+      and wounds description” is the place where the user should describe any
+      witnessed/documented wounds and the overall health of the animal. The
+      biopsy and genetic samples taken are essentially the same thing except we
+      are using the biopsy field as a core (dart) sample taken from a live
+      animal at sea. “Was a tag put on the animal” includes any tag that was put
+      on the animal during this observation AND if the animal already had a tag
+      before the observation took place. For example, a disentanglement attempt
+      on an already tagged whale would have this field as “yes”, even though a
+      tag wasn’t added during this observation.
+    </para>
+    <figure xml:id="image12">
+      <title>incident tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/12.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      “Observation Entanglement” tab (<xref linkend="image13"/>) – This tab
+      contains information on how the whale was entangled. Anchored, entangled
+      body locations, gear description and entanglement description. Pay
+      attention to the definitions and follow those guidelines. The gear
+      description is just focused on the gear, not how the whale was entangled,
+      which is the entanglement description. There is also gear retrieved and by
+      whom and disentanglement attempted. In other words would a take be
+      considered under the permit. The entanglement status is the status of the
+      animal at the end of the observation day. <emphasis>It is important to
+      note that the only entanglement observations that do not involve gear
+      present on the whale are gear shed observations.</emphasis>
+    </para>
+    <figure xml:id="image13">
+      <title>per-observation entanglement tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/13.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+    <para>
+      “Observation narrative” tab (<xref linkend="image14"/>) – This tab is an
+      extensive word summary of the entire observation. It is also useful to put
+      notes/comments of the animal/case between observations here. This will
+      allow for the most complete picture of the entire case. Please give
+      appropriate credit of quotes and sources. You will frequently see “From
+      PCCS website” for a narrative description of the observation. PCCS has
+      worked extensively providing detailed accounts of the event, with little
+      need to expand. Until NERO activates their ALWDN website, the PCCS website
+      should continue to be quoted and used here. Feel free to add any
+      additional comments you think are important to the case/observation. This
+      field is searchable.
+    </para>
+    <figure xml:id="image14">
+      <title>narrative tab</title>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/14.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </chapter>
+  <chapter>
+    <title>Merging animal, cases and observations</title>
+    <para>
+      Users may incorrectly add a new case or animal into the database,
+      warranting a correction. The database has an extensive merging feature
+      that allows users to compare each field entry side by side. When merging
+      it is important to remember the structure of the database: animal followed
+      by case and then the observations. For example, if the user incorrectly
+      creates a new animal and case for an already existing animal and case,
+      they user must merge the animal first. After the animal is merged, you
+      will then see the two corresponding cases under the same animal. If
+      applicable, the user then merges the cases and then if necessary the
+      observations. It is important to remember the first
+      animal/case/observation picked is the one the information will be merged
+      into.
+    </para>
+    <para>
+      The merge links are just above the tabs on any animal, case and
+      observation page. When starting to merge an animal, if known, pick the
+      animal you want to merge the information into and then search in the
+      “other animal” field that appears. This field will auto‐populate possible
+      animals as you type and name or ID number. If the animal does not have a
+      name or ID number, then you will need to use the auto‐generated computer
+      ID#. This number is listed when you do a search and see the animal/case.
+    </para>
+    <para>
+      Once the merging animal is chosen, then a page will appear with the
+      original animal on the left and the animal to be merged on the right (see
+      <xref linkend="image15"/>). Fields that are different will be highlighted
+      in yellow. The central column is what the field entries will be after the
+      merger is saved.
+    </para>
+    <figure xml:id="image15">
+      <title>merge example</title>
+      <caption>
+        <para>
+          This merging page is similar for cases and observations. It is
+          important to remember that if you edit the central column, that is the
+          final field entry for that animal/case/observation.
+        </para>
+      </caption>
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/15.png" format="PNG" width="100%"/>
+          </imageobject>
+        </mediaobject>
+      </screenshot>
+    </figure>
+  </chapter>
+  <chapter>
+    <title>Search capabilities</title>
+    <para>
+      There are a number of basic search functions on the home page and just
+      above the tabs (referred to as titles from now on) that allow users to
+      search for animal or cases based on common requests such as year, NMFS
+      entanglement ID or animal ID. By design, the search features are all
+      inclusive, including previously entered fields that have been changed. The
+      reasoning is the user might not have the latest report and proper data to
+      find the case. Ultimately, the search will provide a list of
+      animals/cases/observations that fill all the current and past search
+      criteria. More complex searches are found under the animal, case and
+      observation titles.
+    </para>
+    <para>
+      The overall database structure is important to remember when selecting a
+      complex search and understanding the results. Generally, most management
+      questions involve a case request and the user should start first with a
+      case search. If details from the animal or observation are needed to
+      further refine the search the appropriate boxes can be checked to expand
+      those sections and see the corresponding fields.
+    </para>
+    <para>
+      Given the large number of fields in the database, which are all
+      searchable, it is imperative the user understands the exact request. Given
+      the complexity, if you are having trouble initiating a search or
+      understand your results, please contact appropriate NERO staff who can
+      guide you through your request.
+    </para>
+  </chapter>
+</part>
+

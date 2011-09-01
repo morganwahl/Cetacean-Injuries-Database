@@ -13,6 +13,10 @@
 <!-- Model overview -->
 <xi:include parse="xml" href="model.docbook"/>
 
+<!-- biologist notes -->
+<!-- TODO integrate this with the other parts -->
+<xi:include parse="xml" href="biologist.docbook"/>
+
 <!-- UI details -->
 <xi:include parse="xml" href="ui.docbook"/>
 
