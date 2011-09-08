@@ -4,7 +4,7 @@ from django.test import TestCase
 from ..models.animal import Animal
 
 from animal import AnimalSearchForm
-from case import CaseAnimalForm
+from case import CaseAnimalForm, CaseSearchForm
 from observation import ObservationDateField
 
 class CaseAnimalFormTestCase(TestCase):
@@ -91,4 +91,20 @@ class AnimalSearchFormTestCase(TestCase):
         f = AnimalSearchForm(data=data)
         self.assertEqual(f.is_valid(), True)
         f._query()
+
+class CaseSearchFormTestCase(TestCase):
+    
+    def test_bug1(self):
         
+        for testdata in ( ['unk'], ['yes'], ['unk', 'yes'] ):
+            data = {
+                'observations_0': 'on',
+                'observations_1-indication_entanglement_0': 'in',
+                'observations_1-indication_entanglement_2': testdata,
+            }
+            form = CaseSearchForm(data=data)
+
+            self.assertEqual(form.is_valid(), True)
+            # just check that this doesn't throw any exceptions
+            form.results()
+

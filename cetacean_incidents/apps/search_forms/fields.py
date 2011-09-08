@@ -382,7 +382,7 @@ class NullBooleanFieldQuery(QueryField):
             
             # None doesn't acutally work as a value for 'in'
             if lookup_type == 'in' and None in lookup_value:
-                q = super(NullBooleanFieldQuery, self).query(value)
+                q = super(NullBooleanFieldQuery, self).query(value, prefix=prefix)
                 q |= Q(**{lookup_fieldname + '__' + 'isnull': True})
                 return q
 
