@@ -98,6 +98,8 @@ class UncertainDateTime(object):
         self.microsecond = microsecond
     
     def __eq__(self, other):
+        if other is None:
+            return False
         if not isinstance(other, UncertainDateTime):
             return NotImplemented
         for attr in 'year', 'month', 'day', 'hour', 'minute', 'second', 'microsecond':

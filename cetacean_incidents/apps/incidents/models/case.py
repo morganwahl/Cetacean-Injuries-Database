@@ -293,7 +293,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         if not obs.exists():
             return None
 
-        date = self.date(obs)
+        date = self.date
 
         s = {}
         
@@ -521,18 +521,13 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             # observations were cleared
             case = kwargs['instance']
             case.save()
-
-    def date(self, obs=None):
-        '''\
-        obs is a queryset of observations. it defaults to this case's
-        observations.
-        '''
-        if obs is None:
-            obs = self.observation_set
-
-        if not obs.exists():
-            return None
-        return obs.order_by('datetime_observed')[0].datetime_observed
+    
+    date = UncertainDateTimeField(
+        editable= False,
+        null= True,
+        db_index= True,
+        help_text= "The earliest observation date for this case.",
+    )
     
     def earliest_observation(self):
         if not self.observation_set.exists():
@@ -563,9 +558,16 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return self.latest_datetime() - self.earliest_datetime()
     
     def save(self, force_insert=False, force_update=False, using=None):
+        date = None
+        obs = self.observation_set
+        if obs.exists():
+           date = obs.order_by('datetime_observed')[0].datetime_observed
+        
+        if self.date != date:
+            self.date = date
+        
         super(Case, self).save(force_insert, force_update, using)
         
-        date = self.date()
         if date:
             def _next_number_in_year(year):
                 this_year = YearCaseNumber.objects.filter(year=year)
@@ -730,7 +732,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
 
     class Meta:
         app_label = 'incidents'
-        ordering = ('current_yearnumber__year', 'current_yearnumber__number', 'id')
+        ordering = ('date', 'current_yearnumber__year', 'current_yearnumber__number', 'id')
 
 guard_deletes(Animal, Case, 'animal')
 
