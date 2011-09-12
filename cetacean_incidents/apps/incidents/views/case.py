@@ -163,13 +163,16 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             case_qs = forms['case'].results()
             # QuerySet.distinct() won't remove duplicate cases because of the
             # joins happening behind the scenes.
-            ids = SortedDict()
+            seen_ids = []
+            seen_cases = []
             for c in case_qs:
-                ids[c.id] = c
-            case_list = ids.values()
+                if not c.id in seen_ids:
+                    seen_ids.append(c.id)
+                    seen_cases.append(c)
+            case_list = seen_cases
             # UseCaseReportForm expects a QuerySet, so create a new one with
             # no dupes.
-            case_qs = Case.objects.filter(id__in=ids.keys())
+            case_qs = Case.objects.filter(id__in=seen_ids)
             
             search_done = True
     

@@ -233,8 +233,11 @@ class BaseSearchForm(BaseForm):
         return q
     
     def results(self):
-        qs = self.manager.filter(self._query())
+        q = self._query()
+        print unicode(q)
+        qs = self.manager.filter(q)
         if self.cleaned_data['sort_by']:
+            print "sort by %s" % self.cleaned_data['sort_by']
             qs = qs.order_by(self.cleaned_data['sort_by'])
         return qs
     
