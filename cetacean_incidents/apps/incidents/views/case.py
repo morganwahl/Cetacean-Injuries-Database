@@ -155,17 +155,28 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
         forms[name] = cls(**form_kwargs)
     
     case_list = tuple()
+    case_qs = None
     
     search_done = False
     if forms['case'].is_bound:
         if forms['case'].is_valid():
-            case_list = forms['case'].results()
+            case_qs = forms['case'].results()
+            # QuerySet.distinct() won't remove duplicate cases because of the
+            # joins happening behind the scenes.
+            ids = SortedDict()
+            for c in case_qs:
+                ids[c.id] = c
+            case_list = ids.values()
+            # UseCaseReportForm expects a QuerySet, so create a new one with
+            # no dupes.
+            case_qs = Case.objects.filter(id__in=ids.keys())
+            
             search_done = True
     
     pressed = request.GET.get('pressed', None)
 
     if pressed == 'use_report_button':
-        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_list, data=request.GET)
+        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_qs, data=request.GET)
         if use_report_form.is_valid():
             report = use_report_form.cleaned_data['report'].specific_instance()
             rendered = report.render({
@@ -173,7 +184,7 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             })
             return HttpResponse(rendered, mimetype=report.format)
     else:
-        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_list)
+        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_qs)
     
     if pressed == 'change_report_button':
         change_report_form = ChangeCaseReportForm(prefix='change_report', data=request.GET)
