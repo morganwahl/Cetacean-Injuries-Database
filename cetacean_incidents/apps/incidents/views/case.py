@@ -178,7 +178,7 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             case_list = seen_cases
             # UseCaseReportForm expects a QuerySet, so create a new one with
             # no dupes.
-            case_qs = Case.objects.filter(id__in=seen_ids).annotate(start_date=Min('observation__datetime_observed')).order_by('start_date')
+            case_qs = Case.objects.filter(id__in=seen_ids)
             
             search_done = True
     
