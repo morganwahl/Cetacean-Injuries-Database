@@ -165,11 +165,11 @@ class UseCaseReportForm(forms.Form):
     
     report = forms.ModelChoiceField(queryset= Report.objects.all())
 
-    def __init__(self, cases, *args, **kwargs):
+    def __init__(self, cases_qs, cases_initial, *args, **kwargs):
         super(UseCaseReportForm, self).__init__(*args, **kwargs)
         self.fields['cases'] = forms.ModelMultipleChoiceField(
-            queryset= cases,
-            initial= cases,
+            queryset= cases_qs,
+            initial= cases_initial,
             label= u'',
             widget= JQueryCheckboxSelectMultiple,
         )

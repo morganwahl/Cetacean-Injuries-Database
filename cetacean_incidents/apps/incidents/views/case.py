@@ -9,7 +9,10 @@ from django.core.paginator import (
     EmptyPage,
 )
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import (
+    Q,
+    Min,
+)
 from django import forms as django_forms
 from django.forms import Media
 from django.http import HttpResponse, HttpResponsePermanentRedirect
@@ -163,6 +166,9 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             case_qs = forms['case'].results()
             # QuerySet.distinct() won't remove duplicate cases because of the
             # joins happening behind the scenes.
+            
+            # Simultaneously ordering by the earliest datetime_observed of a
+            # case and removing duplicates is hard!
             seen_ids = []
             seen_cases = []
             for c in case_qs:
@@ -172,14 +178,14 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             case_list = seen_cases
             # UseCaseReportForm expects a QuerySet, so create a new one with
             # no dupes.
-            case_qs = Case.objects.filter(id__in=seen_ids)
+            case_qs = Case.objects.filter(id__in=seen_ids).annotate(start_date=Min('observation__datetime_observed')).order_by('start_date')
             
             search_done = True
     
     pressed = request.GET.get('pressed', None)
 
     if pressed == 'use_report_button':
-        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_qs, data=request.GET)
+        use_report_form = UseCaseReportForm(case_qs, case_list, prefix='use_report', data=request.GET)
         if use_report_form.is_valid():
             report = use_report_form.cleaned_data['report'].specific_instance()
             rendered = report.render({
@@ -187,7 +193,7 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             })
             return HttpResponse(rendered, mimetype=report.format)
     else:
-        use_report_form = UseCaseReportForm(prefix='use_report', cases=case_qs)
+        use_report_form = UseCaseReportForm(case_qs, case_list, prefix='use_report')
     
     if pressed == 'change_report_button':
         change_report_form = ChangeCaseReportForm(prefix='change_report', data=request.GET)
