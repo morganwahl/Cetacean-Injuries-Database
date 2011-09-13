@@ -173,6 +173,12 @@ class UseCaseReportForm(forms.Form):
             label= u'',
             widget= JQueryCheckboxSelectMultiple,
         )
+        
+    def clean_cases(self):
+        result = []
+        for c in self.cleaned_data['cases']:
+            result.append(c.specific_instance())
+        return result
 
 class ChangeCaseReportForm(forms.Form):
     
