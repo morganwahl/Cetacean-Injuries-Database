@@ -38,9 +38,16 @@ from cetacean_incidents import generic_views
 
 from cetacean_incidents.forms import PagingForm
 
-from cetacean_incidents.apps.entanglements.models import Entanglement
+from cetacean_incidents.apps.csv_export import UnicodeDictWriter
+
+from cetacean_incidents.apps.entanglements.models import (
+    Entanglement,
+    EntanglementObservation,
+)
 
 from cetacean_incidents.apps.jquery_ui.tabs import Tabs
+
+from cetacean_incidents.apps.locations.models import Location
 
 from cetacean_incidents.apps.reports.forms import (
     StringReportForm,
@@ -52,21 +59,29 @@ from cetacean_incidents.apps.reports.models import (
     FileReport,
 )
 
-from cetacean_incidents.apps.shipstrikes.models import Shipstrike
+from cetacean_incidents.apps.shipstrikes.models import (
+    Shipstrike,
+    ShipstrikeObservation,
+    StrikingVesselInfo,
+)
 
 from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes import UncertainDateTime
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
+from cetacean_incidents.apps.vessels.models import VesselInfo
+
 from ..models import (
     Animal,
     Case,
+    Observation,
     YearCaseNumber,
 )
 from ..forms import (
     AnimalForm,
     CaseAnimalForm,
+    CaseCSVForm,
     CaseForm,
     CaseMergeForm,
     CaseMergeSourceForm,
@@ -195,12 +210,19 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
     else:
         use_report_form = UseCaseReportForm(case_qs, case_list, prefix='use_report')
     
+    if pressed == 'csv_button':
+        csv_form = CaseCSVForm(case_qs, case_list, prefix='csv', data=request.GET)
+        if csv_form.is_valid():
+            return _case_dump_response(case_list)
+    else:
+        csv_form = CaseCSVForm(case_qs, case_list, prefix='csv')
+    
     if pressed == 'change_report_button':
         change_report_form = ChangeCaseReportForm(prefix='change_report', data=request.GET)
         if change_report_form.is_valid():
             if not change_report_form.cleaned_data['report']:
                 response_url = reverse(
-                    'case_report_create', 
+                    'case_report_create',
                     kwargs= {
                         'report_type': change_report_form.cleaned_data['report_type']
                     },
@@ -254,9 +276,338 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
             'case_count': paginator.count,
             'use_report_form': use_report_form,
             'change_report_form': change_report_form,
+            'csv_form': csv_form,
         },
         context_instance= RequestContext(request),
     )
+
+def _case_dump_response(cases):
+    
+    # TODO move all this into the model definitions?
+    
+    csv_fields = [] # all the CSV fieldnames, in order
+    c = {} # CSV fieldnames, keyed to model fieldnames
+    r = {} # model field renderers; callables that take a field value
+    g = {} # model field getters; callables that take a model instance
+    
+    def _display_taxon(t):
+        if t is None:
+            return None
+        return '%s (TSN: %d)' % (t.scientific_name(), t.tsn)
+    
+    def _display_taxa(taxa):
+        return ', '.join(map(_display_taxon, taxa))
+    
+    def _display_gear_attribs(attribs):
+        return ', '.join(map(lambda gt: gt.name, attribs))
+    
+    def _display_contact(contact):
+        if contact is None:
+            return u''
+        return u'contact #%06d: %s' % (contact.id, contact.name)
+    
+    def _get_choiced_field(inst, fieldname):
+        return getattr(inst, 'get_%s_display' % fieldname)()
+    
+    # used for m2m fields
+    def _get_from_manager(inst, fieldname):
+        return getattr(inst, fieldname).all()
+    
+    c['animal'] = {}
+    r['animal'] = {
+        'determined_taxon': _display_taxon,
+        'probable_taxon': _display_taxon,
+    }
+    g['animal'] = {
+        'determined_gender':  _get_choiced_field,
+        'probable_gender':  _get_choiced_field,
+        'probable_taxon':  lambda a, fn: getattr(a, fn)(),
+    }
+    for f in Animal._meta.fields:
+        if f.name in ('import_notes', 'documentable_ptr'):
+            continue
+        
+        csv_name = 'animal: ' + f.verbose_name
+        csv_fields.append(csv_name)
+        c['animal'][f.name] = csv_name
+    for propname, displayname in (
+        ('probable_taxon', 'probable taxon'),
+        ('probable_gender', 'probable sex'),
+    ):
+        csv_name = 'animal: %s' % displayname
+        csv_fields.append(csv_name)
+        c['animal'][propname] = csv_name
+    
+    c['case'] = {}
+    r['case'] = {
+        'date': lambda d: d.to_unicode(),
+    }
+    g['case'] = {
+        'valid':  _get_choiced_field,
+        'human_interaction':  _get_choiced_field,
+        'animal_fate':  _get_choiced_field,
+        'fate_cause':  _get_choiced_field,
+    }
+    csv_fields.append('case: name')
+    c['case']['name'] = 'case: name'
+    for f in Case._meta.fields:
+        if f.name in (
+            'import_notes',
+            'documentable_ptr',
+            'animal',
+            'current_yearnumber',
+        ):
+            continue
+        
+        csv_name = 'case: ' + f.verbose_name
+        
+        if f.name in Case.si_n_m_fieldnames():
+            csv_name = 'case: SI&M: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['case'][f.name] = csv_name
+    
+    c['entanglement'] = {}
+    r['entanglement'] = {
+        'observed_gear_attributes': _display_gear_attribs,
+        'implied_observed_gear_attributes': _display_gear_attribs,
+        'gear_types': _display_gear_attribs,
+        'implied_gear_types': _display_gear_attribs,
+        'gear_targets': _display_taxa,
+        'gear_owner_info': lambda goi: "WITHHELD",
+    }
+    g['entanglement'] = {
+        'observed_gear_attributes': _get_from_manager,
+        'gear_types': _get_from_manager,
+        'gear_targets': _get_from_manager,
+    }
+    for f in Entanglement._meta.fields + Entanglement._meta.many_to_many:
+        if f.name in Case._meta.get_all_field_names():
+            continue
+        if f.name in (
+            'case_ptr',
+        ):
+            continue
+        
+        csv_name = 'entanglement: ' + f.verbose_name
+        
+        if f.name in Entanglement.gear_analysis_fieldnames():
+            csv_name = 'entanglement: gear analysis: ' + f.verbose_name
+
+        csv_fields.append(csv_name)
+        c['entanglement'][f.name] = csv_name
+    for propname, displayname in (
+        ('implied_observed_gear_attributes', 'implied observed gear attributes'),
+        ('implied_gear_types', 'implied analyzed gear attributes'),
+    ):
+        csv_name = 'entanglement: gear analysis: %s' % displayname
+        csv_fields.append(csv_name)
+        c['entanglement'][propname] = csv_name
+    
+    c['observation'] = {}
+    r['observation'] = {
+        'observer': _display_contact,
+        'reporter': _display_contact,
+        'datetime_observed': lambda d: d.to_unicode(),
+        'datetime_reported': lambda d: d.to_unicode(),
+        'taxon': _display_taxon,
+    }
+    g['observation'] = {
+        'gender': _get_choiced_field,
+        'age_class': _get_choiced_field,
+        'condition': _get_choiced_field,
+    }
+    for f in Observation._meta.fields:
+        if f.name in (
+            'import_notes',
+            'documentable_ptr',
+            'animal',
+            'cases',
+            'initial',
+            'exam',
+            'location',
+            'observer_vessel',
+        ):
+            continue
+
+        csv_name = 'observation: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['observation'][f.name] = csv_name
+
+    c['location'] = {}
+    r['location'] = {}
+    g['location'] = {
+        'waters': _get_choiced_field,
+        'state': _get_choiced_field,
+    }
+    for f in Location._meta.fields:
+        if f.name in (
+            'id',
+            'import_notes',
+            'roughness',
+        ):
+            continue
+
+        csv_name = 'observation: location: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['location'][f.name] = csv_name
+    
+    def _display_vessel_tags(tags):
+        return ', '.join(map(lambda t: t.name, tags))
+    
+    c['vessel'] = {}
+    r['vessel'] = {
+        'vessel_tags': _display_vessel_tags,
+        'contact': _display_contact,
+    }
+    g['vessel'] = {
+        'vessel_tags': _get_from_manager,
+    }
+    for f in VesselInfo._meta.fields:
+        if f.name in (
+            'id',
+        ):
+            continue
+
+        csv_name = 'observation: vessel: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['vessel'][f.name] = csv_name
+    
+    def _display_gear_body_locations(gbls):
+        # gbls will be a list of pairs. the first item will be a BodyLocation, the second a GearBodyLocation
+        return '; '.join(
+            map(
+                lambda l: "%s: %s" % (l[0], l[1].gear_seen_here),
+                filter(
+                    lambda l: l[1] is not None,
+                    gbls,
+                )
+            )
+        )
+    
+    c['entanglementobservation'] = {}
+    r['entanglementobservation'] = {
+        'gear_body_location': _display_gear_body_locations,
+        'gear_retriever': _display_contact,
+        'gear_giver': _display_contact,
+    }
+    g['entanglementobservation'] = {
+        'gear_body_location': lambda eo, propname: eo.get_gear_body_locations(),
+        'disentanglement_outcome': _get_choiced_field,
+    }
+    for f in EntanglementObservation._meta.fields + EntanglementObservation._meta.many_to_many:
+        if f.name in (
+            'observation_ptr',
+        ):
+            continue
+
+        csv_name = 'observation: entanglement: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['entanglementobservation'][f.name] = csv_name
+
+    c['shipstrikeobservation'] = {}
+    r['shipstrikeobservation'] = {}
+    g['shipstrikeobservation'] = {}
+    for f in ShipstrikeObservation._meta.fields:
+        if f.name in (
+            'observation_ptr',
+            'striking_vessel',
+        ):
+            continue
+
+        csv_name = 'observation: shipstrike: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['shipstrikeobservation'][f.name] = csv_name
+
+    c['strikingvessel'] = {}
+    r['strikingvessel'] = {
+        'vessel_tags': _display_vessel_tags,
+        'contact': _display_contact,
+        'captain': _display_contact,
+    }
+    g['strikingvessel'] = {
+        'vessel_tags': _get_from_manager,
+    }
+    for f in StrikingVesselInfo._meta.fields:
+        if f.name in (
+            'id',
+            'import_notes',
+            'vesselinfo_ptr',
+        ):
+            continue
+
+        csv_name = 'observation: shipstrike: striking vessel: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['strikingvessel'][f.name] = csv_name
+
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=cases.csv'
+    
+    writer = UnicodeDictWriter(response, fieldnames=csv_fields, dialect='excel', encoding='utf-8')
+    header_row = {}
+    for header in csv_fields:
+        header_row[header] = header
+    writer.writerow(header_row)
+    
+    for case in cases:
+        case = case.specific_instance()
+        animal = case.animal
+        
+        for obs in case.observation_set.all():
+            
+            row = {}
+            
+            def _process_fields(keyname, inst):
+                for model_fieldname, csv_name in c[keyname].items():
+                    val = None
+                    if model_fieldname in g[keyname].keys():
+                        val = g[keyname][model_fieldname](inst, model_fieldname)
+                    else:
+                        val = getattr(inst, model_fieldname)
+                    if model_fieldname in r[keyname].keys():
+                        val = r[keyname][model_fieldname](val)
+                    
+                    row[csv_name] = val
+            
+            _process_fields('animal', animal)
+            _process_fields('case', case)
+
+            if isinstance(case, Entanglement):
+                _process_fields('entanglement', case)
+            
+                # TODO gear owner info
+        
+            # Shipstrike cases have no fields of their own
+
+            _process_fields('observation', obs)
+            if not obs.location is None:
+                _process_fields('location', obs.location)
+            if not obs.observer_vessel is None:
+                _process_fields('vessel', obs.observer_vessel)
+            
+            try:
+                oe = obs.entanglements_entanglementobservation
+                _process_fields('entanglementobservation', oe)
+            except EntanglementObservation.DoesNotExist:
+                pass
+
+            try:
+                oe = obs.shipstrikes_shipstrikeobservation
+                _process_fields('shipstrikeobservation', oe)
+                if not oe.striking_vessel is None:
+                    _process_fields('strikingvessel', oe.striking_vessel)
+            except ShipstrikeObservation.DoesNotExist:
+                pass
+
+            writer.writerow(row)
+    
+    return response
 
 def _case_report_change(request, report=None, report_type=None):
     # the list of test cases comes from the GET string

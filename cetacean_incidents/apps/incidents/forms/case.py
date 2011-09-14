@@ -173,6 +173,28 @@ class UseCaseReportForm(forms.Form):
             label= u'',
             widget= JQueryCheckboxSelectMultiple,
         )
+
+    def clean_cases(self):
+        result = []
+        for c in self.cleaned_data['cases']:
+            result.append(c.specific_instance())
+        return result
+
+class CaseCSVForm(forms.Form):
+    
+    show = forms.BooleanField(
+        initial= False,
+        label= u'generate a CSV file with the data from these cases...'
+    )
+    
+    def __init__(self, cases_qs, cases_initial, *args, **kwargs):
+        super(CaseCSVForm, self).__init__(*args, **kwargs)
+        self.fields['cases'] = forms.ModelMultipleChoiceField(
+            queryset= cases_qs,
+            initial= cases_initial,
+            label= u'',
+            widget= JQueryCheckboxSelectMultiple,
+        )
         
     def clean_cases(self):
         result = []

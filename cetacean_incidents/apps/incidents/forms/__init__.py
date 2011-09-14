@@ -10,6 +10,7 @@ from animal import (
 )
 from case import (
     CaseAnimalForm,
+    CaseCSVForm,
     CaseForm,
     CaseMergeForm,
     CaseMergeSourceForm,

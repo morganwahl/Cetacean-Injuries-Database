@@ -47,7 +47,7 @@
     {% endwith %}
 
     {% if user.is_staff %}
-    <table class="layout"><tr><td width="50%">
+    <table class="layout"><tr><td width="33%">
     
     <script>
       $().ready(function(){
@@ -76,7 +76,7 @@
         </div>
     </div>
 
-    </td><td width="50%">
+    </td><td width="33%">
     
     <script>
       $().ready(function(){
@@ -116,6 +116,32 @@
         </div>
     </div>
     
+    </td><td width="33%">
+    
+    <script>
+      $().ready(function(){
+        CheckboxHider.init(
+          '{{ csv_form.show.html_name }}',
+          'csv_form-other_fields'
+        );
+      });
+    </script>
+    <div style="width:100%; text-align: center;">
+        {{ csv_form.non_field_errors }}
+        {% with csv_form.submitted as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        {% with csv_form.show as f %}
+        {% include "labeled_field.html" %}
+        {% endwith %}
+        <div id="csv_form-other_fields">
+            {% with csv_form.cases as f %}
+            {% include "labeled_field.html" %}
+            {% endwith %}
+            <button type="submit" id="csv_button">dump the data for these cases as a CSV file</button>
+        </div>
+    </div>
+
     </td></tr></table>
     {% endif %}
 </form>
