@@ -217,12 +217,15 @@ def case_search(
     else:
         use_report_form = UseCaseReportForm(case_qs, case_list, prefix='use_report')
     
-    if pressed == 'csv_button':
-        csv_form = CaseCSVForm(case_qs, case_list, prefix='csv', data=request.GET)
-        if csv_form.is_valid():
-            return _case_dump_response(case_list)
+    if request.user.has_perm('entanglements.view_gearowner'):
+        if pressed == 'csv_button':
+            csv_form = CaseCSVForm(case_qs, case_list, prefix='csv', data=request.GET)
+            if csv_form.is_valid():
+                return _case_dump_response(case_list)
+        else:
+            csv_form = CaseCSVForm(case_qs, case_list, prefix='csv')
     else:
-        csv_form = CaseCSVForm(case_qs, case_list, prefix='csv')
+        csv_form = None
     
     if pressed == 'change_report_button':
         change_report_form = ChangeCaseReportForm(prefix='change_report', data=request.GET)
