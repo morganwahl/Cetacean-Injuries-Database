@@ -119,7 +119,16 @@ SHORT_TIME_FORMAT = TIME_FORMAT
 DATETIME_FORMAT = DATE_FORMAT + ' ' + TIME_FORMAT
 SHORT_DATETIME_FORMAT = DATETIME_FORMAT
 
-GLOBAL_ETAG = u'29384574'
+GLOABL_ETAG = None
+# if the dulwich library is available, the ETAG is set based on git
+try:
+    from dulwich.repo import Repo
+    # The ETAG is the sha1 of the current git HEAD commit
+    REPO_PATH = path.dirname(PROJECT_PATH)
+    repo = Repo(REPO_PATH)
+    GLOBAL_ETAG = repo.head()
+except ImportError:
+    pass
 
 TINYMCE_JS_URL = MEDIA_URL + 'tiny_mce/tiny_mce.js'
 TINYMCE_JS_ROOT = path.join(MEDIA_ROOT, 'tiny_mce')
