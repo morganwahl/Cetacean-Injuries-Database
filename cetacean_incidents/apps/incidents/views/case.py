@@ -377,6 +377,12 @@ def _case_dump_response(cases):
         csv_fields.append(csv_name)
         c['case'][f.name] = csv_name
     
+    from cetacean_incidents.apps.entanglements.models import (
+        Entanglement,
+        GearOwner,
+        LocationGearSet,
+    )
+
     c['entanglement'] = {}
     r['entanglement'] = {
         'observed_gear_attributes': _display_gear_attribs,
@@ -384,7 +390,7 @@ def _case_dump_response(cases):
         'gear_types': _display_gear_attribs,
         'implied_gear_types': _display_gear_attribs,
         'gear_targets': _display_taxa,
-        'gear_owner_info': lambda goi: "WITHHELD",
+        'gear_owner_info': lambda goi: "yes (CONFIDENTIAL!)",
     }
     g['entanglement'] = {
         'observed_gear_attributes': _get_from_manager,
@@ -413,7 +419,44 @@ def _case_dump_response(cases):
         csv_name = 'entanglement: gear analysis: %s' % displayname
         csv_fields.append(csv_name)
         c['entanglement'][propname] = csv_name
-    
+
+    c['gearowner'] = {}
+    r['gearowner'] = {
+        'datetime_set': lambda d: d.to_unicode(),
+        'datetime_missing': lambda d: d.to_unicode(),
+    }
+    g['gearowner'] = {}
+    for f in GearOwner._meta.fields:
+        if f.name in (
+            'id',
+            'location_gear_set',
+        ):
+            continue
+        
+        csv_name = 'entanglement: gear owner: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['gearowner'][f.name] = csv_name
+
+    c['locationset'] = {}
+    r['locationset'] = {}
+    g['locationset'] = {
+        'waters': _get_choiced_field,
+        'state': _get_choiced_field,
+    }
+    for f in LocationGearSet._meta.fields:
+        if f.name in (
+            'location_ptr',
+            'import_notes',
+            'roughness',
+        ):
+            continue
+        
+        csv_name = 'entanglement: gear owner: location set: ' + f.verbose_name
+        
+        csv_fields.append(csv_name)
+        c['locationset'][f.name] = csv_name
+
     c['observation'] = {}
     r['observation'] = {
         'observer': _display_contact,
@@ -590,8 +633,10 @@ def _case_dump_response(cases):
 
             if isinstance(case, Entanglement):
                 _process_fields('entanglement', case)
-            
-                # TODO gear owner info
+                if not case.gear_owner_info is None:
+                    _process_fields('gearowner', case.gear_owner_info)
+                    if not case.gear_owner_info.location_gear_set is None:
+                        _process_fields('locationset', case.gear_owner_info.location_gear_set)
         
             # Shipstrike cases have no fields of their own
 
