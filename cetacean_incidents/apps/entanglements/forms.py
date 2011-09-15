@@ -12,6 +12,7 @@ from cetacean_incidents.apps.incidents.forms import (
     CaseMergeForm,
     CaseSearchForm,
 )
+from cetacean_incidents.apps.incidents.forms.observation import LocationSearchForm
 from cetacean_incidents.apps.incidents.models import Animal
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
@@ -20,7 +21,11 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
-from cetacean_incidents.apps.search_forms.forms import SubmitDetectingForm
+from cetacean_incidents.apps.search_forms.forms import (
+    SubmitDetectingForm,
+    SearchForm,
+)
+from cetacean_incidents.apps.search_forms.related import HideableForeignKeyQuery
 
 from cetacean_incidents.apps.taxons.forms import TaxonMultipleChoiceField
 from cetacean_incidents.apps.taxons.models import Taxon
@@ -530,6 +535,33 @@ class EntanglementSearchForm(CaseSearchForm):
         label= 'Observed gear attributes',
         help_text= 'search for entanglements cases whose observed gear has these attributes',
     )
+    
+    class GearOwnerSearchForm(SearchForm):
+        class LocationGearSetSearchForm(LocationSearchForm):
+            class Meta:
+                model = LocationGearSet
+                exclude = LocationSearchForm.Meta.exclude + ('depth_sigdigs',)
+        
+        _f = GearOwner._meta.get_field_by_name('location_gear_set')[0]
+        location_gear_set = HideableForeignKeyQuery(
+            model_field= _f,
+            subform_class= LocationGearSetSearchForm,
+        )
+
+        class Meta:
+            model = GearOwner
+            exclude = ('id',)
+
+    def __init__(self, user=None, *args, **kwargs):
+        super(EntanglementSearchForm, self).__init__(*args, **kwargs)
+        if not user is None:
+            if user.has_perm('view_gearowner'):
+                _f = Entanglement._meta.get_field_by_name('gear_owner_info')[0]
+                # the last field is 'sort_by', so insert before that
+                self.fields.insert(-1, 'gear_owner_info', HideableForeignKeyQuery(
+                    model_field= _f,
+                    subform_class= self.GearOwnerSearchForm,
+                ))
 
     class Meta(CaseSearchForm.Meta):
         model = Entanglement

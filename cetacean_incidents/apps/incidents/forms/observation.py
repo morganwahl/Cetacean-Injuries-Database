@@ -417,6 +417,11 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
 
+class LocationSearchForm(SearchForm):
+    class Meta:
+        model = Location
+        exclude = ('id', 'import_notes', 'roughness', 'coordinates')
+
 from cetacean_incidents.apps.entanglements.models import EntanglementObservation
 from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation
 from cetacean_incidents.apps.shipstrikes.models import StrikingVesselInfo
@@ -438,11 +443,6 @@ class ObservationSearchForm(SearchForm):
         subform_class= ObservationContactSearchForm,
     )
     
-    class LocationSearchForm(SearchForm):
-        class Meta:
-            model = Location
-            exclude = ('id', 'import_notes', 'roughness', 'coordinates')
-        
     _f = Observation._meta.get_field_by_name('location')[0]
     location = HideableForeignKeyQuery(
         model_field= _f,

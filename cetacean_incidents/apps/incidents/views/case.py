@@ -156,7 +156,12 @@ def cases_by_year(request, year=None):
 
 @login_required
 @condition(etag_func=global_etag)
-def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/case_search.html'):
+def case_search(
+    request,
+    searchform_class=CaseSearchForm,
+    searchform_kwargs={},
+    template=u'incidents/case_search.html',
+):
     
     # use a SortedDict to ensure 'paging' comes last
     form_classes = SortedDict([
@@ -170,6 +175,8 @@ def case_search(request, searchform_class=CaseSearchForm, template=u'incidents/c
         }
         if request.GET:
             form_kwargs['data'] = request.GET
+        if name == 'case':
+            form_kwargs.update(searchform_kwargs)
         forms[name] = cls(**form_kwargs)
     
     case_list = tuple()

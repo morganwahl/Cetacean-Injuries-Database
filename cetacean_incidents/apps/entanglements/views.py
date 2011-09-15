@@ -150,6 +150,7 @@ def entanglement_search(request):
     return case_search(
         request,
         searchform_class= EntanglementSearchForm,
+        searchform_kwargs= {'user': request.user},
         template= u'entanglements/entanglement_search.html',
     )
 
