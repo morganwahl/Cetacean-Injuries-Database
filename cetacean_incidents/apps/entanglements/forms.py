@@ -555,7 +555,7 @@ class EntanglementSearchForm(CaseSearchForm):
     def __init__(self, user=None, *args, **kwargs):
         super(EntanglementSearchForm, self).__init__(*args, **kwargs)
         if not user is None:
-            if user.has_perm('view_gearowner'):
+            if user.has_perm('entanglements.view_gearowner'):
                 _f = Entanglement._meta.get_field_by_name('gear_owner_info')[0]
                 # the last field is 'sort_by', so insert before that
                 self.fields.insert(-1, 'gear_owner_info', HideableForeignKeyQuery(
