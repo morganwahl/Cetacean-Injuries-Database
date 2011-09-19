@@ -154,6 +154,8 @@ class DateRangeField(MultiValueField):
         )
         if not date_widget is None:
             widget = self.widget(date_widget=date_widget)
+        else:
+            widget = kwargs.get('widget', None)
         super(DateRangeField, self).__init__(fields, widget=widget, *args, **kwargs)
     
     def compress(self, data_list):
