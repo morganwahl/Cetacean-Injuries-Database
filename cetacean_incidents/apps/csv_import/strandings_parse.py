@@ -63,18 +63,23 @@ FIELDNAMES = set((
               'Sp Ver?', # if yes, set taxon
           'Common Name', # determined_taxon (also used for Observation.taxon)
                'Alive?', # determined_dead_before (also used for Observation.condition)
+'    Alive?       Was the animal ever seen alive during this event? 0=No,1=Yes   ', # " used in 2002
                  'Date', # determined_dead_before (if not alive) (also used for Observation.datetime_observed and Observation.datetime_reported)
             'Necropsy?', # necropsy, partial_necropsy
         'Full necropsy', # necropsy, partial_necropsy
+        'Full Necropsy', # " used in 2002
      'Partial necropsy', # necropsy, partial_necropsy
+     'Partial Necropsy', # " used in 2002
 'Carcass Dispossed Y/N', # carcass_disposed
         'Ceta data rec', # document on an animal with type 'Cetacean Data Record'
+ 'Cetacean Data Record', # " used in 2002
         'Histo results', # document on an animal with type 'Histological Findings'
 
 # case
           'Classification', # case_type
                'Re-sight?', # just note in import_notes
   'Resight: Date 1st Seen', # just note in import_notes
+"Date 1st Seen:  If there is a '1' in the Resight column indicating this is a whale with prior events, fill in the date of the whale's initial event in this column.", # " used in 2002
         'Event Confirmed?', # valid
 'NMFS Database Regional #', # just note in import_notes
                  'Field #', # 2005 column name for 'NMFS Database Regional'
@@ -87,6 +92,7 @@ FIELDNAMES = set((
                 'Hi Form?', # document attached to case with type 'Human-Interaction Form'
           'Lg Whale email', # document attached to case with type 'Large Whale email'
          'Stranding Rept?', # document attached to case with type 'Stranding Report (Level-A)'
+                 'Level A', # " used in 2002
 'Last Sighting Prior to Entanglement (for Entangled whales only)', # happened_after
 
 # observation
@@ -97,21 +103,30 @@ FIELDNAMES = set((
                'Common Name', # taxon
                    'Sp Ver?', # just note in import_notes
                        'Sex', # gender
+'      Sex       M=male  F=female  U=unknown', # " used in 2002
 'Age (at time of event)  *PRD indicated age by length as presented in field guides ', # age_class
 'Age (at time of event)', # age_class (in 2004 data)
+'Est. Age (at time of event) - A=adult, S=sub-adult, Y=Yearling, C=calf, U=unknown, NI=not indicated', # " used in 2002
   'Total Length (cm)  *=est', # animal_description
+             'Total Length ', # " used in 2002
 ' Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
 '                               Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
 '                       Ashore?     - Did the whale/carcass ultimately come ashore', # ashore
 'Ashore - Did the whale/carcass ultimately come ashore', # ashore
+'Ashore?  0=No,Floater that never landed  1=Yes, came to shore', # " used in 2002
                     'Alive?', # condition
           'Initial condtion', # condition, observation splitting, initial
+'InitialCondition     Code 1=Alive, Code 2=Fresh dead, Code 3=Moderate Decomposition, Code 4=Advanced Decomposition, Code 5=Mummified/Skeletal   6=Dead-Condition Unknown', # " used in 2002
              'Exam condtion', # condition, observation splitting, exam
+            'Exam Condition', # " used in 2002
               'Photo w/file', # if yes, there's documentation, otherwise unknown
                   'Pictures', # documentation
            'Genetics Sample', # genetic_sample
+          'Genetics sampled', # " used in 2002
                       'HI ?', # human_interaction
+'      HI?     1=Yes 2=No CBD=Cannot be determined', # " used in 2002
 'Indication of Entanglement', # indication_entanglement
+'Indication of Ent  anglement', # " used in 2002
  'Indication of Ship Strike', # indication_shipstrike
                  'Phone Log', # document(s) attached to observation with type 'Phone Log entry'. just note for now.
     
@@ -119,13 +134,16 @@ FIELDNAMES = set((
                               'Gear', # entanglement_details
   'Disentangle status of live whale', # disentanglement_outcome
        'Disent status of live whale', # disentanglement_outcome
+                     'Disent status', # " used in 2002
      'Disent attempt on live whale?', # disentanglement_outcome
 'Disentangle attempt on live whale?', # disentanglement_outcome
+                   'Disent attempt?', # " used in 2002
 
 # location
         'LATITUDE', # coordinates
        'LONGITUDE', # coordinates
         'Location', # coordinates
+'Location     *Location*=estimated', # " used in 2002
 'General location', # description
         'State/EZ', # state, waters, country
           'Region', # just note in import_notes
@@ -196,15 +214,19 @@ ASHORE_KEYS = (
     '                               Ashore?     - Did the whale/carcass ultimately come ashore',
     '                       Ashore?     - Did the whale/carcass ultimately come ashore',
     'Ashore - Did the whale/carcass ultimately come ashore',
+    'Ashore?  0=No,Floater that never landed  1=Yes, came to shore',
 )
 def get_ashore(row):
     # ashore has a couple variations:
     for k in ASHORE_KEYS:
         if k in row:
-            ashore = row[k]
-        
+            key = k
+            break
+    ashore = row[k]
+
     return {
         "": None,
+        '0-1': None,
         "0": False,
         "1": True,
     }[ashore]
@@ -315,21 +337,35 @@ def parse_animal(row):
     # determined_gender defaults to ''
 
     # determined_dead_before
-    dead = {
-        '': False,
-        '?': False,
-        '0': True,
-        '1': False,
-    }[row['Alive?']]
-    if dead:
-        # a one-off exception
-        if row['Date'] == 'unk-Sep07':
-            a['determined_dead_before'] = datetime.date(2007, 10, 1)
-        else:
-            a['determined_dead_before'] = parse_date(row['Date'])
-    # the value isn't understood
-    if row['Alive?'] not in set(('', '0', '1')):
-        unknown_value(a, 'Alive?')
+    alive_key = None
+    for kn in (
+        'Alive?',
+        '    Alive?       Was the animal ever seen alive during this event? 0=No,1=Yes   ',
+    ):
+        if kn in row:
+            alive_key = kn
+            break
+    if alive_key:
+        dead = {
+            '': False,
+            '?': False,
+            '1-0': False,
+            '0-1': False,
+            '0': True,
+            '1': False,
+        }[row[alive_key]]
+        if dead:
+            # a one-off exception
+            if row['Date'] == 'unk-Sep07':
+                a['determined_dead_before'] = datetime.date(2007, 10, 1)
+            elif row['Date'] == '7/1/2003*':
+                a['determined_dead_before'] = datetime.date(2003, 7, 1)
+                odd_value(a, 'Date')
+            else:
+                a['determined_dead_before'] = parse_date(row['Date'])
+        # the value isn't understood
+        if row[alive_key] not in set(('', '0', '1')):
+            unknown_value(a, alive_key)
     
     # carcass_disposed
     if 'Carcass Dispossed Y/N' in row:
@@ -344,6 +380,22 @@ def parse_animal(row):
     
     # partial_necropsy
     # necropsy
+    full_necropsy_key = None
+    for kn in (
+        'Full Necropsy',
+        'Full necropsy',
+    ):
+        if kn in row:
+            full_necropsy_key = kn
+            break
+    partial_necropsy_key = None
+    for kn in (
+        'Partial Necropsy',
+        'Partial necropsy',
+    ):
+        if kn in row:
+            partial_necropsy_key = kn
+            break
     a['necropsy'], a['partial_necropsy'], understood = {
         (None,  None,  None ): (False, False, True),
         (None,  False, False): (False, False, True),
@@ -370,28 +422,31 @@ def parse_animal(row):
     }[
         {
              '': None,
+            'X': None,
             '0': False,
             '1': True,
 'Performed by Bob Bonde, no report in file': True,
 'yes- but no report': True,
+ '0-Kim Durham': False,
         }[row['Necropsy?']],
         {
               '': None,
+             '?': None,
              '0': False,
             'na': False,
            'N/A': False,
              '1': True,
-        }[row['Full necropsy']],
+        }[row[full_necropsy_key]],
         {
               '': None,
              '0': False,
             'na': False,
            'N/A': False,
              '1': True,
-        }[row['Partial necropsy']],
+        }[row[partial_necropsy_key]],
     ]
     if not understood:
-        unknown_values(a, ('Necropsy?', 'Full necropsy', 'Partial necropsy'))
+        unknown_values(a, ('Necropsy?', full_necropsy_key, partial_necropsy_key))
     if row['Necropsy?'] not in set(('', '0', '1')):
         odd_value(a, 'Necropsy?')
     
@@ -454,10 +509,13 @@ def parse_case(row):
     
     c['classification'] = cls
     
-    if row['Re-sight?']:
-        unimportable_column(c, 'Re-sight?')
-    if row['Resight: Date 1st Seen']:
-        unimportable_column(c, 'Resight: Date 1st Seen')
+    for kn in (
+        'Re-sight?',
+        'Resight: Date 1st Seen',
+        "Date 1st Seen:  If there is a '1' in the Resight column indicating this is a whale with prior events, fill in the date of the whale's initial event in this column.",
+    ):
+        if kn in row and row[kn]:
+            unimportable_column(c, kn)
     
     # valid
     c['valid'] = {
@@ -472,13 +530,18 @@ def parse_case(row):
     # happened_after defaults to None
     last_seen_key = 'Last Sighting Prior to Entanglement (for Entangled whales only)'
     if last_seen_key in row and row[last_seen_key]:
-        m = re.search(r'^(?P<date>(August )?[\d/\-.]+)\s*(?P<other>[^\s]+.*)?$', row[last_seen_key])
+        m = re.search(r'^(?P<date>(August )?[\d/Aug\-.]+)\s*(?P<other>[^\s]+.*)?$', row[last_seen_key])
         if m:
             c['happened_after'] = parse_date(m.group('date'))
             if m.group('other'):
                 odd_value(c, last_seen_key)
         else:
-            if row[last_seen_key] not in set(('Unk', 'N/A', 'U')):
+            if row[last_seen_key] not in set((
+                'Unk',
+                'N/A',
+                'U',
+                'N/A, Previously unknown individual'
+            )):
                 raise ValueError("can't parse last-sighted field: '%s'" % row[last_seen_key])
     
     # human_interaction
@@ -487,19 +550,29 @@ def parse_case(row):
     # ('yes', 'yes'),
     # ('no' , 'no'),
     # ('cbd', 'can\'t be determined'),
+    hi_key = None
+    for kn in (
+        'HI ?',
+        '      HI?     1=Yes 2=No CBD=Cannot be determined',
+    ):
+        if kn in row:
+            hi_key = kn
+            break;
     c['human_interaction'] = {
         '': 'unk',
         '?': 'unk',
+        'X': 'unk',
         '1/cbd?': 'unk',
         '1?': 'unk',
 'PENDING HISTO': 'unk',
+        'No': 'no',
         '0': 'no',
         '1': 'yes',
         'cbd': 'cbd',
         'CBD': 'cbd',
         'CBD`': 'cbd',
-    }[row['HI ?']]
-    if c['human_interaction'] in set(('1/cbd?', '1?', 'PENDING HISTO')):
+    }[row[hi_key]]
+    if c['human_interaction'] in set(('1/cbd?', '1?', 'PENDING HISTO', 'X')):
         unknown_value(c, 'human_interaction')
 
     # ole_investigation defaults to False
@@ -593,30 +666,35 @@ def parse_location(row, observation_data):
         l['state'] = state
     
     # coordinates
-    if 'Location' in row and row['Location']:
-        # split 'Location' into a lat and long
-        number = r'[\d.+\-]+[^\s]*'
-        for regex in (
-            r'^(?P<lat>' + number + '[^\d.+\-]*)(?P<lon>' + number + '[^\d.+\-]*)$',
-            r'^(?P<lat>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 1) + '[^\d.+\-]*)$',
-            r'^(?P<lat>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)$',
-            r'^(?P<lat>' + '\s+'.join([number] * 3) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 3) + '[^\d.+\-]*)$',
-        ):
-            m = re.search(regex, row['Location'])
-            if m:
-                if 'LATITUDE' not in row or not row['LATITUDE']:
-                    row['LATITUDE'] = m.group('lat')
-                if 'LONGITUDE' not in row or not row['LONGITUDE']:
-                    row['LONGITUDE'] = m.group('lon')
-                break
-        if not m:
-            if row['Location'] in set((
-                '44 17 49    66 26 43 (7/10/03 sighting)',
-                'est: 4405.532  6837.161',
-            )):
-                unknown_value(observation_data, 'Location')
-            elif row['Location'] not in set(('?', 'unknown')):
-                raise ValueError("can't parse Location: '%s'" % row['Location'])
+    for kn in (
+        'Location',
+        'Location     *Location*=estimated',
+    ):
+        if kn in row and row[kn]:
+            # split 'Location' into a lat and long
+            number = r'[\d.+\-]+[^\s]*'
+            for regex in (
+                r'^(?P<lat>' + number + '[^\d.+\-]*)(?P<lon>' + number + '[^\d.+\-]*)$',
+                r'^(?P<lat>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 1) + '[^\d.+\-]*)$',
+                r'^(?P<lat>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 2) + '[^\d.+\-]*)$',
+                r'^(?P<lat>' + '\s+'.join([number] * 3) + '[^\d.+\-]*)(?P<lon>' + '\s+'.join([number] * 3) + '[^\d.+\-]*)$',
+            ):
+                m = re.search(regex, row[kn])
+                if m:
+                    if 'LATITUDE' not in row or not row['LATITUDE']:
+                        row['LATITUDE'] = m.group('lat')
+                    if 'LONGITUDE' not in row or not row['LONGITUDE']:
+                        row['LONGITUDE'] = m.group('lon')
+                    break
+            if not m:
+                if row[kn] in set((
+                    '44 17 49    66 26 43 (7/10/03 sighting)',
+                    'est: 4405.532  6837.161',
+                    '*4128.52   7116.27*',
+                )):
+                    unknown_value(observation_data, kn)
+                elif row[kn] not in set(('?', 'unknown', '??', 'None')):
+                    raise ValueError("can't parse Location: '%s'" % row[kn])
     
     lat = None
     lon = None
@@ -674,6 +752,9 @@ def parse_observation(row, case_data):
     # a one-off exception
     if row['Date'] == 'unk-Sep07':
         uncertain_datetime = UncertainDateTime(2007, 9)
+    elif row['Date'] == '7/1/2003*':
+        uncertain_datetime = UncertainDateTime(2003, 7, 1)
+        odd_value(o, 'Date')
     else:
         date = parse_date(row['Date'])
         uncertain_datetime = UncertainDateTime(date.year, date.month, date.day)
@@ -696,30 +777,43 @@ def parse_observation(row, case_data):
         unimportable_column(o, 'Sp Ver?')
 
     # animal_length
-    if row['Total Length (cm)  *=est'] not in set(('', 'U')):
+    length_key = None
+    for kn in (
+        'Total Length ',
+        'Total Length (cm)  *=est',
+    ):
+        if kn in row:
+            length_key = kn
+            break;
+    if row[length_key] not in set(('', 'U')):
         try:
-            length, sigdigs = parse_length(row['Total Length (cm)  *=est'])
+            length, sigdigs = parse_length(row[length_key])
             o['animal_length'] = length
             o['animal_length_sigdigs'] = sigdigs
         except ValueError:
-            unimportable_value(o, 'Total Length (cm)  *=est')
+            unimportable_value(o, length_key)
 
     # age_class
     age_keys = (
         'Age (at time of event)  *PRD indicated age by length as presented in field guides ',
         'Age (at time of event)',
+        'Est. Age (at time of event) - A=adult, S=sub-adult, Y=Yearling, C=calf, U=unknown, NI=not indicated',
     )
     for age_key in age_keys:
         if age_key in row:
             o['age_class'] = {
                 '': '',
+               '?': '',
     'Born in 2001': '',
          '6 tons*': '',
                'Y': '',
               'Y*': '',
                'U': '',
+            'Unk.': '',
+     'U-Aknowlton': '',
 'First id in 1992': '',
                'M': '',
+               'X': '',
                'C': 'ca',
             'Calf': 'ca',
                'J': 'ju',
@@ -730,27 +824,39 @@ def parse_observation(row, case_data):
                'A': 'ad',
               'A*': 'ad',
             }[row[age_key]]
-            if row[age_key] in set(('S*','A*')):
+            if row[age_key] in set(('S*','A*', 'U-Aknowlton',)):
                 odd_value(o, age_key)
-            if row[age_key] in set(('Y', 'Y*', 'S', 'M', 'First id in 1992', '6 tons*', 'Born in 2001')):
+            if row[age_key] in set(('Y', 'Y*', 'S', 'M', 'First id in 1992', '6 tons*', 'Born in 2001', 'X')):
                 unknown_value(o, age_key)
             break
     
     # gender
+    sex_key = None
+    for kn in (
+        '      Sex       M=male  F=female  U=unknown',
+        'Sex',
+    ):
+        if kn in row:
+            sex_key = kn
+            break;
     o['gender'] = {
         '': '',
+        '0': '',
         '4': '',
         'U': '',
+        'U-Aknowlton': '',
+        'X': '',
+        '?': '',
         'CBD': '',
         'm': 'm',
         'M': 'm',
         'f': 'f',
         'F': 'f',
-    }[row['Sex']]
-    if row['Sex'] in set(('CBD',)):
-        odd_value(o, 'Sex')
-    if row['Sex'] in set(('4',)):
-        unknown_value(o, 'Sex')
+    }[row[sex_key]]
+    if row[sex_key] in set(('CBD', 'U-Aknowlton')):
+        odd_value(o, sex_key)
+    if row[sex_key] in set(('4', 'X', '0')):
+        unknown_value(o, sex_key)
     
     # animal_description defaults to ''
     
@@ -767,8 +873,34 @@ def parse_observation(row, case_data):
     #        (3, 'moderate decomposition'),
     #        (4, 'advanced decomposition'),
     #        (5, 'skeletal'),
+    alive_key = None
+    for kn in (
+        'Alive?',
+        '    Alive?       Was the animal ever seen alive during this event? 0=No,1=Yes   ',
+    ):
+        if kn in row:
+            alive_key = kn
+            break
+    initial_key = None
+    for kn in (
+        'Initial condtion',
+        'InitialCondition     Code 1=Alive, Code 2=Fresh dead, Code 3=Moderate Decomposition, Code 4=Advanced Decomposition, Code 5=Mummified/Skeletal   6=Dead-Condition Unknown',
+    ):
+        if kn in row:
+            initial_key = kn
+            break
+    exam_key = None
+    for kn in (
+        'Exam condtion',
+        'Exam Condition',
+    ):
+        if kn in row:
+            exam_key = kn
+            break
     conditions = {
          '': 0,
+        '?': 0,
+        'X': 0,
         '0': 0,
         'U': 0,
        'na': 0,
@@ -787,16 +919,18 @@ def parse_observation(row, case_data):
         '5': 5,
         '6': 6,
     }
-    o['initial_condition'] = conditions[row['Initial condtion']]
-    o['exam_condition'] = conditions[row['Exam condtion']]
+    o['initial_condition'] = conditions[row[initial_key]]
+    o['exam_condition'] = conditions[row[exam_key]]
     o['alive_condition'] = {
         '': 0,
         '?': 0,
+        '1-0': 0,
+        '0-1': 0,
         '0': 6,
         '1': 1,
-    }[row['Alive?']]
-    if row['Alive?'] not in set(('', '0', '1')):
-        odd_value(o, 'Alive?')
+    }[row[alive_key]]
+    if row[alive_key] not in set(('', '0', '1')):
+        odd_value(o, alive_key)
     if o['initial_condition'] == 0 and o['alive_condition'] != 0:
         o['initial_condition'] = o['alive_condition']
     if o['exam_condition'] == 0 and o['alive_condition'] != 0:
@@ -807,8 +941,8 @@ def parse_observation(row, case_data):
         o['split'] = True
     condition_expected = set(('', '1', '2', '3', '4', '5', '6'))
     for model_key, row_key in (
-        ('initial', 'Initial condtion'),
-        ('exam',    'Exam condtion'),
+        ('initial', initial_key),
+        ('exam',    exam_key),
     ):
         o[model_key] = bool(o[model_key + '_condition'])
         if row[row_key] not in condition_expected:
@@ -842,6 +976,8 @@ def parse_observation(row, case_data):
             '?': None,
             'Unk': None,
             'Unknown': None,
+            'Maybe, WW Vessel, but NOAA never received.  Photos with file are from a separate 8/11 sighting of Sickle': None,
+            'Uncertain - Canadian CG, Fundy Voyager.': None,
             'No': False,
             'NO': False,
             'Yes': True,
@@ -854,6 +990,8 @@ def parse_observation(row, case_data):
             'Pending': True,
             'Pending -from Navy': True,
             'Gear only': True,
+            'Video- Grisel Rodrigues': True,
+            'CCSN': True,
         }[pictures],
         {
              '': None,
@@ -871,21 +1009,37 @@ def parse_observation(row, case_data):
     # biopsy defaults to None
     
     # genetic_sample
+    genetic_key = None
+    for kn in (
+        'Genetics Sample',
+        'Genetics sampled',
+    ):
+        if kn in row:
+            genetic_key = kn
+            break
     o['genetic_sample'] = {
         "": None,
         "0": False,
         "1": True,
-    }[row['Genetics Sample']]
+    }[row[genetic_key]]
     
     # indication_entanglement
+    indication_entanglement_key = None
+    for kn in (
+        'Indication of Entanglement',
+        'Indication of Ent  anglement',
+    ):
+        if kn in row:
+            indication_entanglement_key = kn
+            break
     o['indication_entanglement'] = {
         '': None,
         '1?': None,
         '0': False,
         '1': True,
-    }[row['Indication of Entanglement']]
-    if row['Indication of Entanglement'] in set(('1?',)):
-        unknown_value(o, 'Indication of Entanglement')
+    }[row[indication_entanglement_key]]
+    if row[indication_entanglement_key] in set(('1?',)):
+        unknown_value(o, indication_entanglement_key)
     
     # indication_shipstrike
     o['indication_shipstrike'] = {
@@ -920,6 +1074,7 @@ def parse_observation(row, case_data):
         for k in (
             'Disentangle attempt on live whale?',
             'Disent attempt on live whale?',
+            'Disent attempt?',
         ):
             if k in row:
                 disent_attempt_key = k
@@ -928,6 +1083,7 @@ def parse_observation(row, case_data):
         for k in (
             'Disentangle status of live whale',
             'Disent status of live whale',
+            'Disent status',
         ):
             if k in row:
                 disent_status_key = k
@@ -937,6 +1093,7 @@ def parse_observation(row, case_data):
                '': None,
               '.': None,
 'Document and tag if possible': None,
+            '1-F/V': None,
               '0': False,
              'no': False,
              'No': False,
@@ -955,11 +1112,14 @@ def parse_observation(row, case_data):
             'Carrying gear': 'gear',
             'disentangled': 'no gear',
             'Disentangled': 'no gear',
+            '"Disentangled"': 'no gear',
             'Disentangled (presumed)': 'no gear',
             'fully disentangled': 'no gear',
             'disentangled by bystander': 'no gear',
             'Entangled': 'entangled',
             'entangled': 'entangled',
+            'Entangled, needs full assessment': 'entangled, needs assesment',
+            'Entangled -suspect but cannot confirm that gear shed': 'entangled, suspected shed',
             'Unsuccessful': 'unsuccessful',
             'Gear free': 'no gear',
             'Gear shed': 'gear shed',
@@ -976,7 +1136,9 @@ def parse_observation(row, case_data):
             'Animal could not be relocated': 'unknown',
             'Unknown': 'unknown',
             'unknown': 'unknown',
+            'Unknown/unconfirmed': 'unknown',
             'Lost/Unidentifiable': 'unknown',
+            'Freed by fisherman': 'no gear by fisherman',
         }[row[disent_status_key]]
         if row[disent_status_key] in set((
             '?',
@@ -1027,10 +1189,14 @@ def parse_observation(row, case_data):
 
             (False, 'unknown'): ('', False), # could be 'shed' or 'mntr'
             (False, 'no gear'): ('shed', True),
+            (False, 'no gear by fisherman'): ('', False),
             (False, 'entangled'): ('entg', True),
+            (False, 'entangled, needs assesment'): ('entg', False),
             (False, 'gear shed'): ('shed', True),
 
             (True, 'entangled'): ('entg', True),
+            (True, 'entangled, needs assesment'): ('entg', False),
+            (True, 'entangled, suspected shed'): ('entg', False),
             (True, 'unsuccessful'): ('entg', True),
             (True, 'partly entangled'): ('part', True),
             (True, 'some gear'): ('', False),
@@ -1054,26 +1220,27 @@ def parse_documents(row, animal_data, case_data):
     
     docs = []
     
-    for doc_key, attach_to, data, doctype_name in (
-        ('Ceta data rec', 'animal', animal_data, 'Cetacean Data Record'),
-        ('Histo results', 'animal', animal_data, 'Histological Findings'),
-        ('CCS web page', 'case', case_data, 'CCS web page'),
-        ('Hi Form?', 'case', case_data, 'Human-Interaction Form'),
-        ('Lg Whale email', 'case', case_data, 'Large Whale email'),
-        ('Stranding Rept?', 'case', case_data, 'Stranding Report (Level-A)'),
+    for doc_keys, attach_to, data, doctype_name in (
+        (('Ceta data rec', 'Cetacean Data Record'), 'animal', animal_data, 'Cetacean Data Record'),
+        (('Histo results',), 'animal', animal_data, 'Histological Findings'),
+        (('CCS web page',), 'case', case_data, 'CCS web page'),
+        (('Hi Form?',), 'case', case_data, 'Human-Interaction Form'),
+        (('Lg Whale email',), 'case', case_data, 'Large Whale email'),
+        (('Stranding Rept?', 'Level A'), 'case', case_data, 'Stranding Report (Level-A)'),
     ):
-        if row[doc_key]:
-            yes_values = set(('1',))
-            no_values = set(('', '0'))
-            if row[doc_key] in yes_values:
-                # create a new document
-                d = {
-                    'attach_to': attach_to,
-                    'document_type': DocumentType.objects.get(name=doctype_name),
-                }
-                docs.append(d)
-            elif row[doc_key] not in no_values:
-                odd_value(data, doc_key)
+        for doc_key in doc_keys:
+            if doc_key in row and row[doc_key]:
+                yes_values = set(('1',))
+                no_values = set(('', '0'))
+                if row[doc_key] in yes_values:
+                    # create a new document
+                    d = {
+                        'attach_to': attach_to,
+                        'document_type': DocumentType.objects.get(name=doctype_name),
+                    }
+                    docs.append(d)
+                elif row[doc_key] not in no_values:
+                    odd_value(data, doc_key)
 
     return docs
 
