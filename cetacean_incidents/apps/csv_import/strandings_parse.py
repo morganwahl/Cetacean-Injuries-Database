@@ -77,6 +77,7 @@ FIELDNAMES = set((
 
 # case
           'Classification', # case_type
+                   'Class', # " used in 2001
                'Re-sight?', # just note in import_notes
   'Resight: Date 1st Seen', # just note in import_notes
 "Date 1st Seen:  If there is a '1' in the Resight column indicating this is a whale with prior events, fill in the date of the whale's initial event in this column.", # " used in 2002
@@ -218,10 +219,14 @@ ASHORE_KEYS = (
 )
 def get_ashore(row):
     # ashore has a couple variations:
+    key = None
     for k in ASHORE_KEYS:
         if k in row:
             key = k
             break
+    if key is None:
+        return None
+    
     ashore = row[k]
 
     return {
@@ -237,19 +242,28 @@ def translate_taxon(data, data_key, row):
         'BOWH': Taxon.objects.get(tsn=180533), # bowhead whale
         'BRWH': Taxon.objects.get(tsn=612597), # bryde's whale
         'FIWH': Taxon.objects.get(tsn=180527), # finback
+        'Fin': Taxon.objects.get(tsn=180527), # finback
         'HUWH': Taxon.objects.get(tsn=180530), # humpback
+        'HUWH?': Taxon.objects.get(tsn=180530), # humpback
+        'Humpback': Taxon.objects.get(tsn=180530), # humpback
         'MIWH': Taxon.objects.get(tsn=180524), # minke
+        'Minke': Taxon.objects.get(tsn=180524), # minke
         'RIWH': Taxon.objects.get(tsn=180537), # right
         'RIWH?': Taxon.objects.get(tsn=180537), # right
+        'Right': Taxon.objects.get(tsn=180537), # right
         'SEWH': Taxon.objects.get(tsn=180526), # sei whale
+        'Sei': Taxon.objects.get(tsn=180526), # sei whale
         'SPWH': Taxon.objects.get(tsn=180488), # sperm whale
+        'Sperm': Taxon.objects.get(tsn=180488), # sperm whale
         'UNAN': None,                          # unknown animal
+        'Unk': None,
         'UNBA': Taxon.objects.get(tsn=552298), # unknown baleen whale
         'UNRW': Taxon.objects.get(tsn=552298), # unknown rorqual
         'UNFS': Taxon.objects.get(tsn=180523), # finback or sei whale
         'FI/SEWH': Taxon.objects.get(tsn=180523), # finback or sei whale
         'FI-SEWH': Taxon.objects.get(tsn=180523), # finback or sei whale
         'FIN/SEI': Taxon.objects.get(tsn=180523), # finback or sei whale
+        'Fin/sei': Taxon.objects.get(tsn=180523), # finback or sei whale
         'UNWH': Taxon.objects.get(tsn=180403), # unknown whale
     }[row['Common Name']]
 
@@ -299,8 +313,8 @@ def parse_animal(row):
         unimportable_column(a, 'NMFS # ')
     if 'NMFS Database Regional #' in row and row['NMFS Database Regional #']:
         unimportable_column(a, 'NMFS Database Regional #')
-    if 'Field #' in row and row['Field #']:
-        unimportable_column(a, 'Field #')
+    #if 'Field #' in row and row['Field #']:
+    #    unimportable_column(a, 'Field #')
     if 'Additional Identifier' in row and row['Additional Identifier']:
         unimportable_column(a, 'Additional Identifier')
     
@@ -310,6 +324,8 @@ def parse_animal(row):
         a['field_number'] = row['Field # (S)']
     elif 'Field # ' in row and row['Field # ']:
         a['field_number'] = row['Field # ']
+    elif 'Field #' in row and row['Field #']:
+        a['field_number'] = row['Field #']
     
     # name
     name_key = None
@@ -388,6 +404,9 @@ def parse_animal(row):
         if kn in row:
             full_necropsy_key = kn
             break
+    if full_necropsy_key is None:
+        full_necropsy_key = 'Full Necropsy'
+        row['Full Necropsy'] = ''
     partial_necropsy_key = None
     for kn in (
         'Partial Necropsy',
@@ -396,6 +415,9 @@ def parse_animal(row):
         if kn in row:
             partial_necropsy_key = kn
             break
+    if partial_necropsy_key is None:
+        partial_necropsy_key = 'Partial Necropsy'
+        row['Partial Necropsy'] = ''
     a['necropsy'], a['partial_necropsy'], understood = {
         (None,  None,  None ): (False, False, True),
         (None,  False, False): (False, False, True),
@@ -423,6 +445,7 @@ def parse_animal(row):
         {
              '': None,
             'X': None,
+      'Pending': None,
             '0': False,
             '1': True,
 'Performed by Bob Bonde, no report in file': True,
@@ -462,7 +485,15 @@ def parse_case(row):
     }
     
     # case_type
-    cls = row['Classification']
+    class_key = None
+    for kn in (
+        'Classification',
+        'Class',
+    ):
+        if kn in row:
+            class_key = kn
+            break
+    cls = row[class_key]
     cls, resight = re.subn(r'(?i)\s*\(?(likely )?resight\??\)?', '', cls)
     resight = bool(resight)
     
@@ -483,6 +514,7 @@ def parse_case(row):
      'E (lures)': 'Entanglement',
  'E (entrapped)': 'Entanglement',
            'C,M': set(('Case', 'Shipstrike')),
+           'M,C': set(('Case', 'Shipstrike')),
           'M,SS': set(('Case', 'Shipstrike')),
           'M, C': set(('Case', 'Shipstrike')),
           'C, M': set(('Case', 'Shipstrike')),
@@ -494,7 +526,7 @@ def parse_case(row):
            'E,M': set(('Case', 'Entanglement')),
        'E, C, M': set(('Case', 'Shipstrike', 'Entanglement')),
     }[cls]
-    if resight or row['Classification'] in set((
+    if resight or row[class_key] in set((
         '',
         'M ?',
         'M(resight?)',
@@ -505,7 +537,7 @@ def parse_case(row):
         'E (lures)',
         'E (entrapped)',
     )):
-        odd_value(c, 'Classification')
+        odd_value(c, class_key)
     
     c['classification'] = cls
     
@@ -520,9 +552,11 @@ def parse_case(row):
     # valid
     c['valid'] = {
         '': 1,
-        '0': 1,
-        '0?': 1,
-        '1': 2,
+     '1,0': 1,
+       '?': 1,
+       '0': 1,
+      '0?': 1,
+       '1': 2,
     }[row['Event Confirmed?']]
     if c['valid'] in set(('0?',)):
         odd_value(c, 'valid')
@@ -558,22 +592,23 @@ def parse_case(row):
         if kn in row:
             hi_key = kn
             break;
-    c['human_interaction'] = {
-        '': 'unk',
-        '?': 'unk',
-        'X': 'unk',
-        '1/cbd?': 'unk',
-        '1?': 'unk',
-'PENDING HISTO': 'unk',
-        'No': 'no',
-        '0': 'no',
-        '1': 'yes',
-        'cbd': 'cbd',
-        'CBD': 'cbd',
-        'CBD`': 'cbd',
-    }[row[hi_key]]
-    if c['human_interaction'] in set(('1/cbd?', '1?', 'PENDING HISTO', 'X')):
-        unknown_value(c, 'human_interaction')
+    if not hi_key is None:
+        c['human_interaction'] = {
+            '': 'unk',
+            '?': 'unk',
+            'X': 'unk',
+            '1/cbd?': 'unk',
+            '1?': 'unk',
+    'PENDING HISTO': 'unk',
+            'No': 'no',
+            '0': 'no',
+            '1': 'yes',
+            'cbd': 'cbd',
+            'CBD': 'cbd',
+            'CBD`': 'cbd',
+        }[row[hi_key]]
+        if c['human_interaction'] in set(('1/cbd?', '1?', 'PENDING HISTO', 'X')):
+            unknown_value(c, 'human_interaction')
 
     # ole_investigation defaults to False
     c['ole_investigation'] = None
@@ -615,7 +650,7 @@ def parse_location(row, observation_data):
     # waters
     # state
     ashore = get_ashore(row)
-    state_input = row['State/EZ'].lower()
+    state_input = row['State/EZ'].lower() if 'State/EZ' in row else ''
     if state_input == '':
         country = None
         eez = None
@@ -785,13 +820,14 @@ def parse_observation(row, case_data):
         if kn in row:
             length_key = kn
             break;
-    if row[length_key] not in set(('', 'U')):
-        try:
-            length, sigdigs = parse_length(row[length_key])
-            o['animal_length'] = length
-            o['animal_length_sigdigs'] = sigdigs
-        except ValueError:
-            unimportable_value(o, length_key)
+    if not length_key is None:
+        if row[length_key] not in set(('', 'U')):
+            try:
+                length, sigdigs = parse_length(row[length_key])
+                o['animal_length'] = length
+                o['animal_length_sigdigs'] = sigdigs
+            except ValueError:
+                unimportable_value(o, length_key)
 
     # age_class
     age_keys = (
@@ -839,24 +875,25 @@ def parse_observation(row, case_data):
         if kn in row:
             sex_key = kn
             break;
-    o['gender'] = {
-        '': '',
-        '0': '',
-        '4': '',
-        'U': '',
-        'U-Aknowlton': '',
-        'X': '',
-        '?': '',
-        'CBD': '',
-        'm': 'm',
-        'M': 'm',
-        'f': 'f',
-        'F': 'f',
-    }[row[sex_key]]
-    if row[sex_key] in set(('CBD', 'U-Aknowlton')):
-        odd_value(o, sex_key)
-    if row[sex_key] in set(('4', 'X', '0')):
-        unknown_value(o, sex_key)
+    if not sex_key is None:
+        o['gender'] = {
+            '': '',
+            '0': '',
+            '4': '',
+            'U': '',
+            'U-Aknowlton': '',
+            'X': '',
+            '?': '',
+            'CBD': '',
+            'm': 'm',
+            'M': 'm',
+            'f': 'f',
+            'F': 'f',
+        }[row[sex_key]]
+        if row[sex_key] in set(('CBD', 'U-Aknowlton')):
+            odd_value(o, sex_key)
+        if row[sex_key] in set(('4', 'X', '0')):
+            unknown_value(o, sex_key)
     
     # animal_description defaults to ''
     
@@ -919,8 +956,14 @@ def parse_observation(row, case_data):
         '5': 5,
         '6': 6,
     }
-    o['initial_condition'] = conditions[row[initial_key]]
-    o['exam_condition'] = conditions[row[exam_key]]
+    if not initial_key is None:
+        o['initial_condition'] = conditions[row[initial_key]]
+    else:
+        o['initial_condition'] = 0
+    if not exam_key is None:
+        o['exam_condition'] = conditions[row[exam_key]]
+    else:
+        o['exam_condition'] = 0
     o['alive_condition'] = {
         '': 0,
         '?': 0,
@@ -945,8 +988,9 @@ def parse_observation(row, case_data):
         ('exam',    exam_key),
     ):
         o[model_key] = bool(o[model_key + '_condition'])
-        if row[row_key] not in condition_expected:
-            odd_value(o, row_key)
+        if not row_key is None:
+            if row[row_key] not in condition_expected:
+                odd_value(o, row_key)
     
     # wounded defaults to None
     
@@ -978,6 +1022,8 @@ def parse_observation(row, case_data):
             'Unknown': None,
             'Maybe, WW Vessel, but NOAA never received.  Photos with file are from a separate 8/11 sighting of Sickle': None,
             'Uncertain - Canadian CG, Fundy Voyager.': None,
+            'Unknown - perhaps w/ S. Dufault': None,
+            'Unknown- DFO?': None,
             'No': False,
             'NO': False,
             'Yes': True,
@@ -996,6 +1042,8 @@ def parse_observation(row, case_data):
         {
              '': None,
             '?': None,
+            'X': None,
+           'PG': None,
             '0': False,
             '1': True,
         }[row['Photo w/file']],
@@ -1017,11 +1065,12 @@ def parse_observation(row, case_data):
         if kn in row:
             genetic_key = kn
             break
-    o['genetic_sample'] = {
-        "": None,
-        "0": False,
-        "1": True,
-    }[row[genetic_key]]
+    if not genetic_key is None:
+        o['genetic_sample'] = {
+            "": None,
+            "0": False,
+            "1": True,
+        }[row[genetic_key]]
     
     # indication_entanglement
     indication_entanglement_key = None
@@ -1032,24 +1081,26 @@ def parse_observation(row, case_data):
         if kn in row:
             indication_entanglement_key = kn
             break
-    o['indication_entanglement'] = {
-        '': None,
-        '1?': None,
-        '0': False,
-        '1': True,
-    }[row[indication_entanglement_key]]
-    if row[indication_entanglement_key] in set(('1?',)):
-        unknown_value(o, indication_entanglement_key)
+    if not indication_entanglement_key is None:
+        o['indication_entanglement'] = {
+            '': None,
+            '1?': None,
+            '0': False,
+            '1': True,
+        }[row[indication_entanglement_key]]
+        if row[indication_entanglement_key] in set(('1?',)):
+            unknown_value(o, indication_entanglement_key)
     
     # indication_shipstrike
-    o['indication_shipstrike'] = {
-        '': None,
-        '0': False,
-        '1': True,
-        '1*': True,
-    }[row['Indication of Ship Strike']]
-    if not row['Indication of Ship Strike'] in set(('', '0', '1')):
-        odd_value(o, 'Indication of Ship Strike')
+    if 'Indication of Ship Strike' in row:
+        o['indication_shipstrike'] = {
+            '': None,
+            '0': False,
+            '1': True,
+            '1*': True,
+        }[row['Indication of Ship Strike']]
+        if not row['Indication of Ship Strike'] in set(('', '0', '1')):
+            odd_value(o, 'Indication of Ship Strike')
     
     ### ObservationExtensions
     o['observation_extensions'] = {}
@@ -1092,8 +1143,9 @@ def parse_observation(row, case_data):
         attempt = {
                '': None,
               '.': None,
+            'N/A': None,
 'Document and tag if possible': None,
-            '1-F/V': None,
+          '1-F/V': None,
               '0': False,
              'no': False,
              'No': False,
@@ -1108,18 +1160,21 @@ def parse_observation(row, case_data):
         outcome = {
             '': 'unknown',
             '?': 'unknown',
+            'N/A': 'unknown',
             'Animal releases': 'unknown',
             'Carrying gear': 'gear',
             'disentangled': 'no gear',
             'Disentangled': 'no gear',
             '"Disentangled"': 'no gear',
             'Disentangled (presumed)': 'no gear',
+            'Completely disentangled': 'no gear',
             'fully disentangled': 'no gear',
             'disentangled by bystander': 'no gear',
             'Entangled': 'entangled',
             'entangled': 'entangled',
             'Entangled, needs full assessment': 'entangled, needs assesment',
             'Entangled -suspect but cannot confirm that gear shed': 'entangled, suspected shed',
+            'Presumed Entangled': 'entangled',
             'Unsuccessful': 'unsuccessful',
             'Gear free': 'no gear',
             'Gear shed': 'gear shed',
@@ -1130,6 +1185,7 @@ def parse_observation(row, case_data):
             'Partial Disentanglement': 'partly entangled',
             'partial disentanglement': 'partly entangled',
             'Partial disentanglement': 'partly entangled',
+            'Disentangled from most gear': 'partly entangled',
             'some line still embedded in dorsal peduncle': 'some gear',
             'unable to relocate': 'unknown',
             'Unable to relocate': 'unknown',
@@ -1139,6 +1195,8 @@ def parse_observation(row, case_data):
             'Unknown/unconfirmed': 'unknown',
             'Lost/Unidentifiable': 'unknown',
             'Freed by fisherman': 'no gear by fisherman',
+            'Animal freed itself': 'gear shed',
+            'Presumed Entangled - Gear shed': 'unknown',
         }[row[disent_status_key]]
         if row[disent_status_key] in set((
             '?',
