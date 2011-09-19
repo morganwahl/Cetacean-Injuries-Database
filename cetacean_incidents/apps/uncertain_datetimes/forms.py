@@ -327,6 +327,93 @@ class UncertainDateTimeField(forms.Field):
     def compress(self, data_dict):
         return UncertainDateTime(**data_dict)
 
+# based on Django's SplitDateTimeWidget
+class UncertainDateTimeRangeWidget(forms.MultiWidget):
+    def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), attrs=None):
+        self.subfield_classes = deepcopy(UncertainDateTimeField.default_subfield_classes)
+
+        self.subfield_kwargs = deepcopy(UncertainDateTimeField.default_subfield_kwargs)
+        
+        for fieldname in required_subfields:
+            self.subfield_kwargs[fieldname]['required'] = True
+        for fieldname in hidden_subfields:
+            self.subfield_kwargs[fieldname]['widget'] = forms.HiddenInput
+
+        subfields = {}
+        for fieldname in self.subfield_classes.keys():
+            subfields[fieldname] = self.subfield_classes[fieldname](**self.subfield_kwargs[fieldname])
+        
+        self.subfields = subfields
+        
+        subfield_widgets = {}
+        subfield_hidden_widgets = {}
+        for subfield_name, subfield in self.subfields.items():
+            subfield_widgets[subfield_name] = subfield.widget
+            subfield_hidden_widgets[subfield_name] = subfield.hidden_widget
+        self.widget = UncertainDateTimeWidget(subwidgets=subfield_widgets)
+        self.hidden_widgets = UncertainDateTimeHiddenWidget(subwidgets=subfield_hidden_widgets)
+
+        widgets = (
+            date_widget(attrs=attrs),
+            date_widget(attrs=attrs),
+        )
+        super(UncertainDateTimeRangeWidget, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value[0], value[1]]
+        return [None, None]
+
+class HiddenUncertainDateTimeRangeWidget(UncertainDateTimeRangeWidget):
+    
+    is_hidden = True
+    
+    def __init__(self, attrs=None):
+        super(HiddenUncertainDateTimeRangeWidget, self).__init__(attrs)
+        for widget in self.widgets:
+            widget.input_type = 'hidden'
+            widget.is_hidden = True
+
+# based heavliy on Django's SplitDateTimeField
+class UncertainDateTimeRangeField(forms.MultiValueField):
+    widget = UncertainDateTimeRangeWidget
+    hidden_widget = HiddenUncertainDateTimeRangeWidget
+    default_error_messages = {
+        'invalid_start': u'Enter a valid start date.',
+        'invalid_end': u'Enter a valid end date.',
+    }
+    
+    def __init__(self, *args, **kwargs):
+        errors = self.default_error_messages.copy()
+        if 'error_messages' in kwargs:
+            errors.update(kwargs['error_messages'])
+        subfield_kwargs = {
+            'required_subfields': ('year',),
+            'hidden_subfields': ('microsecond', 'second', 'minute', 'hour'),
+        }
+        fields = (
+            UncertainDateTimeField(
+                error_messages= {'invalid': errors['invalid_start']},
+                **subfield_kwargs,
+            ),
+            UncertainDateTimeField(
+                error_messages= {'invalid': errors['invalid_end']},
+                **subfield_kwargs,
+            ),
+        )
+        super(UncertainDateTimeRangeField, self).__init__(fields, *args, **kwargs)
+    
+    def compress(self, data_list):
+        if data_list:
+            # Raise a validation error if either date is empty
+            # (possible if UncertainDateTimeRangeField has required=False).
+            if data_list[0] in validators.EMPTY_VALUES:
+                raise ValidationError(self.error_messages['invalid_start'])
+            if data_list[1] in validators.EMPTY_VALUES:
+                raise ValidationError(self.error_messages['invalid_end'])
+            return (data_list[0], data_list[1])
+        return None
+
 class UncertainDateTimeFieldQuery(QueryField):
     default_match_options = MatchOptions([
         MatchOption('before', 'possibly during or before',
@@ -337,6 +424,9 @@ class UncertainDateTimeFieldQuery(QueryField):
         ),
         MatchOption('after', 'possibly during or after',
             UncertainDateTimeField(),
+        ),
+        MatchOption('between', 'possibly on or after and possibly before',
+            UncertainDateTimeRangeField(),
         ),
     ])
     
@@ -354,6 +444,10 @@ class UncertainDateTimeFieldQuery(QueryField):
                 return UncertainDateTimeModelField.get_before_q(lookup_value, lookup_fieldname)
             elif lookup_type == 'after':
                 return UncertainDateTimeModelField.get_after_q(lookup_value, lookup_fieldname)
+            elif lookup_type == 'between':
+                q = UncertainDateTimeModelField.get_after_q(lookup_value[0], lookup_fieldname)
+                q &= UncertainDateTimeModelField.get_before_q(lookup_value[1], lookup_fieldname)
+                return q
                 
         return Q()
 
