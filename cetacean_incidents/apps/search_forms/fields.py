@@ -322,6 +322,9 @@ class CharFieldQuery(QueryField):
                 MatchOption('exact', 'is',
                     forms.TypedChoiceField(**choice_kwargs),
                 ),
+                MatchOption('in', 'is one of',
+                    TypedMultipleChoiceField(widget=InlineCheckboxSelectMultiple, **choice_kwargs),
+                ),
             ])
         else:
             match_options = MatchOptions([
@@ -433,6 +436,9 @@ class NumberFieldQuery(QueryField):
             match_options = MatchOptions([
                 MatchOption('exact', 'is',
                     forms.TypedChoiceField(**choice_kwargs),
+                ),
+                MatchOption('in', 'is one of',
+                    TypedMultipleChoiceField(widget=InlineCheckboxSelectMultiple, **choice_kwargs),
                 ),
             ])
         else:
