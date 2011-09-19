@@ -11,6 +11,7 @@ from cetacean_incidents.apps.utils.forms import (
     InlineRadioFieldRenderer,
     InlineCheckboxSelectMultiple,
     TypedMultipleChoiceField,
+    DateRangeField,
 )
 
 from widgets import (
@@ -361,9 +362,30 @@ class DateFieldQuery(QueryField):
         MatchOption('gt', 'after',
             forms.DateField(widget=Datepicker),
         ),
+        MatchOption('between', 'after or on and before',
+            DateRangeField(date_widget=Datepicker),
+        )
     ])
     
     blank_option = True
+
+    def query(self, value, prefix=None):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.get_attname()
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            # blank fields and null fields are equivalent
+            if lookup_type == 'between':
+                # lookup_value is an interable of datetime.dates
+                q = Q(**{
+                    lookup_fieldname + '__' + 'gte': lookup_value[0],
+                    lookup_fieldname + '__' + 'lt': lookup_value[1],
+                })
+                print unicode(q)
+                return q
+        return super(DateFieldQuery, self).query(value, prefix)
 
 class NullBooleanFieldQuery(QueryField):
 

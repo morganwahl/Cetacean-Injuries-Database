@@ -5,9 +5,13 @@ from django.forms.widgets import (
     CheckboxInput,
     CheckboxSelectMultiple,
     RadioFieldRenderer,
+    MultiWidget,
+    DateInput,
 )
 from django.forms.fields import (
     MultipleChoiceField,
+    MultiValueField,
+    DateField,
 )
 from django.utils.encoding import force_unicode
 from django.utils.html import conditional_escape
@@ -78,4 +82,88 @@ class TypedMultipleChoiceField(MultipleChoiceField):
     
     def validate(self, value):
         pass
+
+# based on Django's SplitDateTimeWidget
+class DateRangeWidget(MultiWidget):
+    '''\
+    A Widget that has two date input boxes, for a range of dates.
+    '''
+    date_format = DateInput.format
+
+    def __init__(self, attrs=None, date_format=None, date_widget=DateInput):
+        from pprint import pprint
+        pprint(('DateRangeWidget.__init__', attrs, date_format, date_widget))
+        widgets = (
+            date_widget(attrs=attrs, format=date_format),
+            date_widget(attrs=attrs, format=date_format),
+        )
+        super(DateRangeWidget, self).__init__(widgets, attrs)
+
+    def decompress(self, value):
+        if value:
+            return [value[0], value[1]]
+        return [None, None]
+
+    def render(self, *args, **kwargs):
+        from pprint import pprint
+        pprint(('DateRangeWidget.render', args, kwargs))
+        return super(DateRangeWidget, self).render(*args, **kwargs)
+
+class HiddenDateRangeWidget(DateRangeWidget):
+    
+    is_hidden = True
+    
+    def __init__(self, attrs=None, date_format=None):
+        super(HiddenDateRangeWidget, self).__init__(attrs, date_format)
+        for widget in self.widgets:
+            widget.input_type = 'hidden'
+            widget.is_hidden = True
+
+    def render(self, *args, **kwargs):
+        from pprint import pprint
+        pprint(('HiddenDateRangeWidget.render', args, kwargs))
+        return super(HiddenDateRangeWidget, self).render(*args, **kwargs)
+
+# based heavliy on Django's SplitDateTimeField
+class DateRangeField(MultiValueField):
+    widget = DateRangeWidget
+    hidden_widget = DateRangeWidget
+    default_error_messages = {
+        'invalid_start': u'Enter a valid start date.',
+        'invalid_end': u'Enter a valid end date.',
+    }
+    
+    def __init__(self, date_widget=None, input_date_formats=None, *args, **kwargs):
+        from pprint import pprint
+        pprint(('DateRangeField.__init__', date_widget, input_date_formats, args, kwargs))
+        errors = self.default_error_messages.copy()
+        if 'error_messages' in kwargs:
+            errors.update(kwargs['error_messages'])
+        subfield_kwargs = {
+            'input_formats': input_date_formats,
+        }
+        fields = (
+            DateField(
+                error_messages= {'invalid': errors['invalid_start']},
+                **subfield_kwargs
+            ),
+            DateField(
+                error_messages= {'invalid': errors['invalid_end']},
+                **subfield_kwargs
+            ),
+        )
+        if not date_widget is None:
+            widget = self.widget(date_widget=date_widget)
+        super(DateRangeField, self).__init__(fields, widget=widget, *args, **kwargs)
+    
+    def compress(self, data_list):
+        if data_list:
+            # Raise a validation error if either date is empty
+            # (possible if DateRangeField has required=False).
+            if data_list[0] in validators.EMPTY_VALUES:
+                raise ValidationError(self.error_messages['invalid_start'])
+            if data_list[1] in validators.EMPTY_VALUES:
+                raise ValidationError(self.error_messages['invalid_end'])
+            return (data_list[0], data_list[1])
+        return None
 
