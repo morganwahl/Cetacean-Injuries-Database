@@ -136,7 +136,7 @@ def cases_by_year(request, year=None):
     if year is None:
         year = datetime.now().year
     year = int(year)
-    cases = Case.objects.filter(observation__datetime_observed__startswith=u"%04d" % year).order_by('current_yearnumber__year', 'current_yearnumber__number', 'pk')
+    cases = Case.objects.filter(observation__datetime_observed__startswith=u"%04d" % year).order_by('date', 'current_yearnumber__year', 'current_yearnumber__number', 'pk')
     # Oracle doesn't support distinct, so this is a work-around
     case_list = []
     case_set = set()
