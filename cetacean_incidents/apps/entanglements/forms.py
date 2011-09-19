@@ -55,7 +55,7 @@ class GearBodyLocationForm(forms.ModelForm):
         super(GearBodyLocationForm, self).__init__(*args, **kwargs)
         
         if not 'location' in self.initial:
-            raise KeyError("location wasn't passed to a GearBodyLocationForm")        
+            raise KeyError("location wasn't passed to a GearBodyLocationForm")
         # transmute the one visible field
         f = self.fields['gear_seen']
         loc = BodyLocation.objects.get(pk=self.initial['location'])
@@ -525,7 +525,7 @@ class EntanglementSearchForm(CaseSearchForm):
         model_field = _f,
         required= False,
         label= 'Analyzed gear attributes',
-        help_text= 'search for entanglements cases whose analyzed gear has these attributes',
+        help_text= 'search for entanglement cases whose analyzed gear has these attributes',
     )
 
     _f = Entanglement._meta.get_field_by_name('observed_gear_attributes')[0]
@@ -533,7 +533,7 @@ class EntanglementSearchForm(CaseSearchForm):
         model_field = _f,
         required= False,
         label= 'Observed gear attributes',
-        help_text= 'search for entanglements cases whose observed gear has these attributes',
+        help_text= 'search for entanglement cases whose observed gear has these attributes',
     )
     
     class GearOwnerSearchForm(SearchForm):

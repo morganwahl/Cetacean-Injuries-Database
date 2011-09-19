@@ -503,7 +503,7 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
             c.save()
     
     @staticmethod
-    def _observation_cases_m2m_changed_update_name_handler(sender, **kwargs):  
+    def _observation_cases_m2m_changed_update_name_handler(sender, **kwargs):
         # sender should be Observation.cases.through
         action, reverse = kwargs['action'], kwargs['reverse']
         if action in ('post_add', 'post_remove') and not reverse:

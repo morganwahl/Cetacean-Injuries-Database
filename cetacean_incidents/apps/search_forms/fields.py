@@ -460,7 +460,7 @@ class NumberFieldQuery(QueryField):
                 ),
                 MatchOption('range', 'in the range (inclusive)',
                     forms.CharField(
-                        help_text= 'Enter two numbers.',
+                        help_text= 'Enter two numbers. You can separate them with commas or spaces.',
                     ),
                 ),
             ])

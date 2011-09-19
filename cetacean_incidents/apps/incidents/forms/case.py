@@ -162,7 +162,7 @@ class UseCaseReportForm(forms.Form):
         initial= False,
         label= u'generate a report using these cases...'
     )
-    
+
     report = forms.ModelChoiceField(queryset= Report.objects.all())
 
     def __init__(self, cases_qs, cases_initial, *args, **kwargs):

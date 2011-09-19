@@ -251,7 +251,7 @@ class Observation(Documentable, Importable):
             MinValueValidator(1),
             MaxValueValidator(6), # should equal animal_length.max_digits
         ],
-        verbose_name= '# of significant digits in animal_length',
+        verbose_name= '# of significant digits in animal length',
         help_text= u"""defaults to # of non-zero digits in 'animal length'""",
     )
 
