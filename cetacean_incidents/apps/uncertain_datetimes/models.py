@@ -9,6 +9,10 @@ from . import UncertainDateTime
 from forms import UncertainDateTimeField as UncertainDateTimeFormField
 from forms import UncertainDateTimeFieldQuery as UncertainDateTimeFormFieldQuery
 
+# this doesn't work!
+#NOTHING = ~ models.Q()
+NOTHING_QUERY = models.Q(pk__isnull=True)
+
 class UncertainDateTimeField(models.Field):
     
     description = """a DateTime whose individual fields (year, month, day, etc)
@@ -43,6 +47,44 @@ class UncertainDateTimeField(models.Field):
         
         return value.sortkey()
     
+    @classmethod
+    def get_definite_after_q(cls, udt, field_lookup):
+        '''
+        Given a field lookup for an UncertainDateTimeField (e.g.
+        'datetime_reported'), returns a Q object that selects for
+        UncertainDateTimeField values that _certainly_ represent a time after
+        this one.
+        '''
+        
+        # if year is unknown, the time given could be arbitrarily far in the
+        # future, and thus no value is certainly after it.
+        if udt.year is None:
+            return NOTHING_QUERY
+        
+        # fill in max-values for each unknown field
+        max_udt = UncertainDateTime.from_datetime(udt.latest)
+        # match anything greater than (not equal to!) that
+        return models.Q(**{field_lookup + '__gt': max_udt.sortkey()})
+    
+    @classmethod
+    def get_definite_before_q(cls, udt, field_lookup):
+        '''
+        Given a field lookup for an UncertainDateTimeField (e.g.
+        'datetime_reported'), returns a Q object that selects for
+        UncertainDateTimeField values that _certainly_ represent a time before
+        this one.
+        '''
+        
+        # if year is unknown, the time given could be arbitrarily far in the
+        # past, and thus no value is certainly before it.
+        if udt.year is None:
+            return NOTHING_QUERY
+        
+        # fill in min-values for each unknown field
+        min_udt = UncertainDateTime.from_datetime(udt.earliest)
+        # match anything less than (not equal to!) that
+        return models.Q(**{field_lookup + '__lt': min_udt.sortkey()})
+
     @classmethod
     def get_after_q(cls, udt, field_lookup):
         '''
@@ -187,7 +229,7 @@ class UncertainDateTimeField(models.Field):
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ('exact',):
             return self.get_prep_value(value)
-        elif lookup_type in ('regex','lte','gte','startswith'):
+        elif lookup_type in ('regex', 'lt', 'lte', 'gt', 'gte', 'startswith'):
             if isinstance(value, UncertainDateTime):
                 return value.sortkey()
             return value

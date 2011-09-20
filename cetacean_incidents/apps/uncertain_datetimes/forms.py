@@ -399,6 +399,15 @@ class UncertainDateTimeFieldQuery(QueryField):
         MatchOption('maybe_between', 'possibly after and possibly before',
             UncertainDateTimeRangeField(**_match_field_kwargs),
         ),
+        MatchOption('before', 'definitely before',
+            UncertainDateTimeField(**_match_field_kwargs),
+        ),
+        MatchOption('after', 'definitely after',
+            UncertainDateTimeField(**_match_field_kwargs),
+        ),
+        MatchOption('between', 'definitely after and definitely before',
+            UncertainDateTimeRangeField(**_match_field_kwargs),
+        ),
     ])
     
     def query(self, value, prefix=None):
@@ -419,6 +428,15 @@ class UncertainDateTimeFieldQuery(QueryField):
                 q = UncertainDateTimeModelField.get_after_q(lookup_value[0], lookup_fieldname)
                 q &= UncertainDateTimeModelField.get_before_q(lookup_value[1], lookup_fieldname)
                 return q
-                
+            elif lookup_type == 'before':
+                return UncertainDateTimeModelField.get_definite_before_q(lookup_value, lookup_fieldname)
+            elif lookup_type == 'after':
+                return UncertainDateTimeModelField.get_definite_after_q(lookup_value, lookup_fieldname)
+            elif lookup_type == 'between':
+                q = UncertainDateTimeModelField.get_definite_after_q(lookup_value[0], lookup_fieldname)
+                q &= UncertainDateTimeModelField.get_definite_before_q(lookup_value[1], lookup_fieldname)
+                return q
+
         return Q()
+
 
