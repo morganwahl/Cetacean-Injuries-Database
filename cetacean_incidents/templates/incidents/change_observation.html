@@ -82,5 +82,40 @@
     {% csrf_token %}
     {{ tabs.render }}
 </form>
+{% if animal.import_notes %}
+<div class="section">
+    <h3>Animal import notes</h3>
+    <h4>{{ animal }}</h4>
+    {% with animal.import_notes as notes %}
+    {% with animal.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
+{% for c in cases %}
+{% if c.import_notes %}
+<div class="section">
+    <h3>Case import notes</h3>
+    <h4>{{ c }}</h4>
+    {% with c.import_notes as notes %}
+    {% with c.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
+{% endfor %}
+{% if observation.import_notes %}
+<div class="section">
+    <h3>Observation import notes</h3>
+    <h4>{{ observation }}</h4>
+    {% with observation.import_notes as notes %}
+    {% with observation.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
 {% endblock content %}
 

@@ -65,5 +65,16 @@
     </div>
 	<button type="submit">save changes to {{ animal|html }}</button>
 </form>
+{% if animal.import_notes %}
+<div class="section">
+    <h3>Animal import notes</h3>
+    <h4>{{ animal }}</h4>
+    {% with animal.import_notes as notes %}
+    {% with animal.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
 {% endblock %}
 
