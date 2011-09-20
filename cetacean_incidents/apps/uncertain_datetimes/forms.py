@@ -387,16 +387,16 @@ class UncertainDateTimeFieldQuery(QueryField):
         'hidden_subfields': ('hour', 'minute', 'second', 'microsecond'),
     }
     default_match_options = MatchOptions([
-        MatchOption('before', 'possibly during or before',
+        MatchOption('maybe_before', 'possibly before',
             UncertainDateTimeField(**_match_field_kwargs),
         ),
-        MatchOption('during', 'during',
+        MatchOption('maybe_during', 'possibly at the same time',
             UncertainDateTimeField(**_match_field_kwargs),
         ),
-        MatchOption('after', 'possibly during or after',
+        MatchOption('maybe_after', 'possibly after',
             UncertainDateTimeField(**_match_field_kwargs),
         ),
-        MatchOption('between', 'possibly on or after and possibly before',
+        MatchOption('maybe_between', 'possibly after and possibly before',
             UncertainDateTimeRangeField(**_match_field_kwargs),
         ),
     ])
@@ -409,13 +409,13 @@ class UncertainDateTimeFieldQuery(QueryField):
                 lookup_fieldname = prefix + '__' + lookup_fieldname
             
             from models import UncertainDateTimeField as UncertainDateTimeModelField            
-            if lookup_type == 'during':
+            if lookup_type == 'maybe_during':
                 return UncertainDateTimeModelField.get_sametime_q(lookup_value, lookup_fieldname)
-            elif lookup_type == 'before':
+            elif lookup_type == 'maybe_before':
                 return UncertainDateTimeModelField.get_before_q(lookup_value, lookup_fieldname)
-            elif lookup_type == 'after':
+            elif lookup_type == 'maybe_after':
                 return UncertainDateTimeModelField.get_after_q(lookup_value, lookup_fieldname)
-            elif lookup_type == 'between':
+            elif lookup_type == 'maybe_between':
                 q = UncertainDateTimeModelField.get_after_q(lookup_value[0], lookup_fieldname)
                 q &= UncertainDateTimeModelField.get_before_q(lookup_value[1], lookup_fieldname)
                 return q
