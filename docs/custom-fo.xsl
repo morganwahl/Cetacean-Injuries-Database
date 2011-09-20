@@ -19,7 +19,7 @@
 </xsl:attribute-set>
 
 <xsl:template match="literal">
-  <fo:inline font-variant="small-caps">
+  <fo:inline font-variant="small-caps" font-family="monospace">
     <xsl:apply-templates/>
   </fo:inline>
 </xsl:template>
