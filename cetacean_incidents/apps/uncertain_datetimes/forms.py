@@ -3,6 +3,7 @@ from copy import deepcopy
 import re
 
 from django.core.exceptions import ValidationError
+from django.core import validators
 from django.db.models import Q
 from django import forms
 from django.forms.util import ErrorList
@@ -332,34 +333,8 @@ class UncertainDateTimeField(forms.Field):
         return UncertainDateTime(**data_dict)
 
 class UncertainDateTimeRangeWidget(MultiWidget):
-    def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), attrs=None):
-        self.subfield_classes = deepcopy(UncertainDateTimeField.default_subfield_classes)
-
-        self.subfield_kwargs = deepcopy(UncertainDateTimeField.default_subfield_kwargs)
-        
-        for fieldname in required_subfields:
-            self.subfield_kwargs[fieldname]['required'] = True
-        for fieldname in hidden_subfields:
-            self.subfield_kwargs[fieldname]['widget'] = forms.HiddenInput
-
-        subfields = {}
-        for fieldname in self.subfield_classes.keys():
-            subfields[fieldname] = self.subfield_classes[fieldname](**self.subfield_kwargs[fieldname])
-        
-        self.subfields = subfields
-        
-        subfield_widgets = {}
-        subfield_hidden_widgets = {}
-        for subfield_name, subfield in self.subfields.items():
-            subfield_widgets[subfield_name] = subfield.widget
-            subfield_hidden_widgets[subfield_name] = subfield.hidden_widget
-        self.widget = UncertainDateTimeWidget(subwidgets=subfield_widgets)
-        self.hidden_widgets = UncertainDateTimeHiddenWidget(subwidgets=subfield_hidden_widgets)
-
-        widgets = (
-            date_widget(attrs=attrs),
-            date_widget(attrs=attrs),
-        )
+    def __init__(self, fields, attrs=None):
+        widgets = tuple(map(lambda field: field.widget, fields))
         super(UncertainDateTimeRangeWidget, self).__init__(widgets, attrs)
 
     def decompress(self, value):
@@ -367,43 +342,33 @@ class UncertainDateTimeRangeWidget(MultiWidget):
             return [value[0], value[1]]
         return [None, None]
 
-class HiddenUncertainDateTimeRangeWidget(UncertainDateTimeRangeWidget):
-    
-    is_hidden = True
-    
-    def __init__(self, attrs=None):
-        super(HiddenUncertainDateTimeRangeWidget, self).__init__(attrs)
-        for widget in self.widgets:
-            widget.input_type = 'hidden'
-            widget.is_hidden = True
-
-# based heavliy on Django's SplitDateTimeField
+# based on Django's SplitDateTimeField
 class UncertainDateTimeRangeField(forms.MultiValueField):
-    widget = UncertainDateTimeRangeWidget
-    hidden_widget = HiddenUncertainDateTimeRangeWidget
+
     default_error_messages = {
         'invalid_start': u'Enter a valid start date.',
         'invalid_end': u'Enter a valid end date.',
     }
-    
-    def __init__(self, *args, **kwargs):
+
+    def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), *args, **kwargs):
         errors = self.default_error_messages.copy()
         if 'error_messages' in kwargs:
             errors.update(kwargs['error_messages'])
         subfield_kwargs = {
-            'required_subfields': ('year',),
-            'hidden_subfields': ('microsecond', 'second', 'minute', 'hour'),
+            'required_subfields': required_subfields,
+            'hidden_subfields': hidden_subfields,
         }
         fields = (
             UncertainDateTimeField(
                 error_messages= {'invalid': errors['invalid_start']},
-                **subfield_kwargs,
+                **subfield_kwargs
             ),
             UncertainDateTimeField(
                 error_messages= {'invalid': errors['invalid_end']},
-                **subfield_kwargs,
+                **subfield_kwargs
             ),
         )
+        self.widget = UncertainDateTimeRangeWidget(fields=fields)
         super(UncertainDateTimeRangeField, self).__init__(fields, *args, **kwargs)
     
     def compress(self, data_list):
