@@ -293,14 +293,14 @@ class UncertainDateTimeFieldQuery(QueryField):
             
             from models import UncertainDateTimeField as UncertainDateTimeModelField
             if lookup_type == 'maybe_during':
-                return UncertainDateTimeModelField.get_sametime_q(lookup_value, lookup_fieldname)
+                return UncertainDateTimeModelField.get_maybe_sametime_q(lookup_value, lookup_fieldname)
             elif lookup_type == 'maybe_before':
-                return UncertainDateTimeModelField.get_before_q(lookup_value, lookup_fieldname)
+                return UncertainDateTimeModelField.get_maybe_before_q(lookup_value, lookup_fieldname)
             elif lookup_type == 'maybe_after':
-                return UncertainDateTimeModelField.get_after_q(lookup_value, lookup_fieldname)
+                return UncertainDateTimeModelField.get_maybe_after_q(lookup_value, lookup_fieldname)
             elif lookup_type == 'maybe_between':
-                q = UncertainDateTimeModelField.get_after_q(lookup_value[0], lookup_fieldname)
-                q &= UncertainDateTimeModelField.get_before_q(lookup_value[1], lookup_fieldname)
+                q = UncertainDateTimeModelField.get_maybe_after_q(lookup_value[0], lookup_fieldname)
+                q &= UncertainDateTimeModelField.get_maybe_before_q(lookup_value[1], lookup_fieldname)
                 return q
             elif lookup_type == 'before':
                 return UncertainDateTimeModelField.get_definite_before_q(lookup_value, lookup_fieldname)

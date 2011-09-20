@@ -230,21 +230,21 @@ class UncertainDateTimeModelFieldTestCase(TestCase):
         self.full = UncertainDateTime(1982, 3, 20, 12, 38, 2, 0)
         self.leap_year = UncertainDateTime(2008, 2)
 
-    def test_after_q(self):
+    def test_maybe_after_q(self):
         # just testing for exception-throwing for now
-        UncertainDateTimeModelField.get_after_q(self.blank, 'fieldname')
-        UncertainDateTimeModelField.get_after_q(self.just_year, 'fieldname')
-        UncertainDateTimeModelField.get_after_q(self.date, 'fieldname')
-        UncertainDateTimeModelField.get_after_q(self.time, 'fieldname')
-        UncertainDateTimeModelField.get_after_q(self.full, 'fieldname')
-        UncertainDateTimeModelField.get_after_q(self.leap_year, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.blank, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.just_year, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.date, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.time, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.full, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_after_q(self.leap_year, 'fieldname')
     
-    def test_before_q(self):
+    def test_maybe_before_q(self):
         # just testing for exception-throwing for now
-        UncertainDateTimeModelField.get_before_q(self.blank, 'fieldname')
-        UncertainDateTimeModelField.get_before_q(self.just_year, 'fieldname')
-        UncertainDateTimeModelField.get_before_q(self.date, 'fieldname')
-        UncertainDateTimeModelField.get_before_q(self.time, 'fieldname')
-        UncertainDateTimeModelField.get_before_q(self.full, 'fieldname')
-        UncertainDateTimeModelField.get_before_q(self.leap_year, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.blank, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.just_year, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.date, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.time, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.full, 'fieldname')
+        UncertainDateTimeModelField.get_maybe_before_q(self.leap_year, 'fieldname')
         
