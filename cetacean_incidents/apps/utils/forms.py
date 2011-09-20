@@ -1,5 +1,6 @@
 from itertools import chain
 
+from django.core.exceptions import ValidationError
 from django.core import validators
 from django.forms.widgets import (
     CheckboxInput,
