@@ -35,9 +35,7 @@
         save changes to {{ case|html }} and {{ animal|html }}
     </button>
     {% csrf_token %}
-    
     {{ tabs.render }}
-
 </form>
 {% with case.animal as animal %}
 {% if animal.import_notes %}
