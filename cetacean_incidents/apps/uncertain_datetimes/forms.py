@@ -6,6 +6,10 @@ from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django import forms
 from django.forms.util import ErrorList
+from django.forms.widgets import (
+    MultiWidget,
+    Widget,
+)
 from django.template.loader import render_to_string
 from django.utils import copycompat as copy
 from django.utils.safestring import mark_safe
@@ -19,7 +23,7 @@ from cetacean_incidents.apps.search_forms.fields import (
 from . import UncertainDateTime
 
 # similiar to Django's MultiWidget, but not really a subclass
-class UncertainDateTimeWidget(forms.Widget):
+class UncertainDateTimeWidget(Widget):
     """
     A Widget that splits an UncertainDateTime input into 7 <input type="text"> inputs.
     """
@@ -327,8 +331,7 @@ class UncertainDateTimeField(forms.Field):
     def compress(self, data_dict):
         return UncertainDateTime(**data_dict)
 
-# based on Django's SplitDateTimeWidget
-class UncertainDateTimeRangeWidget(forms.MultiWidget):
+class UncertainDateTimeRangeWidget(MultiWidget):
     def __init__(self, required_subfields=tuple(), hidden_subfields=tuple(), attrs=None):
         self.subfield_classes = deepcopy(UncertainDateTimeField.default_subfield_classes)
 
