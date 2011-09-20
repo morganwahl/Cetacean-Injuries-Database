@@ -383,18 +383,21 @@ class UncertainDateTimeRangeField(forms.MultiValueField):
         return None
 
 class UncertainDateTimeFieldQuery(QueryField):
+    _match_field_kwargs = {
+        'hidden_subfields': ('hour', 'minute', 'second', 'microsecond'),
+    }
     default_match_options = MatchOptions([
         MatchOption('before', 'possibly during or before',
-            UncertainDateTimeField(),
+            UncertainDateTimeField(**_match_field_kwargs),
         ),
         MatchOption('during', 'during',
-            UncertainDateTimeField(),
+            UncertainDateTimeField(**_match_field_kwargs),
         ),
         MatchOption('after', 'possibly during or after',
-            UncertainDateTimeField(),
+            UncertainDateTimeField(**_match_field_kwargs),
         ),
         MatchOption('between', 'possibly on or after and possibly before',
-            UncertainDateTimeRangeField(),
+            UncertainDateTimeRangeField(**_match_field_kwargs),
         ),
     ])
     
