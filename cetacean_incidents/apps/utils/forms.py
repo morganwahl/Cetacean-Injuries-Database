@@ -91,8 +91,6 @@ class DateRangeWidget(MultiWidget):
     date_format = DateInput.format
 
     def __init__(self, attrs=None, date_format=None, date_widget=DateInput):
-        from pprint import pprint
-        pprint(('DateRangeWidget.__init__', attrs, date_format, date_widget))
         widgets = (
             date_widget(attrs=attrs, format=date_format),
             date_widget(attrs=attrs, format=date_format),
@@ -104,11 +102,6 @@ class DateRangeWidget(MultiWidget):
             return [value[0], value[1]]
         return [None, None]
 
-    def render(self, *args, **kwargs):
-        from pprint import pprint
-        pprint(('DateRangeWidget.render', args, kwargs))
-        return super(DateRangeWidget, self).render(*args, **kwargs)
-
 class HiddenDateRangeWidget(DateRangeWidget):
     
     is_hidden = True
@@ -118,11 +111,6 @@ class HiddenDateRangeWidget(DateRangeWidget):
         for widget in self.widgets:
             widget.input_type = 'hidden'
             widget.is_hidden = True
-
-    def render(self, *args, **kwargs):
-        from pprint import pprint
-        pprint(('HiddenDateRangeWidget.render', args, kwargs))
-        return super(HiddenDateRangeWidget, self).render(*args, **kwargs)
 
 # based heavliy on Django's SplitDateTimeField
 class DateRangeField(MultiValueField):
@@ -134,8 +122,6 @@ class DateRangeField(MultiValueField):
     }
     
     def __init__(self, date_widget=None, input_date_formats=None, *args, **kwargs):
-        from pprint import pprint
-        pprint(('DateRangeField.__init__', date_widget, input_date_formats, args, kwargs))
         errors = self.default_error_messages.copy()
         if 'error_messages' in kwargs:
             errors.update(kwargs['error_messages'])

@@ -35,9 +35,31 @@
         save changes to {{ case|html }} and {{ animal|html }}
     </button>
     {% csrf_token %}
-    
     {{ tabs.render }}
-
 </form>
+{% with case.animal as animal %}
+{% if animal.import_notes %}
+<div class="section">
+    <h3>Animal import notes</h3>
+    <h4>{{ animal }}</h4>
+    {% with animal.import_notes as notes %}
+    {% with animal.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
+{% endwith %}
+{% if case.import_notes %}
+<div class="section">
+    <h3>Case import notes</h3>
+    <h4>{{ case }}</h4>
+    {% with case.import_notes as notes %}
+    {% with case.pk as notes_id %}
+    {% include "incidents/import_notes_include.html" %}
+    {% endwith %}
+    {% endwith %}
+</div>
+{% endif %}
 {% endblock %}
 

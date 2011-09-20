@@ -249,7 +249,7 @@ class UncertainDateTimeField(forms.Field):
         for fieldname in required_subfields:
             self.subfield_kwargs[fieldname]['required'] = True
         for fieldname in hidden_subfields:
-            self.subfield_kwargs[fieldname]['widget'] = forms.HiddenInput        
+            self.subfield_kwargs[fieldname]['widget'] = forms.HiddenInput
 
         subfields = {}
         for fieldname in self.subfield_classes.keys():

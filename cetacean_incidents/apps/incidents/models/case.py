@@ -558,15 +558,19 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         return self.latest_datetime() - self.earliest_datetime()
     
     def save(self, force_insert=False, force_update=False, using=None):
+        super(Case, self).save(force_insert, force_update, using)
+        
         date = None
-        obs = self.observation_set
-        if obs.exists():
-           date = obs.order_by('datetime_observed')[0].datetime_observed
+        if self.id:
+            obs = self.observation_set
+            if obs.exists():
+               date = obs.order_by('datetime_observed')[0].datetime_observed
         
         if self.date != date:
             self.date = date
-        
-        super(Case, self).save(force_insert, force_update, using)
+            # dont' do anything else if the case hasn't been inserted yet
+            if self.id:
+                super(Case, self).save(using=using)
         
         if date:
             def _next_number_in_year(year):

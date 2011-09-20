@@ -17,41 +17,61 @@
       encompass data from all those different sources while still being simple
       enough to do meaningul analysis with.
     </para>
+    <para>
+      This model is simply described in English, as opposed to any formal
+      language. The database implements it as Python classes and an Oracle
+      schema, but it could be represented in various other ways too. By
+      convention, the different types of entries in the model have capitalized
+      names, such as <quote>Observation</quote> or <quote>Entanglement</quote>
+      and the names of the fields for each of those types a written
+      <literal>like this</literal>. These <glossterm>types</glossterm> and
+      <glossterm>fields</glossterm> correspond to tables and columns in a
+      relational database, or sheets and columns in a spreadsheet. The
+      <glossterm>entries</glossterm> of this model are like the rows in a
+      database or spreadsheet, and thus each has a value for each field that is
+      separate from the values for that field of every other entry. When
+      <quote>the database</quote> is mentioned below, it refers to the
+      <citation>Marine Mammal Injury Database</citation>.
+    </para>
+    <para>
+      Each field has a certain restrictions on the values is can have. The
+      simplest are restrict to true or false, or true, false, and unknown. Many
+      are simply text (and may have restrictions on length in a particular
+      implementation). Some are limited to a particular set of values, but that
+      set may be added to later.
+    </para>
+    <para>
+      Some fields’ values are references to other entries, e.g. an Observation
+      has an <literal>animal</literal> field that refers to a single Animal
+      entry. Changing any of the values in that Animal doesn’t change the
+      Observation’s reference to it. These are typically implemented by
+      assigning a unique ID number to each entry, then using that as the value
+      in the referring entry. The database’s implementation of this model does
+      exactly that, and these IDs are sometimes used in its interface to
+      disambiguate entries whose fields have the same values. These IDs are
+      meaningless outside the context of this database, and are not formally
+      part of this model. Some entry-types have fields that are meaningful as
+      identifiers, such as the <literal>stranding field number</literal>
+      of Animal entries, but the assignment of these identifiers is outside the
+      scope of the database.
+    </para>
+    <para>
+      Unless stated otherwise, every field has a value for
+      <quote>unknown</quote>, which is its default value.
+    </para>
   </partintro>
-
-  <chapter>
-    <title>Ancillary datatypes</title>
-    <section xml:id="uncertain_datetime_model">
-      <title>Uncertain Date/Time</title>
-      <para>
-        This is a date and time with varying degrees of uncertainty to it. It
-        has the typical fields of a date and time (year, month, day, hour, etc)
-        but each of them may be left as <quote>unknown</quote>. This means that
-        when storing values of this type in a relational database the database's
-        built-in date and time types can't be used. Instead a string
-        representation is used and comparisons must be done with substring
-        operations.
-      </para>
-      <para>
-        TODO examples of serializations
-      </para>
-      <para>
-        TODO examples of operators and definitions
-      </para>
-    </section>
-  </chapter>
 
   <chapter>
     <title>Observations</title>
     <para>
       The most important type of entry in the database is for an Observation. An
       observation is defined as being by a single observer and of a single
-      animal, with a single observation date/time. It might be a brief sighting
-      from a plane, a detailed examination on a beach, or an attempt at
-      disentanglement. The key thing is that an animal was observed and the
-      Observation entry is to record what all information about the animal could
-      be determined in that time (including what happened to it during the
-      observation, in the case of disentanglement attempts).
+      animal, with a single observation date/time and a single location. It
+      might be a brief sighting from a plane, a detailed examination on a beach,
+      or an attempt at disentanglement. The key thing is that an animal was
+      observed and the Observation entry is to record what all information about
+      the animal could be determined in that time (including what happened to it
+      during the observation, in the case of disentanglement attempts).
     </para>
     <para>
       The specificity with which seperate Observations are recorded is somewhat
@@ -62,26 +82,26 @@
     </para>
     <para>
       Observations have a <literal>narrative</literal> field which is text of
-      arbitrary length that is complete description of who the observer is, what
-      they saw, and when. Narratives are important for indicate the sources of
-      the data in other fields, as well as putting them into context. Ideally,
-      all the other data in the database could be determined from reading these
-      narratives. The other Observation fields and the rest of the database's
-      structure are there to connect related Observations (e.g. for the same
-      animal, or by the same observer) or facilitate searching and analysis of
-      the data (e.g. search for observation of a particular taxon). There are
-      some important exceptions to this, such as uploaded files (which are
-      almost always primary sources of data), and the fields that are similiar
-      to Observation narratives, but for gear-analysis (which is not an
+      unlimited length that is a complete description of who the observer is,
+      what they saw, and when. Narratives are important to indicate the sources
+      of the data in other fields, and to put them into context.
+      Ideally, all the other data in the database could be determined from
+      reading these narratives. The other Observation fields and the rest of the
+      database’s structure are there to connect related Observations (e.g. for
+      the same animal, or by the same observer) or facilitate searching and
+      analysis of the data (e.g. search for observation of a particular taxon).
+      There are some important exceptions to this, such as uploaded files (which
+      are almost always primary sources of data), and the fields that are
+      similiar to Observation narratives, but for gear-analysis (which is not an
       observation of an animal).
     </para>
     <para>
-      An Observation entry has an <literal>observer</literal>, which in the
-      database is a reference to a Contact entry. The observer is who actually
+      An Observation has an <literal>observer</literal>, which in the
+      database is a reference to a Contact. The observer is who actually
       saw the animal and is the ultimate source for the data recorded in the
       narrative. An Observation may also have a <literal>reporter</literal>,
-      which is the proximate source for the data (roughly, it's who told NOAA
-      about the observation). The reporter and observer are often the same.
+      which is the proximate source for the data (roughly, it’s who told NOAA
+      about the observation). The <literal>reporter</literal> and <literal>observer</literal> are often the same.
     </para>
     <para>
       In parallel to the observer and reporter are the <literal>observation
@@ -90,30 +110,108 @@
     </para>
     <para>
       The observation date-time is defined as the start of the observation.
-      Currently, the database doesn't store a duration or observation end-time,
-      since those fields weren't deemed necessary for any queries. The exact
+      Currently, the database doesn’t store a duration or observation end-time,
+      since those fields weren’t deemed necessary for any queries. The exact
       timing of observations can be made clear in the narrative. The database
       currently requires observations to at least have a year defined in their observation date, but all
       other subfields (e.g. month, minute) can be left as <quote>unknown</quote>
     </para>
     <para>
-      The report date-time is when NOAA heard of the observation. It's exact definition isn't pinned down yet, but the purpose of the field is to track the order in which observations we heard about, since that may very well be different than the order they occured.
+      Observations have several fields to describe the location the of observer during the observation. The most important of these is a written description. For convienence there are also fields for coordinates,  whether the observation was made on land or in the water, and in what jurisdiction (e.g. state, federal waters, U.S. EEZ, foreign EEZ, etc.). It is important to note the accuracy of these other fields in the location description, particularly the coordinates. 
+    </para>
+    <para>
+      The <literal>report date/time</literal> is when NOAA heard of the observation. It’s exact definition isn’t pinned down yet, but the purpose of the field is to track the order in which observations we heard about, since that may very well be different than the order they occured.
     </para>
     <para>
       Observations have an animal field, which is a reference to an Animal (see
       <link href="#animal_model">the chapter on the Animal model</link> below).
       Observations of the same animal should refer to the same animal entry.
-      Currently, the database requires an an Observation to have an value for
-      it's animal field, but it could be changed to allow the animal field to be
-      left blank. This might make sense for species where individuals aren't
+      Currently, the database requires an Observation to have an value for its
+      animal field, but it could be changed to allow the animal field to be left
+      blank. This might make sense for species where individuals aren’t
       typically distinguished. Although even in that case, you would want to
       occationally make an Animal entry to indicate two observations were of the
       same animal.
     </para>
   </chapter>
 
+  <chapter>
+    <title>Cases</title>
+    <para>
+      A Case entry brings together all the data about a single 'incident'. An incident could be an entanglement, a mortality, a ship-strike, a beaching, or anything else defined as a 'stranding'. What counts as an incident is essentially up to the database users and is part of the database model. However, some kinds of incidents require additional fields for both their cases and the observations that are relevant to them (see Observation.cases). Currently this is true of entanglements and ship-strikes.
+    </para>
+    <para>
+      A Case is always for a single animal, and a single incident involving that animal. For entanglements this means a single set of gear that the animal became entangled in at once. An animal may becoming entangled in additional gear after already being entangled; these would be two seperate cases. Any observations after the second set of gear appeared would certainly be marked as relevant to both cases. If the animal then died, a case entry for that mortality would be added, and any observations of it dead would be relevant to both entanglement cases and the mortality case.
+    </para>
+    <para>
+      Note that Case entries are decidedly for individual animals. Currently, cases that involve groups of animals have to indicate that in the narratives of the relevant observations. In the future, a GroupCase entry could be added to bring together such related cases and observations, if deemed necessary.
+    </para>
+    <para>
+      <literal>incident was on or after</literal>: This field puts a limit on the earliest time the incident may have happened (incidents are defined differently for different types of cases).
+    </para>
+    <para>
+      Typically this is the last time an animal was seen without any evidence of the incident, but it could also be filled in based on what was seen in an observation after the incident. For example, an animal may be determined to have died no longer than 10 days before it was observed dead.
+    </para>
+    <para>
+      Since incidents themselves are typically unobserved, this field along with the observation date-times at least puts the date of the incident into a certain range. Even filling in this field based on the maximum age an animal could be is useful, since it would keep that case out of searches for cases that may have happened in an even earlier timespan. For example, an animal is seen entangled in 2010 and hasn’t ever been sighted before; the 'incident as on or after' field can be filled in based on the animal’s maximum age (say, 10 years) as 2000-01-01. This will at least preclude this case coming up in searches for entanglements that may have happened before 2000.
+    </para>
+    <para>
+      'OLE investigation': this is simply a yes/no/unknown field for whether there is an Office of Law Enforcement investigation that corresponds to this case. This is important because if there is one, data about this case must be handled with care (TODO: clarify).
+    </para>
+    <para>
+      'validity': This field can be one of 'invalid', 'suspected' and 'confirmed' (additional degrees of sureity could be added later). It defaults to 'suspected'. This field is quite important because it allows the immediate entry of data for cases that later turns out to be wrong. For example, a boater reports an entangled whale that turns out to just be some floating trash. Initially, an entanglement case can be created with a single observation entry. The case would have 'validity' set to 'suspected'. Once the "animal" was examined and determined not to be an animal at all, the case will be marked as 'invalid'. It won’t simply be deleted, since it (along with the observation entry) records the fact that something was reported. The case entry won’t be included in, say, yearly reports of cases, but the observation will show up if one searched for observations where the observer was that boater. (TODO: are contacts really being used this way?)
+    </para>
+    <para>
+      'human interaction': is the incident for this case due to human interaction? For some types of cases (e.g. entanglements and ship-strikes), this is true by definition. For others (e.g. mortalities) it may on of 'yes' (this incident has evidence of human interaction), 'no' (this incident has been determined to not involve human interaction), 'not yet determined' (the default), and 'can’t be determined' (the observations can’t ever rule out or prove human interaction). That last value is useful for things like some skeletal remains washing up on a beach. A mortality clearly occured, but whether there was human-interaction involved will never be known.
+    </para>
+    <para>
+      'NMFS entanglemnt #' (entanglement cases only): This is simply a free-form string to assign simple IDs to entanglement cases. The format used is <quote>E<replaceable>number within year</replaceable>-<replaceable>last two digits of year</replaceable></quote>, but this a user convention, and not enforced by the database itself. Similiarly to the Animal.stranding_field_number, this field should have a unique value, but that’s not enforced by the database. Duplicate values should be pointed out to the users.
+    </para>
+  </chapter>
+
+
   <chapter xml:id="animal_model">
     <title>Animals</title>
+    <para>
+      Animal entries allow the tracking of individual animals, as well as a logical place to put data that concerns an animal as a whole, and not just an 
+    </para>
+    <para>
+Animal entries contain data that is relevant to an individual animal, as a whole. This doesn’t include data that will change over time (such as the animal’s age or size). Because of the nature of mortality cases, much of the data that’s specific to them is stored in the animal’s entry.
+    </para>
+    <para>
+stranding field number: The 'stranding network' (TODO: define?) assignes 'field nubmers' to every animal that is stranded. The database considers this to just be a string of any length. This field can be left blank to indicate no number has been assigned (or one has and it’s not known). If filled in, it ought to be unique, but this isn’t enforced by the database. Animal entries with the same field number should be pointed out to the user as something that needs their attention.
+    </para>
+    <para>
+determined taxon: This takes the same values as the Observation.taxon field, but has a slightly different definition. The Observation.taxon field records what taxon the observer thought the animal was. Animal.determined_taxon records what taxon the animal has been determined to be, based on its observations. Often these will be the same, and when a new Observation is added for an existing animal, the observation’s taxon field defaults to the animal’s determined_taxon. Keeping the determined taxon seperate from the observed taxon allows you to correct the information in old Observation entries without changing those entries themselves. This is important since Observations fundamentally record what was seen at the time they took place, while Animal and Case entries record the data determined from those observations. (TODO this should be mentioned outside the description of Animal.determined_taxon)
+    </para>
+    <para>
+determined sex: same values a Observation.sex . Parallel definition to determined taxon.
+    </para>
+    <para>
+dead on or before: the earliest date/time at which the animal was certainly dead. This field is in lieu of a simple yes/no/unknown field for whether the animal is dead. It not only captures the timing of the animal’s death, but allows for uncertainty. If the current date and time is after the value in this field, the animal is dead. If an observation took place before the value in this field, and the animal is not marked as alive or dead in the Observation (see <literal>condition</literal>), then it’s unknown whether it was alive or not. Note that various combinations of this field and the <literal>condition</literal> in an Animal’s Observations are contradictory. These are allowed in the database, but should be highlighted as such for users.
+    </para>
+  </chapter>
+
+  <chapter>
+    <title>Ancillary datatypes</title>
+    <section xml:id="uncertain_datetime_model">
+      <title>Uncertain Date/Time</title>
+      <para>
+        This is a date and time with varying degrees of uncertainty to it. It
+        has the typical fields of a date and time (year, month, day, hour, etc)
+        but each of them may be left as <quote>unknown</quote>. This means that
+        when storing values of this type in a relational database the database’s
+        built-in date and time types can’t be used. Instead a string
+        representation is used and comparisons must be done with substring
+        operations.
+      </para>
+      <para>
+        TODO examples of serializations
+      </para>
+      <para>
+        TODO examples of operators and definitions
+      </para>
+    </section>
   </chapter>
 
 </part>

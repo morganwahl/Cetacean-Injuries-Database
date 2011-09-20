@@ -328,6 +328,7 @@ class CharFieldQuery(QueryField):
             ])
         else:
             match_options = MatchOptions([
+                MatchOption('blank', 'is blank?', YesNoField()),
                 MatchOption('iexact', 'is', forms.CharField()),
                 MatchOption('icontains', 'contains', forms.CharField()),
             ])
@@ -342,10 +343,21 @@ class CharFieldQuery(QueryField):
                 lookup_fieldname = prefix + '__' + lookup_fieldname
             
             # blank fields and null fields are equivalent
-            if (lookup_type == 'isnull' and lookup_value) or (lookup_type == 'iexact' and lookup_value == u''):
-                q = Q(**{lookup_fieldname + '__' + 'isnull': True})
-                q |= Q(**{lookup_fieldname + '__' + 'iexact': ''})
-                return q
+            blank_q = Q(
+                **{lookup_fieldname + '__isnull': True}
+            ) | Q(
+                **{lookup_fieldname + '__iexact': ''}
+            )
+
+            if lookup_type == 'iexact' and lookup_value == u'':
+                return blank_q
+            
+            if lookup_type == 'blank':
+                if lookup_value:
+                    return blank_q
+                else:
+                    return ~ blank_q
+
         return super(CharFieldQuery, self).query(value, prefix)
 
 class DateFieldQuery(QueryField):
