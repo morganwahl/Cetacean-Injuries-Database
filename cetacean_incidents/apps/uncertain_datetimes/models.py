@@ -47,8 +47,8 @@ class UncertainDateTimeField(models.Field):
         
         return value.sortkey()
     
-    @classmethod
-    def get_definite_after_q(cls, udt, field_lookup):
+    @staticmethod
+    def get_definite_after_q(udt, field_lookup):
         '''
         Given a field lookup for an UncertainDateTimeField (e.g.
         'datetime_reported'), returns a Q object that selects for
@@ -66,8 +66,8 @@ class UncertainDateTimeField(models.Field):
         # match anything greater than (not equal to!) that
         return models.Q(**{field_lookup + '__gt': max_udt.sortkey()})
     
-    @classmethod
-    def get_definite_before_q(cls, udt, field_lookup):
+    @staticmethod
+    def get_definite_before_q(udt, field_lookup):
         '''
         Given a field lookup for an UncertainDateTimeField (e.g.
         'datetime_reported'), returns a Q object that selects for
@@ -85,8 +85,8 @@ class UncertainDateTimeField(models.Field):
         # match anything less than (not equal to!) that
         return models.Q(**{field_lookup + '__lt': min_udt.sortkey()})
 
-    @classmethod
-    def get_after_q(cls, udt, field_lookup):
+    @staticmethod
+    def get_after_q(udt, field_lookup):
         '''
         Given a field lookup for an UncertainDateTimeField (e.g.
         'datetime_reported'), returns a Q object that selects for
@@ -184,8 +184,8 @@ class UncertainDateTimeField(models.Field):
         
         return after_q
 
-    @classmethod
-    def get_before_q(cls, udt, field_lookup):
+    @staticmethod
+    def get_before_q(udt, field_lookup):
         '''
         Given a field lookup for an UncertainDateTimeField name (e.g.
         'datetime_reported'), returns a Q object that selects for
@@ -208,8 +208,8 @@ class UncertainDateTimeField(models.Field):
         
         return after_q
 
-    @classmethod
-    def get_sametime_q(cls, udt, field_lookup):
+    @staticmethod
+    def get_sametime_q(udt, field_lookup):
         '''
         Given a field lookup for an UncertainDateTimeField name (e.g.
         'datetime_reported'), returns a Q object that selects for
