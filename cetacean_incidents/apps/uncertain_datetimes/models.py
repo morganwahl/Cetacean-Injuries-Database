@@ -88,10 +88,10 @@ class UncertainDateTimeField(models.Field):
     @classmethod
     def get_after_q(cls, udt, field_lookup):
         '''
-        Given a field lookup for an UncertainDateTimeField 
-        (e.g. 'datetime_reported'), returns a Q object that selects for 
-        UncertainDateTimeField values that _may_ represent a time the same as
-        or after this one.
+        Given a field lookup for an UncertainDateTimeField (e.g.
+        'datetime_reported'), returns a Q object that selects for
+        UncertainDateTimeField values that _may_ represent a time the same as or
+        after this one.
         '''
         
         # if year is unknown, any time could possibly be after this one
@@ -187,10 +187,10 @@ class UncertainDateTimeField(models.Field):
     @classmethod
     def get_before_q(cls, udt, field_lookup):
         '''
-        Given a field lookup for an UncertainDateTimeField 
-        (e.g. 'datetime_reported'), returns a Q object that selects for 
-        UncertainDateTimeField values that _may_ represent a time the same as
-        or before this one.
+        Given a field lookup for an UncertainDateTimeField name (e.g.
+        'datetime_reported'), returns a Q object that selects for
+        UncertainDateTimeField values that _may_ represent a time the same as or
+        before this one.
         '''
         
         # if year is unknown, any time could possibly be before this one
@@ -211,8 +211,8 @@ class UncertainDateTimeField(models.Field):
     @classmethod
     def get_sametime_q(cls, udt, field_lookup):
         '''
-        Given a field lookup for an UncertainDateTimeField 
-        (e.g. 'datetime_reported'), returns a Q object that selects for 
+        Given a field lookup for an UncertainDateTimeField name (e.g.
+        'datetime_reported'), returns a Q object that selects for
         UncertainDateTimeField values that _may_ represent the same time as this
         one. In other words, each of their fields, if defined, are the same.
         '''

@@ -417,7 +417,7 @@ class UncertainDateTimeFieldQuery(QueryField):
             if not prefix is None:
                 lookup_fieldname = prefix + '__' + lookup_fieldname
             
-            from models import UncertainDateTimeField as UncertainDateTimeModelField            
+            from models import UncertainDateTimeField as UncertainDateTimeModelField
             if lookup_type == 'maybe_during':
                 return UncertainDateTimeModelField.get_sametime_q(lookup_value, lookup_fieldname)
             elif lookup_type == 'maybe_before':
