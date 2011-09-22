@@ -554,11 +554,9 @@ class GearTypeQueryField(DAGField):
             sub_q = Q(**{
                 lookup_fieldname + '__in': gt.get_all_subtypes(),
             })
-            print unicode(sub_q)
             qs = qs.filter(sub_q)
         ids = qs.values_list('pk', flat=True)
         q = Q(pk__in=ids)
-        print unicode(q)
         
         return q
 
