@@ -59,6 +59,12 @@ def DAGNode_factory(edge_model_name):
         def implied_supertypes(self):
             return self._get_implied_supertypes_with_ignore(ignore_types=set())
         
+        def get_all_subtypes(self):
+            result = set([self])
+            for node in self.subtypes.all():
+                result |= node.get_all_subtypes()
+            return result
+        
         class Meta:
             abstract = True
 

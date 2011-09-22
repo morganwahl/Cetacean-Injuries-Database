@@ -542,22 +542,24 @@ class GearTypeQueryField(DAGField):
         lookup_fieldname = self.model_field.name
         if not prefix is None:
             lookup_fieldname = prefix + '__' + lookup_fieldname
-
-        # add all the subtypes of each type to the list
-        todo = set(list(gts)) # gts is a QuerySet, so turn it into a list first.
-        seen = set()
-        while todo:
-            gt = todo.pop()
-            seen.add(gt)
-            subs = set(gt.subtypes.all())
-            todo |= subs
-            todo = todo - seen
         
-        gt_query = Q()
-        for gt in seen:
-            gt_query |= Q(**{lookup_fieldname + '__pk': gt.pk})
+        q = Q()
+        # no way to return a Q value for entanglements with each of these
+        # gear types :-(
+        # this is a so-so workaround
+        qs = self.model_field.model.objects
+        for gt in gts:
+            # match the gear type or any of it's implied types
+            sub_q = Q(**{
+                lookup_fieldname + '__in': gt.get_all_subtypes(),
+            })
+            print unicode(sub_q)
+            qs = qs.filter(sub_q)
+        ids = qs.values_list('pk', flat=True)
+        q = Q(pk__in=ids)
+        print unicode(q)
         
-        return gt_query
+        return q
 
 class GearTargetQueryField(GearTargetsField):
     
