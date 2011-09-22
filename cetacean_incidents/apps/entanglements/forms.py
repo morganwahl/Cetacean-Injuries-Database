@@ -268,8 +268,8 @@ class EntanglementMergeForm(CaseMergeForm):
     gear_types = DAGField(
         queryset= GearType.objects.all(),
         required= _f.blank != True,
-        help_text= 'selecting a type implies the ones above it in the hierarchy',
         label= _f.verbose_name.capitalize(),
+        help_text= 'selecting a type implies the ones above it in the hierarchy',
     )
 
     # need to override the help text when using our own widget partly due to
@@ -528,7 +528,7 @@ class GearTypeQueryField(DAGField):
     
     def __init__(self, model_field, *args, **kwargs):
         # self.model_field should be a ManyToMany reference to GearType
-        self.model_field = model_field        
+        self.model_field = model_field
         super(GearTypeQueryField, self).__init__(queryset=GearType.objects.all(), *args, **kwargs)
         
     def query(self, value, prefix=None):
@@ -592,16 +592,20 @@ class EntanglementSearchForm(CaseSearchForm):
     gear_types = GearTypeQueryField(
         model_field = _f,
         required= False,
-        label= 'Analyzed gear attributes',
-        help_text= 'search for entanglement cases whose analyzed gear has these attributes',
+        label= _f.verbose_name.capitalize(),
+        # we have to set the help_text ourselves since ManyToManyField alters
+        # the field's help_text with instructions for a SelectMultiple widget.
+        help_text= 'search for entanglement cases whose analyzed gear has all these attributes',
     )
 
     _f = Entanglement._meta.get_field_by_name('observed_gear_attributes')[0]
     observed_gear_attributes = GearTypeQueryField(
         model_field = _f,
         required= False,
-        label= 'Observed gear attributes',
-        help_text= 'search for entanglement cases whose observed gear has these attributes',
+        label= _f.verbose_name.capitalize(),
+        # we have to set the help_text ourselves since ManyToManyField alters
+        # the field's help_text with instructions for a SelectMultiple widget.
+        help_text= 'search for entanglement cases whose observed gear has all these attributes',
     )
     
     _f = Entanglement._meta.get_field('targets')

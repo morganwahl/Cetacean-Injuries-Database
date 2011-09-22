@@ -85,7 +85,7 @@ class AnimalSearchFormTestCase(TestCase):
         # /incidents/animals/search?animal_search-observations_0=on&animal_search-observations_1-datetime_observed_0=during&animal_search-observations_1-datetime_observed_3_year=2003
         data = {
             'observations_0': 'on',
-            'observations_1-datetime_observed_0': 'during',
+            'observations_1-datetime_observed_0': 'maybe_during',
             'observations_1-datetime_observed_3_year': '2003',
         }
         f = AnimalSearchForm(data=data)
