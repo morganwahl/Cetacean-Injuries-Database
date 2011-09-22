@@ -8,6 +8,7 @@ from models import (
     EntanglementObservation,
     GearBodyLocation,
     GearOwner,
+    GearTarget,
     GearType,
     GearTypeRelation,
     LocationGearSet,
@@ -44,4 +45,8 @@ admin.site.register(BodyLocation, BodyLocationAdmin)
 class GearBodyLocationAdmin(VersionAdmin):
     pass
 admin.site.register(GearBodyLocation, GearBodyLocationAdmin)
+
+class GearTargetAdmin(VersionAdmin):
+    pass
+admin.site.register(GearTarget, GearTargetAdmin)
 

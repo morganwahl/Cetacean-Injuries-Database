@@ -142,6 +142,23 @@ class GearOwner(AbstractContact):
 
 guard_deletes(Location, GearOwner, 'location_gear_set')
 
+class GearTarget(models.Model):
+    name = models.CharField(
+        max_length= 2048,
+    )
+    
+    definition = models.TextField(
+        blank= True,
+        null= True,
+        help_text= "Detailed definition of which species are targeted.",
+    )
+    
+    def __unicode__(self):
+        return self.name if self.name else unicode(self.id)
+    
+    class Meta:
+        ordering = ('name', 'id')
+
 class GearAnalysis(models.Model):
     '''\
     Abstract class to hold the fields related to gear-analysis.
@@ -206,8 +223,16 @@ class GearAnalysis(models.Model):
         blank= True,
         null= True,
         related_name= 'targeted_by',
-        verbose_name= 'target taxa', # not really verbose, just a name change
-        help_text= "All the taxa that were intended to by caught by this gear.",
+        verbose_name= 'target taxa (deprecated)', # not really verbose, just a name change
+        help_text= "Deprecated! Use the 'targets' field instead. All the taxa that were intended to by caught by this gear.",
+    )
+    
+    targets = models.ManyToManyField(
+        GearTarget,
+        blank= True,
+        null= True,
+        related_name= 'target_of',
+        help_text= "All the targets of this set of gear.",
     )
     
     gear_description = models.TextField(
@@ -338,6 +363,7 @@ class Entanglement(Case, GearAnalysis):
 # abstract models
 guard_deletes(Contact, Entanglement, 'analyzed_by')
 guard_deletes(GearOwner, Entanglement, 'gear_owner_info')
+guard_deletes(GearTarget, Entanglement, 'targets')
 
 class BodyLocation(models.Model):
     '''\

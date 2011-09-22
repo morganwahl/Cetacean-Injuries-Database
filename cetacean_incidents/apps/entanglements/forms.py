@@ -1,9 +1,11 @@
 from operator import __and__
 
+from django.conf import settings
 from django.db.models import Q
 from django import forms
 from django.forms.models import modelformset_factory
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.dag.forms import DAGField
 
@@ -40,9 +42,26 @@ from models import (
     EntanglementObservation,
     GearBodyLocation,
     GearOwner,
+    GearTarget,
     GearType,
     LocationGearSet,
 )
+
+class GearTargetsWidget(forms.CheckboxSelectMultiple):
+    
+    class Media:
+        js = (settings.JQUERY_FILE, 'geartargets.js')
+
+class GearTargetsField(forms.ModelMultipleChoiceField):
+    
+    widget = GearTargetsWidget
+    
+    def __init__(self, *args, **kwargs):
+        super(GearTargetsField, self).__init__(*args, **kwargs)
+    
+    def label_from_instance(self, obj):
+        label = render_to_string('geartarget_choice.html', {'gt': obj})
+        return mark_safe(label)
 
 class GearBodyLocationForm(forms.ModelForm):
     '''\
@@ -193,6 +212,17 @@ class GearAnalysisForm(EntanglementForm):
         label= _f.verbose_name.capitalize(),
     )
 
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('targets')
+    targets = GearTargetsField(
+        queryset= GearTarget.objects.all(),
+        required= _f.blank != True,
+        label= _f.verbose_name.capitalize(),
+        help_text= u'The targets of this gear. You can choose more than one.',
+    )
+
     class Meta(EntanglementForm.Meta):
         exclude = []
         fields = Entanglement.gear_analysis_fieldnames()
@@ -249,8 +279,19 @@ class EntanglementMergeForm(CaseMergeForm):
     observed_gear_attributes = DAGField(
         queryset= GearType.objects.all(),
         required= _f.blank != True,
-        help_text= 'selecting a type implies the ones above it in the hierarchy',
         label= _f.verbose_name.capitalize(),
+        help_text= 'selecting a type implies the ones above it in the hierarchy',
+    )
+    
+    # need to override the help text when using our own widget partly due to
+    # Django bug #9321. Ideally the help text would be part of our own Widget,
+    # and we could just add gear_types to Meta.widgets.
+    _f = Entanglement._meta.get_field('targets')
+    targets = GearTargetsField(
+        queryset= GearTarget.objects.all(),
+        required= _f.blank != True,
+        label= _f.verbose_name.capitalize(),
+        help_text= u'The targets of this gear. You can choose more than one.',
     )
 
     def save(self, commit=True):
@@ -518,6 +559,33 @@ class GearTypeQueryField(DAGField):
         
         return gt_query
 
+class GearTargetQueryField(GearTargetsField):
+    
+    def __init__(self, model_field, *args, **kwargs):
+        self.model_field = model_field
+        super(GearTargetQueryField, self).__init__(queryset=GearTarget.objects.all(), *args, **kwargs)
+    
+    def query(self, value, prefix=None):
+        if value is None:
+            return Q()
+        
+        lookup_fieldname = self.model_field.name
+        if not prefix is None:
+            lookup_fieldname = prefix + '__' + lookup_fieldname
+        
+        # value is a list of GearTargets
+        q = Q()
+        # no way to return a Q value for entanglements with each of these
+        # targets :-(
+        # this is a so-so workaround
+        qs = self.model_field.model.objects
+        for target in value:
+            qs = qs.filter(**{lookup_fieldname: target})
+        ids = qs.values_list('pk', flat=True)
+        q = Q(pk__in=ids)
+        
+        return q
+
 class EntanglementSearchForm(CaseSearchForm):
     
     _f = Entanglement._meta.get_field_by_name('gear_types')[0]
@@ -534,6 +602,16 @@ class EntanglementSearchForm(CaseSearchForm):
         required= False,
         label= 'Observed gear attributes',
         help_text= 'search for entanglement cases whose observed gear has these attributes',
+    )
+    
+    _f = Entanglement._meta.get_field('targets')
+    targets = GearTargetQueryField(
+        model_field = _f,
+        required= False,
+        label= _f.verbose_name.capitalize(),
+        # we have to set the help_text ourselves since ManyToManyField alters
+        # the field's help_text with instructions for a SelectMultiple widget.
+        help_text= u'search for entanglement cases with all these gear targets',
     )
     
     class GearOwnerSearchForm(SearchForm):
