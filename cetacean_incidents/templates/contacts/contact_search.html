@@ -6,15 +6,6 @@
 {% block header %}<h2>Contacts</h2>{% endblock %}
 
 {% block content %}
-<form id="the_form" action="" method="get">
-    <div class="section">
-        <table>
-            {{ form.as_table }}
-            {{ paging_form.as_table }}
-        </table>
-        <button type="submit">search</button>
-    </div>
-</form>
 {% if form.is_bound %}
 <div style="text-align: center;">
 {{ contact_count|default:"no" }} matching contact{{ contact_count|pluralize }}
@@ -46,4 +37,13 @@
     click 'search' to see a list of contacts
 </p>
 {% endif %}
+<form id="the_form" action="" method="get">
+    <div class="section">
+        <table>
+            {{ form.as_table }}
+            {{ paging_form.as_table }}
+        </table>
+        <button type="submit">search</button>
+    </div>
+</form>
 {% endblock %}

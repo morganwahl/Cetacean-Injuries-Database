@@ -8,15 +8,6 @@
 {% block header %}<h2>Animals</h2>{% endblock %}
 
 {% block content %}
-<form id="the_form" action="" method="get">
-    <div class="section">
-        <table>
-            {{ form.as_table }}
-            {{ paging_form.as_table }}
-        </table>
-        <button type="submit">search</button>
-    </div>
-</form>
 {% if form.is_bound %}
 <div style="text-align: center;">
 {{ animal_count|default:"no" }} matching animal{{ animal_count|pluralize }}
@@ -86,4 +77,14 @@
     click 'search' to see a list of animals
 </p>
 {% endif %}
+
+<form id="the_form" action="" method="get">
+    <div class="section">
+        <table>
+            {{ form.as_table }}
+            {{ paging_form.as_table }}
+        </table>
+        <button type="submit">search</button>
+    </div>
+</form>
 {% endblock %}

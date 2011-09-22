@@ -25,13 +25,6 @@
     </script>
     <input type="hidden" name="pressed" value="">
 
-    {% for form_name, form in forms.items %}
-    <table id="{{ form_name }}_form" class="section">
-        {{ form }}
-    </table>
-    {% endfor %}
-    <button type="submit" id="search_button">search</button>
-
     {% if is_bound %}
     {% if case_count > 0 %}
 
@@ -144,15 +137,22 @@
 
     </td></tr></table>
     {% endif %}
-</form>
 
-{% else %}
-<div style="text-align: center;">
-    <i>{{ case_count|default:"no" }} matching case{{ case_count|pluralize }}</i>
-</div>
-{% endif %} {# case_count > 0 #}
-{% else %} {# is_bound #}
-<p>click 'search' to see a list of cases</p>
-{% endif %} {# is_bound #}
+    {% else %}
+    <div style="text-align: center;">
+        <i>{{ case_count|default:"no" }} matching case{{ case_count|pluralize }}</i>
+    </div>
+    {% endif %} {# case_count > 0 #}
+    {% else %} {# is_bound #}
+    <p>click 'search' to see a list of cases</p>
+    {% endif %} {# is_bound #}
+
+    {% for form_name, form in forms.items %}
+    <table id="{{ form_name }}_form" class="section">
+        {{ form }}
+    </table>
+    {% endfor %}
+    <button type="submit" id="search_button">search</button>
+</form>
 {% endblock %}
 
