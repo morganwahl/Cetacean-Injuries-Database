@@ -144,7 +144,7 @@ guard_deletes(Location, GearOwner, 'location_gear_set')
 
 class GearTarget(models.Model):
     name = models.CharField(
-        max_length= 2048,
+        max_length= 1024,
     )
     
     definition = models.TextField(
