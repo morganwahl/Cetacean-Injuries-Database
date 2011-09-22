@@ -37,7 +37,7 @@
             </td>
             {% endwith %}
             <td>{{ case.animal|link_block }}</td>
-	        {% with case.earliest_observation.datetime_observed as first_obs_date %}
+	        {% with case.date as first_obs_date %}
 	        <td sorttable_customkey="{{ first_obs_date.sortkey }}">{% date_observed_display first_obs_date %}</td>
 	        {% endwith %}
 	        {% with case.latest_observation.datetime_observed as last_obs_date %}
