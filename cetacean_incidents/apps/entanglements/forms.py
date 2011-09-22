@@ -535,8 +535,9 @@ class GearTypeQueryField(DAGField):
         if value is None:
             return Q()
         
+        # value is a list of GearTypes
         gts = value
-        if not gts:
+        if len(gts) == 0:
             return Q()
         
         lookup_fieldname = self.model_field.name
@@ -576,6 +577,9 @@ class GearTargetQueryField(GearTargetsField):
             lookup_fieldname = prefix + '__' + lookup_fieldname
         
         # value is a list of GearTargets
+        if len(value) == 0:
+            return Q()
+        
         q = Q()
         # no way to return a Q value for entanglements with each of these
         # targets :-(
