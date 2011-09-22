@@ -1,0 +1,4 @@
+{# given a GearTarget instance as gt, produces an HTML view of it #}{{ gt.name }} <a href=""  class="geartarget_def_toggle">defintion...</a>
+<div class="geartarget_def" style="display: none;">
+{{ gt.definition|linebreaks }}
+</div>
