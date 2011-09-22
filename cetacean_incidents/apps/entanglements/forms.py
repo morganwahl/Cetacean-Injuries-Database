@@ -529,41 +529,60 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
     def results(self):
         return self.cleaned_data['nmfs_id']
 
-class GearTypeQueryField(DAGField):
+class GearTypeQueryField(QueryField):
     
-    def __init__(self, model_field, *args, **kwargs):
-        # self.model_field should be a ManyToMany reference to GearType
-        self.model_field = model_field
-        super(GearTypeQueryField, self).__init__(queryset=GearType.objects.all(), *args, **kwargs)
-        
+    default_match_options = MatchOptions([
+        MatchOption('and', 'all of',
+            DAGField(queryset=GearType.objects.all())
+        ),
+        MatchOption('or', 'any of',
+            DAGField(queryset=GearType.objects.all())
+        ),
+    ])
+
+    blank_option = True
+    
     def query(self, value, prefix=None):
-        if value is None:
-            return Q()
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.name
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            if lookup_type == 'and':
+                # lookup_value is a list of GearTypes
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                # no way to return a Q value for entanglements with each of these
+                # gear types :-(
+                # this is a so-so workaround
+                qs = self.model_field.model.objects
+                for gt in lookup_value:
+                    # match the gear type or any of it's implied types
+                    sub_q = Q(**{
+                        lookup_fieldname + '__in': gt.get_all_subtypes(),
+                    })
+                    qs = qs.filter(sub_q)
+                ids = qs.values_list('pk', flat=True)
+                q = Q(pk__in=ids)
+
+                return q
         
-        # value is a list of GearTypes
-        gts = value
-        if len(gts) == 0:
-            return Q()
-        
-        lookup_fieldname = self.model_field.name
-        if not prefix is None:
-            lookup_fieldname = prefix + '__' + lookup_fieldname
-        
-        q = Q()
-        # no way to return a Q value for entanglements with each of these
-        # gear types :-(
-        # this is a so-so workaround
-        qs = self.model_field.model.objects
-        for gt in gts:
-            # match the gear type or any of it's implied types
-            sub_q = Q(**{
-                lookup_fieldname + '__in': gt.get_all_subtypes(),
-            })
-            qs = qs.filter(sub_q)
-        ids = qs.values_list('pk', flat=True)
-        q = Q(pk__in=ids)
-        
-        return q
+            if lookup_type == 'or':
+                # lookup_value is a list of GearTypes
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                all_types = set()
+                for gt in lookup_value:
+                    all_types |= gt.get_all_subtypes()
+                
+                q = Q(**{lookup_fieldname + '__in': all_types})
+                
+                return q
+
+        return super(GearTypeQueryField, self).query(value, prefix)
 
 class GearTargetQueryField(QueryField):
     
