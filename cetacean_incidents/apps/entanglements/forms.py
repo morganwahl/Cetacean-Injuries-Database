@@ -23,6 +23,11 @@ from cetacean_incidents.apps.locations.forms import NiceLocationForm
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
+from cetacean_incidents.apps.search_forms.fields import (
+    QueryField,
+    MatchOptions,
+    MatchOption,
+)
 from cetacean_incidents.apps.search_forms.forms import (
     SubmitDetectingForm,
     SearchForm,
@@ -560,35 +565,53 @@ class GearTypeQueryField(DAGField):
         
         return q
 
-class GearTargetQueryField(GearTargetsField):
+class GearTargetQueryField(QueryField):
     
-    def __init__(self, model_field, *args, **kwargs):
-        self.model_field = model_field
-        super(GearTargetQueryField, self).__init__(queryset=GearTarget.objects.all(), *args, **kwargs)
+    default_match_options = MatchOptions([
+        MatchOption('and', 'all of',
+            GearTargetsField(queryset=GearTarget.objects.all()),
+        ),
+        MatchOption('or', 'any of',
+            GearTargetsField(queryset=GearTarget.objects.all()),
+        ),
+    ])
+    
+    blank_option = True
     
     def query(self, value, prefix=None):
-        if value is None:
-            return Q()
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.name
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            if lookup_type == 'and':
+                # lookup_value is a list of GearTargets
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                q = Q()
+                # no way to return a Q value for entanglements with each of these
+                # targets :-(
+                # this is a so-so workaround
+                qs = self.model_field.model.objects
+                for target in lookup_value:
+                    qs = qs.filter(**{lookup_fieldname: target})
+                ids = qs.values_list('pk', flat=True)
+                q = Q(pk__in=ids)
+                
+                return q
         
-        lookup_fieldname = self.model_field.name
-        if not prefix is None:
-            lookup_fieldname = prefix + '__' + lookup_fieldname
-        
-        # value is a list of GearTargets
-        if len(value) == 0:
-            return Q()
-        
-        q = Q()
-        # no way to return a Q value for entanglements with each of these
-        # targets :-(
-        # this is a so-so workaround
-        qs = self.model_field.model.objects
-        for target in value:
-            qs = qs.filter(**{lookup_fieldname: target})
-        ids = qs.values_list('pk', flat=True)
-        q = Q(pk__in=ids)
-        
-        return q
+            if lookup_type == 'or':
+                # lookup_value is a list of GearTargets
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                q = Q(**{lookup_fieldname + '__in': lookup_value})
+                
+                return q
+
+        return super(GearTargetQueryField, self).query(value, prefix)
 
 class EntanglementSearchForm(CaseSearchForm):
     
