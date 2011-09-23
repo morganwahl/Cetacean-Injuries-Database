@@ -116,9 +116,9 @@ FIELDNAMES = set((
 'Ashore - Did the whale/carcass ultimately come ashore', # ashore
 'Ashore?  0=No,Floater that never landed  1=Yes, came to shore', # " used in 2002
                     'Alive?', # condition
-          'Initial condtion', # condition, observation splitting, initial
+          'Initial condtion', # condition, observation splitting
 'InitialCondition     Code 1=Alive, Code 2=Fresh dead, Code 3=Moderate Decomposition, Code 4=Advanced Decomposition, Code 5=Mummified/Skeletal   6=Dead-Condition Unknown', # " used in 2002
-             'Exam condtion', # condition, observation splitting, exam
+             'Exam condtion', # condition, observation splitting
             'Exam Condition', # " used in 2002
               'Photo w/file', # if yes, there's documentation, otherwise unknown
                   'Pictures', # documentation
@@ -900,8 +900,6 @@ def parse_observation(row, case_data):
     # ashore
     o['ashore'] = get_ashore(row)
 
-    # initial
-    # exam
     # condition
     #        (0, 'unknown'),
     #        (1, 'alive'),
@@ -1538,13 +1536,11 @@ def _save_row(r, filename, user):
         if o['initial']:
             i_kwargs = copy(o)
             i_kwargs['condition'] = o['initial_condition']
-            i_kwargs['exam'] = False
             _make_observation(i_kwargs)
         
         if o['exam']:
             e_kwargs = copy(o)
             e_kwargs['condition'] = o['exam_condition']
-            e_kwargs['initial'] = False
             _make_observation(e_kwargs)
 
         if len(observations) != 2:

@@ -110,10 +110,6 @@ def parse_observation(row, orig):
     # cases
     o['cases'] = orig.cases.all()
     
-    # initial defaults to False
-
-    # exam defaults to False
-
     # narrative defaults to ''
     
     # observer is handled elsewhere

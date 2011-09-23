@@ -476,8 +476,6 @@ def _case_dump_response(cases):
             'documentable_ptr',
             'animal',
             'cases',
-            'initial',
-            'exam',
             'location',
             'observer_vessel',
         ):

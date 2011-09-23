@@ -72,17 +72,6 @@ class Observation(Documentable, Importable):
         help_text= 'The cases that this observation is relevant to.',
     )
     
-    initial = models.BooleanField(
-        default= False,
-        verbose_name= u"is this an ‘initial observation’ on a Level A?",
-        help_text= u"""Check if this observation corresponds to the ‘initial observation’ on a Level A form. If it does, the observation date should correspond to the "date of initial observation" on the Level A, and the condition should correspond to the "condition at initial observation".""",
-    )
-    exam = models.BooleanField(
-        default= False,
-        verbose_name= u"is this a ‘Level A Examination’?",
-        help_text= u"""Check if this observation corresponds to the ‘level a examination’ on a Level A form. If it does, the observation date should correspond to the date of examination on the Level A, the condition should correspond to the "condition at examination", and the observer should correspond to the "examiner". Note that an observation can be both the ‘initial observation’ and the ‘examination’ (or neither).""",
-    )
-    
     narrative = models.TextField(
         blank= True,
         help_text= "A complete description of the observation. No limit as to length. Ideally, all the other fields for an observation could be filled in after reading this."

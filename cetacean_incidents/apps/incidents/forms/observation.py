@@ -492,6 +492,6 @@ class ObservationSearchForm(SearchForm):
 
     class Meta:
         model = Observation
-        exclude = ('id', 'import_notes', 'exam', 'initial', 'animal_length_sigdigs')
+        exclude = ('id', 'import_notes', 'animal_length_sigdigs')
         sort_field = True
 

@@ -53,8 +53,6 @@ class ObservationBasicsTab(Tab):
                 ] + map(
                     lambda f: self.context['forms']['observation'][f].errors, 
                     (
-                        'initial',
-                        'exam',
                         'datetime_reported',
                         'new_reporter',
                         'reporter',
