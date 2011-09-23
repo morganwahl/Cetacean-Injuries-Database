@@ -1,11 +1,17 @@
 from django.core.urlresolvers import reverse
 from django import forms
+from django.db.models import Q
 from django.forms.formsets import formset_factory
 
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
+from cetacean_incidents.apps.search_forms.fields import (
+    QueryField,
+    MatchOptions,
+    MatchOption,
+)
 from cetacean_incidents.apps.search_forms.forms import SearchForm
 from cetacean_incidents.apps.search_forms.related import ManyToManyFieldQuery
 
@@ -171,6 +177,60 @@ class ContactMergeForm(MergeForm):
             'email': EmailInput,
         }
 
+class AffiliationQueryField(QueryField):
+    
+    default_match_options = MatchOptions([
+        MatchOption('and', 'all of',
+            forms.ModelMultipleChoiceField(
+                queryset= Organization.objects.all(),
+                widget= forms.CheckboxSelectMultiple,
+            ),
+        ),
+        MatchOption('or', 'any of',
+            forms.ModelMultipleChoiceField(
+                queryset= Organization.objects.all(),
+                widget= forms.CheckboxSelectMultiple,
+            ),
+        ),
+    ])
+    
+    blank_option = True
+    
+    def query(self, value, prefix=None):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.name
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            if lookup_type == 'and':
+                # lookup_value is a list of Organizations
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                q = Q()
+                # no way to return a Q value for contacts with each of these
+                # targets :-(
+                # this is a so-so workaround
+                qs = self.model_field.model.objects
+                for target in lookup_value:
+                    qs = qs.filter(**{lookup_fieldname: target})
+                ids = qs.values_list('pk', flat=True)
+                q = Q(pk__in=ids)
+                
+                return q
+        
+            if lookup_type == 'or':
+                # lookup_value is a list of Organizations
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                q = Q(**{lookup_fieldname + '__in': lookup_value})
+                
+                return q
+
+        return super(AffiliationQueryField, self).query(value, prefix)
+
 class ContactSearchForm(SearchForm):
 
     class ContactAffiliationsSearchForm(SearchForm):
@@ -179,9 +239,13 @@ class ContactSearchForm(SearchForm):
             exclude = ('id',)
 
     _f = Contact._meta.get_field_by_name('affiliations')[0]
-    affiliations = ManyToManyFieldQuery(
+    affiliations = AffiliationQueryField(
         model_field= _f,
-        subform_class= ContactAffiliationsSearchForm,
+        required=False,
+        label= _f.verbose_name.capitalize(),
+        # we have to set the help_text ourselves since ManyToManyField alters
+        # the field's help_text with instructions for a SelectMultiple widget.
+        help_text= u'search for contacts with these affiliations',
     )
 
     class Meta:
