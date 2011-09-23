@@ -218,15 +218,6 @@ class GearAnalysis(models.Model):
         help_text= "All the applicable gear attributes in the analyzed set of gear from this entanglement. This is only the gear that was brought in for analysis.",
     )
     
-    gear_targets = models.ManyToManyField(
-        Taxon,
-        blank= True,
-        null= True,
-        related_name= 'targeted_by',
-        verbose_name= 'target taxa (deprecated)', # not really verbose, just a name change
-        help_text= "Deprecated! Use the 'targets' field instead. All the taxa that were intended to by caught by this gear.",
-    )
-    
     targets = models.ManyToManyField(
         GearTarget,
         blank= True,

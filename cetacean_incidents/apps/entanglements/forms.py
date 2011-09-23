@@ -209,17 +209,6 @@ class GearAnalysisForm(EntanglementForm):
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
     # and we could just add gear_types to Meta.widgets.
-    _f = Entanglement._meta.get_field('gear_targets')
-    gear_targets = TaxonMultipleChoiceField(
-        queryset= Taxon.objects.all(),
-        required= _f.blank != True,
-        help_text= None,
-        label= _f.verbose_name.capitalize(),
-    )
-
-    # need to override the help text when using our own widget partly due to
-    # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('targets')
     targets = GearTargetsField(
         queryset= GearTarget.objects.all(),

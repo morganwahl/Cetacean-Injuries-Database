@@ -420,7 +420,7 @@
 
             <th>Target Species</th>
             <td>
-              {% for t in c.gear_targets.all %}
+              {% for t in c.targets.all %}
               {{ t|html }}{% if not forloop.last %}, {% endif %}
               {% endfor %}
             </td>

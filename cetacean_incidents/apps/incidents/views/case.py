@@ -389,14 +389,12 @@ def _case_dump_response(cases):
         'implied_observed_gear_attributes': _display_gear_attribs,
         'gear_types': _display_gear_attribs,
         'implied_gear_types': _display_gear_attribs,
-        'gear_targets': _display_taxa,
         'gear_owner_info': lambda goi: "yes (CONFIDENTIAL!)",
         'targets': lambda gts: ', '.join(map(unicode, gts)),
     }
     g['entanglement'] = {
         'observed_gear_attributes': _get_from_manager,
         'gear_types': _get_from_manager,
-        'gear_targets': _get_from_manager,
         'targets': _get_from_manager,
     }
     for f in Entanglement._meta.fields + Entanglement._meta.many_to_many:
