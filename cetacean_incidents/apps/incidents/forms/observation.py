@@ -431,25 +431,25 @@ class ObservationSearchForm(SearchForm):
         class Meta(ContactSearchForm.Meta):
             sort_field = False
 
-    _f = Observation._meta.get_field_by_name('observer')[0]
+    _f = Observation._meta.get_field('observer')
     observer = HideableForeignKeyQuery(
         model_field= _f,
         subform_class= ObservationContactSearchForm,
     )
     
-    _f = Observation._meta.get_field_by_name('reporter')[0]
+    _f = Observation._meta.get_field('reporter')
     reporter = HideableForeignKeyQuery(
         model_field= _f,
         subform_class= ObservationContactSearchForm,
     )
     
-    _f = Observation._meta.get_field_by_name('location')[0]
+    _f = Observation._meta.get_field('location')
     location = HideableForeignKeyQuery(
         model_field= _f,
         subform_class= LocationSearchForm,
     )
 
-    _f = Observation._meta.get_field_by_name('taxon')[0]
+    _f = Observation._meta.get_field('taxon')
     taxon = TaxonQueryField(model_field= _f, required=False)
 
     # TODO dynamically get all the ObservationExtensions
@@ -458,7 +458,7 @@ class ObservationSearchForm(SearchForm):
         class Meta:
             model = EntanglementObservation
 
-    _f = EntanglementObservation._meta.get_field_by_name('observation_ptr')[0]
+    _f = EntanglementObservation._meta.get_field('observation_ptr')
     eos = HideableReverseForeignKeyQuery(
         label= 'entanglement fields',
         model_field= _f,
@@ -473,7 +473,7 @@ class ObservationSearchForm(SearchForm):
                 model = StrikingVesselInfo
                 exclude = ('id', 'import_notes')
 
-        _f = ShipstrikeObservation._meta.get_field_by_name('striking_vessel')[0]
+        _f = ShipstrikeObservation._meta.get_field('striking_vessel')
         striking_vessel = ForeignKeyQuery(
             model_field= _f,
             subform_class= ShipstrikeObservationStrikingVesselSearchForm,
@@ -482,7 +482,7 @@ class ObservationSearchForm(SearchForm):
         class Meta:
             model = ShipstrikeObservation
 
-    _f = ShipstrikeObservation._meta.get_field_by_name('observation_ptr')[0]
+    _f = ShipstrikeObservation._meta.get_field('observation_ptr')
     ssos = HideableReverseForeignKeyQuery(
         label= 'shipstrike fields',
         model_field= _f,

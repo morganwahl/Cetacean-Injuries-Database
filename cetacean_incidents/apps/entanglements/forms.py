@@ -634,24 +634,24 @@ class GearTargetQueryField(QueryField):
 
 class EntanglementSearchForm(CaseSearchForm):
     
-    _f = Entanglement._meta.get_field_by_name('gear_types')[0]
+    _f = Entanglement._meta.get_field('gear_types')
     gear_types = GearTypeQueryField(
         model_field = _f,
         required= False,
         label= _f.verbose_name.capitalize(),
         # we have to set the help_text ourselves since ManyToManyField alters
         # the field's help_text with instructions for a SelectMultiple widget.
-        help_text= 'search for entanglement cases whose analyzed gear has all these attributes',
+        help_text= 'search for entanglement cases whose analyzed gear has these attributes',
     )
 
-    _f = Entanglement._meta.get_field_by_name('observed_gear_attributes')[0]
+    _f = Entanglement._meta.get_field('observed_gear_attributes')
     observed_gear_attributes = GearTypeQueryField(
         model_field = _f,
         required= False,
         label= _f.verbose_name.capitalize(),
         # we have to set the help_text ourselves since ManyToManyField alters
         # the field's help_text with instructions for a SelectMultiple widget.
-        help_text= 'search for entanglement cases whose observed gear has all these attributes',
+        help_text= 'search for entanglement cases whose observed gear has these attributes',
     )
     
     _f = Entanglement._meta.get_field('targets')
@@ -661,7 +661,7 @@ class EntanglementSearchForm(CaseSearchForm):
         label= _f.verbose_name.capitalize(),
         # we have to set the help_text ourselves since ManyToManyField alters
         # the field's help_text with instructions for a SelectMultiple widget.
-        help_text= u'search for entanglement cases with all these gear targets',
+        help_text= u'search for entanglement cases with these gear targets',
     )
     
     class GearOwnerSearchForm(SearchForm):
@@ -670,7 +670,7 @@ class EntanglementSearchForm(CaseSearchForm):
                 model = LocationGearSet
                 exclude = LocationSearchForm.Meta.exclude + ('depth_sigdigs',)
         
-        _f = GearOwner._meta.get_field_by_name('location_gear_set')[0]
+        _f = GearOwner._meta.get_field('location_gear_set')
         location_gear_set = HideableForeignKeyQuery(
             model_field= _f,
             subform_class= LocationGearSetSearchForm,
@@ -684,7 +684,7 @@ class EntanglementSearchForm(CaseSearchForm):
         super(EntanglementSearchForm, self).__init__(*args, **kwargs)
         if not user is None:
             if user.has_perm('entanglements.view_gearowner'):
-                _f = Entanglement._meta.get_field_by_name('gear_owner_info')[0]
+                _f = Entanglement._meta.get_field('gear_owner_info')
                 # the last field is 'sort_by', so insert before that
                 self.fields.insert(-1, 'gear_owner_info', HideableForeignKeyQuery(
                     model_field= _f,

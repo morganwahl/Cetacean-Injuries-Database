@@ -119,7 +119,7 @@ class CaseSearchForm(SearchForm):
         class Meta(AnimalSearchForm.Meta):
             sort_field = False
     
-    _f = Case._meta.get_field_by_name('animal')[0]
+    _f = Case._meta.get_field('animal')
     animal = HideableForeignKeyQuery(
         model_field= _f,
         subform_class= CaseAnimalSearchForm,
@@ -130,7 +130,7 @@ class CaseSearchForm(SearchForm):
         class Meta(ObservationSearchForm.Meta):
             sort_field = False
 
-    _f = Observation._meta.get_field_by_name('cases')[0]
+    _f = Observation._meta.get_field('cases')
     observations = HideableReverseManyToManyFieldQuery(
         model_field= _f,
         subform_class= CaseObservationSearchForm,

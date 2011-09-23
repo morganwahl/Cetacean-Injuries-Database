@@ -174,7 +174,7 @@ class AnimalSearchForm(SearchForm):
             model = Case
             exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
         
-    _f = Case._meta.get_field_by_name('animal')[0]
+    _f = Case._meta.get_field('animal')
     cases = HideableReverseForeignKeyQuery(
         model_field= _f,
         subform_class= AnimalCaseSearchForm,
@@ -185,14 +185,14 @@ class AnimalSearchForm(SearchForm):
         class Meta(ObservationSearchForm.Meta):
             sort_field = False
         
-    _f = Observation._meta.get_field_by_name('animal')[0]
+    _f = Observation._meta.get_field('animal')
     observations = HideableReverseForeignKeyQuery(
         model_field= _f,
         subform_class= AnimalObservationSearchForm,
         help_text= "Only match animals with an observation that matches this.",
     )
     
-    _f = Animal._meta.get_field_by_name('determined_taxon')[0]
+    _f = Animal._meta.get_field('determined_taxon')
     determined_taxon = TaxonQueryField(model_field= _f, required=False)
 
     class Meta:

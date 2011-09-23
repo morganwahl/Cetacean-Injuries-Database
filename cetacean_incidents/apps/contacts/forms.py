@@ -238,7 +238,7 @@ class ContactSearchForm(SearchForm):
             model = Organization
             exclude = ('id',)
 
-    _f = Contact._meta.get_field_by_name('affiliations')[0]
+    _f = Contact._meta.get_field('affiliations')
     affiliations = AffiliationQueryField(
         model_field= _f,
         required=False,
