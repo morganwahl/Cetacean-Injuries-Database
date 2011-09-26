@@ -193,7 +193,7 @@ class GearAnalysisForm(EntanglementForm):
     
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
+    # and we could just add observed_gear_attributes to Meta.widgets.
     _f = Entanglement._meta.get_field('observed_gear_attributes')
     observed_gear_attributes = DAGField(
         queryset= GearAttribute.objects.all(),
@@ -210,7 +210,7 @@ class GearAnalysisForm(EntanglementForm):
 
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
+    # and we could just add targets to Meta.widgets.
     _f = Entanglement._meta.get_field('targets')
     targets = GearTargetsField(
         queryset= GearTarget.objects.all(),
@@ -270,7 +270,7 @@ class EntanglementMergeForm(CaseMergeForm):
 
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
+    # and we could just add observed_gear_attributes to Meta.widgets.
     _f = Entanglement._meta.get_field('observed_gear_attributes')
     observed_gear_attributes = DAGField(
         queryset= GearAttribute.objects.all(),
@@ -281,7 +281,7 @@ class EntanglementMergeForm(CaseMergeForm):
     
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
+    # and we could just add targets to Meta.widgets.
     _f = Entanglement._meta.get_field('targets')
     targets = GearTargetsField(
         queryset= GearTarget.objects.all(),

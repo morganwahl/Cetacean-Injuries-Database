@@ -7,8 +7,6 @@ from django.core.validators import (
 from django.core.urlresolvers import reverse
 from django.db import models
 
-#from cetacean_incidents.apps.clean_cache import Smidgen
-
 from cetacean_incidents.apps.contacts.models import (
     AbstractContact,
     Contact,
@@ -156,8 +154,8 @@ class GearOwner(AbstractContact):
         LocationGearSet,
         blank= True,
         null= True,
-    )    
-        
+    )
+    
     datetime_missing = UncertainDateTimeField(
         blank= True,
         null= True,
@@ -233,7 +231,6 @@ class GearAnalysis(models.Model):
         blank= True,
         null= True,
         related_name= 'observed_in',
-        verbose_name= 'observed gear attributes',
         help_text= "All the applicable gear attributes in the observed set of gear from this entanglement. This includes any gear on the animal as described in observations or otherwise documented.",
         through= GearAttributesObserved,
     )
