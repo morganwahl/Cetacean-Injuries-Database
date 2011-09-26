@@ -8,7 +8,7 @@ from cetacean_incidents.apps.contacts.forms import ContactSearchForm
 
 from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
-from cetacean_incidents.apps.locations.models import Location
+from cetacean_incidents.apps.locations.forms import LocationSearchForm
 
 from cetacean_incidents.apps.search_forms.forms import SearchForm
 from cetacean_incidents.apps.search_forms.related import (
@@ -416,11 +416,6 @@ class ObservationMergeForm(DocumentableMergeForm, BaseObservationForm):
         exclude = ('animal', 'cases', 
             'animal_length', 'animal_length_sigdigs', # these are handled by a LengthField
         )
-
-class LocationSearchForm(SearchForm):
-    class Meta:
-        model = Location
-        exclude = ('id', 'import_notes', 'roughness', 'coordinates')
 
 from cetacean_incidents.apps.entanglements.models import EntanglementObservation
 from cetacean_incidents.apps.shipstrikes.models import ShipstrikeObservation

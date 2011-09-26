@@ -2,9 +2,17 @@ from decimal import Decimal
 import re
 
 from django import forms
+from django.db.models import Q
 from django.template.loader import render_to_string
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
+
+from cetacean_incidents.apps.search_forms.forms import SearchForm
+from cetacean_incidents.apps.search_forms.fields import (
+    MatchOption,
+    MatchOptions,
+    QueryField,
+)
 
 from models import Location
 from utils import dms_to_dec
@@ -195,4 +203,51 @@ class NiceLocationForm(LocationForm):
             'coordinates': forms.HiddenInput,
             'country': CountryWidget,
         }
+
+from cetacean_incidents.apps.countries.models import Country
+    
+class CountryQueryField(QueryField):
+    
+    default_match_options = MatchOptions([
+        MatchOption('or', 'one of',
+            forms.ModelMultipleChoiceField(
+                queryset= Country.objects.filter(iso__in=['US', 'CA']),
+                widget= forms.CheckboxSelectMultiple,
+            ),
+        ),
+    ])
+    
+    blank_option = True
+    
+    def query(self, value, prefix=None):
+        if not value is None:
+            lookup_type, lookup_value = value
+            lookup_fieldname = self.model_field.name
+            if not prefix is None:
+                lookup_fieldname = prefix + '__' + lookup_fieldname
+            
+            if lookup_type == 'or':
+                # lookup_value is a list of Countries
+                if len(lookup_value) == 0:
+                    return Q()
+                
+                q = Q(**{lookup_fieldname + '__in': lookup_value})
+                
+                return q
+
+        return super(CountryQueryField, self).query(value, prefix)
+
+class LocationSearchForm(SearchForm):
+    
+    _f = Location._meta.get_field('country')
+    country = CountryQueryField(
+        model_field= _f,
+        label= _f.verbose_name.capitalize(),
+        required= False,
+        help_text= _f.help_text,
+    )
+    
+    class Meta:
+        model = Location
+        exclude = ('id', 'import_notes', 'roughness', 'coordinates')
 

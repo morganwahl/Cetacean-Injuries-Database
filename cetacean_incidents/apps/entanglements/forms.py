@@ -14,12 +14,14 @@ from cetacean_incidents.apps.incidents.forms import (
     CaseMergeForm,
     CaseSearchForm,
 )
-from cetacean_incidents.apps.incidents.forms.observation import LocationSearchForm
 from cetacean_incidents.apps.incidents.models import Animal
 
 from cetacean_incidents.apps.jquery_ui.widgets import Datepicker
 
-from cetacean_incidents.apps.locations.forms import NiceLocationForm
+from cetacean_incidents.apps.locations.forms import (
+    LocationSearchForm,
+    NiceLocationForm,
+)
 
 from cetacean_incidents.apps.merge_form.forms import MergeForm
 
