@@ -32,12 +32,12 @@ STATE_CHOICES = (
     ('CT', 'Connecticut'),
     ('NY', 'New York'),
     ('NJ', 'New Jersey'),
-    # ('PA', 'Pennsylvania'), # TODO include this? Could a whale get up the
-                              # delaware river far enough?
+    ('PA', 'Pennsylvania'), # A whale could conceivably get up the
+                            # delaware river far enough.
     ('DE', 'Delaware'),
     ('MD', 'Maryland'),
-    # ('DC', 'District of Columbia'), # TODO include this? Could a whale get up
-                                      # the potomac river far enough?
+    ('DC', 'District of Columbia'), # A whale could conceivably get up
+                                    # the potomac river far enough.
     ('VA', 'Virginia'),
     ('NC', 'North Carolina'),
     ('SC', 'South Carolina'),
