@@ -76,6 +76,8 @@ def make_sortfield_choices(field_dict, value_prefix=None, label_prefix=None, rec
         label = field.label
         if label is None:
             label = pretty_name(fieldname)
+        else:
+            label = unicode(label)
         label = label_prefix + label
         if hasattr(field, 'sort_choices'):
             subchoices = field.sort_choices(
