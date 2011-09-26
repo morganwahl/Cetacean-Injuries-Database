@@ -9,98 +9,98 @@ from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTime
 from models import (
     Entanglement,
     EntanglementObservation,
-    GearType,
-    GearTypeRelation,
+    GearAttribute,
+    GearAttributeImplication,
 )
 from forms import GearOwnerForm
 
-class GearTypeTestCase(TestCase):
+class GearAttributeTestCase(TestCase):
     def setUp(self):
         pass
 
     def test_implied_supertypes(self):
-        line = GearType.objects.create(name='line')
+        line = GearAttribute.objects.create(name='line')
         self.assertEqual(line.implied_supertypes, frozenset())
 
-        long_line = GearType.objects.create(name='long line')
-        GearTypeRelation(supertype=line, subtype=long_line).save()
+        long_line = GearAttribute.objects.create(name='long line')
+        GearAttributeImplication(supertype=line, subtype=long_line).save()
         self.assertEqual(long_line.implied_supertypes, frozenset([line]))
 
-        longer_line = GearType.objects.create(name='longer line')
-        GearTypeRelation(supertype=long_line, subtype=longer_line).save()
+        longer_line = GearAttribute.objects.create(name='longer line')
+        GearAttributeImplication(supertype=long_line, subtype=longer_line).save()
         self.assertEqual(
             longer_line.implied_supertypes,
             frozenset([line, long_line])
         )
         
-        red = GearType.objects.create(name='red')
-        GearTypeRelation(supertype=red, subtype=long_line).save()
+        red = GearAttribute.objects.create(name='red')
+        GearAttributeImplication(supertype=red, subtype=long_line).save()
         self.assertEqual(
             longer_line.implied_supertypes,
             frozenset([line, long_line, red])
         )
 
     def test_cyclecheck(self):
-        line = GearType.objects.create(name='line')
-        long_line = GearType.objects.create(name='long line')
+        line = GearAttribute.objects.create(name='line')
+        long_line = GearAttribute.objects.create(name='long line')
         # no cycles to begin with, so this shouldn't raise exceptions
         try:
-            GearTypeRelation(supertype=line, subtype=long_line).save()
-        except GearTypeRelation.DAGException as (message):
+            GearAttributeImplication(supertype=line, subtype=long_line).save()
+        except GearAttributeImplication.DAGException as (message):
             self.fail(message)
         
         # create a self-cycle
         self.assertRaises(
-            GearTypeRelation.DAGException,
-            GearTypeRelation(subtype=line, supertype=line).save,
+            GearAttributeImplication.DAGException,
+            GearAttributeImplication(subtype=line, supertype=line).save,
         )
         
         # create a 3-node cycle
-        longer_line = GearType.objects.create(name='longer line')
-        GearTypeRelation(supertype=long_line, subtype=longer_line).save()
+        longer_line = GearAttribute.objects.create(name='longer line')
+        GearAttributeImplication(supertype=long_line, subtype=longer_line).save()
         self.assertRaises(
-            GearTypeRelation.DAGException,
-            GearTypeRelation(subtype=line, supertype=long_line).save,
+            GearAttributeImplication.DAGException,
+            GearAttributeImplication(subtype=line, supertype=long_line).save,
         )
 
 class EntanglementTestCase(TestCase):
     def test_geartypes(self):
         e = Entanglement.objects.create(animal=Animal.objects.create())
 
-        line = GearType.objects.create(name='line')
+        line = GearAttribute.objects.create(name='line')
 
-        long_line = GearType.objects.create(name='long line')
-        GearTypeRelation(supertype=line, subtype=long_line).save()
+        long_line = GearAttribute.objects.create(name='long line')
+        GearAttributeImplication(supertype=line, subtype=long_line).save()
 
-        longer_line = GearType.objects.create(name='longer line')
-        GearTypeRelation(supertype=long_line, subtype=longer_line).save()
+        longer_line = GearAttribute.objects.create(name='longer line')
+        GearAttributeImplication(supertype=long_line, subtype=longer_line).save()
         
         self.assertEqual(
-            set(e.gear_types.all()),
+            set(e.analyzed_gear_attributes.all()),
             set(),
         )
         self.assertEqual(
-            set(e.implied_gear_types),
+            set(e.implied_analyzed_gear_attributes),
             set(),
         )
         
-        e.gear_types.add(long_line)
+        e.analyzed_gear_attributes.add(long_line)
         self.assertEqual(
-            set(e.gear_types.all()),
+            set(e.analyzed_gear_attributes.all()),
             set([long_line]),
         )
         self.assertEqual(
-            set(e.implied_gear_types),
+            set(e.implied_analyzed_gear_attributes),
             set([line]),
         )
         
-        e.gear_types.add(longer_line)
+        e.analyzed_gear_attributes.add(longer_line)
         self.assertEqual(
-            set(e.gear_types.all()),
+            set(e.analyzed_gear_attributes.all()),
             set([long_line, longer_line]),
         )
         self.assertEqual(
-            set(e.implied_gear_types),
+            set(e.implied_analyzed_gear_attributes),
             set([line]),
         )
 

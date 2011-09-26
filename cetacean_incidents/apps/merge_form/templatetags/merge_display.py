@@ -111,8 +111,8 @@ def display_merge_geartypes_row(destination, source, merge_form, field_name):
         field_name,
         cell_template_name= 'geartypes_cell',
         cell_kwargs= (
-            {'implied': destination.implied_gear_types},
-            {'implied': source.implied_gear_types} if isinstance(source, Entanglement) else {},
+            {'implied': destination.implied_analyzed_gear_attributes},
+            {'implied': source.implied_analyzed_gear_attributes} if isinstance(source, Entanglement) else {},
         )
     )
 

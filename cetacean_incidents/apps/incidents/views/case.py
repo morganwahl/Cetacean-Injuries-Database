@@ -387,14 +387,14 @@ def _case_dump_response(cases):
     r['entanglement'] = {
         'observed_gear_attributes': _display_gear_attribs,
         'implied_observed_gear_attributes': _display_gear_attribs,
-        'gear_types': _display_gear_attribs,
-        'implied_gear_types': _display_gear_attribs,
+        'analyzed_gear_attributes': _display_gear_attribs,
+        'implied_analyzed_gear_attributes': _display_gear_attribs,
         'gear_owner_info': lambda goi: "yes (CONFIDENTIAL!)",
         'targets': lambda gts: ', '.join(map(unicode, gts)),
     }
     g['entanglement'] = {
         'observed_gear_attributes': _get_from_manager,
-        'gear_types': _get_from_manager,
+        'analyzed_gear_attributes': _get_from_manager,
         'targets': _get_from_manager,
     }
     for f in Entanglement._meta.fields + Entanglement._meta.many_to_many:
@@ -414,7 +414,7 @@ def _case_dump_response(cases):
         c['entanglement'][f.name] = csv_name
     for propname, displayname in (
         ('implied_observed_gear_attributes', 'implied observed gear attributes'),
-        ('implied_gear_types', 'implied analyzed gear attributes'),
+        ('implied_analyzed_gear_attributes', 'implied analyzed gear attributes'),
     ):
         csv_name = 'entanglement: gear analysis: %s' % displayname
         csv_fields.append(csv_name)

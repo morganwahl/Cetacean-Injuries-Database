@@ -628,7 +628,7 @@ def parse_case(row):
 
         # analyzed_by defaults to None
 
-        # gear_types defaults to []
+        # analyzed_gear_attributes defaults to []
 
         # gear_owner_info defaults to None
         

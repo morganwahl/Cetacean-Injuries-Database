@@ -59,7 +59,6 @@ from models import (
     Entanglement,
     EntanglementObservation,
     GearBodyLocation,
-    GearType,
 )
 from forms import (
     AddEntanglementForm,

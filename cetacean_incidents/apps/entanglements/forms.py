@@ -50,7 +50,7 @@ from models import (
     GearBodyLocation,
     GearOwner,
     GearTarget,
-    GearType,
+    GearAttribute,
     LocationGearSet,
 )
 
@@ -182,10 +182,10 @@ class GearAnalysisForm(EntanglementForm):
     
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
-    _f = Entanglement._meta.get_field('gear_types')
-    gear_types = DAGField(
-       queryset= GearType.objects.all(),
+    # and we could just add analyzed_gear_attributes to Meta.widgets.
+    _f = Entanglement._meta.get_field('analyzed_gear_attributes')
+    analyzed_gear_attributes = DAGField(
+       queryset= GearAttribute.objects.all(),
         required= _f.blank != True,
         help_text= 'Selecting a type implies the ones above it in the hierarchy.',
         label= _f.verbose_name.capitalize(),
@@ -196,7 +196,7 @@ class GearAnalysisForm(EntanglementForm):
     # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('observed_gear_attributes')
     observed_gear_attributes = DAGField(
-        queryset= GearType.objects.all(),
+        queryset= GearAttribute.objects.all(),
         required= _f.blank != True,
         help_text= 'Selecting a type implies the ones above it in the hierarchy.',
         label= _f.verbose_name.capitalize(),
@@ -259,10 +259,10 @@ class EntanglementMergeForm(CaseMergeForm):
     
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
-    # and we could just add gear_types to Meta.widgets.
-    _f = Entanglement._meta.get_field('gear_types')
-    gear_types = DAGField(
-        queryset= GearType.objects.all(),
+    # and we could just add analyzed_gear_attributes to Meta.widgets.
+    _f = Entanglement._meta.get_field('analyzed_gear_attributes')
+    analyzed_gear_attributes = DAGField(
+        queryset= GearAttribute.objects.all(),
         required= _f.blank != True,
         label= _f.verbose_name.capitalize(),
         help_text= 'selecting a type implies the ones above it in the hierarchy',
@@ -273,7 +273,7 @@ class EntanglementMergeForm(CaseMergeForm):
     # and we could just add gear_types to Meta.widgets.
     _f = Entanglement._meta.get_field('observed_gear_attributes')
     observed_gear_attributes = DAGField(
-        queryset= GearType.objects.all(),
+        queryset= GearAttribute.objects.all(),
         required= _f.blank != True,
         label= _f.verbose_name.capitalize(),
         help_text= 'selecting a type implies the ones above it in the hierarchy',
@@ -520,14 +520,14 @@ class EntanglementNMFSIDLookupForm(SubmitDetectingForm):
     def results(self):
         return self.cleaned_data['nmfs_id']
 
-class GearTypeQueryField(QueryField):
+class GearAttributeQueryField(QueryField):
     
     default_match_options = MatchOptions([
         MatchOption('and', 'all of',
-            DAGField(queryset=GearType.objects.all())
+            DAGField(queryset=GearAttribute.objects.all())
         ),
         MatchOption('or', 'any of',
-            DAGField(queryset=GearType.objects.all())
+            DAGField(queryset=GearAttribute.objects.all())
         ),
     ])
 
@@ -541,7 +541,7 @@ class GearTypeQueryField(QueryField):
                 lookup_fieldname = prefix + '__' + lookup_fieldname
             
             if lookup_type == 'and':
-                # lookup_value is a list of GearTypes
+                # lookup_value is a list of GearAttributes
                 if len(lookup_value) == 0:
                     return Q()
                 
@@ -561,7 +561,7 @@ class GearTypeQueryField(QueryField):
                 return q
         
             if lookup_type == 'or':
-                # lookup_value is a list of GearTypes
+                # lookup_value is a list of GearAttributes
                 if len(lookup_value) == 0:
                     return Q()
                 
@@ -573,7 +573,7 @@ class GearTypeQueryField(QueryField):
                 
                 return q
 
-        return super(GearTypeQueryField, self).query(value, prefix)
+        return super(GearAttributeQueryField, self).query(value, prefix)
 
 class GearTargetQueryField(QueryField):
     
@@ -625,8 +625,8 @@ class GearTargetQueryField(QueryField):
 
 class EntanglementSearchForm(CaseSearchForm):
     
-    _f = Entanglement._meta.get_field('gear_types')
-    gear_types = GearTypeQueryField(
+    _f = Entanglement._meta.get_field('analyzed_gear_attributes')
+    analyzed_gear_attributes = GearAttributeQueryField(
         model_field = _f,
         required= False,
         label= _f.verbose_name.capitalize(),
@@ -636,7 +636,7 @@ class EntanglementSearchForm(CaseSearchForm):
     )
 
     _f = Entanglement._meta.get_field('observed_gear_attributes')
-    observed_gear_attributes = GearTypeQueryField(
+    observed_gear_attributes = GearAttributeQueryField(
         model_field = _f,
         required= False,
         label= _f.verbose_name.capitalize(),

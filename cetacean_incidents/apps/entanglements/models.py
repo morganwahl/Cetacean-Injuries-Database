@@ -33,7 +33,7 @@ from cetacean_incidents.apps.taxons.models import Taxon
 
 from cetacean_incidents.apps.uncertain_datetimes.models import UncertainDateTimeField
 
-class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
+class GearAttribute(DAGNode_factory(edge_model_name='GearAttributeImplication')):
     name= models.CharField(
         max_length= 512,
     )
@@ -42,17 +42,46 @@ class GearType(DAGNode_factory(edge_model_name='GearTypeRelation')):
         return self.name
     
     class Meta:
+        # For backwards compatibility with the old name of this model (GearType)
+        db_table = 'entanglements_geartype'
         ordering = ('name',)
-        verbose_name = 'Gear Attribute (formerly Gear Type)'
-        verbose_name_plural = 'Gear Attributes (formerly Gear Types)'
 
-class GearTypeRelation(DAGEdge_factory(node_model=GearType)):
+class GearAttributeImplication(DAGEdge_factory(node_model=GearAttribute)):
     
     class Meta:
         # TODO this ordering seems to cause problems on Oracle
         #ordering = ('supertype__name', 'subtype__name')
-        verbose_name = 'Gear Attribute Implication (formerly Gear Type Relation)'
-        verbose_name_plural = 'Gear Attribute Implications (formerly Gear Type Relations)'
+        
+        # For backwards compatiblity with the old name of this model
+        # (GearTypeRelation)
+        db_table = 'entanglements_geartyperelation'
+
+# replacement for entanglements_entanglement_observed_gear_attributes table
+# created by the GearAnalysis.observed_gear_attributes field. Only here for
+# backward-compatibility with the old field-names.
+class GearAttributesObserved(models.Model):
+    entanglement = models.ForeignKey('Entanglement')
+    gearattribute = models.ForeignKey(
+        'GearAttribute',
+        db_column='geartype_id', # old column name
+    )
+    
+    class Meta:
+        # old table name
+        db_table = 'entanglements_entanglement_observed_gear_attributes'
+
+# replacement for entanglements_entanglement_gear_types table
+# created by the GearAnalysis.gear_types (now analyzed_gear_attributes) field.
+# Only here for backward-compatibility with the old field-names.
+class GearAttributesAnalyzed(models.Model):
+    entanglement = models.ForeignKey('Entanglement')
+    gearattribute = models.ForeignKey(
+        'GearAttribute',
+        db_column='geartype_id', # old column name
+    )
+    
+    class Meta:
+        db_table = 'entanglements_entanglement_gear_types' # old table name
 
 class LocationGearSet(Location):
     '''\
@@ -200,22 +229,25 @@ class GearAnalysis(models.Model):
     )
     
     observed_gear_attributes = models.ManyToManyField(
-        'GearType',
+        'GearAttribute',
         blank= True,
         null= True,
         related_name= 'observed_in',
         verbose_name= 'observed gear attributes',
         help_text= "All the applicable gear attributes in the observed set of gear from this entanglement. This includes any gear on the animal as described in observations or otherwise documented.",
+        through= GearAttributesObserved,
     )
     
-    # would be called 'analyzed_gear_attributes', but isn't for backwards-compat
-    gear_types = models.ManyToManyField(
-        'GearType',
+    # formerly 'gear_types'. No db_column arg is needed since this is a 
+    # ManyToManyField, however the GearAttributesAnalyzed is needed for
+    # backwards compatilibility
+    analyzed_gear_attributes = models.ManyToManyField(
+        'GearAttribute',
         blank= True,
         null= True,
         related_name= 'analyzed_in',
-        verbose_name= 'analyzed gear attributes',
         help_text= "All the applicable gear attributes in the analyzed set of gear from this entanglement. This is only the gear that was brought in for analysis.",
+        through= GearAttributesAnalyzed,
     )
     
     targets = models.ManyToManyField(
@@ -283,14 +315,15 @@ class GearAnalysis(models.Model):
     def gear_analysis_fieldnames():
         return GearAnalysis._meta.get_all_field_names()
     
+    # formerly implied_gear_types
     @property
-    def implied_gear_types(self):
-        if not self.gear_types.count():
+    def implied_analyzed_gear_attributes(self):
+        if not self.analyzed_gear_attributes.count():
             return set()
-        implied_geartypes = set()
-        for geartype in self.gear_types.all():
-            implied_geartypes |= geartype.implied_supertypes
-        return frozenset(implied_geartypes - set(self.gear_types.all()))
+        implied_attributes = set()
+        for attrib in self.analyzed_gear_attributes.all():
+            implied_attributes |= attrib.implied_supertypes
+        return frozenset(implied_attributes - set(self.analyzed_gear_attributes.all()))
     
     @property
     def implied_observed_gear_attributes(self):
