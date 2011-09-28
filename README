@@ -1,35 +1,22 @@
-Please edit local_settings.py-example and save it as local_settings.py before
-trying to run anything.
+All code © 2009, 2010, 2011 Integrated Statisics.
 
-The jQuery library should be present in
+Credits
+-------
+Written by Integrated Statistics employee Morgan Wahl. Written under a contract
+with NOAA (National Oceanic and Atmospheric Administration). Specifically, with
+the Protected Resources Department of the North-East Regional Office.
 
-<MEDIA_ROOT>/<JQUERY_FILE>
-
-The jQuery cookie plugin should be in
-
-<MEDIA_URL>/<JQUERY_PLUGIN_COOKIE>
-
-(see https://github.com/carhartl/jquery-cookie )
-
-The a jQuery-ui library with the overcast theme and the tabs component should be
-present in:
-
-<MEDIA_URL>/<JQUERYUI_CSS_FILE>
-<MEDIA_URL>/<JQUERYUI_JS_FILE>
-
-The MEDIA_ROOT is set in local_settings.py and the jQuery variables
-are set in settings.py.
-
-Uses the flag 'silk' iconsets from famfamfam.com (Mark James) (CC3.0-AT license)
+Uses the 'silk' iconsets from famfamfam.com (Mark James) (CC3.0-AT license)
 The OLE icon is derived from one of these.
 
-uses the sorttable.js script (with some very small modifications) by Stuart Langridge (x11 license)
+Uses the sorttable.js script (with some very small modifications) by Stuart
+Langridge (X11 license).
 
-# only needed when serving static media with django itself
-MEDIA_ROOT = path.join(PROJECT_PATH, 'site_media/')
+Dependencies
+------------
 
-Dependancies (earlier versions may work; these are the ones that have been
-tested):
+These are the versions used during development. Earlier (or later) ones may
+work.
 
 Python 2.5
 Django 1.2.5
@@ -69,13 +56,38 @@ This path is case-sensitve! Despite the Oracle docs, it must be lowercase.
 
 IMPORTANT:
 
-Django's Oracle backend contains a bug in 
+Django's Oracle backend contains a bug in
 
 django.db.backends.oracle.base.DatabaseOperations.field_cast_sql
 
-The call in SQL to DBMS_LOB.SUBSTR should be removed or else search Cases by name causes an error.
+The call in SQL to DBMS_LOB.SUBSTR should be removed or else searching Cases by
+name causes an error.
 
 This bug was still present at revision 16016 of Django (after version 1.3).
 see https://code.djangoproject.com/ticket/11580
 
+Installation
+------------
+
+Please edit local_settings.py-example and save it as local_settings.py before
+trying to run anything.
+
+The jQuery library should be present in
+
+<MEDIA_ROOT>/<JQUERY_FILE>
+
+The jQuery cookie plugin should be in
+
+<MEDIA_URL>/<JQUERY_PLUGIN_COOKIE>
+
+(see https://github.com/carhartl/jquery-cookie )
+
+The a jQuery-ui library with the overcast theme and the tabs component should be
+present in:
+
+<MEDIA_URL>/<JQUERYUI_CSS_FILE>
+<MEDIA_URL>/<JQUERYUI_JS_FILE>
+
+The MEDIA_ROOT is set in local_settings.py and the jQuery variables
+are set in settings.py.
 
