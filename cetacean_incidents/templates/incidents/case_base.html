@@ -121,6 +121,7 @@
                 <div class="subsection">
                     <h3>Serious Injury and Mortality determination</h3>
                     <table>
+                        {% display_chosen_row case "reviewer_casetype" %}
                         {% display_row case "case_confirm_criteria" %}
                         {% display_chosen_row case "animal_fate" %}
                         {% display_chosen_row case "fate_cause" %}

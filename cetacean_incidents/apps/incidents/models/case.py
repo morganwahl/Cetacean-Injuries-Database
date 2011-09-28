@@ -64,11 +64,54 @@ class CaseMeta(models.Model.__metaclass__):
 
         return the_class
 
+def num_choices(low, high):
+    return tuple([(i, unicode(i)) for i in range(low, high + 1)])
+
 class SeriousInjuryAndMortality(models.Model):
     '''\
     Abstract class to collect together all the Serious Injury and Mortality 
     Determination fields.
     '''
+    
+    casetype_choices = (
+        ('UN', 'Unknown'),
+        ('SS', 'Ship Strike'),
+        ('EN', 'Entanglement'),
+        ('ES', 'Entanglement and Ship Strike'),
+        ('ET', 'Entrapment'),
+        ('NO', 'Stranding with no indication of HI'),
+        ('RS', 'Resight'),
+        ('OT', 'Other'),
+    )
+    casetype_def = u"""\
+Unknown:
+  Can't rule out Shipstrike or Entanglement.
+
+Ship Strike:
+  Reported by shipper, linear lacerations, blunt trauma including large areas of
+  hemorrhaging and/or skeletal fracturing.
+
+Entanglement:
+  Reported by owner of entangling gear, gear witnessed on animal.
+
+Entanglement and Ship Strike:
+  Evidence of both types of HI.
+
+Entrapment:
+  Animal encircled by, but not entangled in, gear.
+
+Stranding with no indication of HI:
+  Significant examination (level A, thorough documentation, necropsy) shows no
+  evidence of Entanglement or Shipstrike.
+
+Resight:
+  Additional sighting of previously documented event (?).
+
+Other:
+  Other than Shipstrike or Entanglement. For example: ingestion of manmade
+  objects, mortalities due to natural causes, sightings in uncommon habitats
+  (rivers, etc).
+"""
     
     review_1_date = models.DateField(
         blank= True,
@@ -97,44 +140,159 @@ class SeriousInjuryAndMortality(models.Model):
         verbose_name = "2nd reviewer initials",
     )
 
-    case_confirm_criteria = models.IntegerField(
+    reviewer_casetype = models.CharField(
+        max_length= 2,
+        choices= casetype_choices,
+        default= '',
         blank= True,
         null= True,
+        verbose_name = u"case classification by reviewer",
+        # reStructuredText
+        # TODO ES and RS don't make much sense in our model...
+        help_text= casetype_def,
+    )
+
+    case_confirm_criteria = models.CommaSeparatedIntegerField(
+        max_length= 12 * 3 - 1, # enough for every number
+        blank= True,
         verbose_name = "criteria for case confirmation",
-        help_text= "a number in one of the ranges 11-14, 21-24, or 31-34",
+        help_text= u"""\
+11:
+  Photographs or video allowed identification.
+
+12:
+  Marine mammal expert reported as certain.
+
+13:
+  The report was made by trained observer or member of the disentanglement
+  network and was then verified via interview by NMFS, disentanglement or
+  stranding network staff.
+
+14:
+  A fisherman reported a whale entangled in gear or a shipper reported colliding
+  with a whale.
+
+21:
+  Photographs or video allowed probable identification.
+
+22:
+  A marine mammal expert reported as possible.
+
+23:
+  An inexperienced observer’s report allowed probable identification.
+
+24:
+  An inexperienced observer’s report was verified via interview by NMFS,
+  disentanglement or stranding network staff.
+
+31:
+  Photographs or video were of insufficient quality to verify.
+32:
+  An inexperienced observer’s report lacked photographs or video and/or detail
+  to confirm.
+33:
+  An incomplete examination did not allow for identification.
+34:
+  A carcass was too decomposed to identify.
+""",
     )
 
     animal_fate = models.CharField(
         max_length= 2,
         choices = (
-            ('mt', 'mortality'),
-            ('si', 'serious injury'),
-            ('ns', 'non-serious injury'),
-            ('no', 'no injury from human interaction'),
-            ('un', 'unknown'),
+            ('MT', 'Mortality'),
+            ('SI', 'Serious Injury'),
+            ('NS', 'Non-Serious Injury'),
+            ('NO', 'No Injury From Human Interaction'),
+            ('UN', 'Unknown'),
         ),
-        default= 'un',
+        default= '',
         blank= True,
+        help_text= u"""\
+Mortality:
+  Dead.
+
+Serious Injury:
+  More likely than not to die from the event.
+
+Non-Serious Injury:
+  Unlikely to die from the event.
+
+No Injury From Human Interaction:
+  Generally only applies to cases classified by the reviewer as
+  \u2018Other\u2019.
+
+Unknown:
+  Can\u2019t rule out Serious Injury or Non-Serious Injury.
+""",
     )
     
     fate_cause = models.CharField(
-        max_length= 1,
-        choices = (
-            ('y', 'yes'),
-            ('m', 'can\'t be ruled out'),
-            ('n', 'no'),
-            ('-', 'not applicable'),
-        ),
-        default= '-',
+        max_length= 2,
+        choices = casetype_choices,
+        default= '',
         blank= True,
-        help_text= "Did the injury this case is concerned with lead to the animal's fate above? If the fate was 'no injury' or 'unknown' this should be 'not applicable'",
+        help_text= casetype_def,
     )
     
-    fate_cause_indications = models.IntegerField(
+    fate_cause_indications = models.CommaSeparatedIntegerField(
+        max_length = 15 * 3 - 1, # enough for every number
         blank= True,
         null= True,
         verbose_name= "indications of fate cause",
-        help_text= "a number in one of the ranges 41-44, 51-54, or 61-66",
+        help_text= u"""\
+41:
+  Fishing line constricted any body part, and subdermal hemorrhaging or
+  extensive necrosis was present at point of attachment.
+
+42:
+  An extensive entanglement was evident.
+
+43:
+  An entanglement prevented feeding.
+
+44:
+  A code 2 (fresh dead) whale was pulled up during fishing operations.
+
+51:
+  Large linear laceration(s) was present anywhere on body.
+
+52:
+  Large area(s) of subdermal hemorrhaging, hematoma, or edema was evident.
+
+53:
+  Extensive skeletal fracturing was evident.
+
+54:
+  A code 2 (fresh dead) carcass was found on the bow of a ship.
+
+61:
+  Fishing line constricted any body part or was likely to become constricting as
+  the whale grew.
+
+62:
+  It was uncertain if the line was constricting, but appendages near the
+  entanglement\u2019s point of attachment were discolored and likely
+  compromised.
+
+63:
+  The whale showed a marked decline in appearance following entanglement,
+  including skin discoloration, lesions near the nares, fat loss, or increased
+  cyamid loads.
+
+64:
+  The entanglement prevented feeding.
+
+65:
+  The whale was anchored.
+
+66:
+  The entanglement was extensive.
+
+67:
+  Health decline exhibited (skin discoloration, nare lesions, fat loss, heavy
+  cyamid load) following the appearance of a linear laceration or large gouge.
+""",
     )
 
     si_prevented = models.NullBooleanField(
