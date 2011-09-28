@@ -43,6 +43,31 @@
     <a href="{% url edit_case_animal case.id %}">change the animal this case is for</a>
 </div>
 {% endif %}
+{% if perms.incidents.change_case %}
+<script type="text/javascript">
+    // based on info at
+    // http://www.quirksmode.org/js/popup.html
+    $(function() {
+        $("#open_sinm_popup").click(function(e){
+            {# TODO javascript string escaping? #}
+            var url = "{% url edit_sinm_popup case.id %}";
+            var newwindow = window.open(
+                url,
+                // IE is picky about what this string contains
+                "sinm_window_for_{{ case.id }}",
+                "height=700,width=775,resizable=yes,scrollbars=yes"
+            );
+            if (window.focus) {
+                newwindow.focus();
+            }
+            return false;
+        });
+    });
+</script>
+<div>
+    <a href="{% url edit_sinm_popup case.id %}" id="open_sinm_popup">edit <abbr title="Serious Injury and Mortality">SI&M</abbr> data for this case</a> (will open in a new window)
+</div>
+{% endif %}
 {% block merge_link %}
 {% if perms.incidents.change_case and perms.incidents.delete_case %}
 <script type="text/javascript">

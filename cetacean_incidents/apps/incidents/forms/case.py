@@ -18,6 +18,8 @@ from cetacean_incidents.apps.reports.models import Report
 
 from cetacean_incidents.apps.jquery_ui.widgets import CheckboxSelectMultiple as JQueryCheckboxSelectMultiple
 
+from cetacean_incidents.apps.utils.forms import RestModelForm
+
 from ..models import (
     Animal,
     Case,
@@ -56,6 +58,31 @@ class CaseForm(forms.ModelForm):
         exclude += tuple(Case.si_n_m_fieldnames())
 
 Case.form_class = CaseForm
+
+class SINMForm(RestModelForm):
+    
+    class Meta:
+        model = Case
+        # ordering matters
+        fields = (
+            'review_1_date',
+            'review_1_inits',
+            'review_2_date',
+            'review_2_inits',
+            'reviewer_casetype',
+            'case_confirm_criteria',
+            'animal_fate',
+            'fate_cause',
+            'fate_cause_indications',
+            'si_prevented',
+            'included_in_sar',
+            'review_1_notes',
+            'review_2_notes',
+        )
+        widgets = {
+            'review_1_date': Datepicker,
+            'review_2_date': Datepicker,
+        }
 
 class CaseMergeSourceForm(forms.Form):
     

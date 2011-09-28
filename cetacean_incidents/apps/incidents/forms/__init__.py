@@ -17,6 +17,7 @@ from case import (
     CaseSearchForm,
     CaseSelectionForm,
     ChangeCaseReportForm,
+    SINMForm,
     UseCaseReportForm,
 )
 from observation import (

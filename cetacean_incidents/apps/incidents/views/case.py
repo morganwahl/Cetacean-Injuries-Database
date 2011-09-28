@@ -88,6 +88,7 @@ from ..forms import (
     CaseSearchForm,
     CaseSelectionForm,
     ChangeCaseReportForm,
+    SINMForm,
     UseCaseReportForm,
 )
 from ..templatetags.case_extras import YearsForm
@@ -858,6 +859,35 @@ def edit_case(request, case_id):
         form = CaseForm(prefix='case', instance=case)
         
     return _change_case(request, case, form)
+
+@login_required
+@permission_required('incidents.change_case')
+def edit_sinm_popup(request, case_id):
+    case = Case.objects.get(id=case_id)
+    
+    form_kwargs = {
+        'instance': case,
+    }
+    if request.method == 'POST':
+        form_kwargs['data'] = request.POST
+    form = SINMForm(**form_kwargs)
+    
+    success = False
+    if request.method == 'POST':
+        if form.is_valid():
+            case = form.save()
+            success = True
+
+    return render_to_response(
+        'incidents/edit_sinm_popup.html',
+        {
+            'case': case,
+            'form': form,
+            'success': success,
+            'media': form.media,
+        },
+        context_instance= RequestContext(request),
+    )
 
 @login_required
 @permission_required('incidents.change_case')

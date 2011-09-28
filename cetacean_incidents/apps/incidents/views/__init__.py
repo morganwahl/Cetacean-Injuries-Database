@@ -17,6 +17,7 @@ from case import (
     cases_by_year,
     edit_case,
     edit_case_animal,
+    edit_sinm_popup,
 )
 
 from observation import (
