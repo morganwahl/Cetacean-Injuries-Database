@@ -54,33 +54,6 @@ class GearAttributeImplication(DAGEdge_factory(node_model=GearAttribute)):
         # (GearTypeRelation)
         db_table = 'entanglements_geartyperelation'
 
-# replacement for entanglements_entanglement_observed_gear_attributes table
-# created by the GearAnalysis.observed_gear_attributes field. Only here for
-# backward-compatibility with the old field-names.
-class GearAttributesObserved(models.Model):
-    entanglement = models.ForeignKey('Entanglement')
-    gearattribute = models.ForeignKey(
-        'GearAttribute',
-        db_column='geartype_id', # old column name
-    )
-    
-    class Meta:
-        # old table name
-        db_table = 'entanglements_entanglement_observed_gear_attributes'
-
-# replacement for entanglements_entanglement_gear_types table
-# created by the GearAnalysis.gear_types (now analyzed_gear_attributes) field.
-# Only here for backward-compatibility with the old field-names.
-class GearAttributesAnalyzed(models.Model):
-    entanglement = models.ForeignKey('Entanglement')
-    gearattribute = models.ForeignKey(
-        'GearAttribute',
-        db_column='geartype_id', # old column name
-    )
-    
-    class Meta:
-        db_table = 'entanglements_entanglement_gear_types' # old table name
-
 class LocationGearSet(Location):
     '''\
     Everything in this table should be considered confidential!
@@ -232,7 +205,6 @@ class GearAnalysis(models.Model):
         null= True,
         related_name= 'observed_in',
         help_text= "All the applicable gear attributes in the observed set of gear from this entanglement. This includes any gear on the animal as described in observations or otherwise documented.",
-        through= GearAttributesObserved,
     )
     
     # formerly 'gear_types'. No db_column arg is needed since this is a 
@@ -244,7 +216,6 @@ class GearAnalysis(models.Model):
         null= True,
         related_name= 'analyzed_in',
         help_text= "All the applicable gear attributes in the analyzed set of gear from this entanglement. This is only the gear that was brought in for analysis.",
-        through= GearAttributesAnalyzed,
     )
     
     targets = models.ManyToManyField(
