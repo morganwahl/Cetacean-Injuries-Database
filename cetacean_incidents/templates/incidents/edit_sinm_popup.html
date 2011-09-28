@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load html_filter %}
+
+{% block title %}{{ block.super }}: {{ case }} [editing SI&M data]{% endblock %}
+
+{% block body %}
+{% if success %}
+<div class="note">
+    Changes saved!
+</div>
+{% endif %}
+<div class="warning">
+    Note that if you close this window without saving, any changes you have made will be lost.
+</div>
+<form action="" method="post">
+    <div style="text-align: center;">
+        <button type="submit">save changes to Serious Injury and Mortality data for {{ case|html }}</button>
+    </div>
+    {% csrf_token %}
+    <table class="section">
+        {{ form.as_table }}
+    </table>
+    <div style="text-align: center;">
+        <button type="submit">save changes to Serious Injury and Mortality data for {{ case|html }}</button>
+    </div>
+</form>
+{% endblock %}
