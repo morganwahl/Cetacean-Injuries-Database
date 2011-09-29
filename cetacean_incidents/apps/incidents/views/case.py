@@ -686,8 +686,8 @@ def _case_report_change(request, report=None, report_type=None):
         form = form_class(request.POST, files=request.FILES, instance=report)
         cases_form = CaseSelectionForm(cases, request.POST, prefix='cases')
         
-        if pressed == 'save':
-            if form.is_valid():
+        if form.is_valid():
+            if pressed == 'save':
                 if form_class == FileReportForm:
                     report = form.save(commit=False)
                     report.uploader = request.user
@@ -700,15 +700,15 @@ def _case_report_change(request, report=None, report_type=None):
                     url = reverse('case_report_edit', args=(report.id,))
                     querystring = urlencode(doseq=True, query={'cases': case_ids})
                     return redirect(url + '?' + querystring)
-        if pressed == 'try':
-            if creating:
-                report = form.save(commit=False)
-            if form.is_valid() and cases_form.is_valid():
-                report = report.specific_instance()
-                rendered = report.render({
-                    'cases': cases_form.cleaned_data['cases'],
-                })
-                return HttpResponse(rendered, mimetype=report.format)
+            if pressed == 'try':
+                if creating:
+                    report = form.save(commit=False)
+                if cases_form.is_valid():
+                    report = report.specific_instance()
+                    rendered = report.render({
+                        'cases': cases_form.cleaned_data['cases'],
+                    })
+                    return HttpResponse(rendered, mimetype=report.format)
     else:
         form = form_class(instance=report)
         cases_form = CaseSelectionForm(cases, prefix='cases')
