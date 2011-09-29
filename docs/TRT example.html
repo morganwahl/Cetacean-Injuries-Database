@@ -411,14 +411,14 @@
 
             <th>Bottom Type</th>
             <td>
-            {{ c.gear_owner_info.location_gear_set.bottom_type }}
+              {{ c.gear_owner_info.location_gear_set.bottom_type }}
             </td>
           </tr>
           <tr>
             <th>Gear Type(s)</th>
             <td colspan="2">{{ c.analyzed_gear_attributes.all|join:", " }}</td>
 
-            <th>Target Species</th>
+            <th>Gear Targets</th>
             <td>
               {% for t in c.targets.all %}
               {{ t|html }}{% if not forloop.last %}, {% endif %}
