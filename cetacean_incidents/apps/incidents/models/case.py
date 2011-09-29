@@ -60,6 +60,13 @@ class CaseMeta(models.Model.__metaclass__):
                 dict['save'] = new_save
 
             the_class = super(CaseMeta, self).__new__(self, name, bases, dict)
+            
+            # modify the case_type field to include the new subclass as a choice
+            # TODO is it kosher to modify _choices ?
+            case_type_field = self.case_class._meta.get_field('case_type')
+            old_choices = case_type_field._choices
+            case_type_field._choices = old_choices + ((name, the_class._meta.verbose_name),)
+            
             self.case_class.detailed_classes[name] = the_class
 
         return the_class
@@ -785,6 +792,9 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
 
     case_type = models.CharField(
         max_length= 512,
+        choices= (
+            ('Case', 'stranding (generic case)'),
+        ),
         default= 'Case',
         editable= False, # note that this only means it's not editable in the admin interface
         null= False,

@@ -164,7 +164,7 @@ class CaseSearchForm(SearchForm):
 
     class Meta:
         model = Case
-        exclude = ('id', 'import_notes', 'case_type') + tuple(Case.si_n_m_fieldnames())
+        exclude = ('id', 'import_notes') + tuple(Case.si_n_m_fieldnames())
         sort_field = True
     
     def __init__(self, *args, **kwargs):
