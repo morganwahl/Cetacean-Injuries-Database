@@ -12,26 +12,26 @@
     <para>
       This part of the manual describes a general model for tracking animal
       observations and injuries. There are a variety of different models and
-      definitions implicitly used in the various forms and spreadsheets and deal
+      definitions implicitly used in the various forms and spreadsheets that deal
       with this data. This is an attempt at defining one that can easily
       encompass data from all those different sources while still being simple
-      enough to do meaningul analysis with.
+      enough to do meaningful analysis with.
     </para>
     <para>
       This model is simply described in English, as opposed to any formal
       language. The database implements it as Python classes and an Oracle
       schema, but it could be represented in various other ways too. By
       convention, the different types of entries in the model have capitalized
-      names, such as <quote>Observation</quote> or <quote>Entanglement</quote>
-      and the names of the fields for each of those types a written
-      <literal>like this</literal>. These <glossterm>types</glossterm> and
-      <glossterm>fields</glossterm> correspond to tables and columns in a
-      relational database, or sheets and columns in a spreadsheet. The
-      <glossterm>entries</glossterm> of this model are like the rows in a
-      database or spreadsheet, and thus each has a value for each field that is
-      separate from the values for that field of every other entry. When
-      <quote>the database</quote> is mentioned below, it refers to the
-      <citation>Marine Mammal Injury Database</citation>.
+      names, such as <literal>Observation</literal> or
+      <literal>Entanglement</literal> and the names of the fields for each of
+      those types a written <literal>like this</literal>. These
+      <glossterm>types</glossterm> and <glossterm>fields</glossterm> correspond
+      to tables and columns in a relational database, or sheets and columns in a
+      spreadsheet. The <glossterm>entries</glossterm> of this model are like the
+      rows in a database or spreadsheet: each entry has a value for each
+      field that is separate from the values for that field of every other
+      entry. When <quote>the database</quote> is mentioned below, it refers to
+      the <citation>Marine Mammal Injury Database</citation>.
     </para>
     <para>
       Each field has a certain restrictions on the values is can have. The
@@ -41,18 +41,18 @@
       set may be added to later.
     </para>
     <para>
-      Some fields’ values are references to other entries, e.g. an Observation
-      has an <literal>animal</literal> field that refers to a single Animal
-      entry. Changing any of the values in that Animal doesn’t change the
+      Some fields’ values are references to other entries, e.g. an <literal>Observation</literal>
+      has an <literal>animal</literal> field that refers to a single <literal>Animal</literal>
+      entry. Changing any of the values in that <literal>Animal</literal> doesn’t change the
       Observation’s reference to it. These are typically implemented by
       assigning a unique ID number to each entry, then using that as the value
       in the referring entry. The database’s implementation of this model does
       exactly that, and these IDs are sometimes used in its interface to
       disambiguate entries whose fields have the same values. These IDs are
-      meaningless outside the context of this database, and are not formally
+      meaningless outside the context of this database, and are not
       part of this model. Some entry-types have fields that are meaningful as
       identifiers, such as the <literal>stranding field number</literal>
-      of Animal entries, but the assignment of these identifiers is outside the
+      of <literal>Animal</literal> entries, but the assignment of these identifiers is outside the
       scope of the database.
     </para>
     <para>
@@ -64,7 +64,8 @@
   <chapter>
     <title>Observations</title>
     <para>
-      The most important type of entry in the database is for an Observation. An
+      The most important type of entry in the database is an
+      <literal>Observation</literal>. An
       observation is defined as being by a single observer and of a single
       animal, with a single observation date/time and a single location. It
       might be a brief sighting from a plane, a detailed examination on a beach,
@@ -74,9 +75,9 @@
       during the observation, in the case of disentanglement attempts).
     </para>
     <para>
-      The specificity with which seperate Observations are recorded is somewhat
-      up to the user. Currently, sighting of the same animal by the same
-      observer on the same day are considered a single long observation and are
+      The specificity with which seperate <literal>Observations</literal> are recorded is somewhat
+      up to the user. Currently, sightings of the same animal by the same
+      observer on the same day are typically considered a single long observation and are
       given a single entry in the database. This is merely a database
       user-policy, and is not inherint in this model.
     </para>
@@ -123,15 +124,15 @@
       The <literal>report date/time</literal> is when NOAA heard of the observation. It’s exact definition isn’t pinned down yet, but the purpose of the field is to track the order in which observations we heard about, since that may very well be different than the order they occured.
     </para>
     <para>
-      Observations have an animal field, which is a reference to an Animal (see
-      <link href="#animal_model">the chapter on the Animal model</link> below).
-      Observations of the same animal should refer to the same animal entry.
-      Currently, the database requires an Observation to have an value for its
-      animal field, but it could be changed to allow the animal field to be left
-      blank. This might make sense for species where individuals aren’t
-      typically distinguished. Although even in that case, you would want to
-      occationally make an Animal entry to indicate two observations were of the
-      same animal.
+      <literal>Observations</literal> have an animal field, which is a reference
+      to an <literal>Animal</literal> (see <link href="#animal_model">the
+      chapter on the Animal model</link> below). <literal>Observations</literal>
+      of the same animal should refer to the same animal entry. Currently, the
+      database requires an Observation to have a value for its animal field, but
+      it could be changed to allow the animal field to be left blank. This might
+      make sense for species where individuals aren’t typically distinguished.
+      Although even in that case, you would want to occationally make an Animal
+      entry to indicate two observations were of the same animal.
     </para>
   </chapter>
 
