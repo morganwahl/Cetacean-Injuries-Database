@@ -1,4 +1,6 @@
+from django.conf import settings
 from django import forms
+from django.utils.safestring import mark_safe
 
 from cetacean_incidents.apps.documents.forms import DocumentableMergeForm
 
@@ -24,6 +26,7 @@ from ..models import (
     Animal,
     Case,
     Observation,
+    SeriousInjuryAndMortality,
     YearCaseNumber,
 )
 
@@ -164,13 +167,32 @@ class CaseSearchForm(SearchForm):
 
     class Meta:
         model = Case
-        exclude = ('id', 'import_notes') + tuple(Case.si_n_m_fieldnames())
+        exclude = ('id', 'import_notes')
         sort_field = True
     
     def __init__(self, *args, **kwargs):
         super(CaseSearchForm, self).__init__(*args, **kwargs)
         self.fields['sort_by'].initial = 'observation__datetime_observed'
 
+        # put an extra CSS class on SI&M fields
+        for fieldname in SeriousInjuryAndMortality.si_n_m_fieldnames():
+            if fieldname not in self.fields:
+                continue
+            
+            self.fields[fieldname].widget.attrs.update({
+                'class': 'si_n_m',
+            })
+    
+    def as_table(self):
+        output = super(CaseSearchForm, self).as_table()
+        output = mark_safe(u"""\
+            <tr><td colspan="2"><a href="" class="toggle_sinm_link">show/hide <abbr title="Serious Injury and Mortality">SI&M</abbr> fields...</a></td></tr>
+        """ + output)
+        return output
+    
+    class Media:
+        js = (settings.JQUERY_FILE, 'toggle_sinm.js')
+    
 class CaseSelectionForm(forms.Form):
     def __init__(self, cases, *args, **kwargs):
         super(CaseSelectionForm, self).__init__(*args, **kwargs)

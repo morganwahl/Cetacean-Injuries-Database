@@ -7,6 +7,7 @@ from animal import (
 
 from case import (
     Case,
+    SeriousInjuryAndMortality,
     YearCaseNumber,
 )
 
