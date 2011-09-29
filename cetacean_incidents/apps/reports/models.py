@@ -80,6 +80,11 @@ class FileReport(Report):
     
     def template(self):
         contents = self.template_file.file.read()
+        # turn off autoescaping
+        # TODO better way to do this
+        if self.format == 'text':
+            contents = u"{# The template system assumes you want HTML escaping. Since we're not  generating HTML, turn it off. #}{% autoescape off %}" + contents + u"{% endautoescape %}"
+            
         return Template(contents)
 
     format = models.CharField(
