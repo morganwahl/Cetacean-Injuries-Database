@@ -86,6 +86,7 @@ class FileReport(Report):
         max_length= 1000, # TODO just how long can a mimetype be?
         help_text= 'the type of the template\'s output',
         choices= (
+            ('text', u'text'),
             ('text/html', u'HTML'),
             #('image/svg+xml', u'SVG'),
         ),
