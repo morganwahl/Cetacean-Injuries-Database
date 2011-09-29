@@ -80,7 +80,7 @@ class SeriousInjuryAndMortality(models.Model):
     Determination fields.
     '''
     
-    casetype_choices = (
+    _casetype_choices = (
         ('UN', 'Unknown'),
         ('SS', 'Ship Strike'),
         ('EN', 'Entanglement'),
@@ -90,7 +90,7 @@ class SeriousInjuryAndMortality(models.Model):
         ('RS', 'Resight'),
         ('OT', 'Other'),
     )
-    casetype_def = u"""\
+    _casetype_def = u"""\
 Unknown:
   Can't rule out Shipstrike or Entanglement.
 
@@ -149,14 +149,14 @@ Other:
 
     reviewer_casetype = models.CharField(
         max_length= 2,
-        choices= casetype_choices,
+        choices= _casetype_choices,
         default= '',
         blank= True,
         null= True,
         verbose_name = u"case classification by reviewer",
         # reStructuredText
         # TODO ES and RS don't make much sense in our model...
-        help_text= casetype_def,
+        help_text= _casetype_def,
     )
 
     case_confirm_criteria = models.CommaSeparatedIntegerField(
@@ -236,10 +236,10 @@ Unknown:
     
     fate_cause = models.CharField(
         max_length= 2,
-        choices = casetype_choices,
+        choices = _casetype_choices,
         default= '',
         blank= True,
-        help_text= casetype_def,
+        help_text= _casetype_def,
     )
     
     fate_cause_indications = models.CommaSeparatedIntegerField(
