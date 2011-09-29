@@ -5,7 +5,7 @@ $().ready(function(){
   // initially hide them
   $(the_fields).hide();
   $('.toggle_sinm_link').click(function(event){
-    $(the_fields).toggle('fast');
+    $(the_fields).toggle();
     return false;
   });
 });
