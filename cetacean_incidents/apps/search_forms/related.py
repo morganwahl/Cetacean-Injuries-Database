@@ -169,7 +169,10 @@ class SubqueryField(Field):
             raise TypeError("value must be a %s instance" % self.query_form_class.__name__)
         if not value.is_valid():
             if self.required:
-                raise ValidationError(self.error_messages['invalid'])
+                message = self.error_messages['invalid']
+                if settings.DEBUG:
+                    message = message + ':' + repr(value.errors)
+                raise ValidationError(message)
             else:
                 return None
         return value

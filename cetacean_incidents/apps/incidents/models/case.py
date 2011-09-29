@@ -131,7 +131,7 @@ Other:
         null= True,
         verbose_name = "2nd reviewer date",
     )
-
+    
     review_2_inits = models.CharField(
         max_length= 5,
         blank= True,

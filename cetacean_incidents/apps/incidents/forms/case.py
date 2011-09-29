@@ -49,8 +49,6 @@ class CaseForm(forms.ModelForm):
         # custom widgets for date fields
         widgets = {
             'happened_after': Datepicker,
-            'review_1_date': Datepicker,
-            'review_2_date': Datepicker,
         }
         # don't edit model-relationship fields
         exclude = ('animal',)
