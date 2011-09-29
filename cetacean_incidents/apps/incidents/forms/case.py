@@ -172,8 +172,7 @@ class CaseSearchForm(SearchForm):
     
     def __init__(self, *args, **kwargs):
         super(CaseSearchForm, self).__init__(*args, **kwargs)
-        self.fields['sort_by'].initial = 'observation__datetime_observed'
-
+        self.fields['sort_by'].initial = 'date'
         # put an extra CSS class on SI&M fields
         for fieldname in SeriousInjuryAndMortality.si_n_m_fieldnames():
             if fieldname not in self.fields:
