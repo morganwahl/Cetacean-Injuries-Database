@@ -544,12 +544,6 @@ class Case(Documentable, SeriousInjuryAndMortality, Importable):
         if self.names_list:
             return self.names_list[-1]
         return None
-    #def _set_name(self, new_name):
-    #    if new_name != self.name:
-    #        if self.names is None or self.names == '':
-    #            self.names = new_name
-    #        else:
-    #            self.names += ',' + new_name
 
     name = property(_get_name)
     
