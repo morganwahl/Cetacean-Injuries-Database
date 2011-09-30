@@ -6,7 +6,7 @@ XSLT_DIR := /usr/share/xml/docbook/stylesheet/docbook-xsl
 STYLESHEET := manual.css
 HTML_PARAMS := --stringparam html.stylesheet $(STYLESHEET)
 
-BUILD_DIR := ../cetacean_incidents/site_media/manual
+BUILD_DIR := output
 
 MANUAL_DEPENDS := TRT\ example.html api.docbook model.docbook reports.docbook ui.docbook biologist.docbook
 

@@ -1,0 +1,31 @@
+{% extends "page.html" %}
+
+{% block title %}{{ block.super }}: manual{% endblock %}
+
+{% block header %}
+<h2>The manual (including past versions)</h2>
+{% endblock %}
+
+{% block content %}
+The current version can be downloaded <a href="{% url download_manual %}">here</a>.
+
+{% if user.is_staff %}
+<form class="section" method="POST" target="" enctype="multipart/form-data">
+  {% csrf_token %}
+  <h3>upload a new version</h3>
+  <table>
+
+      {{ new_manual_form.as_table }}
+  </table>
+  <button type="submit">upload</button>
+</form>
+{% endif %}
+
+<h3>Past versions</h3>
+<table class="section">
+  <tr><th>date uploaded</th><th>uploader</th><th>download link</th></tr>
+  {% for m in manuals %}
+  <tr><td>{{ m.date_uploaded }}</td><td>{{ m.uploader }}</td><td><a href="{% url download_manual m.id %}">download</a></td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

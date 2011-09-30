@@ -109,6 +109,7 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.clean_cache',
     'cetacean_incidents.apps.search_forms',
     'cetacean_incidents.apps.reports',
+    'cetacean_incidents.apps.manual',
 )
 
 USING_ORACLE = False
