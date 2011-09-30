@@ -104,15 +104,6 @@
                 &#x2022;
                 <a href="{% url clear_cache %}">clear cache</a>
                 {% endif %}
-                {% comment %}
-                {# these pages are buggy and inscrutable #}
-                {% if perms.taxons.add_taxon and user.is_staff %}
-                &#x2022;
-                {% endif %}
-                {% if user.is_staff %}
-                <a href="{% url recent_revisions %}">recent revisions</a>
-                {% endif %}
-                {% endcomment %}
             </td>
         </tr>
     </table>
