@@ -247,16 +247,6 @@ GearAnalysisObservationFormset = modelformset_factory(
 
 class EntanglementMergeForm(CaseMergeForm):
     
-    def __init__(self, source, destination, data=None, **kwargs):
-        # TODO gear owner info!
-        if destination.gear_owner_info:
-            raise NotImplementedError("can't yet merge entanglement cases with gear-owner info.")
-        if isinstance(source, Entanglement):
-            if source.gear_owner_info:
-                raise NotImplementedError("can't yet merge entanglement cases with gear-owner info.")
-        
-        super(EntanglementMergeForm, self).__init__(source, destination, data, **kwargs)
-    
     # need to override the help text when using our own widget partly due to
     # Django bug #9321. Ideally the help text would be part of our own Widget,
     # and we could just add analyzed_gear_attributes to Meta.widgets.
