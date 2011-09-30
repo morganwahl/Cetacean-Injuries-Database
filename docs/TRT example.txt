@@ -1,0 +1,171 @@
+{% for c in cases %}
+{% with c.observation_set.all as obs %}
+
+==========
+{{ c.name }}
+==========
+
+NMFS number:
+  {{ c.nmfs_id|default:"none" }}
+
+Indication of Entanglement:
+  {{ obs.0.indication_entanglement|yesno }}
+
+Initial condition:
+  {{ obs.0.get_condition_display }}
+
+Subsequent Status (as of the date the NMFS report was completed):
+  {{ c.latest_observation.entanglements_entanglementobservation.get_disentanglement_outcome_display }}
+
+Date 1st Observed Entangled:
+  {{ obs.0.datetime_observed }}
+
+Species:
+  *{{ c.animal.taxon.scientific_name }}*
+
+Individual ID:
+  {{ c.animal.name|default:"none" }}
+
+Location First Observed Entangled:
+  {{ obs.0.location.description }}
+
+Coordinates First Observed Entangled:
+  {{ obs.0.location.coords_pair.0|floatformat:3 }}, {{ obs.0.location.coords_pair.1|floatformat:3 }}
+
+
+Event description
+----------
+{% for o in obs %}
+{{ o.datetime_observed }}:
+  {{ o.narrative|default:"no narrative" }}
+{% endfor %}
+
+Description of Gear on Whale
+----------
+{% for o in obs %}
+{{ o.datetime_observed }}:
+  {{ o.entanglements_entanglementobservation.gear_description }}
+{% endfor %}
+
+Description of Wounds/Condition
+----------
+{% for o in obs %}
+{{ o.datetime_observed }}:
+  {{ o.wound_description }}
+{% endfor %}
+
+Sighting Prior to Entanglement:
+  {{ c.happened_after }}
+
+Re-sightings Post-entanglement:
+  TODO!
+
+Life History Information:
+  {{ c.animal.get_determined_gender_display }}
+  {% for o in c.animal.observation_set.all %}
+  {{ o.datetime_observed }}:
+    {{ o.get_age_class_display }} {{ o.animal_length|default:"" }}
+  {% endfor %}
+
+NMFS Serious Injury/Mortality Determination:
+  {{ c.get_animal_fate_display }}
+
+{% if c.case_type == 'Entanglement' %}
+Fishery Interaction Gear Analysis
+==========
+
+NMFS Number:
+  {{ c.nmfs_id|default:"none" }}
+
+Field Number:
+  {{ c.gear_fieldnumber }}
+
+Location First Observed:
+  {{ obs.0.location.description }}
+
+Species:
+  *{{ c.animal.determined_taxon.scientific_name }}*
+
+Individual ID:
+  {{ c.animal.name }}
+
+Date First Observed:
+  {{ obs.0.observation_datetime }}
+
+Type of Event:
+{% for o in obs %}
+{{ o.datetime_observed }}:
+  {{ o.entanglements_entanglementobservation.get_disentanglement_outcome_display }}
+{% endfor %}
+
+Gear Recovered:
+  {{ c.gear_retrieved|yesno }}
+
+Gear Analysis Conducted:
+  {{ c.gear_analyzed|yesno }}
+
+{% if c.gear_analyzed %}
+
+Gear Description / Analysis
+----------
+{% for o in obs %}
+{% if o.entanglements_entanglementobservation.gear_retrieved %}
+Observation on {{ o.datetime_observed }}:
+  Gear Retrieved:
+    {{ o.entanglements_entanglementobservation.gear_retrieved }}
+
+  Gear Retrieved By:
+    {{ o.entanglements_entanglementobservation.gear_retriever.name }}
+
+  Gear Received Date:
+    {{ o.entanglements_entanglementobservation.gear_given_date }}
+
+  Gear Received From:
+    {{ o.entanglements_entanglementobservation.gear_giver.name }}
+{% endif %}
+{% endfor %}
+
+Date Set:
+  {{ c.gear_owner_info.datetime_missing }}
+
+Location:
+  {{ c.gear_owner_info.location_gear_set.description }}
+
+Depth:
+  {{ c.gear_owner_info.location_gear_set.depth }}
+
+Bottom Type:
+  {{ c.gear_owner_info.location_gear_set.bottom_type }}
+
+Gear Type(s):
+  {{ c.analyzed_gear_attributes.all|join:", " }}
+
+Gear Targets:
+  {% for t in c.targets.all %}
+  {{ t.name }}{% if not forloop.last %}, {% endif %}
+  {% endfor %}
+
+Gear Description:
+  {{ c.gear_description|default:"no description" }}
+
+Comments:
+  {{ c.gear_analysis_comments|default:"none" }}
+
+Conclusions:
+ {{ c.gear_analysis_conclusions|default:"none" }}
+
+Report By:
+  {{ c.analyzed_by.name }}
+
+Date:
+  {{ c.analyzed_date }}
+
+Current Location of Gear:
+  {{ c.gear_kept_where }}
+
+{% endif %}
+
+{% endif %}
+
+{% endwith %}
+{% endfor %}
