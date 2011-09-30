@@ -3,14 +3,12 @@ TODOs by type, in order of importance:
 bugfixes:
 - bug: Entanglement.clean() throwing an error didn't give an error message when
   editing an observation with multiple cases, one of which was the entanglement
-- allow merging of Entanglement cases with gear-owner info
 - removed nested TBODY in merge form for entanglements
 - taxon merge doesn't work when Taxon.tsn is defined as unique
 - IE doesn't show table-sort arrows
 - fix jqueryui font sizes (too big in widgets in IE)
     vessel type in particular
 - 'observer on land' fake field for vessels marked as 'land'
-- secured the 'clear cache' link
 - using google static maps API probably violates their terms-of-use. is there a
     noaa charts equivalent?
 
@@ -20,7 +18,6 @@ important improvements:
 - flexible search interface
 - tag interface with color-coding of tags
 - 'needs review' by a particular user field
-- update poster!
 - add permissions for SI&M editors
 - add interface for deleting ObservationExtensions that are no longer relevant
   because the cases an Observation is relevant to have changed
@@ -39,8 +36,6 @@ important improvements:
     with warnings
 
 minor improvements:
-- add gear_present property to cases (entanglements?) that is yes if any of
-    their relevant observations are yes
 - make delete tag link bigger
 - deleting a document should send you back to it's attach_to page
 - if a tab has an error on observation editing, it should be redirected to
