@@ -293,7 +293,7 @@ def _change_incident(
         def _try_saving():
             _check('animal')
             animal = forms['animal'].save()
-            
+
             if cases: # we're editing existing cases
                 for c in cases:
                     k = _case_key(c)
