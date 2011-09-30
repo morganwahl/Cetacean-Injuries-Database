@@ -267,7 +267,7 @@ class Observation(Documentable, Importable):
     
     animal_description = models.TextField(
         blank= True,
-        help_text= u"""Anything that would help identify the individual animal or it's species or age or sex, etc. Even if those are specified above, please note what that was on the basis of.""",
+        help_text= u"""Anything that would help identify the individual animal or its species or age or sex, etc. Even if those are specified above, please note what that was on the basis of.""",
     )
     
     ashore = models.NullBooleanField(
