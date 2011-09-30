@@ -1,0 +1,85 @@
+TODOs by type, in order of importance:
+
+bugfixes:
+- bug: Entanglement.clean() throwing an error didn't give an error message when
+  editing an observation with multiple cases, one of which was the entanglement
+- allow merging of Entanglement cases with gear-owner info
+- removed nested TBODY in merge form for entanglements
+- taxon merge doesn't work when Taxon.tsn is defined as unique
+- IE doesn't show table-sort arrows
+- fix jqueryui font sizes (too big in widgets in IE)
+    vessel type in particular
+- 'observer on land' fake field for vessels marked as 'land'
+- secured the 'clear cache' link
+- using google static maps API probably violates their terms-of-use. is there a
+    noaa charts equivalent?
+
+important improvements:
+- add 'n/a' value to GearAnalysis.gear_compliant (and maybe have it default to
+  that when gear_regulated is False)
+- flexible search interface
+- tag interface with color-coding of tags
+- 'needs review' by a particular user field
+- update poster!
+- add permissions for SI&M editors
+- add interface for deleting ObservationExtensions that are no longer relevant
+  because the cases an Observation is relevant to have changed
+- use pre_delete signal to set refernces to a model to None
+- use 'unknown' option throughout site
+- contact types (seem to be making generic contacts)
+- contact info for documentation
+- stranding fields:
+    Animal.necropsied_by (Contact)
+    Animal.necropsy_findings?
+    Case.valid
+        more values between suspected and confirmed
+    Observation.confidence
+- add timezone to date-times
+- deletion!
+    with warnings
+
+minor improvements:
+- add gear_present property to cases (entanglements?) that is yes if any of
+    their relevant observations are yes
+- make delete tag link bigger
+- deleting a document should send you back to it's attach_to page
+- if a tab has an error on observation editing, it should be redirected to
+- importing an invalid taxon just gives an error message. should import valid
+  taxon with feedback.
+- Vessel.contact should have option for 'same as observer/reporter'
+- replace named media-url with DJANGO.CORE.CONTEXT_PROCESSORS.MEDIA
+- use JS to update things like IDs and OLE warnings while editing a case
+- list of recent stuff (on homepage)
+- make clear what the vessel-info fields are that are hidden
+- API change in DAGEdge: change subtype/supertype to generic DAG names
+- add icons for gear body-location
+- add icons for observations with location data
+- add map to case pages
+- add map to animal pages
+
+minor tweaks:
+- add message to tables that are sortable explaining such
+- change 'probable' to 'observed' in 'probable taxon/gender'
+- if an observed taxon differs from determined taxon, should be noted
+- define Observation.tagged
+- add Django settings for Documents
+- tooltips for ID-box (defining ids)
+- shipstrike is two words
+- striking vessel flag should default to unknown
+- 'taxons' should be taxa
+- fontographically set-off NMFS ID numbers
+
+handy stuff:
+- add duplicate-observation facility
+    "duplicate this observation <x> times" creates a form to create <x> new
+    observations whose fields are the same as the original obs, except for a few
+    chosen fields. one row for each new obs, one column for each modified field
+- affiliation merging
+- use graphviz to show relationships between Animals, Cases, and Observations
+- poster of workflow.
+- 'case type' for ones that don't have fields specifc to them
+- automate the generation of the tabbed pages
+- add icons for actions
+- google-charts venn-diagram for gear-types
+- gitweb hosting at NOAA
+
