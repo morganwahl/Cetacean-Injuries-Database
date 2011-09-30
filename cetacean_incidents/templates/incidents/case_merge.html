@@ -24,6 +24,19 @@ This template is an amalgam of editing and viewing.
 {% display_merge_row destination source form 'happened_after' %}
 {% display_merge_chosen_row destination source form 'human_interaction' %}
 {% display_merge_yesnounk_row destination source form 'ole_investigation' %}
+{% display_merge_row destination source form 'review_1_date' %}
+{% display_merge_row destination source form 'review_1_inits' %}
+{% display_merge_row destination source form 'review_2_date' %}
+{% display_merge_row destination source form 'review_2_inits' %}
+{% display_merge_chosen_row destination source form 'reviewer_casetype' %}
+{% display_merge_row destination source form 'case_confirm_criteria' %}
+{% display_merge_chosen_row destination source form 'animal_fate' %}
+{% display_merge_chosen_row destination source form 'fate_cause' %}
+{% display_merge_row destination source form 'fate_cause_indications' %}
+{% display_merge_yesnounk_row destination source form 'si_prevented' %}
+{% display_merge_yesnounk_row destination source form 'included_in_sar' %}
+{% display_merge_row destination source form 'review_1_notes' %}
+{% display_merge_row destination source form 'review_2_notes' %}
 {% block additional_form_rows %}
 {% endblock %}
 <tr>
