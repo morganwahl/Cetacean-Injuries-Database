@@ -111,6 +111,17 @@ INSTALLED_APPS = (
     'cetacean_incidents.apps.reports',
 )
 
+USING_ORACLE = False
+import re
+for db_settings in DATABASES.values():
+    if re.search('\.oracle$', db_settings['ENGINE']):
+        USING_ORACLE = True
+
+# oracle checks the enviornment for lang settings.
+if USING_ORACLE:
+    import os
+    os.environ['NLS_SORT'] = 'LATIN' # do a sensible english sort
+
 # match the formatting of UncertainDatetime.__unicode__
 DATE_FORMAT = '%Y-%m-%d'
 SHORT_DATE_FORMAT = DATE_FORMAT
