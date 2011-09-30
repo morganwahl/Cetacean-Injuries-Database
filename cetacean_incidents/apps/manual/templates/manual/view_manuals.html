@@ -1,13 +1,21 @@
 {% extends "page.html" %}
 
-{% block title %}{{ block.super }}: manual{% endblock %}
+{% block title %}{{ block.super }}: User Manual{% endblock %}
 
 {% block header %}
-<h2>The manual (including past versions)</h2>
+<h2>User Manual{% if user.is_staff %} (including past versions){% endif %}</h2>
 {% endblock %}
 
 {% block content %}
-The current version can be downloaded <a href="{% url download_manual %}">here</a>.
+<p>
+  The user manual documents the animal&#x2010;observation model that the
+  database implements, the detailed definitions of every field, the website
+  user-interface, and the report-generating system.
+</p>
+<p>
+  The current version can be downloaded
+  <a href="{% url download_manual %}">here</a>.
+</p>
 
 {% if user.is_staff %}
 <form class="section" method="POST" target="" enctype="multipart/form-data">
@@ -21,6 +29,7 @@ The current version can be downloaded <a href="{% url download_manual %}">here</
 </form>
 {% endif %}
 
+{% if user.is_staff %}
 <h3>Past versions</h3>
 <table class="section">
   <tr><th>date uploaded</th><th>uploader</th><th>download link</th></tr>
@@ -28,4 +37,6 @@ The current version can be downloaded <a href="{% url download_manual %}">here</
   <tr><td>{{ m.date_uploaded }}</td><td>{{ m.uploader }}</td><td><a href="{% url download_manual m.id %}">download</a></td></tr>
   {% endfor %}
 </table>
+{% endif %}
+
 {% endblock %}

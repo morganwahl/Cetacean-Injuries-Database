@@ -25,7 +25,6 @@ urlpatterns = patterns('',
     (r'^tags/', include('cetacean_incidents.apps.tags.urls')),
     
     (r'^manual/', include('cetacean_incidents.apps.manual.urls')),
-    (r'^manual/$', direct_to_template, {'template': 'manual_index.html'}, 'manual_index'),
     (r'^problems/', views.odd_entries, {}, 'odd_entries'),
  
     # strip the initial '/' from the login url
