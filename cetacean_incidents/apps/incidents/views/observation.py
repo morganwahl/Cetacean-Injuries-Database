@@ -184,7 +184,7 @@ def _change_incident(
                 raise ValueError("These cases are for different animals!")
     
     def _case_key(case):
-        return 'case-' + unicode(c.pk) 
+        return 'case-' + unicode(case.pk) 
 
     ### First, we get all the model instances we'll want to edit
     # note that 'animal', 'cases', and 'observation' are just shortcuts. all the
