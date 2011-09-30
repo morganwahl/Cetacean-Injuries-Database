@@ -28,7 +28,7 @@ class AbstractContact(models.Model):
         max_length= 1023,
         blank= True,
         null= True,
-        help_text= u"The contact's name. Appears in lists of contacts.",
+        help_text= u"The contact's name.",
     )
     person = models.NullBooleanField(
         blank= True,
@@ -56,7 +56,7 @@ class AbstractContact(models.Model):
     
     notes = models.TextField(
         blank= True,
-        help_text= u"""anything to note about this contact info? e.g. office 
+        help_text= u"""Anything to note about this contact info? e.g. office 
             hours, alternative phone numbers, etc.""",
     )
     
@@ -73,7 +73,8 @@ class AbstractContact(models.Model):
         abstract = True
 
 class Contact(AbstractContact, Documentable):
-    """A contact is a name of a person _or_ organization, preferably with some
+    """\
+    A contact is a name of a person _or_ organization, preferably with some
     way of contacting them. 
     
     Note that only one each of phone, email, etc. is given so that contacts
@@ -86,8 +87,9 @@ class Contact(AbstractContact, Documentable):
     sort_name = models.CharField(
         max_length= 1023,
         blank= True,
-        help_text= u"""Used in sorting contacts. If left blank, will be filled
-            in with the same value as 'name'.
+        help_text= u"""\
+            Used in sorting contacts. If left blank, will be filled in with the
+            same value as 'name'.
         """,
     )
 
