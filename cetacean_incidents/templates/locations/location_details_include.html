@@ -7,7 +7,7 @@
         {% if l.coordinates %}
         <td class="layout" rowspan="2">
             <div>
-            <img src="http://maps.google.com/maps/api/staticmap?center={{ l.coordinates }}&zoom=6&size=200x150&maptype=terrain&markers=size:small|color:yellow|{{ l.coordinates }}&sensor=false">
+                <img src="{% map_url l %}"/>
             </div>
             <table id="coords_dec">
                 {% display_coord_dec_row l "lat" %}
