@@ -18,9 +18,6 @@
 /cetacean_incidents/site_media/documents/uploads
 /cetacean_incidents/cache
 
-# report templates
-/cetacean_incidents/site_media/documents/reports
-
 # generated docs
 /cetacean_incidents/site_media/manual
 /docs/api_docs
